@@ -1,0 +1,2542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesiones | ADIUR FEMENINO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --naranja:#f47721;
+  --naranja-oscuro:#dc5e0b;
+  --naranja-claro:#fff0e6;
+  --negro:#171717;
+  --fondo:#f7f8fa;
+  --texto:#242424;
+  --gris:#f4f5f7;
+  --gris-texto:#747474;
+  --borde:#e8e8e8;
+  --blanco:#fff;
+  --verde:#18864b;
+  --verde-fondo:#e3f7eb;
+  --rojo:#c62828;
+  --rojo-fondo:#fde9e9;
+  --amarillo:#986600;
+  --amarillo-fondo:#fff5d7;
+  --azul:#285ea8;
+  --azul-fondo:#eaf2ff;
+  --radio:13px;
+  --sombra:0 4px 18px rgba(0,0,0,.045)
+}
+
+*{
+  box-sizing:border-box
+}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:100px
+}
+
+body{
+  margin:0;
+  background:var(--fondo);
+  color:var(--texto);
+  font-family:Inter,'Segoe UI',Arial,sans-serif;
+  font-size:14px;
+  -webkit-font-smoothing:antialiased
+}
+
+button,input,select,textarea{
+  font:inherit
+}
+
+button,a{
+  -webkit-tap-highlight-color:transparent
+}
+
+button{
+  cursor:pointer
+}
+
+a{
+  color:inherit;
+  text-decoration:none
+}
+
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{
+  outline:3px solid rgba(244,119,33,.25);
+  outline-offset:2px
+}
+
+.oculto{
+  display:none!important
+}
+
+/* Barra superior y navegación ADIUR */
+.barra-superior{
+  position:sticky;
+  top:0;
+  z-index:200;
+  display:flex;
+  align-items:center;
+  gap:15px;
+  min-height:84px;
+  padding:12px 25px;
+  background:#fff;
+  border-bottom:1px solid var(--borde)
+}
+
+.barra-superior *,.sidebar *{
+  font-family:Arial,Helvetica,sans-serif
+}
+
+.boton-menu{
+  display:grid;
+  place-items:center;
+  width:42px;
+  height:42px;
+  flex-shrink:0;
+  border:0;
+  border-radius:9px;
+  background:#fff;
+  color:var(--negro);
+  font-size:27px
+}
+
+.boton-menu:hover{
+  background:var(--gris)
+}
+
+.identidad-club{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex:1;
+  min-width:0
+}
+
+.logo-club{
+  width:55px;
+  height:55px;
+  flex-shrink:0;
+  object-fit:contain;
+  border-radius:50%;
+  padding:2px;
+  background:#fff
+}
+
+.textos-club{
+  min-width:0
+}
+
+.textos-club h1{
+  margin:0 0 5px;
+  color:var(--negro);
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:.5px
+}
+
+.textos-club p{
+  margin:0;
+  color:var(--gris-texto);
+  font-size:12px
+}
+
+.perfil{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+  margin-left:auto;
+  padding:4px 7px;
+  border:0;
+  border-radius:9px;
+  background:transparent;
+  text-align:left
+}
+
+.perfil:hover{
+  background:#f7f7f7
+}
+
+.avatar{
+  display:grid;
+  place-items:center;
+  width:42px;
+  height:42px;
+  flex-shrink:0;
+  border-radius:50%;
+  background:var(--negro);
+  color:#fff;
+  font-size:14px;
+  font-weight:900
+}
+
+.informacion-perfil{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  min-width:0
+}
+
+.nombre-perfil{
+  max-width:150px;
+  overflow:hidden;
+  color:var(--negro);
+  font-size:12px;
+  font-weight:800;
+  text-overflow:ellipsis;
+  white-space:nowrap
+}
+
+.rol-perfil{
+  color:var(--gris-texto);
+  font-size:11px
+}
+
+.contenedor{
+  display:flex;
+  min-height:calc(100vh - 84px)
+}
+
+.sidebar{
+  display:flex;
+  flex:0 0 258px;
+  flex-direction:column;
+  width:258px;
+  height:calc(100vh - 84px);
+  position:sticky;
+  top:84px;
+  padding:20px 13px;
+  overflow-y:auto;
+  background:#fff;
+  border-right:1px solid var(--borde);
+  transition:margin-left .22s ease
+}
+
+.sidebar.oculto{
+  margin-left:-258px
+}
+
+.menu-inicio{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:14px;
+  padding:12px 13px;
+  border-radius:10px;
+  background:#fff;
+  color:var(--negro);
+  font-size:12px;
+  font-weight:900
+}
+
+.menu-inicio:hover{
+  background:#f7f7f7
+}
+
+.icono-inicio{
+  width:20px;
+  text-align:center;
+  font-size:19px
+}
+
+.grupo-menu{
+  margin-bottom:5px
+}
+
+.titulo-grupo{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+  min-height:42px;
+  padding:10px 12px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:var(--negro);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.6px;
+  text-align:left
+}
+
+.titulo-grupo:hover{
+  background:#f7f7f7
+}
+
+.flecha{
+  font-size:19px;
+  transition:transform .2s
+}
+
+.grupo-menu:not(.cerrado) .flecha{
+  transform:rotate(90deg)
+}
+
+.submenu{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  padding:2px 0 8px 4px
+}
+
+.grupo-menu.cerrado .submenu{
+  display:none
+}
+
+.submenu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-height:35px;
+  padding:8px 10px;
+  border-radius:8px;
+  color:#656872;
+  font-size:12px
+}
+
+.submenu a:hover{
+  background:#f6f6f6;
+  color:var(--negro)
+}
+
+.submenu a.actual{
+  background:var(--naranja-claro);
+  color:var(--naranja-oscuro);
+  font-weight:800
+}
+
+.nav-punto{
+  width:5px;
+  height:5px;
+  flex-shrink:0;
+  border-radius:50%;
+  background:#c9cbd1
+}
+
+.submenu a.actual .nav-punto{
+  background:var(--naranja)
+}
+
+.separador-sesion{
+  margin-top:auto;
+  padding-top:15px;
+  border-top:1px solid var(--borde)
+}
+
+.enlace-cerrar-sesion{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:8px;
+  color:#c0392b;
+  font-size:12px;
+  font-weight:800
+}
+
+.enlace-cerrar-sesion:hover{
+  background:#fff0ef
+}
+
+.fondo-sidebar{
+  display:none
+}
+
+/* Página */
+main{
+  flex:1;
+  min-width:0;
+  width:100%;
+  max-width:1650px;
+  margin:28px auto;
+  padding:0 25px 45px
+}
+
+.page-heading{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+  margin-bottom:22px
+}
+
+.page-heading>div:first-child{
+  flex:1;
+  min-width:0
+}
+
+.eyebrow{
+  display:block;
+  margin-bottom:9px;
+  color:var(--naranja-oscuro);
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:1.7px
+}
+
+.page-heading h2{
+  margin:0 0 8px;
+  color:var(--negro);
+  font-size:clamp(24px,3vw,31px);
+  font-weight:900;
+  letter-spacing:-.7px;
+  line-height:1.2
+}
+
+.page-heading p{
+  max-width:780px;
+  margin:0;
+  color:var(--gris-texto);
+  font-size:13px;
+  line-height:1.7
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:39px;
+  padding:9px 14px;
+  border:1px solid transparent;
+  border-radius:9px;
+  font-size:11px;
+  font-weight:900;
+  transition:background .16s,transform .16s,box-shadow .16s
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 11px rgba(0,0,0,.06)
+}
+
+.btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
+  box-shadow:none
+}
+
+.btn-primary{
+  background:var(--naranja);
+  color:#fff
+}
+
+.btn-primary:hover{
+  background:var(--naranja-oscuro)
+}
+
+.btn-secondary{
+  border-color:#e0e3e8;
+  background:#fff;
+  color:#353941
+}
+
+.btn-secondary:hover{
+  background:#f8f9fa
+}
+
+.btn-danger{
+  border-color:#f1cccc;
+  background:#fff5f5;
+  color:#ae2525
+}
+
+.btn-small{
+  min-height:30px;
+  padding:5px 8px;
+  font-size:10px
+}
+
+.selector-categoria-principal{
+  display:grid;
+  grid-template-columns:54px minmax(0,1fr) minmax(240px,330px);
+  align-items:center;
+  gap:16px;
+  margin:0 0 18px;
+  padding:19px 22px;
+  border:1px solid #f0d4c1;
+  border-left:5px solid var(--naranja);
+  border-radius:15px;
+  background:#fff;
+  box-shadow:var(--sombra)
+}
+
+.selector-categoria-icono{
+  display:grid;
+  place-items:center;
+  width:52px;
+  height:52px;
+  border-radius:14px;
+  background:var(--naranja-claro);
+  color:var(--naranja-oscuro);
+  font-size:29px;
+  font-weight:900
+}
+
+.selector-categoria-texto{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  min-width:0
+}
+
+.selector-kicker{
+  color:var(--naranja-oscuro);
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:1.2px
+}
+
+.selector-categoria-texto label{
+  color:var(--negro);
+  font-size:18px;
+  font-weight:900
+}
+
+.selector-categoria-texto p{
+  margin:0;
+  color:var(--gris-texto);
+  font-size:12px;
+  line-height:1.5
+}
+
+#selectorCategoriaGlobal{
+  width:100%;
+  min-height:48px;
+  padding:0 14px;
+  border:1px solid #e4c8b5;
+  border-radius:10px;
+  background:#fffaf6;
+  color:#272727;
+  font-size:13px;
+  font-weight:850;
+  outline-color:var(--naranja)
+}
+
+.aviso-categoria{
+  margin:0 0 20px;
+  padding:13px 15px;
+  border:1px solid #f0d4c1;
+  border-radius:10px;
+  background:#fffaf6;
+  color:#86501f;
+  font-size:11px;
+  line-height:1.7
+}
+
+/* Métricas */
+.metricas{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:20px
+}
+
+.metrica{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  min-width:0;
+  min-height:105px;
+  padding:15px;
+  border:1px solid var(--borde);
+  border-radius:13px;
+  background:#fff;
+  box-shadow:var(--sombra)
+}
+
+.metrica-icono{
+  display:grid;
+  place-items:center;
+  width:40px;
+  height:40px;
+  flex:0 0 40px;
+  border-radius:11px;
+  background:var(--naranja-claro);
+  color:var(--naranja-oscuro);
+  font-size:18px
+}
+
+.metrica:nth-child(2) .metrica-icono{
+  background:var(--rojo-fondo);
+  color:var(--rojo)
+}
+
+.metrica:nth-child(3) .metrica-icono{
+  background:var(--azul-fondo);
+  color:var(--azul)
+}
+
+.metrica:nth-child(4) .metrica-icono{
+  background:var(--verde-fondo);
+  color:var(--verde)
+}
+
+.metrica-etiqueta{
+  color:var(--gris-texto);
+  font-size:10px;
+  font-weight:850;
+  line-height:1.5
+}
+
+.metrica-valor{
+  margin-top:6px;
+  color:var(--negro);
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:-.5px;
+  line-height:1.2;
+  overflow-wrap:anywhere
+}
+
+.metrica-detalle{
+  margin-top:5px;
+  color:#888d96;
+  font-size:10px;
+  line-height:1.5
+}
+
+/* Paneles y formulario */
+.panel{
+  min-width:0;
+  margin:0 0 18px;
+  padding:21px;
+  border:1px solid var(--borde);
+  border-radius:var(--radio);
+  background:#fff;
+  box-shadow:var(--sombra)
+}
+
+.panel-cabecera{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:17px
+}
+
+.panel-cabecera h3{
+  margin:0;
+  color:var(--negro);
+  font-size:16px;
+  font-weight:900;
+  line-height:1.4
+}
+
+.panel-cabecera p{
+  margin:5px 0 0;
+  color:var(--gris-texto);
+  font-size:12px;
+  line-height:1.65
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:14px
+}
+
+.campo{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  min-width:0
+}
+
+.span-12{
+  grid-column:span 12
+}
+
+.span-8{
+  grid-column:span 8
+}
+
+.span-6{
+  grid-column:span 6
+}
+
+.span-4{
+  grid-column:span 4
+}
+
+.span-3{
+  grid-column:span 3
+}
+
+.campo label{
+  color:#444b55;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.25px
+}
+
+.campo input,.campo select,.campo textarea{
+  width:100%;
+  min-width:0;
+  min-height:42px;
+  padding:10px 11px;
+  border:1px solid #dfe3e8;
+  border-radius:8px;
+  background:#fff;
+  color:var(--texto);
+  font-size:12px
+}
+
+.campo textarea{
+  min-height:76px;
+  resize:vertical;
+  line-height:1.6
+}
+
+.campo input:focus,.campo select:focus,.campo textarea:focus{
+  border-color:var(--naranja);
+  outline:0;
+  box-shadow:0 0 0 3px rgba(244,119,33,.09)
+}
+
+.campo small,.ayuda-campo{
+  color:#8b9099;
+  font-size:10px;
+  line-height:1.55
+}
+
+.separador-form{
+  grid-column:span 12;
+  margin:6px 0 0;
+  padding-top:15px;
+  border-top:1px solid #eceef1;
+  color:var(--negro);
+  font-size:12px;
+  font-weight:900
+}
+
+.campo-check{
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  padding:12px;
+  border:1px solid var(--borde);
+  border-radius:9px;
+  background:#fafbfc
+}
+
+.campo-check input{
+  margin-top:3px;
+  accent-color:var(--naranja)
+}
+
+.campo-check label{
+  font-size:11px;
+  line-height:1.6;
+  font-weight:750
+}
+
+.formulario-acciones{
+  display:flex;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:19px;
+  padding-top:17px;
+  border-top:1px solid #eceef1
+}
+
+.aviso-formulario{
+  margin-top:13px;
+  padding:12px;
+  border:1px solid #f1caca;
+  border-radius:9px;
+  background:#fff4f4;
+  color:#a61b1b;
+  font-size:11px;
+  line-height:1.7
+}
+
+.notice{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:12px 14px;
+  border:1px solid #d9e5f8;
+  border-radius:10px;
+  background:#f6f9ff;
+  color:#355681;
+  font-size:11px;
+  line-height:1.7
+}
+
+.notice strong{
+  display:block;
+  margin-bottom:3px
+}
+
+/* Filtros y tabla */
+.filtros-registros{
+  display:grid;
+  grid-template-columns:minmax(170px,1.25fr) minmax(160px,1fr) minmax(160px,1fr) auto;
+  gap:11px;
+  margin-bottom:16px;
+  padding:14px;
+  border:1px solid #eceef1;
+  border-radius:10px;
+  background:#fafbfc
+}
+
+.filtro-item{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  min-width:0
+}
+
+.filtro-item label{
+  color:#59606b;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.3px
+}
+
+.filtro-item input,.filtro-item select{
+  width:100%;
+  min-width:0;
+  min-height:40px;
+  padding:9px 11px;
+  border:1px solid #dfe3e8;
+  border-radius:8px;
+  background:#fff;
+  color:var(--texto);
+  font-size:11px
+}
+
+.filtro-limpiar{
+  justify-content:flex-end
+}
+
+.tabla-contenedor{
+  width:100%;
+  overflow-x:auto;
+  border:1px solid var(--borde);
+  border-radius:10px;
+  background:#fff
+}
+
+.tabla{
+  width:100%;
+  min-width:1050px;
+  border-collapse:separate;
+  border-spacing:0
+}
+
+.tabla th{
+  padding:12px 11px;
+  border-bottom:1px solid #e6e8ec;
+  background:#f8f9fb;
+  color:#656b76;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.45px;
+  text-align:left;
+  text-transform:uppercase;
+  white-space:nowrap
+}
+
+.tabla td{
+  padding:12px 11px;
+  border-bottom:1px solid #f0f1f3;
+  color:#454953;
+  font-size:11px;
+  line-height:1.55;
+  vertical-align:middle
+}
+
+.tabla tbody tr:last-child td{
+  border-bottom:0
+}
+
+.tabla tbody tr:hover td{
+  background:#fffaf6
+}
+
+.tabla td strong{
+  color:#242424;
+  font-weight:850
+}
+
+.tabla-vacia{
+  padding:32px 20px!important;
+  color:#858a93!important;
+  text-align:center!important;
+  line-height:1.8!important
+}
+
+.acciones-fila{
+  display:flex;
+  align-items:center;
+  gap:5px
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  padding:5px 8px;
+  border:1px solid transparent;
+  border-radius:6px;
+  font-size:9px;
+  font-weight:900;
+  line-height:1.4
+}
+
+.badge-naranja{
+  border-color:#f4d7c4;
+  background:var(--naranja-claro);
+  color:var(--naranja-oscuro)
+}
+
+.badge-verde{
+  border-color:#ccebd8;
+  background:var(--verde-fondo);
+  color:var(--verde)
+}
+
+.badge-rojo{
+  border-color:#f3cece;
+  background:var(--rojo-fondo);
+  color:var(--rojo)
+}
+
+.badge-azul{
+  border-color:#d5e3fa;
+  background:var(--azul-fondo);
+  color:var(--azul)
+}
+
+.badge-amarillo{
+  border-color:#f2e3ad;
+  background:var(--amarillo-fondo);
+  color:var(--amarillo)
+}
+
+.badge-gris{
+  border-color:#e4e6ea;
+  background:#f5f6f8;
+  color:#5f6570
+}
+
+.estado-vacio{
+  padding:27px 18px;
+  border:1px dashed #d6d9df;
+  border-radius:10px;
+  background:#fcfcfd;
+  color:#777d86;
+  font-size:12px;
+  line-height:1.7;
+  text-align:center
+}
+
+.resumen-tabla{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:11px;
+  color:#858a93;
+  font-size:10px;
+  line-height:1.6
+}
+
+/* Seguimientos e indicadores */
+.resumen-evolucion{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:9px;
+  margin:12px 0
+}
+
+.resumen-evolucion-card{
+  padding:12px;
+  border:1px solid var(--borde);
+  border-radius:9px;
+  background:#fafbfc
+}
+
+.resumen-evolucion-card small{
+  display:block;
+  color:var(--gris-texto);
+  font-size:9px;
+  font-weight:900
+}
+
+.resumen-evolucion-card strong{
+  display:block;
+  margin-top:6px;
+  color:var(--negro);
+  font-size:18px;
+  font-weight:900
+}
+
+.seguimiento-item{
+  padding:13px 0;
+  border-bottom:1px solid #eceef1
+}
+
+.seguimiento-item:last-child{
+  border-bottom:0
+}
+
+.seguimiento-top{
+  display:flex;
+  align-items:center;  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap
+}
+
+.seguimiento-item p{
+  margin:8px 0 0;
+  color:#525863;
+  font-size:11px;
+  line-height:1.7;
+  white-space:pre-wrap
+}
+
+.seguimiento-item small{
+  color:#858a93;
+  font-size:10px
+}
+
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:rgba(19,21,24,.56);
+  backdrop-filter:blur(3px)
+}
+
+.modal-overlay.visible{
+  display:flex
+}
+
+.modal-card{
+  width:100%;
+  max-width:860px;
+  max-height:92vh;
+  margin:auto;
+  overflow-y:auto;
+  border:1px solid #e5e7eb;
+  border-radius:15px;
+  background:#fff;
+  box-shadow:0 22px 70px rgba(0,0,0,.24)
+}
+
+.modal-header{
+  position:sticky;
+  top:0;
+  z-index:2;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding:18px 21px;
+  border-bottom:1px solid var(--borde);
+  background:#fff
+}
+
+.modal-header h3{
+  margin:0;
+  color:var(--negro);
+  font-size:17px;
+  font-weight:900;
+  line-height:1.5
+}
+
+.modal-header p{
+  margin:5px 0 0;
+  color:var(--gris-texto);
+  font-size:11px;
+  line-height:1.6
+}
+
+.modal-close{
+  display:grid;
+  place-items:center;
+  width:35px;
+  height:35px;
+  flex:0 0 35px;
+  border:1px solid #e1e4e8;
+  border-radius:9px;
+  background:#f7f8fa;
+  color:#454951;
+  font-size:20px
+}
+
+.modal-body{
+  padding:20px
+}
+
+.detalle-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:16px
+}
+
+.detalle-card{
+  padding:12px;
+  border:1px solid var(--borde);
+  border-radius:9px;
+  background:#fafbfc
+}
+
+.detalle-card small{
+  display:block;
+  color:#747984;
+  font-size:9px;
+  font-weight:900
+}
+
+.detalle-card strong{
+  display:block;
+  margin-top:6px;
+  color:#202124;
+  font-size:13px;
+  line-height:1.5;
+  overflow-wrap:anywhere
+}
+
+.modal-seccion{
+  margin-top:19px;
+  padding-top:17px;
+  border-top:1px solid #eceef1
+}
+
+.modal-seccion h4{
+  margin:0 0 12px;
+  color:var(--negro);
+  font-size:13px;
+  font-weight:900
+}
+
+.detalle-texto{
+  padding:11px 12px;
+  border-radius:9px;
+  background:#fafbfc;
+  color:#525863;
+  font-size:11px;
+  line-height:1.7;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere
+}
+
+.modal-footer{
+  display:flex;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:18px
+}
+
+.toast{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:1300;
+  max-width:min(420px,calc(100vw - 32px));
+  padding:13px 16px;
+  border:1px solid #ccebd8;
+  border-radius:10px;
+  background:#f0fbf5;
+  color:#176c3e;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.6;
+  box-shadow:0 8px 28px rgba(0,0,0,.12);
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(8px);
+  transition:opacity .2s,transform .2s
+}
+
+.toast.visible{
+  opacity:1;
+  transform:translateY(0)
+}
+
+@media print{
+  body *{
+  visibility:hidden!important
+}
+
+#modalDetalle,#modalDetalle *{
+  visibility:visible!important
+}
+
+#modalDetalle{
+  display:block!important;
+  position:absolute;
+  inset:0;
+  padding:0;
+  background:#fff;
+  backdrop-filter:none
+}
+
+#modalDetalle .modal-card{
+  width:100%;
+  max-width:none;
+  max-height:none;
+  overflow:visible;
+  margin:0;
+  border:0;
+  border-radius:0;
+  box-shadow:none
+}
+
+#modalDetalle .modal-header{
+  position:static;
+  padding:0 0 12px
+}
+
+#modalDetalle .modal-close,#modalDetalle .modal-footer,#formSeguimiento,#formRutina{
+  display:none!important
+}
+
+.modal-seccion{
+  break-inside:avoid
+}
+
+}
+
+@media(max-width:1200px){
+  .metricas{
+  grid-template-columns:repeat(2,minmax(0,1fr))
+}
+
+.registro-datos-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))
+}
+
+.filtros-registros{
+  grid-template-columns:repeat(2,minmax(0,1fr))
+}
+
+}
+
+@media(max-width:900px){
+  .barra-superior{
+  min-height:72px;
+  padding:10px 14px
+}
+
+.logo-club{
+  width:44px;
+  height:44px
+}
+
+.textos-club h1{
+  font-size:14px
+}
+
+.textos-club p{
+  font-size:10px
+}
+
+.contenedor{
+  min-height:calc(100vh - 72px)
+}
+
+.sidebar{
+  position:fixed;
+  top:72px;
+  bottom:0;
+  left:0;
+  z-index:650;
+  width:258px;
+  max-width:86vw;
+  height:auto;
+  margin:0;
+  transform:translateX(0);
+  box-shadow:8px 0 25px rgba(0,0,0,.08);
+  transition:transform .22s
+}
+
+.sidebar.oculto{
+  margin:0;
+  transform:translateX(-110%)
+}
+
+.fondo-sidebar.visible{
+  display:block;
+  position:fixed;
+  inset:72px 0 0;
+  z-index:640;
+  background:rgba(0,0,0,.32)
+}
+
+main{
+  margin:0 auto;
+  padding:23px 16px 32px
+}
+
+.selector-categoria-principal{
+  grid-template-columns:46px minmax(0,1fr);
+  padding:15px;
+  gap:12px
+}
+
+.selector-categoria-icono{
+  width:44px;
+  height:44px;
+  font-size:24px
+}
+
+.selector-categoria-principal #selectorCategoriaGlobal{
+  grid-column:1/-1
+}
+
+.page-heading h2{
+  font-size:26px
+}
+
+.tabla{
+  min-width:1000px
+}
+
+}
+
+@media(max-width:600px){
+  .barra-superior{
+  padding:8px;
+  gap:6px
+}
+
+.boton-menu{
+  width:34px;
+  height:36px;
+  font-size:23px
+}
+
+.identidad-club{
+  gap:7px
+}
+
+.logo-club{
+  width:35px;
+  height:35px
+}
+
+.textos-club h1{
+  font-size:12px;
+  letter-spacing:.2px
+}
+
+.textos-club p{
+  font-size:9px
+}
+
+.perfil{
+  padding:2px
+}
+
+.avatar{
+  width:32px;
+  height:32px;
+  font-size:11px
+}
+
+.informacion-perfil{
+  display:none
+}
+
+main{
+  padding:20px 10px 28px
+}
+
+.page-heading h2{
+  font-size:23px
+}
+
+.page-heading p{
+  font-size:12px
+}
+
+.metricas{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px
+}
+
+.metrica{
+  min-height:100px;
+  gap:8px;
+  padding:11px
+}
+
+.metrica-icono{
+  width:33px;
+  height:33px;
+  flex-basis:33px;
+  font-size:15px
+}
+
+.metrica-etiqueta{
+  font-size:9px
+}
+
+.metrica-valor{
+  font-size:19px
+}
+
+.metrica-detalle{
+  font-size:9px
+}
+
+.panel{
+  padding:14px
+}
+
+.panel-cabecera{
+  align-items:flex-start;
+  flex-direction:column
+}
+
+.registro-datos-grid,.filtros-registros{
+  grid-template-columns:1fr
+}
+
+.form-grid{
+  gap:12px
+}
+
+.span-8,.span-6,.span-4,.span-3{
+  grid-column:span 12
+}
+
+.detalle-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))
+}
+
+.resumen-evolucion{
+  grid-template-columns:repeat(2,minmax(0,1fr))
+}
+
+.modal-overlay{
+  padding:8px
+}
+
+.modal-body{
+  padding:14px
+}
+
+.modal-header{
+  padding:15px
+}
+
+}
+
+/* Diario de seguimiento día por día */
+.diario-lista{
+  display:flex;
+  flex-direction:column;
+  gap:12px
+}
+
+.diario-card{
+  position:relative;
+  padding:15px 16px 15px 20px;
+  border:1px solid var(--borde);
+  border-radius:11px;
+  background:#fff
+}
+
+.diario-card:before{
+  content:"";
+  position:absolute;
+  top:17px;
+  bottom:17px;
+  left:0;
+  width:4px;
+  border-radius:0 4px 4px 0;
+  background:var(--naranja)
+}
+
+.diario-cabecera{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:10px
+}
+
+.diario-acciones{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:6px;
+  flex-wrap:wrap
+}
+
+.diario-acciones .btn{
+  min-height:29px;
+  padding:5px 9px;
+  font-size:9px
+}
+
+.diario-dia{
+  font-size:12px;
+  font-weight:900;
+  color:var(--naranja-oscuro)
+}
+
+.diario-fecha{
+  margin-top:4px;
+  font-size:11px;
+  color:var(--gris-texto)
+}
+
+.diario-campo{
+  margin-top:10px
+}
+
+.diario-campo strong{
+  display:block;
+  margin-bottom:5px;
+  font-size:10px;
+  letter-spacing:.3px;
+  color:#4a5059
+}
+
+.diario-campo p{
+  margin:0;
+  font-size:12px;
+  color:#343941;
+  line-height:1.7;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere
+}
+
+.diario-vacio{
+  padding:18px;
+  border:1px dashed #d9dde3;
+  border-radius:10px;
+  color:var(--gris-texto);
+  font-size:11px;
+  line-height:1.7;
+  text-align:center;
+  background:#fafbfc
+}
+
+.diario-form{
+  padding:15px;
+  border:1px solid #f0d8c7;
+  border-radius:11px;
+  background:#fffaf6
+}
+
+.diario-form-title{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-bottom:13px;
+  font-size:13px;
+  font-weight:900;
+  color:var(--negro)
+}
+
+.diario-form-title .dia-pastilla{
+  padding:6px 9px;
+  border-radius:7px;
+  background:var(--naranja);
+  color:white;
+  font-size:10px
+}
+
+/* Rutina adaptada por expediente: se documenta, no se prescribe automáticamente */
+.rutina-aviso{
+  margin-bottom:13px;
+  padding:11px 12px;
+  border:1px solid #d9e5f8;
+  border-radius:9px;
+  background:#f6f9ff;
+  color:#355681;
+  font-size:10px;
+  line-height:1.7
+}
+
+.rutina-lista{
+  display:flex;
+  flex-direction:column;
+  gap:10px
+}
+
+.rutina-ejercicio{
+  padding:13px;
+  border:1px solid var(--borde);
+  border-radius:10px;
+  background:#fff
+}
+
+.rutina-ejercicio-cabecera{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:11px
+}
+
+.rutina-ejercicio-cabecera strong{
+  font-size:11px;
+  font-weight:900
+}
+
+.rutina-grid{
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:10px
+}
+
+.rutina-grid .campo{
+  grid-column:span 3
+}
+
+.rutina-grid .campo.wide{
+  grid-column:span 6
+}
+
+.rutina-grid .campo.full{
+  grid-column:span 12
+}
+
+.rutina-grid input,.rutina-grid select,.rutina-grid textarea{
+  width:100%;
+  min-width:0;
+  min-height:38px;
+  padding:8px 9px;
+  border:1px solid #dfe3e8;
+  border-radius:8px;
+  background:#fff;
+  color:var(--texto);
+  font-size:11px
+}
+
+.rutina-grid textarea{
+  min-height:58px;
+  resize:vertical;
+  line-height:1.5
+}
+
+.rutina-acciones{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:13px
+}
+
+.rutina-guardada-badge{
+  display:inline-flex;
+  padding:5px 8px;
+  border-radius:7px;
+  background:var(--verde-fondo);
+  color:var(--verde);
+  font-size:10px;
+  font-weight:850
+}
+
+@media(max-width:700px){
+  .rutina-grid .campo,.rutina-grid .campo.wide{
+  grid-column:span 6
+}
+
+.rutina-grid .campo.full{
+  grid-column:span 12
+}
+
+.diario-card{
+  padding:13px 13px 13px 17px
+}
+
+}
+
+@media(max-width:440px){
+  .rutina-grid .campo,.rutina-grid .campo.wide,.rutina-grid .campo.full{
+  grid-column:span 12
+}
+
+}
+
+
+
+/* Resumen operativo interactivo: conserva la estructura general de la página */
+#resumenOperativo{min-width:0}
+.operativo-intro{display:flex;align-items:center;gap:10px;margin-bottom:15px;padding:12px 13px;border:1px solid #e7e9ed;border-radius:10px;background:#fafbfc;color:#626975;font-size:11px;line-height:1.65}
+.operativo-intro strong{color:#30343b}
+.operativo-intro-punto{width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:var(--naranja);box-shadow:0 0 0 4px var(--naranja-claro)}
+.operativo-actualizar{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;margin-left:auto;border:1px solid #e1e4e8;border-radius:8px;background:#fff;color:#4b515b;font-size:20px;transition:transform .2s,background .2s}
+.operativo-actualizar:hover{transform:rotate(35deg);background:#f5f6f8}
+.operativo-grupos{display:grid;grid-template-columns:1fr;gap:13px}
+.operativo-grupo{min-width:0;overflow:hidden;border:1px solid var(--borde);border-radius:12px;background:#fff}
+.operativo-grupo-cabecera{display:flex;align-items:center;gap:12px;padding:14px 15px;border-bottom:1px solid #eceef1;background:#fcfcfd}
+.operativo-grupo-icono{display:grid;place-items:center;width:36px;height:36px;flex:0 0 36px;border-radius:10px;background:var(--amarillo-fondo);color:var(--amarillo);font-size:19px;font-weight:900}
+.operativo-sin-diario .operativo-grupo-icono{background:var(--naranja-claro);color:var(--naranja-oscuro)}
+.operativo-reintegro .operativo-grupo-icono{background:var(--azul-fondo);color:var(--azul)}
+.operativo-grupo-titulos{flex:1;min-width:0}
+.operativo-grupo-titulos h4{margin:0;color:var(--negro);font-size:12px;font-weight:900;line-height:1.5}
+.operativo-grupo-titulos p{margin:3px 0 0;color:var(--gris-texto);font-size:10px;line-height:1.55}
+.operativo-contador{display:grid;place-items:center;min-width:30px;height:30px;padding:0 8px;border:1px solid #f0e0d4;border-radius:8px;background:#fff;color:var(--naranja-oscuro);font-size:12px;font-weight:900}
+.operativo-casos{display:flex;flex-direction:column;padding:0 13px}
+.operativo-caso{min-width:0;padding:12px 0;border-bottom:1px solid #f0f1f3}
+.operativo-caso:last-child{border-bottom:0}
+.operativo-caso-principal{display:flex;align-items:center;gap:11px;width:100%;min-width:0;padding:0;border:0;border-radius:8px;background:transparent;text-align:left}
+.operativo-caso-principal:hover .operativo-caso-datos strong{color:var(--naranja-oscuro)}
+.operativo-caso-principal:focus-visible{outline:2px solid rgba(244,119,33,.5);outline-offset:3px}
+.operativo-caso-inicial{display:grid;place-items:center;width:37px;height:37px;flex:0 0 37px;border:1px solid #f3ddcd;border-radius:10px;background:#fff7f1;color:var(--naranja-oscuro);font-size:14px;font-weight:900}
+.operativo-caso-datos{display:flex;flex:1;flex-direction:column;gap:3px;min-width:0}
+.operativo-caso-datos strong{overflow:hidden;color:#262a30;font-size:11px;font-weight:900;text-overflow:ellipsis;white-space:nowrap;transition:color .15s}
+.operativo-caso-datos>span{overflow:hidden;color:#5c626c;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+.operativo-caso-datos small{color:#888e98;font-size:9px;line-height:1.5}
+.operativo-caso-estado{max-width:210px;white-space:normal;text-align:center}
+.operativo-caso-flecha{flex:0 0 auto;color:#969ba4;font-size:21px;transition:transform .15s,color .15s}
+.operativo-caso-principal:hover .operativo-caso-flecha{transform:translateX(3px);color:var(--naranja)}
+.operativo-caso-acciones{display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap;margin-top:9px;margin-left:48px}
+.operativo-grupo-pie{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 15px;border-top:1px solid #f0f1f3;background:#fcfcfd;color:#8a9099;font-size:9px}
+.operativo-ver-lista{display:inline-flex;align-items:center;gap:6px;padding:4px 0;border:0;background:transparent;color:var(--naranja-oscuro);font-size:10px;font-weight:900}
+.operativo-ver-lista:hover{text-decoration:underline}
+.operativo-vacio{display:flex;flex-direction:column;align-items:center;gap:8px;padding:27px 18px}
+.operativo-vacio-icono{display:grid;place-items:center;width:43px;height:43px;border-radius:50%;background:var(--verde-fondo);color:var(--verde);font-size:21px;font-weight:900}
+.operativo-vacio>strong{color:#272b31;font-size:13px}
+.operativo-vacio p{max-width:480px;margin:0 0 6px;color:var(--gris-texto);font-size:11px;line-height:1.7}
+@media(max-width:700px){
+  .operativo-grupo-cabecera{padding:12px;gap:9px}
+  .operativo-grupo-titulos h4{font-size:11px}
+  .operativo-casos{padding:0 10px}
+  .operativo-caso-principal{gap:8px;flex-wrap:wrap}
+  .operativo-caso-datos{flex-basis:calc(100% - 48px);}
+  .operativo-caso-estado{margin-left:45px;max-width:calc(100% - 80px)}
+  .operativo-caso-flecha{margin-left:auto}
+  .operativo-caso-acciones{margin-left:0}
+  .operativo-intro{align-items:flex-start}
+}
+
+</style>
+<script src="ADIUR-permisos.js?v=20261122"></script>
+</head>
+<body>
+<header class="barra-superior">
+    <button class="boton-menu" id="botonMenu" type="button" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="true">☰</button>
+    <div class="identidad-club">
+        <img class="logo-club" src="ADIUR-Logo ADIUR.jpg" alt="Logo ADIUR" onerror="this.style.display='none'">
+        <div class="textos-club">
+<h1>ADIUR FEMENINO</h1>
+<p>Seguimiento de lesiones y disponibilidad</p>
+</div>
+    </div>
+    <button class="perfil" id="botonPerfil" type="button" aria-label="Ver perfil de usuario">
+<span class="avatar" id="avatarUsuario">U</span>
+<span class="informacion-perfil">
+<span class="nombre-perfil" id="nombreUsuario">Usuario</span>
+<span class="rol-perfil" id="rolUsuario">Club ADIUR</span>
+</span>
+</button>
+</header>
+<div class="fondo-sidebar" id="fondoSidebar">
+</div>
+<div class="contenedor">
+<aside class="sidebar" id="sidebar">
+    <a href="ADIUR-Pagina Principal.html" class="menu-inicio">
+<span class="icono-inicio" aria-hidden="true">⌂</span> INICIO</a>
+    <div class="grupo-menu cerrado" id="grupoPlantel">
+<button class="titulo-grupo" type="button" data-grupo="grupoPlantel" aria-expanded="false">
+<span>PLANTEL</span>
+<span class="flecha">›</span>
+</button>
+<div class="submenu">
+<a href="ADIUR-jugadoras.html">
+<span class="nav-punto">
+</span>Jugadoras</a>
+<a href="ADIUR-asistencia.html">
+<span class="nav-punto">
+</span>Asistencia</a>
+</div>
+</div>
+    <div class="grupo-menu cerrado" id="grupoEntrenamiento">
+<button class="titulo-grupo" type="button" data-grupo="grupoEntrenamiento" aria-expanded="false">
+<span>ENTRENAMIENTO</span>
+<span class="flecha">›</span>
+</button>
+<div class="submenu">
+<a href="ADIUR-calendario.html">
+<span class="nav-punto">
+</span>Calendario</a>
+<a href="ADIUR-planificacion.html">
+<span class="nav-punto">
+</span>Planificación</a>
+<a href="biblioteca.html">
+<span class="nav-punto">
+</span>Biblioteca de ejercicios</a>
+<a href="ADIUR-gimnasio.html">
+<span class="nav-punto">
+</span>Gimnasio</a>
+<a href="ADIUR-calculadora.html">
+<span class="nav-punto">
+</span>Calculadora</a>
+</div>
+</div>
+    <div class="grupo-menu cerrado" id="grupoCompetencia">
+<button class="titulo-grupo" type="button" data-grupo="grupoCompetencia" aria-expanded="false">
+<span>COMPETENCIA</span>
+<span class="flecha">›</span>
+</button>
+<div class="submenu">
+<a href="ADIUR-Partidos.html">
+<span class="nav-punto">
+</span>Partidos</a>
+<a href="ADIUR-informes.html">
+<span class="nav-punto">
+</span>Informes</a>
+<a href="ADIUR-estadisticas.html">
+<span class="nav-punto">
+</span>Estadísticas</a>
+<a href="ADIUR-pizarra.html">
+<span class="nav-punto">
+</span>Pizarra táctica</a>
+</div>
+</div>
+    <div class="grupo-menu" id="grupoRendimientos">
+<button class="titulo-grupo" type="button" data-grupo="grupoRendimientos" aria-expanded="true">
+<span>RENDIMIENTOS</span>
+<span class="flecha">›</span>
+</button>
+<div class="submenu">
+<a href="ADIUR-testeos.html">
+<span class="nav-punto">
+</span>Planilla de testeos</a>
+<a href="ADIUR-tiempos.html">
+<span class="nav-punto">
+</span>Tiempos</a>
+<a href="multimedia.html">
+<span class="nav-punto">
+</span>Multimedia</a>
+<a href="ADIUR-encuestas.html">
+<span class="nav-punto">
+</span>Encuestas</a>
+<a href="lesiones.html" class="actual" aria-current="page">
+<span class="nav-punto">
+</span>Lesiones</a>
+</div>
+</div>
+    <div class="separador-sesion">
+<a href="#" class="enlace-cerrar-sesion" id="cerrarSesion">
+<span aria-hidden="true">↪</span>Cerrar sesión</a>
+</div>
+</aside>
+<main>
+    <header class="page-heading">
+<div>
+<span class="eyebrow">RENDIMIENTOS · SALUD Y DISPONIBILIDAD</span>
+<h2>Seguimiento de lesiones</h2>
+<p>Centralizá los incidentes, el estado de recuperación, los controles pendientes y la disponibilidad deportiva de cada jugadora.</p>
+</div>
+<button class="btn btn-primary" id="btnNuevaLesion" type="button" disabled>＋ Registrar lesión</button>
+</header>
+    <section class="selector-categoria-principal" aria-labelledby="tituloCategoria">
+<div class="selector-categoria-icono">＋</div>
+<div class="selector-categoria-texto">
+<span class="selector-kicker">SELECCIÓN PRINCIPAL</span>
+<label id="tituloCategoria" for="selectorCategoriaGlobal">Categoría del plantel</label>
+<p>Elegí primero la categoría para ver sus casos y cargar un nuevo registro.</p>
+</div>
+<select id="selectorCategoriaGlobal" required aria-label="Seleccionar categoría">
+<option value="" selected disabled>Seleccioná una categoría para continuar</option>
+</select>
+</section>
+    <div id="avisoCategoria" class="aviso-categoria oculto" role="status">
+</div>
+    <div id="contenidoCategoria" class="oculto">
+        <div class="notice" style="margin-bottom:18px">
+<span aria-hidden="true">ⓘ</span>
+<div>
+<strong>Registro de seguimiento, no diagnóstico médico</strong>Guardá solo la información necesaria y limitá el acceso a este archivo. La evaluación, el tratamiento y la autorización de retorno al deporte corresponden al profesional de salud. Ante una urgencia, priorizá la atención médica inmediata.</div>
+</div>
+        <section class="metricas" aria-label="Resumen de lesiones">
+            <article class="metrica">
+<div class="metrica-icono">✚</div>
+<div>
+<div class="metrica-etiqueta">Casos abiertos</div>
+<div class="metrica-valor" id="mCasosAbiertos">0</div>
+<div class="metrica-detalle">Seguimiento aún activo</div>
+</div>
+</article>
+            <article class="metrica">
+<div class="metrica-icono">◷</div>
+<div>
+<div class="metrica-etiqueta">Seguimientos registrados</div>
+<div class="metrica-valor" id="mSeguimientosRegistrados">0</div>
+<div class="metrica-detalle">Jornadas de evolución cargadas</div>
+</div>
+</article>
+            <article class="metrica">
+<div class="metrica-icono">↗</div>
+<div>
+<div class="metrica-etiqueta">Reintegro progresivo</div>
+<div class="metrica-valor" id="mReintegro">0</div>
+<div class="metrica-detalle">Casos en retorno gradual</div>
+</div>
+</article>
+            <article class="metrica">
+<div class="metrica-icono">✓</div>
+<div>
+<div class="metrica-etiqueta">Altas este mes</div>
+<div class="metrica-valor" id="mAltasMes">0</div>
+<div class="metrica-detalle">Con retorno registrado</div>
+</div>
+</article>
+        </section>
+
+        <section class="panel oculto" id="panelFormulario">
+            <div class="panel-cabecera">
+<div>
+<h3 id="tituloFormulario">Registrar lesión o incidente</h3>
+<p>Completá los datos conocidos. Los campos de diagnóstico y autorización deben reflejar únicamente indicaciones profesionales documentadas.</p>
+</div>
+<span class="badge badge-naranja" id="estadoFormulario">NUEVO CASO</span>
+</div>
+            <form id="formLesion" novalidate>
+                <div class="form-grid">
+                    <div class="campo span-6">
+<label for="jugadora">JUGADORA *</label>
+<select id="jugadora" required>
+<option value="">Seleccioná una jugadora</option>
+</select>
+<small id="ayudaJugadoras">La lista se obtiene de Jugadoras.html.</small>
+</div>
+                    <div class="campo span-6">
+<label for="fechaLesion">FECHA DEL INCIDENTE *</label>
+<input id="fechaLesion" type="date" required>
+</div>
+
+                    <div class="campo span-4">
+<label for="contexto">CONTEXTO *</label>
+<select id="contexto" required>
+<option value="Entrenamiento">Entrenamiento</option>
+<option value="Partido">Partido</option>
+<option value="Entrada en calor">Entrada en calor</option>
+<option value="Actividad fuera del club">Actividad fuera del club</option>
+<option value="No determinado">No determinado</option>
+</select>
+</div>
+                    <div class="campo span-4">
+<label for="zona">ZONA CORPORAL *</label>
+<select id="zona" required>
+<option value="">Seleccioná una zona</option>
+<option>Cabeza / rostro</option>
+<option>Cuello</option>
+<option>Hombro</option>
+<option>Clavícula</option>
+<option>Parte superior del brazo</option>
+<option>Codo</option>
+<option>Antebrazo</option>
+<option>Muñeca / mano</option>
+<option>Espalda</option>
+<option>Zona lumbar</option>
+<option>Cadera</option>
+<option>Ingle / aductores</option>
+<option>Muslo anterior</option>
+<option>Muslo posterior / isquiotibiales</option>
+<option>Rodilla</option>
+<option>Pantorrilla</option>
+<option>Tobillo</option>
+<option>Pie / dedos</option>
+<option>Otra zona</option>
+</select>
+</div>
+                    <div class="campo span-4">
+<label for="lado">LADO</label>
+<select id="lado">
+<option value="No aplica">No aplica</option>
+<option value="Derecho">Derecho</option>
+<option value="Izquierdo">Izquierdo</option>
+<option value="Bilateral">Bilateral</option>
+<option value="No determinado">No determinado</option>
+</select>
+</div>
+
+                    <div class="campo span-4">
+<label for="tipoLesion">TIPO / CLASIFICACIÓN *</label>
+<select id="tipoLesion" required>
+<option value="">Seleccioná una opción</option>
+<option>Muscular</option>
+<option>Tendinosa</option>
+<option>Ligamentaria / esguince</option>
+<option>Articular</option>
+<option>Ósea / fractura sospechada o confirmada</option>
+<option>Contusión / golpe</option>
+<option>Herida / corte</option>
+<option>Dolor sin causa determinada</option>
+<option>Enfermedad / malestar</option>
+<option>Otra / sin clasificar</option>
+</select>
+<small>No representa un diagnóstico; consigná el tipo informado o “sin clasificar”.</small>
+</div>
+                    <div class="campo span-4">
+<label for="mecanismo">MECANISMO INFORMADO</label>
+<select id="mecanismo">
+<option value="No determinado">No determinado</option>
+<option value="Contacto / choque">Contacto / choque</option><option value="Sin contacto aparente">Sin contacto aparente</option>
+<option value="Sobrecarga / repetición">Sobrecarga / repetición</option>
+<option value="Caída / giro">Caída / giro</option>
+<option value="Otro">Otro</option>
+</select>
+</div>
+                    <div class="campo span-4">
+<label for="gravedad">GRAVEDAD INFORMADA</label>
+<select id="gravedad">
+<option value="No evaluada">No evaluada</option>
+<option value="Leve (informada por profesional)">Leve (informada por profesional)</option>
+<option value="Moderada (informada por profesional)">Moderada (informada por profesional)</option>
+<option value="Grave (informada por profesional)">Grave (informada por profesional)</option>
+</select>
+</div>
+
+                    <div class="separador-form">Situación actual y disponibilidad</div>
+                    <div class="campo span-4">
+<label for="estado">ESTADO DEL CASO *</label>
+<select id="estado" required>
+<option value="Pendiente de evaluación">Pendiente de evaluación</option>
+<option value="En tratamiento / rehabilitación">En tratamiento / rehabilitación</option>
+<option value="Entrenamiento adaptado">Entrenamiento adaptado</option>
+<option value="Reintegro progresivo">Reintegro progresivo</option>
+<option value="Alta deportiva confirmada">Alta deportiva confirmada</option>
+<option value="Caso cerrado">Caso cerrado</option>
+</select>
+</div>
+                    <div class="campo span-6">
+<label for="autorizacionRetorno">AUTORIZACIÓN DE RETORNO DEPORTIVO</label>
+<select id="autorizacionRetorno">
+<option value="No evaluada / no consta">No evaluada / no consta</option>
+<option value="Sin autorización documentada">Sin autorización documentada</option>
+<option value="Autorización profesional documentada">Autorización profesional documentada</option>
+</select>
+<small>La página registra la autorización; no determina aptitud deportiva.</small>
+</div>
+                    <div class="campo span-6">
+<label for="profesional">PROFESIONAL / CENTRO DE ATENCIÓN (SI CORRESPONDE)</label>
+<input id="profesional" maxlength="180" placeholder="Nombre o institución">
+</div>
+
+                    <div class="campo span-6">
+<label for="descripcion">INCIDENTE Y SÍNTOMAS REFERIDOS *</label>
+<textarea id="descripcion" maxlength="2500" required placeholder="Qué ocurrió, cuándo aparecieron las molestias y qué refiere la jugadora. Evitá conclusiones diagnósticas no confirmadas.">
+</textarea>
+</div>
+                    <div class="campo span-6">
+<label for="atencionInicial">ATENCIÓN INICIAL / DERIVACIÓN</label>
+<textarea id="atencionInicial" maxlength="1800" placeholder="Atención recibida, medidas iniciales, derivación indicada o persona contactada.">
+</textarea>
+</div>
+                    <div class="campo span-6">
+<label for="restricciones">RESTRICCIONES / INDICACIONES DOCUMENTADAS</label>
+<textarea id="restricciones" maxlength="1800" placeholder="Restricciones y recomendaciones indicadas por el profesional, si las hubiera.">
+</textarea>
+</div>
+                    <div class="campo span-6">
+<label for="observaciones">OBSERVACIONES PARA EL CUERPO TÉCNICO</label>
+<textarea id="observaciones" maxlength="1800" placeholder="Información operativa necesaria para organizar la actividad y el seguimiento.">
+</textarea>
+</div>
+                </div>
+                <div id="avisoFormulario" class="aviso-formulario oculto" role="alert">
+</div>
+                <div class="formulario-acciones">
+<button type="button" class="btn btn-secondary" id="btnCancelar">Cancelar</button>
+<button type="button" class="btn btn-secondary" id="btnLimpiar">Limpiar campos</button>
+<button type="submit" class="btn btn-primary" id="btnGuardar">Guardar caso</button>
+</div>
+            </form>
+        </section>
+
+        <section class="panel" id="panelRegistros">
+            <div class="panel-cabecera">
+<div>
+<h3>Registro de lesiones</h3>
+<p>Una ficha por incidente. Abrí el detalle para cargar controles, evolución y decisiones profesionales documentadas.</p>
+</div>
+<span class="badge badge-gris" id="totalCasos">0 casos</span>
+</div>
+            <div class="filtros-registros">
+                <div class="filtro-item">
+<label for="buscar">BUSCAR JUGADORA O TÉRMINO</label>
+<input id="buscar" type="search" placeholder="Nombre, zona o descripción">
+</div>
+                <div class="filtro-item">
+<label for="filtroEstado">ESTADO</label>
+<select id="filtroEstado">
+<option value="TODOS">Todos los estados</option>
+<option>Pendiente de evaluación</option>
+<option>En tratamiento / rehabilitación</option>
+<option>Entrenamiento adaptado</option>
+<option>Reintegro progresivo</option>
+<option>Alta deportiva confirmada</option>
+<option>Caso cerrado</option>
+</select>
+</div>
+                <div class="filtro-item">
+<label for="filtroZona">ZONA CORPORAL</label>
+<select id="filtroZona">
+<option value="TODAS">Todas las zonas</option>
+</select>
+</div>
+                <div class="filtro-item filtro-limpiar">
+<label>&nbsp;</label>
+<button class="btn btn-secondary" id="btnLimpiarFiltros" type="button">Limpiar filtros</button>
+</div>
+            </div>
+            <div class="tabla-contenedor">
+<table class="tabla">
+<thead>
+<tr>
+<th>Fecha</th>
+<th>Jugadora</th>
+<th>Zona / lado</th>
+<th>Tipo</th>
+<th>Estado</th>
+<th>Días desde el incidente</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody id="tbodyLesiones">
+</tbody>
+</table>
+</div>
+            <div class="resumen-tabla">
+<span id="resumenTabla">No hay casos registrados.</span>
+<span>Datos guardados localmente en este navegador.</span>
+</div>
+        </section>
+
+        <section class="panel" id="panelSeguimientoGlobal">
+            <div class="panel-cabecera">
+<div>
+<h3>Resumen operativo</h3>
+<p>Vista rápida de los casos que requieren atención organizativa o de seguimiento.</p>
+</div>
+</div>
+            <div id="resumenOperativo" class="estado-vacio">No hay casos registrados para esta categoría.</div>
+        </section>
+    </div>
+</main>
+</div>
+
+<div class="modal-overlay" id="modalDetalle" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+<section class="modal-card">
+<div class="modal-header">
+<div>
+<h3 id="modalTitulo">Detalle de lesión</h3>
+<p id="modalSubtitulo">Seguimiento de caso</p>
+</div>
+<button class="modal-close" id="cerrarModal" type="button" aria-label="Cerrar">×</button>
+</div>
+<div class="modal-body" id="modalBody">
+</div>
+</section>
+</div>
+<div class="modal-overlay" id="modalPerfil" role="dialog" aria-modal="true" aria-labelledby="nombrePerfilModal">
+<section class="modal-card" style="max-width:380px;text-align:center">
+<div class="modal-header">
+<h3 id="nombrePerfilModal">Perfil de usuario</h3>
+<button class="modal-close" id="cerrarModalPerfil" type="button" aria-label="Cerrar">×</button>
+</div>
+<div style="padding:8px 0 16px">
+<div class="avatar" id="avatarPerfilModal" style="width:62px;height:62px;margin:0 auto 13px;font-size:23px">U</div>
+<strong id="nombrePerfilDetalle" style="display:block;font-size:16px">
+</strong>
+<p id="rolPerfilDetalle" style="margin:7px 0 0;color:var(--gris-texto);font-size:12px">
+</p>
+</div>
+<button class="btn btn-secondary" id="cerrarPerfilBoton" type="button">Cerrar</button>
+</section>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite">
+</div>
+
+<script>
+
+"use strict";
+
+const STORAGE_KEY = "lesionesADIUR_registros_v1";
+
+const AREAS_ZONA = ["Cabeza / rostro","Cuello","Hombro","Clavícula","Parte superior del brazo","Codo","Antebrazo","Muñeca / mano","Espalda","Zona lumbar","Cadera","Ingle / aductores","Muslo anterior","Muslo posterior / isquiotibiales","Rodilla","Pantorrilla","Tobillo","Pie / dedos","Otra zona"];
+
+const ESTADOS = ["Pendiente de evaluación","En tratamiento / rehabilitación","Entrenamiento adaptado","Reintegro progresivo","Alta deportiva confirmada","Caso cerrado"];
+
+const CERRADOS = new Set(["Alta deportiva confirmada","Caso cerrado"]);
+
+const $ = id => document.getElementById(id);
+
+let registros = [];
+
+let jugadorasBase = [];
+
+let idEditando = null;
+
+let toastTimer = null;
+
+let filtroIdsOperativo = null;
+
+
+function escapeHTML(valor){return String(valor??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function normalizar(valor){return String(valor??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLocaleLowerCase("es");}
+function fechaHoy(){const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);}
+function fechaBonita(valor){if(!valor)return "—";const p=String(valor).split("-");return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:valor;}
+function diasEntre(inicio,fin){if(!inicio||!fin)return null;const a=new Date(inicio+"T12:00:00"),b=new Date(fin+"T12:00:00");if(Number.isNaN(a.getTime())||Number.isNaN(b.getTime()))return null;return Math.max(0,Math.floor((b-a)/86400000));}
+function crearId(){return window.crypto?.randomUUID?window.crypto.randomUUID():"lesion-"+Date.now()+"-"+Math.random().toString(36).slice(2,10);}
+function toast(mensaje,error=false){const el=$("toast");el.textContent=mensaje;el.style.background=error?"#fff4f4":"#f0fbf5";el.style.color=error?"#a61b1b":"#176c3e";el.style.borderColor=error?"#f0caca":"#ccebd8";el.classList.add("visible");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("visible"),3300);}
+function leerJSON(clave){try{const raw=localStorage.getItem(clave);return raw?JSON.parse(raw):null;}catch(e){console.warn("No se pudo leer",clave,e);return null;}}
+function guardarRegistros(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(registros));return true;}catch(e){toast("No se pudieron guardar los cambios. Revisá el espacio disponible del navegador.",true);return false;}}
+function normalizarRegistro(r){
+    if(!r||typeof r!=="object")return null;
+    const seguimientos=Array.isArray(r.seguimientos)?r.seguimientos.filter(s=>s&&typeof s==="object").map((s,i)=>({
+        id:String(s.id||crearId()),dia:Number.isInteger(Number(s.dia))&&Number(s.dia)>0?Number(s.dia):i+1,fecha:String(s.fecha||""),
+        estado:ESTADOS.includes(s.estado)?s.estado:"Pendiente de evaluación",dolor:s.dolor==null||s.dolor===""?null:Number(s.dolor),
+        actividad:String(s.actividad||s.trabajoRealizado||s.notas||""),observacionesDia:String(s.observacionesDia||s.observaciones||""),
+        restricciones:String(s.restricciones||""),autorizacionRetorno:String(s.autorizacionRetorno||"No evaluada / no consta"),profesional:String(s.profesional||"")
+    })):[];
+    const rutina=Array.isArray(r.rutina)?r.rutina.filter(x=>x&&typeof x==="object").map(x=>({
+        id:String(x.id||crearId()),ejercicio:String(x.ejercicio||x.nombre||""),tipo:String(x.tipo||"Fuerza / control"),
+        series:String(x.series??""),repeticiones:String(x.repeticiones??""),duracion:String(x.duracion??""),carga:String(x.carga||""),indicaciones:String(x.indicaciones||"")
+    })):[];
+    return {
+        id:String(r.id||crearId()),jugadora:String(r.jugadora||"").trim(),jugadoraId:String(r.jugadoraId||r.jugadora||"").trim(),categoria:String(r.categoria||"").trim(),fecha:String(r.fecha||"").trim(),
+        hora:String(r.hora||""),contexto:String(r.contexto||"No determinado"),zona:String(r.zona||"Otra zona"),lado:String(r.lado||"No determinado"),tipo:String(r.tipo||"Otra / sin clasificar"),
+        mecanismo:String(r.mecanismo||"No determinado"),gravedad:String(r.gravedad||"No evaluada"),estado:ESTADOS.includes(r.estado)?r.estado:"Pendiente de evaluación",
+        proximoControl:String(r.proximoControl||""),fechaRetorno:String(r.fechaRetorno||""),autorizacionRetorno:String(r.autorizacionRetorno||"No evaluada / no consta"),profesional:String(r.profesional||""),
+        descripcion:String(r.descripcion||""),atencionInicial:String(r.atencionInicial||""),restricciones:String(r.restricciones||""),observaciones:String(r.observaciones||""),seguimientos,rutina,
+        creadoEn:String(r.creadoEn||new Date().toISOString()),actualizadoEn:String(r.actualizadoEn||"")
+    };
+}
+function cargarRegistros(){const v=leerJSON(STORAGE_KEY);registros=Array.isArray(v)?v.map(normalizarRegistro).filter(r=>r&&r.jugadora&&r.fecha):[];}
+
+/* Lectura flexible de la base actual de Jugadoras.html. No genera jugadoras de ejemplo. */
+function leerJugadoras(){const claves=["jugadorasADIUR","jugadoras","jugadorasADIUR_v1","plantelADIUR","baseJugadorasADIUR","adiurJugadoras"];const halladas=[];const esCategoria=k=>/categor[ií]a|division|divisi[oó]n|sub\s*\d+|\bu\s*\d+|\bs\s*\d+|primera|reserva|infantil|juvenil|femenino|mayor/i.test(String(k));const visitar=(v,catHer="")=>{if(Array.isArray(v)){v.forEach(x=>{if(x&&typeof x==="object")visitar(x,catHer);else if(typeof x==="string"&&x.trim())halladas.push({nombre:x.trim(),categoria:catHer});});return;}if(!v||typeof v!=="object")return;const categoria=String(v.categoria||v.categoría||v.division||v.división||v.category||v.equipo||v.categoriaNombre||catHer||"").trim();const nombre=v.nombreCompleto||v.nombreYApellido||v.nombre_y_apellido||v.nombre_apellido||v.apellidoNombre||v.apellido_nombre||v.jugadora||([v.apellido,v.nombre].filter(Boolean).join(", "))||v.nombre;if(typeof nombre==="string"&&nombre.trim()){halladas.push({nombre:nombre.trim(),categoria});return;}Object.entries(v).forEach(([k,x])=>{if(x&&typeof x==="object")visitar(x,esCategoria(k)?String(k):categoria);});};try{for(const k of claves){const raw=localStorage.getItem(k);if(raw)visitar(JSON.parse(raw));}for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k||claves.includes(k)||!/jugadora|plantel/i.test(k))continue;const raw=localStorage.getItem(k);if(raw)try{visitar(JSON.parse(raw));}catch(_){}}}catch(e){console.warn("No se pudo leer la base de jugadoras",e);}const unicas=new Map();halladas.forEach(j=>{if(!j.nombre||!j.categoria)return;const key=normalizar(j.nombre)+"|"+normalizar(j.categoria);if(!unicas.has(key))unicas.set(key,{id:key,nombre:j.nombre,categoria:j.categoria});});return [...unicas.values()].sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"));}
+function categoriaActual(){return $("selectorCategoriaGlobal").value||"";}
+function registrosActuales(){const c=categoriaActual();return c?registros.filter(r=>r.categoria===c):[];}
+function poblarCategorias(){jugadorasBase=leerJugadoras();const select=$("selectorCategoriaGlobal"),anterior=select.value;const categorias=[...new Set(jugadorasBase.map(j=>j.categoria).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));select.replaceChildren(new Option("Seleccioná una categoría para continuar",""));categorias.forEach(c=>select.add(new Option(c,c)));if(categorias.includes(anterior))select.value=anterior;else select.value="";const aviso=$("avisoCategoria");if(!categorias.length){aviso.textContent="No pude detectar categorías en la base de Jugadoras.html. Verificá que las jugadoras tengan una categoría asignada y que ambas páginas compartan el mismo origen (sitio/dominio). Hasta entonces no se habilita la carga para evitar asignar una lesión a una categoría incorrecta.";aviso.classList.remove("oculto");}else{aviso.textContent="Seleccioná una categoría para consultar o cargar casos.";aviso.classList.toggle("oculto",!!select.value);}actualizarAccesoCategoria();}
+function actualizarAccesoCategoria(){const elegida=!!categoriaActual();$("contenidoCategoria").classList.toggle("oculto",!elegida);$("btnNuevaLesion").disabled=!elegida;$("avisoCategoria").classList.toggle("oculto",elegida&&jugadorasBase.length>0);if(!elegida){$("panelFormulario").classList.add("oculto");idEditando=null;}}
+function poblarJugadoras(preferida=""){const cat=categoriaActual();const select=$("jugadora");const lista=jugadorasBase.filter(j=>j.categoria===cat);select.replaceChildren(new Option(lista.length?"Seleccioná una jugadora":"No hay jugadoras en esta categoría",""));lista.forEach(j=>{const o=new Option(j.nombre,j.id);o.dataset.nombre=j.nombre;o.dataset.categoria=j.categoria;select.add(o);});if(preferida){const encontrada=lista.find(j=>j.nombre===preferida||j.id===preferida);if(encontrada)select.value=encontrada.id;}$("ayudaJugadoras").textContent=lista.length?`${lista.length} jugadoras disponibles en ${cat}.`:`No se encontraron jugadoras con categoría ${cat} en Jugadoras.html.`;}
+function jugadoraSeleccionada(){const opt=$("jugadora").selectedOptions[0];if(!opt||!opt.value)return null;return jugadorasBase.find(j=>j.id===opt.value)||null;}
+function estadoAbierto(r){return !CERRADOS.has(r.estado);}
+function estadoBadge(estado){if(estado==="Alta deportiva confirmada")return"badge-verde";if(estado==="Caso cerrado")return"badge-gris";if(estado==="Reintegro progresivo")return"badge-azul";if(estado==="Entrenamiento adaptado")return"badge-naranja";if(estado==="Pendiente de evaluación")return"badge-amarillo";return"badge-rojo";}
+function diasCaso(r){const cierre=r.fechaRetorno||(CERRADOS.has(r.estado)&&r.actualizadoEn?r.actualizadoEn.slice(0,10):"");return diasEntre(r.fecha,cierre||fechaHoy());}
+function ordenarSeguimientos(r){
+    if(!Array.isArray(r.seguimientos))r.seguimientos=[];
+    r.seguimientos.sort((a,b)=>String(a.fecha||"").localeCompare(String(b.fecha||""))||String(a.id||"").localeCompare(String(b.id||"")));
+    r.seguimientos.forEach((s,i)=>{s.dia=i+1;});
+}
+function sincronizarEstadoUltimoSeguimiento(r){
+    ordenarSeguimientos(r);
+    const ultimo=r.seguimientos[r.seguimientos.length-1];
+    if(!ultimo)return;
+    r.estado=ESTADOS.includes(ultimo.estado)?ultimo.estado:r.estado;
+    r.autorizacionRetorno=ultimo.autorizacionRetorno||r.autorizacionRetorno||"No evaluada / no consta";
+    r.profesional=ultimo.profesional||r.profesional;
+    r.restricciones=ultimo.restricciones||r.restricciones;
+    if(r.estado==="Alta deportiva confirmada")r.fechaRetorno=ultimo.fecha;
+    else if(r.estado!=="Caso cerrado")r.fechaRetorno="";
+}
+function actualizarMetricas(){
+    const lista=registrosActuales();
+    $("mCasosAbiertos").textContent=lista.filter(estadoAbierto).length;
+    $("mSeguimientosRegistrados").textContent=lista.reduce((total,r)=>total+(r.seguimientos||[]).length,0);
+    $("mReintegro").textContent=lista.filter(r=>r.estado==="Reintegro progresivo").length;
+    const mes=fechaHoy().slice(0,7);
+    $("mAltasMes").textContent=lista.filter(r=>r.estado==="Alta deportiva confirmada"&&(r.fechaRetorno||r.actualizadoEn||r.fecha).slice(0,7)===mes).length;
+}
+function poblarFiltros(){const select=$("filtroZona"),prev=select.value;select.replaceChildren(new Option("Todas las zonas","TODAS"));[...new Set(registrosActuales().map(r=>r.zona).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es")).forEach(z=>select.add(new Option(z,z)));if([...select.options].some(o=>o.value===prev))select.value=prev;}
+function datosFiltrados(){const cat=categoriaActual(),busqueda=normalizar($("buscar").value),estado=$("filtroEstado").value,zona=$("filtroZona").value;return registros.filter(r=>r.categoria===cat&&(!filtroIdsOperativo||filtroIdsOperativo.has(r.id))&&(!busqueda||normalizar([r.jugadora,r.zona,r.tipo,r.descripcion,r.observaciones].join(" ")).includes(busqueda))&&(estado==="TODOS"||r.estado===estado)&&(zona==="TODAS"||r.zona===zona)).sort((a,b)=>b.fecha.localeCompare(a.fecha)||b.creadoEn.localeCompare(a.creadoEn));}
+function renderizarTabla(){
+    const tbody=$("tbodyLesiones"),lista=datosFiltrados();
+    if(!lista.length){tbody.innerHTML='<tr><td colspan="7" class="tabla-vacia">No hay casos para mostrar con esta categoría y estos filtros.<br>Podés registrar una lesión nueva con el botón de arriba.</td></tr>';}
+    else{tbody.innerHTML=lista.map(r=>{
+        const dias=diasCaso(r);
+        return `<tr><td>${escapeHTML(fechaBonita(r.fecha))}</td><td><strong>${escapeHTML(r.jugadora)}</strong><br><span class="ayuda-campo">${escapeHTML(r.contexto)}</span></td><td>${escapeHTML(r.zona)}<br><span class="ayuda-campo">${escapeHTML(r.lado)}</span></td><td>${escapeHTML(r.tipo)}</td><td><span class="badge ${estadoBadge(r.estado)}">${escapeHTML(r.estado)}</span></td><td>${dias===null?'—':dias+(dias===1?' día':' días')}</td><td><div class="acciones-fila"><button class="btn btn-secondary btn-small" data-accion="ver" data-id="${escapeHTML(r.id)}" type="button">Detalle</button><button class="btn btn-secondary btn-small" data-accion="editar" data-id="${escapeHTML(r.id)}" type="button">Editar</button><button class="btn btn-danger btn-small" data-accion="eliminar" data-id="${escapeHTML(r.id)}" type="button" aria-label="Eliminar ficha de ${escapeHTML(r.jugadora)}">×</button></div></td></tr>`;
+    }).join("");}
+    $("totalCasos").textContent=`${lista.length} ${lista.length===1?"caso":"casos"}`;
+    $("resumenTabla").textContent=`Mostrando ${lista.length} de ${registrosActuales().length} casos de ${categoriaActual()}. Los días son transcurridos desde el incidente; no equivalen necesariamente a días oficiales de baja.`;
+}
+function renderizarResumenOperativo(){
+    const lista=registrosActuales();
+    const ordenar=(a,b)=>String(b.fecha||"").localeCompare(String(a.fecha||""))||String(a.jugadora||"").localeCompare(String(b.jugadora||""),"es");
+    const pendientes=lista.filter(r=>r.estado==="Pendiente de evaluación").sort(ordenar);
+    const sinDiario=lista.filter(r=>estadoAbierto(r)&&(!Array.isArray(r.seguimientos)||r.seguimientos.length===0)).sort(ordenar);
+    const enReintegro=lista.filter(r=>r.estado==="Reintegro progresivo"||r.estado==="Entrenamiento adaptado").sort(ordenar);
+
+    const renderCaso=(r,detalleExtra="")=>`<article class="operativo-caso">
+        <button type="button" class="operativo-caso-principal" data-accion="abrir-caso" data-id="${escapeHTML(r.id)}" aria-label="Abrir expediente de ${escapeHTML(r.jugadora)}">
+            <span class="operativo-caso-inicial" aria-hidden="true">${escapeHTML((r.jugadora||"?").trim().charAt(0).toLocaleUpperCase("es"))}</span>
+            <span class="operativo-caso-datos"><strong>${escapeHTML(r.jugadora)}</strong><span>${escapeHTML(r.zona)}${r.lado&&r.lado!=="No aplica"?" · "+escapeHTML(r.lado):""}</span><small>Incidente: ${escapeHTML(fechaBonita(r.fecha))}${detalleExtra?" · "+escapeHTML(detalleExtra):""}</small></span>
+            <span class="operativo-caso-estado badge ${estadoBadge(r.estado)}">${escapeHTML(r.estado)}</span>
+            <span class="operativo-caso-flecha" aria-hidden="true">›</span>
+        </button>
+        <div class="operativo-caso-acciones"><button type="button" class="btn btn-secondary btn-small" data-accion="abrir-caso" data-id="${escapeHTML(r.id)}">Abrir expediente</button><button type="button" class="btn btn-primary btn-small" data-accion="cargar-seguimiento" data-id="${escapeHTML(r.id)}">＋ Registrar jornada</button></div>
+    </article>`;
+
+    const renderGrupo=(clase,titulo,descripcion,items,etiqueta,detalleFn)=>{
+        if(!items.length)return "";
+        return `<section class="operativo-grupo ${clase}">
+            <div class="operativo-grupo-cabecera"><div class="operativo-grupo-icono" aria-hidden="true">${clase==="operativo-pendientes"?"!":clase==="operativo-sin-diario"?"◷":"↗"}</div><div class="operativo-grupo-titulos"><h4>${escapeHTML(titulo)}</h4><p>${escapeHTML(descripcion)}</p></div><span class="operativo-contador">${items.length}</span></div>
+            <div class="operativo-casos">${items.map(r=>renderCaso(r,detalleFn?detalleFn(r):"")).join("")}</div>
+            <div class="operativo-grupo-pie"><span>${items.length===1?"1 caso requiere atención":""+items.length+" casos requieren atención"}</span><button type="button" class="operativo-ver-lista" data-accion="ver-grupo" data-grupo="${clase}">Ver en el registro <span aria-hidden="true">→</span></button></div>
+        </section>`;
+    };
+
+    const partes=[
+        renderGrupo("operativo-pendientes","Pendientes de evaluación","Casos que todavía figuran sin evaluación registrada.",pendientes,"Pendiente"),
+        renderGrupo("operativo-sin-diario","Casos activos sin seguimiento diario","Abrí el expediente y registrá la evolución de cada jornada.",sinDiario,"Completar evolución",r=>r.estado),
+        renderGrupo("operativo-reintegro","Entrenamiento adaptado y reintegro","Casos que requieren coordinación y seguimiento del retorno.",enReintegro,"Seguimiento activo",r=>`${(r.seguimientos||[]).length} ${(r.seguimientos||[]).length===1?"jornada":"jornadas"} registradas`)
+    ].filter(Boolean);
+
+    $("resumenOperativo").innerHTML=partes.length?`<div class="operativo-intro"><span class="operativo-intro-punto" aria-hidden="true"></span><span>Seleccioná un caso para abrir su expediente o usá <strong>Registrar jornada</strong> para cargar directamente el seguimiento diario.</span><button type="button" class="operativo-actualizar" data-accion="actualizar-resumen" title="Actualizar resumen" aria-label="Actualizar resumen">↻</button></div><div class="operativo-grupos">${partes.join("")}</div>`:'<div class="estado-vacio operativo-vacio"><span class="operativo-vacio-icono" aria-hidden="true">✓</span><strong>Todo al día en esta categoría</strong><p>No hay casos que requieran una acción organizativa especial. Podés consultar el registro completo o seguir actualizando los expedientes activos.</p><button type="button" class="btn btn-secondary" data-accion="mostrar-todos">Ver registro completo</button></div>';
+}
+
+$("resumenOperativo").addEventListener("click",e=>{
+    const boton=e.target.closest("button[data-accion]");
+    if(!boton)return;
+    const accion=boton.dataset.accion;
+    if(accion==="actualizar-resumen"){
+        actualizarTodo();
+        toast("Resumen operativo actualizado.");
+        return;
+    }
+    if(accion==="mostrar-todos"){
+        filtroIdsOperativo=null;
+        $("buscar").value="";
+        $("filtroEstado").value="TODOS";
+        $("filtroZona").value="TODAS";
+        renderizarTabla();
+        $("panelRegistros").scrollIntoView({behavior:"smooth",block:"start"});
+        return;
+    }
+    if(accion==="ver-grupo"){
+        const clase=boton.dataset.grupo;
+        const lista=registrosActuales();
+        let objetivo=[];
+        if(clase==="operativo-pendientes") objetivo=lista.filter(r=>r.estado==="Pendiente de evaluación");
+        if(clase==="operativo-sin-diario") objetivo=lista.filter(r=>estadoAbierto(r)&&(!Array.isArray(r.seguimientos)||r.seguimientos.length===0));
+        if(clase==="operativo-reintegro") objetivo=lista.filter(r=>r.estado==="Reintegro progresivo"||r.estado==="Entrenamiento adaptado");
+        filtroIdsOperativo=new Set(objetivo.map(r=>r.id));
+        $("buscar").value="";
+        $("filtroZona").value="TODAS";
+        $("filtroEstado").value="TODOS";
+        renderizarTabla();
+        $("panelRegistros").scrollIntoView({behavior:"smooth",block:"start"});
+        toast(`Mostrando ${objetivo.length} ${objetivo.length===1?"caso del grupo seleccionado":"casos del grupo seleccionado"}.`);
+        return;
+    }
+    if(accion==="abrir-caso"||accion==="cargar-seguimiento"){
+        const id=boton.dataset.id;
+        const r=registros.find(x=>x.id===id&&x.categoria===categoriaActual());
+        if(!r){toast("No se encontró el expediente en la categoría seleccionada.",true);return;}
+        abrirDetalle(id);
+        if(accion==="cargar-seguimiento"){
+            const form=$("formSeguimiento");
+            if(form){
+                form.scrollIntoView({behavior:"smooth",block:"center"});
+                const actividad=form.elements.actividad;
+                if(actividad)actividad.focus({preventScroll:true});
+            }
+        }
+    }
+});
+function actualizarTodo(){filtroIdsOperativo=null;if(!categoriaActual())return;actualizarMetricas();poblarFiltros();renderizarTabla();renderizarResumenOperativo();}
+
+function mostrarAviso(m){$("avisoFormulario").textContent=m;$("avisoFormulario").classList.remove("oculto");}
+function limpiarAviso(){$("avisoFormulario").textContent="";$("avisoFormulario").classList.add("oculto");}
+function formularioLimpio(){
+    idEditando=null;$('formLesion').reset();$('fechaLesion').value=fechaHoy();$('contexto').value="Entrenamiento";$('lado').value="No aplica";
+    $('mecanismo').value="No determinado";$('gravedad').value="No evaluada";$('estado').value="Pendiente de evaluación";$('autorizacionRetorno').value="No evaluada / no consta";
+    $('tituloFormulario').textContent="Registrar lesión o incidente";$('estadoFormulario').textContent="NUEVO CASO";$('btnGuardar').textContent="Guardar caso";
+    $('panelFormulario').classList.add("oculto");limpiarAviso();poblarJugadoras();
+}
+function abrirFormulario(){if(!categoriaActual()){toast("Primero seleccioná una categoría.",true);$('selectorCategoriaGlobal').focus();return;}formularioLimpio();$('panelFormulario').classList.remove("oculto");$('panelFormulario').scrollIntoView({behavior:"smooth",block:"start"});$('jugadora').focus({preventScroll:true});}
+function editarRegistro(id){
+    const r=registros.find(x=>x.id===String(id));if(!r)return;
+    if(r.categoria!==categoriaActual()){toast("El registro no pertenece a la categoría seleccionada.",true);return;}
+    formularioLimpio();idEditando=r.id;poblarJugadoras(r.jugadora);
+    const jug=jugadorasBase.find(j=>j.nombre===r.jugadora&&j.categoria===r.categoria);if(jug)$('jugadora').value=jug.id;
+    $('fechaLesion').value=r.fecha;$('contexto').value=r.contexto;$('zona').value=r.zona;$('lado').value=r.lado;$('tipoLesion').value=r.tipo;
+    $('mecanismo').value=r.mecanismo;$('gravedad').value=r.gravedad;$('estado').value=r.estado;$('autorizacionRetorno').value=r.autorizacionRetorno;
+    $('profesional').value=r.profesional;$('descripcion').value=r.descripcion;$('atencionInicial').value=r.atencionInicial;$('restricciones').value=r.restricciones;$('observaciones').value=r.observaciones;
+    $('tituloFormulario').textContent="Editar ficha de lesión";$('estadoFormulario').textContent="EDITANDO";$('btnGuardar').textContent="Guardar cambios";
+    $('panelFormulario').classList.remove("oculto");$('panelFormulario').scrollIntoView({behavior:"smooth",block:"start"});
+}
+$('formLesion').addEventListener('submit',e=>{
+    e.preventDefault();limpiarAviso();
+    if(!categoriaActual()){mostrarAviso("Seleccioná una categoría antes de guardar.");return;}
+    const jug=jugadoraSeleccionada();if(!jug||jug.categoria!==categoriaActual()){mostrarAviso("Seleccioná una jugadora de la categoría elegida.");$('jugadora').focus();return;}
+    const fecha=$('fechaLesion').value,estado=$('estado').value,autorizacion=$('autorizacionRetorno').value;
+    if(!fecha){mostrarAviso("Ingresá la fecha del incidente.");return;}
+    if(fecha>fechaHoy()){mostrarAviso("La fecha del incidente no puede estar en el futuro.");return;}
+    if(!$('zona').value||!$('tipoLesion').value||!$('descripcion').value.trim()){mostrarAviso("Completá zona corporal, tipo/clasificación y la descripción del incidente.");return;}
+    if(estado==="Alta deportiva confirmada"&&autorizacion!=="Autorización profesional documentada"){
+        mostrarAviso("Para registrar un alta deportiva, indicá que existe autorización profesional documentada. La página no determina por sí misma el alta.");$('autorizacionRetorno').focus();return;
+    }
+    const anterior=registros,editando=idEditando!==null,viejo=editando?registros.find(r=>r.id===idEditando):null;
+    const nuevo={id:idEditando||crearId(),jugadora:jug.nombre,jugadoraId:jug.id,categoria:jug.categoria,fecha,fechaRetorno:CERRADOS.has(estado)?(viejo?.fechaRetorno||""):"",contexto:$('contexto').value,zona:$('zona').value.trim(),lado:$('lado').value,tipo:$('tipoLesion').value,mecanismo:$('mecanismo').value,gravedad:$('gravedad').value,estado,autorizacionRetorno:autorizacion,profesional:$('profesional').value.trim(),descripcion:$('descripcion').value.trim(),atencionInicial:$('atencionInicial').value.trim(),restricciones:$('restricciones').value.trim(),observaciones:$('observaciones').value.trim(),seguimientos:viejo?.seguimientos||[],rutina:viejo?.rutina||[],creadoEn:viejo?.creadoEn||new Date().toISOString(),actualizadoEn:new Date().toISOString()};
+    if(editando)registros=registros.map(r=>r.id===idEditando?nuevo:r);else registros=[nuevo,...registros];
+    if(!guardarRegistros()){registros=anterior;return;}
+    $('panelFormulario').classList.add("oculto");formularioLimpio();actualizarTodo();toast(editando?"Ficha de lesión actualizada.":"Caso registrado correctamente.");$('panelRegistros').scrollIntoView({behavior:"smooth",block:"start"});
+});
+function eliminarRegistro(id){const r=registros.find(x=>x.id===String(id));if(!r||r.categoria!==categoriaActual())return;if(!confirm(`¿Eliminar definitivamente la ficha de ${r.jugadora} del ${fechaBonita(r.fecha)}? Esta acción también elimina su historial de controles y no se puede deshacer.`))return;const anterior=registros;registros=registros.filter(x=>x.id!==r.id);if(!guardarRegistros()){registros=anterior;return;}actualizarTodo();toast("Ficha eliminada.");}
+function htmlEntradaRutina(e={}){
+    const tipos=["Fuerza / control","Movilidad","Estabilidad","Propiocepción","Cardiorrespiratorio","Técnica adaptada","Otro"];
+    return `<article class="rutina-ejercicio"><div class="rutina-ejercicio-cabecera"><strong>Ejercicio</strong><button type="button" class="btn btn-danger btn-small" data-accion="quitar-ejercicio-rutina">Quitar</button></div><div class="rutina-grid">
+    <div class="campo wide"><label>Nombre del ejercicio *</label><input data-campo="ejercicio" maxlength="160" value="${escapeHTML(e.ejercicio||"")}" placeholder="Ej. movilidad de tobillo"></div>
+    <div class="campo"><label>Tipo</label><select data-campo="tipo">${tipos.map(t=>`<option ${t===(e.tipo||"Fuerza / control")?'selected':''}>${escapeHTML(t)}</option>`).join("")}</select></div>
+    <div class="campo"><label>Series</label><input data-campo="series" type="number" min="1" max="30" step="1" value="${escapeHTML(e.series??"")}" placeholder="Ej. 3"></div>
+    <div class="campo"><label>Repeticiones</label><input data-campo="repeticiones" maxlength="60" value="${escapeHTML(e.repeticiones??"")}" placeholder="Ej. 8 por lado"></div>
+    <div class="campo"><label>Tiempo (seg)</label><input data-campo="duracion" type="number" min="0" max="7200" step="1" value="${escapeHTML(e.duracion??"")}" placeholder="Opcional"></div>
+    <div class="campo wide"><label>Carga / intensidad indicada</label><input data-campo="carga" maxlength="120" value="${escapeHTML(e.carga||"")}" placeholder="Ej. peso, banda o intensidad indicada"></div>
+    <div class="campo full"><label>Indicaciones / adaptación</label><textarea data-campo="indicaciones" maxlength="1000" placeholder="Rango, técnica, pausas, adaptación o indicación profesional documentada">${escapeHTML(e.indicaciones||"")}</textarea></div></div></article>`;
+}
+function htmlDiarioSeguimiento(r){
+    ordenarSeguimientos(r);
+    const entradas=r.seguimientos||[];
+    if(!entradas.length)return '<div class="diario-vacio">Todavía no hay jornadas de evolución. Registrá cada día qué trabajo se hizo y cómo respondió la jugadora.</div>';
+    return `<div class="diario-lista">${entradas.map((s,i)=>`<article class="diario-card"><div class="diario-cabecera"><div><div class="diario-dia">Día ${i+1}</div><div class="diario-fecha">${escapeHTML(fechaBonita(s.fecha))}</div></div><div class="diario-acciones"><span class="badge ${estadoBadge(s.estado)}">${escapeHTML(s.estado)}</span><button type="button" class="btn btn-secondary" data-accion="editar-seguimiento" data-id="${escapeHTML(r.id)}" data-seguimiento-id="${escapeHTML(s.id)}" aria-label="Editar jornada ${i+1}">Editar</button><button type="button" class="btn btn-danger" data-accion="eliminar-seguimiento" data-id="${escapeHTML(r.id)}" data-seguimiento-id="${escapeHTML(s.id)}" aria-label="Eliminar jornada ${i+1}">Eliminar</button></div></div><div class="diario-campo"><strong>TRABAJO REALIZADO</strong><p>${escapeHTML(s.actividad||s.notas||"Sin actividad detallada.")}</p></div><div class="diario-campo"><strong>OBSERVACIONES DEL DÍA</strong><p>${escapeHTML(s.observacionesDia||"Sin observaciones adicionales.")}</p></div>${s.dolor!==null&&s.dolor!==undefined?`<div class="diario-campo"><strong>DOLOR REFERIDO</strong><p>${escapeHTML(s.dolor)}/10</p></div>`:""}${s.restricciones?`<div class="diario-campo"><strong>RESTRICCIONES / INDICACIONES</strong><p>${escapeHTML(s.restricciones)}</p></div>`:""}${s.profesional?`<div class="diario-campo"><strong>PROFESIONAL / CENTRO</strong><p>${escapeHTML(s.profesional)}</p></div>`:""}${s.autorizacionRetorno?`<div style="margin-top:9px"><span class="badge ${s.autorizacionRetorno==="Autorización profesional documentada"?'badge-verde':'badge-gris'}">${escapeHTML(s.autorizacionRetorno)}</span></div>`:""}</article>`).join("")}</div>`;
+}
+function htmlFormularioDiario(r, seguimiento=null){
+    const e=seguimiento||{}, editando=!!seguimiento;
+    const fecha=e.fecha||fechaHoy();
+    const estado=e.estado||r.estado;
+    const autorizacion=e.autorizacionRetorno||r.autorizacionRetorno||"No evaluada / no consta";
+    const dia=editando?(e.dia||1):(r.seguimientos||[]).length+1;
+    return `<div class="diario-form"><div class="diario-form-title"><span class="dia-pastilla">DÍA ${dia}</span>${editando?'Editar jornada de seguimiento':'Agregar jornada de seguimiento'}</div><form id="formSeguimiento" data-id="${escapeHTML(r.id)}" data-seguimiento-id="${editando?escapeHTML(e.id):''}"><div class="form-grid"><div class="campo span-4"><label for="segFecha">FECHA DE LA JORNADA *</label><input id="segFecha" name="fecha" type="date" required value="${escapeHTML(fecha)}" min="${escapeHTML(r.fecha)}" max="${fechaHoy()}"></div><div class="campo span-4"><label for="segEstado">ESTADO DEL CASO *</label><select id="segEstado" name="estado" required>${ESTADOS.map(v=>`<option ${v===estado?'selected':''}>${escapeHTML(v)}</option>`).join('')}</select></div><div class="campo span-4"><label for="segDolor">DOLOR REFERIDO (0 A 10)</label><input id="segDolor" name="dolor" type="number" min="0" max="10" step="1" value="${e.dolor===null||e.dolor===undefined?'':escapeHTML(e.dolor)}" placeholder="Sin dato"></div><div class="campo span-12"><label for="segActividad">TRABAJO / ACTIVIDADES REALIZADAS *</label><textarea id="segActividad" name="actividad" maxlength="2200" required placeholder="Ejercicios realizados, duración, cargas aplicadas y adaptaciones de la jornada.">${escapeHTML(e.actividad||e.notas||'')}</textarea></div><div class="campo span-12"><label for="segObservaciones">OBSERVACIONES DEL DÍA</label><textarea id="segObservaciones" name="observacionesDia" maxlength="2200" placeholder="Cómo respondió la jugadora y cualquier observación relevante.">${escapeHTML(e.observacionesDia||'')}</textarea></div><div class="campo span-6"><label for="segAutorizacion">AUTORIZACIÓN DE RETORNO</label><select id="segAutorizacion" name="autorizacionRetorno"><option ${autorizacion==='No evaluada / no consta'?'selected':''}>No evaluada / no consta</option><option ${autorizacion==='Sin autorización documentada'?'selected':''}>Sin autorización documentada</option><option ${autorizacion==='Autorización profesional documentada'?'selected':''}>Autorización profesional documentada</option></select></div><div class="campo span-6"><label for="segProfesional">PROFESIONAL / CENTRO (SI CORRESPONDE)</label><input id="segProfesional" name="profesional" maxlength="180" value="${escapeHTML(e.profesional??r.profesional??'')}" placeholder="Nombre o institución"></div><div class="campo span-12"><label for="segRestricciones">RESTRICCIONES / INDICACIONES ACTUALIZADAS</label><textarea id="segRestricciones" name="restricciones" maxlength="1800" placeholder="Indicaciones profesionales documentadas o modificaciones del plan.">${escapeHTML(e.restricciones??r.restricciones??'')}</textarea></div></div><div class="modal-footer"><button type="submit" class="btn btn-primary">${editando?'Guardar cambios':'Guardar jornada'}</button>${editando?`<button type="button" class="btn btn-secondary" data-accion="cancelar-edicion-seguimiento" data-id="${escapeHTML(r.id)}">Cancelar edición</button>`:''}</div><div id="avisoSeguimiento" class="aviso-formulario oculto" role="alert"></div></form></div>`;
+}
+function htmlFormularioRutina(r){
+    const filas=(r.rutina||[]).length?r.rutina.map(htmlEntradaRutina).join(""):htmlEntradaRutina();
+    return `<form id="formRutina" data-id="${escapeHTML(r.id)}"><div class="rutina-aviso"><strong>Planificación registrada para este expediente.</strong> Usá este apartado para documentar el trabajo adaptado acordado con el profesional responsable. La página no prescribe ejercicios, cargas ni criterios de rehabilitación.</div><div class="rutina-lista" id="listaRutina">${filas}</div><div class="rutina-acciones"><button type="button" class="btn btn-secondary" data-accion="agregar-ejercicio-rutina">＋ Agregar ejercicio</button><button type="submit" class="btn btn-primary">Guardar rutina</button></div><div class="modal-footer" style="justify-content:flex-start;margin-top:10px"><span class="rutina-guardada-badge">${(r.rutina||[]).length} ejercicios guardados</span></div><div id="avisoRutina" class="aviso-formulario oculto" role="alert"></div></form>`;
+}
+function abrirDetalle(id, seguimientoEdicionId=null){
+    const r=registros.find(x=>x.id===String(id));if(!r||r.categoria!==categoriaActual())return;
+    if(!Array.isArray(r.seguimientos))r.seguimientos=[];if(!Array.isArray(r.rutina))r.rutina=[];
+    const seguimientoEdicion=seguimientoEdicionId?r.seguimientos.find(s=>s.id===String(seguimientoEdicionId)):null;
+    $('modalTitulo').textContent=r.jugadora;$('modalSubtitulo').textContent=`${r.categoria} · Incidente ${fechaBonita(r.fecha)} · ${r.zona}`;
+    const dias=diasCaso(r);
+    const campos=[['Estado',r.estado],['Tipo',r.tipo],['Zona / lado',`${r.zona} · ${r.lado}`],['Contexto',r.contexto],['Gravedad informada',r.gravedad],['Días transcurridos',dias===null?'—':dias],['Autorización de retorno',r.autorizacionRetorno],['Profesional / centro',r.profesional||'No consignado']];
+    const dato=(et,v)=>`<div class="detalle-card"><small>${escapeHTML(et.toUpperCase())}</small><strong>${escapeHTML(v||'—')}</strong></div>`;
+    $('modalBody').innerHTML=`
+        <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px"><span class="badge badge-naranja">${escapeHTML(r.zona)}</span><span class="badge ${estadoBadge(r.estado)}">${escapeHTML(r.estado)}</span><span class="badge badge-gris">${escapeHTML(r.contexto)}</span></div>
+        <div class="detalle-grid">${campos.map(([k,v])=>dato(k,v)).join('')}</div>
+        <div class="modal-seccion"><h4>Descripción del incidente</h4><div class="detalle-texto">${escapeHTML(r.descripcion||'Sin descripción.')}</div></div>
+        <div class="modal-seccion"><h4>Atención inicial / derivación</h4><div class="detalle-texto">${escapeHTML(r.atencionInicial||'Sin datos consignados.')}</div></div>
+        <div class="modal-seccion"><h4>Restricciones e indicaciones documentadas</h4><div class="detalle-texto">${escapeHTML(r.restricciones||'Sin datos consignados.')}</div></div>
+        <div class="modal-seccion"><h4>Observaciones iniciales del cuerpo técnico</h4><div class="detalle-texto">${escapeHTML(r.observaciones||'Sin observaciones.')}</div></div>
+        <div class="modal-seccion"><h4>Diario de evolución (${r.seguimientos.length} jornadas)</h4><p style="margin:-4px 0 13px;color:var(--gris-texto);font-size:11px;line-height:1.6">Registrá por fecha qué actividad se realizó y cómo respondió la jugadora. Las jornadas se numeran en orden cronológico.</p>${htmlDiarioSeguimiento(r)}</div>
+        <div class="modal-seccion"><h4>Agregar jornada al seguimiento</h4>${htmlFormularioDiario(r,seguimientoEdicion)}</div>
+        <div class="modal-seccion"><h4>Rutina adaptada para este expediente</h4><p style="margin:-4px 0 13px;color:var(--gris-texto);font-size:11px;line-height:1.6">Diseñá y guardá la rutina que corresponda, con ejercicios, series, repeticiones, tiempo, carga e indicaciones individualizadas.</p>${htmlFormularioRutina(r)}</div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" id="btnEditarDesdeDetalle" data-id="${escapeHTML(r.id)}">Editar ficha</button><button type="button" class="btn btn-secondary" id="btnImprimirDetalle">Imprimir ficha</button><button type="button" class="btn btn-secondary" id="btnCerrarDetalleAbajo">Cerrar</button></div>`;
+    $('modalDetalle').classList.add("visible");
+    $('btnEditarDesdeDetalle').addEventListener('click',()=>{cerrarDetalle();editarRegistro(r.id);});
+    $('btnCerrarDetalleAbajo').addEventListener('click',cerrarDetalle);$('btnImprimirDetalle').addEventListener('click',()=>window.print());
+}
+function cerrarDetalle(){$('modalDetalle').classList.remove("visible");}
+$('modalBody').addEventListener('submit',e=>{
+    if(e.target.id!=="formSeguimiento")return;
+    e.preventDefault();
+    const f=e.target,id=f.dataset.id,r=registros.find(x=>x.id===id);if(!r)return;
+    const fecha=f.elements.fecha.value,estado=f.elements.estado.value;
+    const dolor=f.elements.dolor.value===""?null:Number(f.elements.dolor.value);
+    const actividad=f.elements.actividad.value.trim(),observacionesDia=f.elements.observacionesDia.value.trim();
+    const aut=f.elements.autorizacionRetorno.value,pro=f.elements.profesional.value.trim(),restr=f.elements.restricciones.value.trim();
+    const seguimientoId=f.dataset.seguimientoId||"";
+    const aviso=$('avisoSeguimiento');aviso.classList.add("oculto");
+    if(!fecha||!actividad){aviso.textContent="Completá la fecha y describí qué trabajo se realizó en esta jornada.";aviso.classList.remove("oculto");return;}
+    if(fecha>fechaHoy()){aviso.textContent="La fecha de la jornada no puede estar en el futuro.";aviso.classList.remove("oculto");return;}
+    if(fecha<r.fecha){aviso.textContent="La fecha de la jornada no puede ser anterior al incidente.";aviso.classList.remove("oculto");return;}
+    if(dolor!==null&&(!Number.isInteger(dolor)||dolor<0||dolor>10)){aviso.textContent="El valor de dolor referido debe ser un entero entre 0 y 10.";aviso.classList.remove("oculto");return;}
+    if(estado==="Alta deportiva confirmada"&&aut!=="Autorización profesional documentada"){aviso.textContent="Para registrar un alta deportiva, indicá que existe autorización profesional documentada.";aviso.classList.remove("oculto");return;}
+    if(seguimientoId&&!r.seguimientos.some(s=>s.id===seguimientoId)){aviso.textContent="No se encontró la jornada que intentás editar. Cerrá el detalle y volvé a abrir el caso.";aviso.classList.remove("oculto");return;}
+    const anterior=JSON.parse(JSON.stringify(registros));
+    const jornada={id:seguimientoId||crearId(),dia:0,fecha,estado,dolor,actividad,observacionesDia,notas:actividad+(observacionesDia?"\nObservaciones: "+observacionesDia:""),restricciones:restr,autorizacionRetorno:aut,profesional:pro};
+    if(seguimientoId)r.seguimientos=r.seguimientos.map(s=>s.id===seguimientoId?jornada:s);
+    else r.seguimientos=[...r.seguimientos,jornada];
+    ordenarSeguimientos(r);sincronizarEstadoUltimoSeguimiento(r);
+    r.actualizadoEn=new Date().toISOString();
+    if(!guardarRegistros()){registros=anterior;actualizarTodo();abrirDetalle(id);return;}
+    actualizarTodo();abrirDetalle(id);toast(seguimientoId?"Jornada de seguimiento actualizada.":"Jornada de seguimiento guardada.");
+});
+$('modalBody').addEventListener('click',e=>{
+    const boton=e.target.closest('button[data-accion]');if(!boton)return;
+    const accion=boton.dataset.accion;
+    if(accion==="editar-seguimiento"){
+        abrirDetalle(boton.dataset.id,boton.dataset.seguimientoId);return;
+    }
+    if(accion==="cancelar-edicion-seguimiento"){
+        abrirDetalle(boton.dataset.id);return;
+    }
+    if(accion==="eliminar-seguimiento"){
+        const id=boton.dataset.id,seguimientoId=boton.dataset.seguimientoId;
+        const r=registros.find(x=>x.id===id);if(!r)return;
+        const jornada=r.seguimientos.find(s=>s.id===seguimientoId);if(!jornada)return;
+        if(!confirm(`¿Eliminar la jornada del ${fechaBonita(jornada.fecha)}? Esta acción no se puede deshacer.`))return;
+        const anterior=JSON.parse(JSON.stringify(registros));
+        r.seguimientos=r.seguimientos.filter(s=>s.id!==seguimientoId);
+        sincronizarEstadoUltimoSeguimiento(r);r.actualizadoEn=new Date().toISOString();
+        if(!guardarRegistros()){registros=anterior;actualizarTodo();abrirDetalle(id);return;}
+        actualizarTodo();abrirDetalle(id);toast("Jornada eliminada.");return;
+    }
+    if(accion==="agregar-ejercicio-rutina"){
+        const lista=$('listaRutina');if(!lista)return;
+        lista.insertAdjacentHTML('beforeend',htmlEntradaRutina());
+        const campo=lista.lastElementChild?.querySelector('[data-campo="ejercicio"]');if(campo)campo.focus();
+        return;
+    }
+    if(accion==="quitar-ejercicio-rutina"){
+        const fila=boton.closest('.rutina-ejercicio');if(fila)fila.remove();
+    }
+});
+$('modalBody').addEventListener('submit',e=>{
+    if(e.target.id!=="formRutina")return;e.preventDefault();
+    const form=e.target,id=form.dataset.id,r=registros.find(x=>x.id===id);if(!r)return;
+    const aviso=$('avisoRutina');aviso.classList.add('oculto');
+    const filas=[...form.querySelectorAll('.rutina-ejercicio')],rutina=[];let error="";
+    filas.forEach(fila=>{
+        const obtener=campo=>fila.querySelector(`[data-campo="${campo}"]`)?.value?.trim()||"";
+        const ejercicio=obtener('ejercicio'),tipo=obtener('tipo')||"Fuerza / control",series=obtener('series'),repeticiones=obtener('repeticiones'),duracion=obtener('duracion'),carga=obtener('carga'),indicaciones=obtener('indicaciones');
+        if(!ejercicio){if(series||repeticiones||duracion||carga||indicaciones)error="Completá el nombre de cada ejercicio que tenga otros datos cargados, o quitá esa fila vacía.";return;}
+        if(series&&(!Number.isInteger(Number(series))||Number(series)<1||Number(series)>30)){error="Las series deben ser un número entero entre 1 y 30.";return;}
+        if(duracion&&(!Number.isFinite(Number(duracion))||Number(duracion)<0||Number(duracion)>7200)){error="El tiempo debe estar entre 0 y 7200 segundos.";return;}
+        rutina.push({id:crearId(),ejercicio,tipo,series,repeticiones,duracion,carga,indicaciones});
+    });
+    if(error){aviso.textContent=error;aviso.classList.remove('oculto');return;}
+    if(!rutina.length){aviso.textContent="Agregá al menos un ejercicio con nombre antes de guardar la rutina.";aviso.classList.remove('oculto');return;}
+    const anterior=registros.map(x=>x.id===id?{...x,rutina:[...(x.rutina||[])]}:x);
+    r.rutina=rutina;r.actualizadoEn=new Date().toISOString();
+    if(!guardarRegistros()){registros=anterior;return;}actualizarTodo();abrirDetalle(id);toast("Rutina del expediente guardada.");
+});
+$('tbodyLesiones').addEventListener('click',e=>{const b=e.target.closest('button[data-accion]');if(!b)return;if(b.dataset.accion==="ver")abrirDetalle(b.dataset.id);if(b.dataset.accion==="editar")editarRegistro(b.dataset.id);if(b.dataset.accion==="eliminar")eliminarRegistro(b.dataset.id);});
+$('btnNuevaLesion').addEventListener('click',abrirFormulario);$('btnCancelar').addEventListener('click',()=>{formularioLimpio();toast("Formulario cerrado.");});$('btnLimpiar').addEventListener('click',()=>{if(idEditando!==null&&!confirm("¿Descartar los cambios de esta ficha?"))return;formularioLimpio();toast("Campos limpiados.");});$('btnLimpiarFiltros').addEventListener('click',()=>{filtroIdsOperativo=null;$('buscar').value="";$('filtroEstado').value="TODOS";$('filtroZona').value="TODAS";renderizarTabla();});['buscar','filtroEstado','filtroZona'].forEach(id=>$(id).addEventListener(id==='buscar'?'input':'change',()=>{filtroIdsOperativo=null;renderizarTabla();}));
+$('selectorCategoriaGlobal').addEventListener('change',()=>{filtroIdsOperativo=null;if(idEditando!==null||!$('panelFormulario').classList.contains('oculto'))formularioLimpio();actualizarAccesoCategoria();poblarJugadoras();actualizarTodo();});$('cerrarModal').addEventListener('click',cerrarDetalle);$('modalDetalle').addEventListener('click',e=>{if(e.target.id==='modalDetalle')cerrarDetalle();});$('cerrarModalPerfil').addEventListener('click',()=>$('modalPerfil').classList.remove('visible'));$('cerrarPerfilBoton').addEventListener('click',()=>$('modalPerfil').classList.remove('visible'));$('modalPerfil').addEventListener('click',e=>{if(e.target.id==='modalPerfil')$('modalPerfil').classList.remove('visible');});$('botonPerfil').addEventListener('click',()=>{$('modalPerfil').classList.add('visible');});
+function obtenerUsuario(){try{const raw=localStorage.getItem('usuarioADIUR');if(!raw)return'Usuario';try{const x=JSON.parse(raw);return typeof x==='string'?x:(x.nombreCompleto||x.nombre||x.usuario||x.username||'Usuario');}catch(_){return raw;}}catch(_){return'Usuario';}}
+function actualizarPerfil(){const n=obtenerUsuario(),ini=n.trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'U';$('nombreUsuario').textContent=n;$('avatarUsuario').textContent=ini;$('rolUsuario').textContent='Club ADIUR';$('nombrePerfilDetalle').textContent=n;$('avatarPerfilModal').textContent=ini;$('rolPerfilDetalle').textContent='Club ADIUR';}
+const sidebar=$('sidebar'),fondoSidebar=$('fondoSidebar'),botonMenu=$('botonMenu');function esMovil(){return window.innerWidth<=900;}function actualizarMenu(){botonMenu.setAttribute('aria-expanded',String(!sidebar.classList.contains('oculto')));fondoSidebar.classList.toggle('visible',esMovil()&&!sidebar.classList.contains('oculto'));}function ajustarMenu(){if(esMovil())sidebar.classList.add('oculto');else sidebar.classList.remove('oculto');actualizarMenu();}function cerrarMenu(){sidebar.classList.add('oculto');actualizarMenu();}botonMenu.addEventListener('click',()=>{sidebar.classList.toggle('oculto');actualizarMenu();});fondoSidebar.addEventListener('click',cerrarMenu);window.addEventListener('resize',ajustarMenu);document.querySelectorAll('.titulo-grupo[data-grupo]').forEach(b=>b.addEventListener('click',()=>{const g=$(b.dataset.grupo);if(!g)return;g.classList.toggle('cerrado');b.setAttribute('aria-expanded',String(!g.classList.contains('cerrado')));}));$('cerrarSesion').addEventListener('click',e=>{e.preventDefault();if(confirm('¿Querés cerrar la sesión de ADIUR?'))window.location.href='ADIUR-Loing.html';});document.addEventListener('keydown',e=>{if(e.key==='Escape'){cerrarDetalle();$('modalPerfil').classList.remove('visible');if(esMovil())cerrarMenu();}});
+window.addEventListener('storage',e=>{if(e.key===STORAGE_KEY){cargarRegistros();actualizarTodo();}if(e.key==='usuarioADIUR')actualizarPerfil();if(e.key&&/jugadora|plantel/i.test(e.key)){const cat=categoriaActual();poblarCategorias();if(cat&&[...$('selectorCategoriaGlobal').options].some(o=>o.value===cat))$('selectorCategoriaGlobal').value=cat;poblarJugadoras();actualizarAccesoCategoria();actualizarTodo();}});
+function iniciar(){cargarRegistros();poblarCategorias();poblarJugadoras();actualizarPerfil();ajustarMenu();if(!categoriaActual())actualizarAccesoCategoria();else actualizarTodo();$('fechaLesion').value=fechaHoy();}
+iniciar();
+</script>
+</body>
+</html>
