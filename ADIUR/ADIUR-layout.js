@@ -449,7 +449,16 @@
 
   const separador = document.createElement("div");
   separador.className = "separador-sesion";
-  async function importarCerrarSesionADIUR() {\n    try { const modulo = await import("./ADIUR-auth.js"); await modulo.cerrarSesionADIUR(); }\n    catch (error) { console.error("No se pudo cerrar la sesión:", error); }\n    window.location.href = "ADIUR-Loing.html";\n  }\n  const salir = document.createElement("a");
+  async function importarCerrarSesionADIUR() {
+    try {
+      const modulo = await import("./ADIUR-auth.js");
+      await modulo.cerrarSesionADIUR();
+      window.location.href = "ADIUR-Loing.html";
+    } catch (error) {
+      console.error("No se pudo cerrar la sesión:", error);
+      alert("No se pudo cerrar la sesión. Intentá nuevamente.");
+    }
+  }\n  const salir = document.createElement("a");
   salir.href = "#";
   salir.id = "cerrarSesion";
   salir.className = "enlace-cerrar-sesion";
