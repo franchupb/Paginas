@@ -1340,10 +1340,13 @@ import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gsta
    CONEXIÓN A FIRESTORE (adiur-b1913)
 ===================================================== */
 const firebaseConfig = {
-  projectId: "adiur-b1913",
-  appId: "1:1032379124859:web:adiur-fem-web",
+  apiKey: "AIzaSyCc0dPIEkaKxbHoRC2gZK412dXVGPOdTI",
   authDomain: "adiur-b1913.firebaseapp.com",
-  storageBucket: "adiur-b1913.appspot.com"
+  projectId: "adiur-b1913",
+  storageBucket: "adiur-b1913.firebasestorage.app",
+  messagingSenderId: "884643321144",
+  appId: "1:884643321144:web:ba3c314de3a1c9e3545dcd",
+  measurementId: "G-58LL26YXPM"
 };
 
 let db = null;
@@ -1946,7 +1949,7 @@ async function obtenerInfoAsistenciaJugadora(jugadora, mesFiltro = "total") {
 
   if (nubeActiva && db) {
     try {
-      const snap = await getDocs(collection(db, "asistencia"));
+      const snap = await getDocs(collection(db, "asistenciaADIUR"));
       snap.forEach(d => {
         const dato = d.data();
         // Si el ID del documento contiene la fecha (ej: Sub_14_2026-11-15), la preservamos
@@ -2099,7 +2102,7 @@ async function obtenerInfoTiemposJugadora(jugadora) {
 
   if (nubeActiva && db) {
     try {
-      const snap = await getDocs(collection(db, "tiempos"));
+      const snap = await getDocs(collection(db, "tiemposRendimiento"));
       snap.forEach(d => tiempos.push({ id: d.id, ...d.data() }));
     } catch (e) {}
   }
