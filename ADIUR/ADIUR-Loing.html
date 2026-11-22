@@ -800,6 +800,107 @@
             .boton-escudo { animation: none; }
         }
 
+    
+        /* Elementos laterales: aparecen junto al formulario, como en SAN JORGE */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse at 8% 50%, rgba(255,255,255,0.10), transparent 28%),
+                radial-gradient(ellipse at 92% 50%, rgba(0,0,0,0.16), transparent 30%);
+        }
+
+        .detalle-lateral {
+            position: fixed;
+            top: 50%;
+            z-index: 1;
+            transform: translateY(-50%);
+            width: min(23vw, 270px);
+            color: rgba(255,255,255,0.94);
+            pointer-events: none;
+            text-shadow: 0 2px 18px rgba(0,0,0,0.45);
+            opacity: 0;
+            transition: opacity 0.7s ease 0.15s;
+        }
+
+        .detalle-izquierdo {
+            left: clamp(22px, 5vw, 78px);
+            text-align: left;
+        }
+
+        .detalle-derecho {
+            right: clamp(22px, 5vw, 78px);
+            text-align: right;
+        }
+
+        .detalle-lateral .detalle-linea {
+            display: block;
+            width: 46px;
+            height: 4px;
+            margin-bottom: 19px;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #ffffff, rgba(255,255,255,0.25));
+        }
+
+        .detalle-derecho .detalle-linea {
+            margin-left: auto;
+            background: linear-gradient(90deg, rgba(255,255,255,0.25), #ffffff);
+        }
+
+        .detalle-lateral strong {
+            display: block;
+            font-size: clamp(17px, 2vw, 28px);
+            line-height: 1.08;
+            letter-spacing: 1.3px;
+            font-weight: 900;
+        }
+
+        .detalle-lateral span:not(.detalle-linea) {
+            display: block;
+            margin-top: 12px;
+            font-size: 10px;
+            line-height: 1.8;
+            letter-spacing: 2px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.82);
+        }
+
+        .login-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(16px);
+            position: relative;
+            z-index: 2;
+        }
+
+        body.login-activo .pantalla-inicial {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        body.login-activo .login-container {
+            display: block;
+            animation: mostrarFormulario 0.55s ease forwards;
+        }
+
+        body.login-activo .detalle-lateral {
+            opacity: 1;
+        }
+
+        @keyframes mostrarFormulario {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 900px) {
+            .detalle-lateral { display: none; }
+        }
+
     </style>
 </head>
 
@@ -809,14 +910,23 @@
         <button type="button" class="boton-escudo" id="botonAcceso" aria-label="Ingresar al sistema de ADIUR FEMENINO">
             <img src="ADIUR-Logo ADIUR.jpg" alt="Escudo de ADIUR FEMENINO">
         </button>
-        <div class="frase-institucional">
-            <h2>Más que un club, una familia</h2>
-            <p>Pasión, compromiso y trabajo en equipo.</p>
-        </div>
-    </section>
+        </section>
 
 
-    <main class="login-container">
+    
+    <div class="detalle-lateral detalle-izquierdo" aria-hidden="true">
+        <span class="detalle-linea"></span>
+        <strong>MÁS QUE UN CLUB</strong>
+        <span>Una familia</span>
+    </div>
+
+    <div class="detalle-lateral detalle-derecho" aria-hidden="true">
+        <span class="detalle-linea"></span>
+        <strong>PASIÓN · COMPROMISO<br>· TRABAJO EN EQUIPO</strong>
+        <span>Identidad y pertenencia</span>
+    </div>
+
+<main class="login-container">
 
         <div class="franja-superior" aria-hidden="true"></div>
 
