@@ -22,9 +22,9 @@
         ===================================================== */
 
         :root {
-            --naranja: #f47721;
-            --naranja-oscuro: #dc5e0b;
-            --naranja-claro: #fff0e6;
+            --azul: #174a7e;
+            --azul-oscuro: #10365d;
+            --azul-claro: #eaf2fa;
 
             --negro: #171717;
             --negro-suave: #262626;
@@ -100,7 +100,7 @@
 
         button:focus-visible,
         input:focus-visible {
-            outline: 3px solid rgba(244, 119, 33, 0.55);
+            outline: 3px solid rgba(23, 74, 126, 0.55);
             outline-offset: 3px;
         }
 
@@ -136,9 +136,9 @@
 
             background: linear-gradient(
                 90deg,
-                var(--naranja-oscuro),
-                var(--naranja),
-                #ffad70
+                var(--azul-oscuro),
+                var(--azul),
+                var(--rojo)
             );
         }
 
@@ -197,7 +197,7 @@
 
             margin-bottom: 13px;
 
-            color: var(--naranja-oscuro);
+            color: var(--azul-oscuro);
 
             font-size: 10px;
             font-weight: 900;
@@ -209,7 +209,7 @@
             width: 6px;
             height: 6px;
 
-            background: var(--naranja);
+            background: var(--rojo);
             border-radius: 50%;
         }
 
@@ -250,7 +250,7 @@
             height: 4px;
 
             border-radius: 10px;
-            background: var(--naranja);
+            background: var(--azul);
         }
 
         /* =====================================================
@@ -334,10 +334,10 @@
         }
 
         .campo input:focus {
-            border-color: var(--naranja);
+            border-color: var(--azul);
 
             box-shadow:
-                0 0 0 3px rgba(244, 119, 33, 0.12);
+                0 0 0 3px rgba(23, 74, 126, 0.12);
 
             background: #ffffff;
         }
@@ -395,8 +395,8 @@
         }
 
         .boton-ver-contrasena:hover {
-            background: var(--naranja-claro);
-            color: var(--naranja-oscuro);
+            background: var(--azul-claro);
+            color: var(--azul-oscuro);
         }
 
         /* =====================================================
@@ -415,10 +415,10 @@
             margin-top: 7px;
             padding: 14px 18px;
 
-            border: 1px solid var(--naranja);
+            border: 1px solid var(--azul);
             border-radius: 10px;
 
-            background: var(--naranja);
+            background: var(--azul);
             color: var(--blanco);
 
             font-size: 12px;
@@ -426,7 +426,7 @@
             letter-spacing: 0.8px;
 
             box-shadow:
-                0 5px 12px rgba(244, 119, 33, 0.17);
+                0 5px 12px rgba(23, 74, 126, 0.17);
 
             cursor: pointer;
 
@@ -438,11 +438,11 @@
         }
 
         .boton-login:hover {
-            background: var(--naranja-oscuro);
-            border-color: var(--naranja-oscuro);
+            background: var(--azul-oscuro);
+            border-color: var(--azul-oscuro);
 
             box-shadow:
-                0 7px 17px rgba(220, 94, 11, 0.24);
+                0 7px 17px rgba(16, 54, 93, 0.24);
 
             transform: translateY(-1px);
         }
@@ -540,7 +540,7 @@
         }
 
         .pie-login span {
-            color: var(--naranja-oscuro);
+            color: var(--azul-oscuro);
             font-weight: 700;
         }
 
