@@ -10,11 +10,11 @@
   const LOGIN_URL = "ADIUR-Loing.html";
   const DIVISION_FIJA = { ct_s16: "Sub 16", jugadora_s14: "Sub 14" };
   const PAGINAS_BIANCA = new Set([
-    "pagina principal.html",
-    "partidos.html",
-    "ADIUR-calendario.html",
-    "ADIUR-gimnasio.html",
-    "ADIUR-testeos.html"
+    "ADIUR-Pagina Principal.html".toLowerCase(),
+    "ADIUR-Partidos.html".toLowerCase(),
+    "ADIUR-calendario.html".toLowerCase(),
+    "ADIUR-gimnasio.html".toLowerCase(),
+    "ADIUR-testeos.html".toLowerCase()
   ]);
   const normalizar = value => String(value ?? "")
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -284,7 +284,7 @@
   }
 
   function ocultarRegistrosDeOtrasJugadoras() {
-    if (rol !== "jugadora_s14" || !["partidos.html", "ADIUR-gimnasio.html", "ADIUR-testeos.html"].includes(pagina)) return;
+    if (rol !== "jugadora_s14" || !["adiur-partidos.html", "adiur-gimnasio.html", "adiur-testeos.html"].includes(pagina)) return;
     const nombres = Array.from(nombresAjeno).filter(n => n.length >= 4);
     if (!nombres.length) return;
     document.querySelectorAll("tr, [data-jugadora], .rutina-card, .jugadora-card, .registro-card, .tarjeta-jugadora").forEach(item => {
@@ -296,7 +296,7 @@
   function aplicarPermisos() {
     document.querySelectorAll('a[href]').forEach(a => {
       const destino = (a.getAttribute('href') || '').split(/[?#]/)[0].toLowerCase();
-      if (/^(biblioteca|biblioteca de ejercicios|multimedia|lesiones)\.html$/.test(destino)) {
+      if (/^(biblioteca|biblioteca de ejercicios|multimedia)\.html$/.test(destino)) {
         a.hidden = true;
         a.removeAttribute('href');
         a.setAttribute('aria-disabled', 'true');
@@ -318,8 +318,9 @@
     }
     if (rol === "jugadora_s14") {
       document.querySelectorAll("a[href]").forEach(a => {
-        const href = (a.getAttribute("href") || "").split("?")[0].toLowerCase();
-        if (/^(jugadoras|asistencia|planificacion|calculadora|informes|estadisticas|pizarra|pruebas|tiempos|encuestas)\.html$/.test(href)) a.remove();
+        const href = (a.getAttribute("href") || "").split(/[?#]/)[0].toLowerCase();
+        const archivo = href.split("/").pop();
+        if (archivo.endsWith(".html") && !PAGINAS_BIANCA.has(archivo)) a.remove();
       });
       document.querySelectorAll("[data-ocultar-bianca]").forEach(el => el.remove());
     }
