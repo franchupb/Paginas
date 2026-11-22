@@ -85,7 +85,7 @@
             background-attachment: fixed;
         }
 
-        /* Escudo institucional como marca de agua en el fondo */
+        /* Escudo institucional desplazado hacia el lateral izquierdo */
         body::before {
             content: "";
             position: fixed;
@@ -95,10 +95,84 @@
 
             background-image: url("SAN JORGE - Logo.png");
             background-repeat: no-repeat;
-            background-position: center center;
-            background-size: min(42vw, 430px);
+            background-position: left 8vw center;
+            background-size: min(27vw, 330px);
 
-            opacity: 0.13;
+            opacity: 0.17;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse at 8% 50%, rgba(255,255,255,0.10), transparent 28%),
+                radial-gradient(ellipse at 92% 50%, rgba(0,0,0,0.16), transparent 30%);
+        }
+
+        .detalle-lateral {
+            position: fixed;
+            top: 50%;
+            z-index: 0;
+            transform: translateY(-50%);
+            width: min(23vw, 270px);
+            color: rgba(255,255,255,0.92);
+            pointer-events: none;
+            text-shadow: 0 2px 18px rgba(0,0,0,0.18);
+        }
+
+        .detalle-izquierdo {
+            left: clamp(22px, 5vw, 78px);
+            text-align: left;
+        }
+
+        .detalle-derecho {
+            right: clamp(22px, 5vw, 78px);
+            text-align: right;
+        }
+
+        .detalle-lateral .detalle-linea {
+            display: block;
+            width: 46px;
+            height: 4px;
+            margin-bottom: 19px;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #ffffff, rgba(255,255,255,0.25));
+        }
+
+        .detalle-derecho .detalle-linea {
+            margin-left: auto;
+            background: linear-gradient(90deg, rgba(255,255,255,0.25), #ffffff);
+        }
+
+        .detalle-lateral strong {
+            display: block;
+            font-size: clamp(19px, 2.2vw, 30px);
+            line-height: 1.05;
+            letter-spacing: 1.5px;
+            font-weight: 900;
+        }
+
+        .detalle-lateral span {
+            display: block;
+            margin-top: 12px;
+            font-size: 10px;
+            line-height: 1.8;
+            letter-spacing: 2.3px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.78);
+        }
+
+        .detalle-derecho strong {
+            font-size: clamp(15px, 1.7vw, 23px);
+            letter-spacing: 2px;
+        }
+
+        .detalle-derecho span {
+            letter-spacing: 1.8px;
         }
 
         button,
@@ -560,6 +634,18 @@
            RESPONSIVE: CELULARES Y TABLETS
         ===================================================== */
 
+        @media (max-width: 900px) {
+            .detalle-lateral {
+                display: none;
+            }
+
+            body::before {
+                background-position: center center;
+                background-size: min(58vw, 300px);
+                opacity: 0.10;
+            }
+        }
+
         @media (max-width: 500px) {
             body {
                 padding: 16px;
@@ -701,6 +787,18 @@
 </head>
 
 <body>
+
+    <div class="detalle-lateral detalle-izquierdo" aria-hidden="true">
+        <span class="detalle-linea"></span>
+        <strong>IDENTIDAD<br>JORJENSE</strong>
+        <span>Orgullo de<br>pertenecer</span>
+    </div>
+
+    <div class="detalle-lateral detalle-derecho" aria-hidden="true">
+        <span class="detalle-linea"></span>
+        <strong>PASIÓN · TRABAJO<br>· COMPROMISO</strong>
+        <span>Un club, una familia</span>
+    </div>
 
     <main class="login-container">
 
