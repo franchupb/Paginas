@@ -454,15 +454,51 @@ function guardarRegistros(){
 }
 
 // Puente entre la página de tiempos y Firebase.
-window.aplicarRegistrosTiemposNube = function(lista){
-    datasetRendimiento = Array.isArray(lista)
+window.aplicarRegistrosTiemposNube = async function(lista){
+    // La nube y el navegador se combinan por ID. Nunca se reemplaza la copia
+    // local completa por una respuesta vacía o parcial de Firestore.
+    const locales = cargarRegistros();
+    const remotos = Array.isArray(lista)
         ? lista.map(normalizarRegistro).filter(r => r && r.jugadora && r.pasadas.length)
         : [];
+
+    const porId = new Map();
+    remotos.forEach(registro => porId.set(String(registro.id), registro));
+
+    const pendientesDeSubir = [];
+    locales.forEach(local => {
+        const id = String(local.id);
+        const remoto = porId.get(id);
+        if (!remoto) {
+            porId.set(id, local);
+            pendientesDeSubir.push(local);
+            return;
+        }
+
+        const fechaLocal = Date.parse(local.actualizadoEn || local.creadoEn || "") || 0;
+        const fechaRemota = Date.parse(remoto.actualizadoEn || remoto.creadoEn || "") || 0;
+        if (fechaLocal > fechaRemota) {
+            porId.set(id, local);
+            pendientesDeSubir.push(local);
+        }
+    });
+
+    datasetRendimiento = [...porId.values()];
 
     try{
         localStorage.setItem(STORAGE_KEY, JSON.stringify(datasetRendimiento));
     }catch(e){
-        console.warn("No se pudo guardar la copia local de los tiempos.", e);
+        console.warn("No se pudo guardar la copia local combinada de los tiempos.", e);
+    }
+
+    // Recupera en Firestore los registros que solo existían en este navegador
+    // o que tenían una versión local más reciente.
+    for (const registro of pendientesDeSubir) {
+        try {
+            await setDoc(doc(db, "tiemposRendimiento", String(registro.id)), registro);
+        } catch (error) {
+            console.error("No se pudo recuperar un registro local de tiempos:", registro.id, error);
+        }
     }
 
     if(typeof actualizarTodo === "function"){
