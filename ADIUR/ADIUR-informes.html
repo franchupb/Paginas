@@ -5285,37 +5285,135 @@ function normalizarPartidoGuardado(p) {
   };
 }
 
+function extraerRegistrosDeRespaldoInformes(valor) {
+  if (Array.isArray(valor)) return valor;
+  if (!valor || typeof valor !== "object") return [];
+  for (const propiedad of ["partidos","informes","jornadas","registros","historial"]) {
+    if (Array.isArray(valor[propiedad])) return valor[propiedad];
+  }
+  return [];
+}
+
+function normalizarInformeDeRespaldo(registro, claveOrigen, indice) {
+  const p = registro && typeof registro === "object" ? registro : {};
+  const resultado = String(p.resultado || "").match(/(\d+)\s*[-:]\s*(\d+)/);
+  const fecha = p.fecha || p.fechaReal || p.fechaPartido || "";
+  const rival = p.rival || p.clubRival || p.nombre || "Rival sin nombre";
+  const torneo = p.torneo || p.competicion || "Rosarina";
+  const division = p.division || p.categoria || p.categoría || "Primera";
+  const identidad = [fecha, division, rival, torneo, p.jornada || "", p.golesFavor ?? p.golesAdiur ?? (resultado ? resultado[1] : ""), p.golesContra ?? p.golesRival ?? (resultado ? resultado[2] : "")]
+    .map(v => normalizarTexto(v)).join("-").replace(/[^a-z0-9-]+/g, "-").replace(/-+/g, "-").slice(0, 100);
+  const origen = String(claveOrigen || "respaldo").replace(/[^a-zA-Z0-9_-]+/g, "-").slice(0, 35);
+  return normalizarPartidoGuardado({
+    ...p,
+    id: p.id || `recuperado-${origen}-${identidad || "registro"}-${indice}`,
+    fecha,
+    division,
+    rival,
+    torneo,
+    golesFavor: p.golesFavor ?? p.golesAdiur ?? (resultado ? Number(resultado[1]) : null),
+    golesContra: p.golesContra ?? p.golesRival ?? (resultado ? Number(resultado[2]) : null),
+    creadoEn: p.creadoEn || p.fechaCreacion || p.createdAt || "",
+    actualizadoEn: p.actualizadoEn || p.fechaActualizacion || p.updatedAt || p.creadoEn || p.fechaCreacion || ""
+  });
+}
+
+function puntajeInformeRecuperacion(p) {
+  let puntos = 0;
+  for (const [clave, valor] of Object.entries(p || {})) {
+    if (["id","creadoEn","actualizadoEn"].includes(clave)) continue;
+    if (Array.isArray(valor)) puntos += valor.length * 4;
+    else if (valor && typeof valor === "object") puntos += Object.values(valor).filter(v => v !== "" && v !== null && v !== undefined).length;
+    else if (valor !== "" && valor !== null && valor !== undefined) puntos++;
+  }
+  return puntos;
+}
+
+function fusionarInformeSinPerderDatos(a, b) {
+  const tA = Date.parse(a.actualizadoEn || a.creadoEn || "") || 0;
+  const tB = Date.parse(b.actualizadoEn || b.creadoEn || "") || 0;
+  const preferido = tA > tB ? a : tB > tA ? b : puntajeInformeRecuperacion(a) >= puntajeInformeRecuperacion(b) ? a : b;
+  const respaldo = preferido === a ? b : a;
+  const combinado = { ...respaldo, ...preferido };
+  for (const clave of Object.keys(respaldo)) {
+    const valorPreferido = combinado[clave];
+    const valorRespaldo = respaldo[clave];
+    const vacio = valorPreferido === "" || valorPreferido === null || valorPreferido === undefined ||
+      (Array.isArray(valorPreferido) && valorPreferido.length === 0);
+    if (vacio && valorRespaldo !== "" && valorRespaldo !== null && valorRespaldo !== undefined) {
+      combinado[clave] = valorRespaldo;
+    }
+  }
+  for (const clave of ["jugadoras","golesEventos","tarjetasEventos"]) {
+    if (Array.isArray(respaldo[clave]) && respaldo[clave].length > (combinado[clave]?.length || 0)) {
+      combinado[clave] = respaldo[clave];
+    }
+  }
+  return combinado;
+}
+
 function cargarPartidos() {
-  const actuales=leerJSON(CLAVE_PARTIDOS,null);
-
-  if (Array.isArray(actuales)) {
-    partidos=actuales.map(normalizarPartidoGuardado);
-    return;
+  // Se revisan tanto la clave actual como los respaldos históricos, aunque la clave
+  // actual exista vacía. Así no se pierde el historial antiguo por un array [].
+  const claves = new Set([CLAVE_PARTIDOS, CLAVE_INFORMES_ANTERIORES]);
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const clave = localStorage.key(i);
+      if (clave && /adiur.*(informe|partido|jornada)|(informe|partido|jornada).*adiur/i.test(clave)) {
+        claves.add(clave);
+      }
+    }
+  } catch (error) {
+    console.warn("No se pudieron revisar todas las claves locales de Informes.", error);
   }
 
-  const anteriores=leerJSON(CLAVE_INFORMES_ANTERIORES,[]);
+  const mapa = new Map();
+  const respaldosEncontrados = {};
+  let cantidadRespaldoAntiguo = 0;
 
-  if (Array.isArray(anteriores)&&anteriores.length) {
-    partidos=anteriores.map((p,i)=>{
-      const resultado=String(p.resultado||"").match(/(\d+)\s*[-:]\s*(\d+)/);
-      return normalizarPartidoGuardado({
-        ...p,
-        id:p.id||"migrado-"+i+"-"+idUnico(),
-        fecha:p.fecha||p.fechaPartido||"",
-        rival:p.rival||p.clubRival||p.nombre||"Rival sin nombre",
-        torneo:p.torneo||p.competicion||"Rosarina",
-        golesFavor:p.golesFavor??(resultado?Number(resultado[1]):null),
-        golesContra:p.golesContra??(resultado?Number(resultado[2]):null)
-      });
+  for (const clave of claves) {
+    const valor = leerJSON(clave, null);
+    const registros = extraerRegistrosDeRespaldoInformes(valor);
+    if (!registros.length) continue;
+    respaldosEncontrados[clave] = valor;
+    if (clave !== CLAVE_PARTIDOS) cantidadRespaldoAntiguo += registros.length;
+
+    registros.forEach((registro, indice) => {
+      const normalizado = clave === CLAVE_PARTIDOS
+        ? normalizarPartidoGuardado(registro)
+        : normalizarInformeDeRespaldo(registro, clave, indice);
+      const id = String(normalizado.id);
+      const existente = mapa.get(id);
+      mapa.set(id, existente ? fusionarInformeSinPerderDatos(normalizado, existente) : normalizado);
     });
-    guardarJSON(CLAVE_PARTIDOS,partidos);
-  } else {
-    partidos=[];
   }
+
+  partidos = [...mapa.values()];
+
+  // Copia cruda de las fuentes antiguas antes de consolidarlas.
+  if (cantidadRespaldoAntiguo > 0) {
+    try {
+      localStorage.setItem("informesADIURRespaldoMigracionV1", JSON.stringify({
+        fechaRespaldo: new Date().toISOString(),
+        fuentes: respaldosEncontrados
+      }));
+    } catch (error) {
+      console.warn("No se pudo crear una copia previa de los respaldos de Informes.", error);
+    }
+    console.info("ADIUR Informes: registros encontrados en claves antiguas:", cantidadRespaldoAntiguo);
+  }
+
+  try {
+    localStorage.setItem(CLAVE_PARTIDOS, JSON.stringify(partidos));
+  } catch (error) {
+    console.warn("No se pudo guardar la lista consolidada de Informes en el navegador.", error);
+  }
+
+  window.informesRecuperadosDesdeClavesAntiguas = cantidadRespaldoAntiguo;
 }
 
 
-// Puente para unir los informes locales con los documentos de Firestore.
+// Une informes locales y remotos sin borrar documentos existentes de Firestore.
 window.recibirInformesFirebase = function(listaNube) {
   const locales = Array.isArray(partidos) ? partidos.map(normalizarPartidoGuardado) : [];
   const remotos = Array.isArray(listaNube) ? listaNube.map(normalizarPartidoGuardado) : [];
@@ -5330,12 +5428,9 @@ window.recibirInformesFirebase = function(listaNube) {
       pendientes.push(local);
       return;
     }
-    const tLocal = Date.parse(local.actualizadoEn || local.creadoEn || "") || 0;
-    const tNube = Date.parse(remoto.actualizadoEn || remoto.creadoEn || "") || 0;
-    if (tLocal > tNube) {
-      mapa.set(id, local);
-      pendientes.push(local);
-    }
+    const combinado = fusionarInformeSinPerderDatos(local, remoto);
+    mapa.set(id, combinado);
+    if (JSON.stringify(combinado) !== JSON.stringify(remoto)) pendientes.push(combinado);
   });
 
   partidos = [...mapa.values()];
@@ -5643,6 +5738,12 @@ function borrarPartido(id) {
   if (!guardarJSON(CLAVE_PARTIDOS,partidos)) {
     partidos=anterior;
     return;
+  }
+
+  if (typeof window.eliminarInformeFirebase === "function") {
+    window.eliminarInformeFirebase(id).catch(error =>
+      console.error("No se pudo eliminar el informe de Firestore:", error)
+    );
   }
 
   renderizarTodo();
@@ -6447,14 +6548,19 @@ window.addEventListener("storage",evento=>{
 
   window.guardarInformesFirebase = async function(lista) {
     const actuales = Array.isArray(lista) ? lista : [];
-    const idsLocales = new Set(actuales.map(p => String(p.id)));
     for (const partido of actuales) {
-      await setDoc(doc(dbInformes, "informes", String(partido.id)), partido);
+      await setDoc(
+        doc(dbInformes, "informes", String(partido.id)),
+        { ...partido, actualizadoEn: partido.actualizadoEn || new Date().toISOString() },
+        { merge: true }
+      );
     }
-    for (const id of idsInformesNube) {
-      if (!idsLocales.has(id)) await deleteDoc(doc(dbInformes, "informes", id));
-    }
-    idsInformesNube = idsLocales;
+  };
+
+  // Solo se elimina de la nube cuando el usuario borra explícitamente ese informe.
+  window.eliminarInformeFirebase = async function(id) {
+    if (!id) return;
+    await deleteDoc(doc(dbInformes, "informes", String(id)));
   };
 
   onSnapshot(coleccionInformes, async snapshot => {
