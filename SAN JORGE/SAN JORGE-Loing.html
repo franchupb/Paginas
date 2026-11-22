@@ -71,21 +71,34 @@
             font-family: Arial, Helvetica, sans-serif;
             color: var(--negro);
 
-            background-color: #202020;
+            position: relative;
+            isolation: isolate;
 
-            background-image:
-                linear-gradient(
-                    135deg,
-                    rgba(18, 18, 18, 0.76),
-                    rgba(25, 25, 25, 0.58),
-                    rgba(18, 18, 18, 0.78)
-                ),
-                url("SAN JORGE - Familia.jpg");
+            background: linear-gradient(
+                125deg,
+                #064b32 0%,
+                #087a4b 34%,
+                #70433f 67%,
+                #a51f2b 100%
+            );
 
-            background-size: cover;
-            background-position: center 22%;
-            background-repeat: no-repeat;
             background-attachment: fixed;
+        }
+
+        /* Escudo institucional como marca de agua en el fondo */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+
+            background-image: url("SAN JORGE - Logo.png");
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: min(42vw, 430px);
+
+            opacity: 0.13;
         }
 
         button,
