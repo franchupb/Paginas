@@ -2944,11 +2944,37 @@ function iniciarSincronizacionNube() {
                 return;
             }
 
+            // Combinar por ID: la respuesta de Firestore no debe borrar
+            // partidos que todavía existan únicamente en este navegador.
+            const mapa = new Map(listaNube.map(p => [String(p.id), p]));
+            const pendientesDeSubir = [];
+
+            partidos.forEach(local => {
+                const id = String(local.id);
+                if (!mapa.has(id)) {
+                    mapa.set(id, local);
+                    pendientesDeSubir.push(local);
+                }
+            });
+
+            partidos = [...mapa.values()];
             migracionInicialRealizada = true;
-            partidos = listaNube;
             respaldarEnLocalStorage();
+
+            for (const pendiente of pendientesDeSubir) {
+                try {
+                    await setDoc(doc(db, "partidos", String(pendiente.id)), {
+                        ...pendiente,
+                        actualizadoPor: usuarioGuardado,
+                        actualizadoEl: new Date().toISOString()
+                    });
+                } catch (error) {
+                    console.error("No se pudo recuperar un partido local:", pendiente.id, error);
+                }
+            }
+
             renderizarFixture();
-            actualizarIndicadorGuardado("", "☁️ Guardado en la nube");
+            actualizarIndicadorGuardado("", "☁️ Datos locales y nube combinados");
         },
         error => {
             console.warn("No se pudo suscribir a Firestore:", error);
