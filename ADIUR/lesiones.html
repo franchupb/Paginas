@@ -2206,7 +2206,21 @@ function diasEntre(inicio,fin){if(!inicio||!fin)return null;const a=new Date(ini
 function crearId(){return window.crypto?.randomUUID?window.crypto.randomUUID():"lesion-"+Date.now()+"-"+Math.random().toString(36).slice(2,10);}
 function toast(mensaje,error=false){const el=$("toast");el.textContent=mensaje;el.style.background=error?"#fff4f4":"#f0fbf5";el.style.color=error?"#a61b1b":"#176c3e";el.style.borderColor=error?"#f0caca":"#ccebd8";el.classList.add("visible");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("visible"),3300);}
 function leerJSON(clave){try{const raw=localStorage.getItem(clave);return raw?JSON.parse(raw):null;}catch(e){console.warn("No se pudo leer",clave,e);return null;}}
-function guardarRegistros(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(registros));return true;}catch(e){toast("No se pudieron guardar los cambios. Revisá el espacio disponible del navegador.",true);return false;}}
+function guardarRegistros(){
+    try{
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(registros));
+        if(typeof window.sincronizarLesionesNube==="function"){
+            window.sincronizarLesionesNube(registros).catch(error=>{
+                console.error("No se pudieron sincronizar las lesiones con Firestore:",error);
+                toast("Cambios guardados en este navegador; la nube no respondió.",true);
+            });
+        }
+        return true;
+    }catch(e){
+        toast("No se pudieron guardar los cambios. Revisá el espacio disponible del navegador.",true);
+        return false;
+    }
+}
 function normalizarRegistro(r){
     if(!r||typeof r!=="object")return null;
     const seguimientos=Array.isArray(r.seguimientos)?r.seguimientos.filter(s=>s&&typeof s==="object").map((s,i)=>({
@@ -2229,6 +2243,27 @@ function normalizarRegistro(r){
     };
 }
 function cargarRegistros(){const v=leerJSON(STORAGE_KEY);registros=Array.isArray(v)?v.map(normalizarRegistro).filter(r=>r&&r.jugadora&&r.fecha):[];}
+
+// Puente de recuperación: combina por ID y mantiene los expedientes locales
+// que todavía no existen en Firestore.
+window.aplicarLesionesNube=function(lista){
+    const locales=Array.isArray(registros)?registros:[];
+    const remotos=Array.isArray(lista)?lista.map(normalizarRegistro).filter(r=>r&&r.jugadora&&r.fecha):[];
+    const mapa=new Map(remotos.map(r=>[String(r.id),r]));
+    const pendientes=[];
+    locales.forEach(local=>{
+        const id=String(local.id),remoto=mapa.get(id);
+        if(!remoto){mapa.set(id,local);pendientes.push(local);return;}
+        const tLocal=Date.parse(local.actualizadoEn||local.creadoEn||"")||0;
+        const tNube=Date.parse(remoto.actualizadoEn||remoto.creadoEn||"")||0;
+        if(tLocal>tNube){mapa.set(id,local);pendientes.push(local);}
+    });
+    registros=[...mapa.values()];
+    try{localStorage.setItem(STORAGE_KEY,JSON.stringify(registros));}
+    catch(e){console.warn("No se pudo guardar la copia local combinada de lesiones.",e);}
+    actualizarTodo();
+    return pendientes;
+};
 
 /* Lectura flexible de la base actual de Jugadoras.html. No genera jugadoras de ejemplo. */
 function leerJugadoras(){const claves=["jugadorasADIUR","jugadoras","jugadorasADIUR_v1","plantelADIUR","baseJugadorasADIUR","adiurJugadoras"];const halladas=[];const esCategoria=k=>/categor[ií]a|division|divisi[oó]n|sub\s*\d+|\bu\s*\d+|\bs\s*\d+|primera|reserva|infantil|juvenil|femenino|mayor/i.test(String(k));const visitar=(v,catHer="")=>{if(Array.isArray(v)){v.forEach(x=>{if(x&&typeof x==="object")visitar(x,catHer);else if(typeof x==="string"&&x.trim())halladas.push({nombre:x.trim(),categoria:catHer});});return;}if(!v||typeof v!=="object")return;const categoria=String(v.categoria||v.categoría||v.division||v.división||v.category||v.equipo||v.categoriaNombre||catHer||"").trim();const nombre=v.nombreCompleto||v.nombreYApellido||v.nombre_y_apellido||v.nombre_apellido||v.apellidoNombre||v.apellido_nombre||v.jugadora||([v.apellido,v.nombre].filter(Boolean).join(", "))||v.nombre;if(typeof nombre==="string"&&nombre.trim()){halladas.push({nombre:nombre.trim(),categoria});return;}Object.entries(v).forEach(([k,x])=>{if(x&&typeof x==="object")visitar(x,esCategoria(k)?String(k):categoria);});};try{for(const k of claves){const raw=localStorage.getItem(k);if(raw)visitar(JSON.parse(raw));}for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k||claves.includes(k)||!/jugadora|plantel/i.test(k))continue;const raw=localStorage.getItem(k);if(raw)try{visitar(JSON.parse(raw));}catch(_){}}}catch(e){console.warn("No se pudo leer la base de jugadoras",e);}const unicas=new Map();halladas.forEach(j=>{if(!j.nombre||!j.categoria)return;const key=normalizar(j.nombre)+"|"+normalizar(j.categoria);if(!unicas.has(key))unicas.set(key,{id:key,nombre:j.nombre,categoria:j.categoria});});return [...unicas.values()].sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"));}
@@ -2538,5 +2573,61 @@ window.addEventListener('storage',e=>{if(e.key===STORAGE_KEY){cargarRegistros();
 function iniciar(){cargarRegistros();poblarCategorias();poblarJugadoras();actualizarPerfil();ajustarMenu();if(!categoriaActual())actualizarAccesoCategoria();else actualizarTodo();$('fechaLesion').value=fechaHoy();}
 iniciar();
 </script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCc0dPIEkaKxbHoRC2CgZK412dXVGPOdTI",
+    authDomain: "adiur-b1913.firebaseapp.com",
+    projectId: "adiur-b1913",
+    storageBucket: "adiur-b1913.firebasestorage.app",
+    messagingSenderId: "884643321144",
+    appId: "1:884643321144:web:ba3c314de3a1c9e3545dcd",
+    measurementId: "G-58LL26YXPM"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const coleccion = collection(db, "lesiones");
+let inicializado = false;
+let idsNube = new Set();
+
+window.sincronizarLesionesNube = async function(lista) {
+    const actuales = Array.isArray(lista) ? lista : [];
+    const idsLocales = new Set(actuales.map(r => String(r.id)));
+    for (const registro of actuales) {
+        await setDoc(doc(db, "lesiones", String(registro.id)), registro);
+    }
+    for (const id of idsNube) {
+        if (!idsLocales.has(id)) await deleteDoc(doc(db, "lesiones", id));
+    }
+    idsNube = idsLocales;
+};
+
+onSnapshot(coleccion, async snapshot => {
+    const nube = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    idsNube = new Set(nube.map(r => String(r.id)));
+    if (typeof window.aplicarLesionesNube !== "function") return;
+    const pendientes = window.aplicarLesionesNube(nube);
+    inicializado = true;
+    if (pendientes.length) {
+        try {
+            for (const registro of pendientes) {
+                await setDoc(doc(db, "lesiones", String(registro.id)), registro);
+                idsNube.add(String(registro.id));
+            }
+            console.info("ADIUR: expedientes locales recuperados en Firestore:", pendientes.length);
+        } catch (error) {
+            console.error("No se pudieron recuperar todos los expedientes locales:", error);
+        }
+    }
+}, error => {
+    console.error("Error al escuchar lesiones en Firestore:", error);
+    if (!inicializado) console.warn("Se conserva la información local de lesiones.");
+});
+</script>
+
 </body>
 </html>
