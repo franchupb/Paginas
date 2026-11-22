@@ -98,7 +98,12 @@
             background-position: left 8vw center;
             background-size: min(27vw, 330px);
 
-            opacity: 0.17;
+            /* Integra los blancos del PNG con el degradado, sin el recuadro */
+            background-color: transparent;
+            background-blend-mode: multiply;
+            mix-blend-mode: multiply;
+
+            opacity: 0.22;
         }
 
         body::after {
@@ -796,7 +801,7 @@
 
     <div class="detalle-lateral detalle-derecho" aria-hidden="true">
         <span class="detalle-linea"></span>
-        <strong>PASIÓN · TRABAJO<br>· COMPROMISO</strong>
+        <strong>FORMACIÓN · RESPETO<br>· UNIÓN</strong>
         <span>Un club, una familia</span>
     </div>
 
