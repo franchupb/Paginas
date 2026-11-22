@@ -24,7 +24,6 @@
       paginas: [
         ["ADIUR-calendario.html", "Calendario", false],
         ["ADIUR-planificacion.html", "Planificación", true],
-        ["biblioteca.html", "Biblioteca de ejercicios", true],
         ["ADIUR-gimnasio.html", "Gimnasio", false],
         ["ADIUR-calculadora.html", "Calculadora", true]
       ]
@@ -45,7 +44,6 @@
       paginas: [
         ["ADIUR-testeos.html", "Planilla de testeos", false],
         ["ADIUR-tiempos.html", "Tiempos", false],
-        ["multimedia.html", "Multimedia", false],
         ["ADIUR-encuestas.html", "Encuestas", false],
         ["lesiones.html", "Lesiones", false]
       ]
@@ -75,7 +73,8 @@
       border-bottom: 1px solid var(--borde, #e8e8e8) !important;
       box-sizing: border-box !important;
     }
-    .barra-superior .boton-menu {
+    .barra-superior .boton-menu,
+    .barra-superior .menu-boton {
       display: grid !important;
       place-items: center !important;
       width: 42px !important;
@@ -88,7 +87,8 @@
       font-size: 27px !important;
       cursor: pointer !important;
     }
-    .barra-superior .boton-menu:hover { background: var(--gris, #f4f5f7) !important; }
+    .barra-superior .boton-menu:hover,
+    .barra-superior .menu-boton:hover { background: var(--gris, #f4f5f7) !important; }
     .barra-superior .logo-superior,
     .barra-superior .logo-club,
     .barra-superior .identidad-club img {
@@ -326,7 +326,8 @@
         padding: 10px 13px !important;
         gap: 9px !important;
       }
-      .barra-superior .boton-menu {
+      .barra-superior .boton-menu,
+      .barra-superior .menu-boton {
         width: 38px !important;
         height: 38px !important;
         flex-basis: 38px !important;
@@ -491,8 +492,22 @@
   }
 
   const botonMenu = document.getElementById("botonMenu");
-  // Se conserva el evento original del botón de cada página para no duplicar
-  // sus controladores; el botón mantiene el mismo ID y clase en todos los módulos.
+
+  // El menú se controla desde este archivo en todas las páginas.
+  // Se intercepta en captura para evitar que los controladores antiguos de
+  // cada módulo ejecuten un segundo toggle y vuelvan a cerrar el menú.
+  if (botonMenu) {
+    botonMenu.setAttribute("aria-controls", "sidebar");
+    botonMenu.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      sidebar.classList.toggle("oculto");
+      const abierto = !sidebar.classList.contains("oculto");
+      botonMenu.setAttribute("aria-expanded", String(abierto));
+      botonMenu.setAttribute("aria-label", abierto ? "Cerrar menú" : "Abrir menú");
+      actualizarEstado();
+    }, true);
+  }
 
   function ajustarPantalla() {
     if (window.innerWidth <= 760) sidebar.classList.add("oculto");
