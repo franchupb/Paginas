@@ -1,0 +1,50 @@
+/* ADIUR FEMENINO · AUTENTICACIÓN CENTRALIZADA FIREBASE
+   El usuario escribe solo su nombre de usuario. El correo técnico
+   se deriva internamente y nunca se muestra en pantalla. */
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCc0dPIEkaKxbHoRO2CgZK412dXVGPOdTI",
+  authDomain: "adiur-b1913.firebaseapp.com",
+  projectId: "adiur-b1913",
+  storageBucket: "adiur-b1913.firebasestorage.app",
+  messagingSenderId: "884643321144",
+  appId: "1:884643321144:web:ba3c314de3a1c9e3545dcd",
+  measurementId: "G-58LL26YXPM"
+};
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+
+export function normalizarUsuarioADIUR(usuario) {
+  return String(usuario || "").trim().toLowerCase().replace(/[^a-z0-9._-]/g, "");
+}
+export function correoTecnicoADIUR(usuario) {
+  const limpio = normalizarUsuarioADIUR(usuario);
+  if (!limpio) throw new Error("Ingresá un nombre de usuario válido.");
+  return limpio + "@adiur-b1913.firebaseapp.com";
+}
+export async function iniciarSesionADIUR(usuario, contrasena) {
+  const credencial = await signInWithEmailAndPassword(auth, correoTecnicoADIUR(usuario), contrasena);
+  const referencia = doc(db, "usuarios", credencial.user.uid);
+  const perfil = await getDoc(referencia);
+  if (!perfil.exists() || perfil.data().activo === false) {
+    await signOut(auth);
+    throw new Error("La cuenta todavía no tiene un perfil habilitado. Contactá al administrador del club.");
+  }
+  return { user: credencial.user, perfil: perfil.data() };
+}
+export async function obtenerPerfilADIUR(user) {
+  if (!user) return null;
+  const snapshot = await getDoc(doc(db, "usuarios", user.uid));
+  if (!snapshot.exists() || snapshot.data().activo === false) return null;
+  return snapshot.data();
+}
+export function observarSesionADIUR(callback) {
+  return onAuthStateChanged(auth, callback);
+}
+export async function cerrarSesionADIUR() {
+  await signOut(auth);
+}
