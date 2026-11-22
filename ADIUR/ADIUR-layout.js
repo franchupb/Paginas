@@ -454,7 +454,9 @@
   salir.className = "enlace-cerrar-sesion";
   salir.innerHTML = '<span class="icono-salir" aria-hidden="true">↪</span>Cerrar sesión';
   salir.addEventListener("click", event => {
+    if (event.defaultPrevented) return;
     event.preventDefault();
+    event.stopImmediatePropagation();
     if (window.confirm("¿Querés cerrar la sesión de ADIUR?")) {
       localStorage.removeItem("usuarioADIUR");
       window.location.href = "ADIUR-Loing.html";
@@ -489,14 +491,8 @@
   }
 
   const botonMenu = document.getElementById("botonMenu");
-  if (botonMenu) {
-    // Evita que un onclick heredado y el listener original disparen dos veces.
-    botonMenu.removeAttribute("onclick");
-    botonMenu.addEventListener("click", () => {
-      sidebar.classList.toggle("oculto");
-      actualizarEstado();
-    });
-  }
+  // Se conserva el evento original del botón de cada página para no duplicar
+  // sus controladores; el botón mantiene el mismo ID y clase en todos los módulos.
 
   function ajustarPantalla() {
     if (window.innerWidth <= 760) sidebar.classList.add("oculto");
