@@ -5653,27 +5653,51 @@ async function inicializarPlanificacion() {
     await window.firebasePlanificacionReady;
 
     const datosNube = await window.cargarPlanificacionNube();
+    const datosLocales = cargarAlmacen();
 
-    if (
-      datosNube &&
-      Object.keys(datosNube).length > 0
-    ) {
-
-      // La nube tiene prioridad sobre el almacenamiento local
-      localStorage.setItem(
-        CLAVE_PLANIFICACION,
-        JSON.stringify(datosNube)
-      );
-
-    } else {
-
-      // Si todavía no hay datos en la nube,
-      // conservar y subir los datos existentes
-      const datosLocales = cargarAlmacen();
-
-      if (Object.keys(datosLocales).length > 0) {
-        await window.guardarPlanificacionEnNube(datosLocales);
+    // Unión recursiva: conserva categorías, semanas y sesiones que existan
+    // solamente en uno de los dos almacenamientos. En conflictos de campos
+    // concretos prevalece el dato de Firestore, salvo que esté vacío.
+    const combinarSinPerderDatos = (local, nube) => {
+      if (Array.isArray(local) || Array.isArray(nube)) {
+        const a = Array.isArray(local) ? local : [];
+        const b = Array.isArray(nube) ? nube : [];
+        const cantidad = Math.max(a.length, b.length);
+        return Array.from({ length: cantidad }, (_, i) => {
+          if (a[i] === undefined) return b[i];
+          if (b[i] === undefined) return a[i];
+          return combinarSinPerderDatos(a[i], b[i]);
+        });
       }
+
+      const esObjeto = v => v && typeof v === "object" && !Array.isArray(v);
+      if (esObjeto(local) || esObjeto(nube)) {
+        const resultado = {};
+        const claves = new Set([
+          ...Object.keys(esObjeto(local) ? local : {}),
+          ...Object.keys(esObjeto(nube) ? nube : {})
+        ]);
+        claves.forEach(clave => {
+          const tieneLocal = esObjeto(local) && Object.prototype.hasOwnProperty.call(local, clave);
+          const tieneNube = esObjeto(nube) && Object.prototype.hasOwnProperty.call(nube, clave);
+          resultado[clave] = tieneLocal && tieneNube
+            ? combinarSinPerderDatos(local[clave], nube[clave])
+            : tieneNube ? nube[clave] : local[clave];
+        });
+        return resultado;
+      }
+
+      if (nube === undefined || nube === null || nube === "") return local;
+      return nube;
+    };
+
+    const datosCombinados = combinarSinPerderDatos(datosLocales, datosNube || {});
+    localStorage.setItem(CLAVE_PLANIFICACION, JSON.stringify(datosCombinados));
+
+    // Publicar la unión para recuperar en Firestore cualquier semana que
+    // estuviera guardada únicamente en este navegador.
+    if (Object.keys(datosCombinados).length > 0) {
+      await window.guardarPlanificacionEnNube(datosCombinados);
     }
 
   } catch (error) {
