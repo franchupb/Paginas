@@ -4860,13 +4860,18 @@ function configurarMenu() {
     $("botonMenu").setAttribute("aria-expanded", "false");
   });
 
-  $("cerrarSesion").addEventListener("click", e => {
+  $("cerrarSesion").addEventListener("click", async e => {
     e.preventDefault();
-
     if (!confirm("¿Querés cerrar la sesión?")) return;
-
-    localStorage.removeItem(SESSION_KEY);
-    window.location.href = "ADIUR-Loing.html";
+    try {
+      const modulo = await import("./ADIUR-auth.js");
+      await modulo.cerrarSesionADIUR();
+      localStorage.removeItem(SESSION_KEY);
+      window.location.href = "ADIUR-Loing.html";
+    } catch (error) {
+      console.error("No se pudo cerrar la sesión:", error);
+      alert("No se pudo cerrar la sesión. Intentá nuevamente.");
+    }
   });
 }
 
