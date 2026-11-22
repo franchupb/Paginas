@@ -827,6 +827,21 @@
             transition: opacity 0.7s ease 0.15s;
         }
 
+        .detalle-izquierdo::before {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            left: -18px;
+            top: 50%;
+            width: clamp(190px, 22vw, 285px);
+            aspect-ratio: 1;
+            transform: translateY(-50%);
+            background: url("SAN BENITO - Logo.jpg") center / contain no-repeat;
+            opacity: 0.19;
+            filter: grayscale(1) brightness(0) invert(1);
+            pointer-events: none;
+        }
+
         .detalle-izquierdo {
             left: clamp(22px, 5vw, 78px);
             text-align: left;
@@ -853,8 +868,8 @@
 
         .detalle-lateral strong {
             display: block;
-            font-size: clamp(17px, 2vw, 28px);
-            line-height: 1.08;
+            font-size: clamp(18px, 2.05vw, 28px);
+            line-height: 1.12;
             letter-spacing: 1.3px;
             font-weight: 900;
         }
@@ -917,13 +932,12 @@
     
     <div class="detalle-lateral detalle-izquierdo" aria-hidden="true">
         <span class="detalle-linea"></span>
-        <strong>MÁS QUE UN CLUB</strong>
-        <span>Una familia</span>
+        <strong>MÁS QUE UN CLUB,<br>UNA FAMILIA</strong>
     </div>
 
     <div class="detalle-lateral detalle-derecho" aria-hidden="true">
         <span class="detalle-linea"></span>
-        <strong>UNIÓN · COMPROMISO<br>· IDENTIDAD</strong>
+        <strong>UNIÓN<br>PASIÓN<br>COMPROMISO</strong>
         <span>Orgullo de pertenecer</span>
     </div>
 
