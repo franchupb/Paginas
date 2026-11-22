@@ -1434,11 +1434,17 @@ if (esBianca) {
   });
 }
 
-window.cerrarSesion = function(event) {
-  event.preventDefault();
-
-  localStorage.removeItem("usuarioADIUR");
-  window.location.href = "ADIUR-Loing.html";
+window.cerrarSesion = async function(event) {
+  event?.preventDefault();
+  try {
+    const modulo = await import("./ADIUR-auth.js");
+    await modulo.cerrarSesionADIUR();
+    localStorage.removeItem("usuarioADIUR");
+    window.location.href = "ADIUR-Loing.html";
+  } catch (error) {
+    console.error("No se pudo cerrar la sesión:", error);
+    alert("No se pudo cerrar la sesión. Intentá nuevamente.");
+  }
 };
 
 /* =====================================================
