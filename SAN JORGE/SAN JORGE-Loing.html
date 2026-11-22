@@ -137,26 +137,6 @@
             z-index: 1;
         }
 
-        .detalle-izquierdo::before {
-            content: "";
-            position: absolute;
-            z-index: 0;
-            left: -18px;
-            top: 50%;
-            width: clamp(190px, 22vw, 285px);
-            aspect-ratio: 1;
-            transform: translateY(-50%);
-            background: url("SAN JORGE - Logo.png") center / contain no-repeat;
-            opacity: 0.19;
-            filter: grayscale(1) brightness(0) invert(1);
-            pointer-events: none;
-        }
-
-        .detalle-izquierdo {
-            left: clamp(22px, 5vw, 78px);
-            text-align: left;
-        }
-
         .detalle-derecho {
             right: clamp(22px, 5vw, 78px);
             text-align: right;
@@ -954,11 +934,6 @@
             <img src="SAN JORGE - Logo.png" alt="Escudo de SAN JORGE">
         </button>
     </section>
-
-    <div class="detalle-lateral detalle-izquierdo" aria-hidden="true">
-        <span class="detalle-linea"></span>
-        <strong>IDENTIDAD<br>JORJENSE</strong>
-    </div>
 
     <div class="detalle-lateral detalle-derecho" aria-hidden="true">
         <span class="detalle-linea"></span>
