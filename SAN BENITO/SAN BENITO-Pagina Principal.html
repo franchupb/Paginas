@@ -353,7 +353,7 @@ a {
   overflow: hidden;
   background:
     linear-gradient(90deg, rgba(0,0,0,.78), rgba(0,0,0,.25)),
-    url("SAN BENITO-Familia.jpg") center 45% / cover no-repeat;
+    linear-gradient(135deg,#111827,#26364d) center 45% / cover no-repeat;
   color: white;
 }
 
@@ -956,9 +956,9 @@ a {
 
   <img
     class="logo-superior"
-    src="SAN BENITO-Logo SAN BENITO.jpg"
+    src="SAN BENITO - Logo.jpg"
     alt="Logo SAN BENITO"
-    onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='SAN BENITO-Logo SAN BENITO.jpg'}else{this.style.display='none'}"
+    onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='SAN BENITO - Logo.jpg'}else{this.style.display='none'}"
   >
 
   <div class="titulo-superior">
@@ -1810,7 +1810,7 @@ function crearPartidoJugadoCard(partido) {
 
   local.append(
     construirEscudo(
-      partido.escudoAdiur || "SAN BENITO-Logo SAN BENITO.jpg",
+      partido.escudoAdiur || "SAN BENITO - Logo.jpg",
       nombreLocal
     )
   );

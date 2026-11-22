@@ -353,7 +353,7 @@ a {
   overflow: hidden;
   background:
     linear-gradient(90deg, rgba(0,0,0,.78), rgba(0,0,0,.25)),
-    url("SAN JORGE-Familia.jpg") center 45% / cover no-repeat;
+    linear-gradient(135deg,#111827,#26364d) center 45% / cover no-repeat;
   color: white;
 }
 
@@ -956,9 +956,9 @@ a {
 
   <img
     class="logo-superior"
-    src="SAN JORGE-Logo SAN JORGE.jpg"
+    src="SAN JORGE - Logo.png"
     alt="Logo SAN JORGE"
-    onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='SAN JORGE-Logo SAN JORGE.jpg'}else{this.style.display='none'}"
+    onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='SAN JORGE - Logo.png'}else{this.style.display='none'}"
   >
 
   <div class="titulo-superior">
@@ -1810,7 +1810,7 @@ function crearPartidoJugadoCard(partido) {
 
   local.append(
     construirEscudo(
-      partido.escudoAdiur || "SAN JORGE-Logo SAN JORGE.jpg",
+      partido.escudoAdiur || "SAN JORGE - Logo.png",
       nombreLocal
     )
   );
