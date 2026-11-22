@@ -2832,6 +2832,31 @@ function obtenerClavePlanilla(division,mes){
    CARGAR PLANILLA OPERATIVA
 ===================================================== */
 
+function combinarObjetosSinPerderLocales(local,nube){
+  if(Array.isArray(local)||Array.isArray(nube)){
+    const a=Array.isArray(local)?local:[],b=Array.isArray(nube)?nube:[];
+    if(a.every(x=>x&&typeof x==="object"&&x.id)&&b.every(x=>x&&typeof x==="object"&&x.id)){
+      const mapa=new Map(a.map(x=>[String(x.id),x]));
+      b.forEach(x=>mapa.set(String(x.id),mapa.has(String(x.id))
+        ?combinarObjetosSinPerderLocales(mapa.get(String(x.id)),x):x));
+      return [...mapa.values()];
+    }
+    return Array.from({length:Math.max(a.length,b.length)},(_,i)=>
+      a[i]===undefined?b[i]:b[i]===undefined?a[i]:combinarObjetosSinPerderLocales(a[i],b[i]));
+  }
+  const esObjeto=v=>v&&typeof v==="object"&&!Array.isArray(v);
+  if(esObjeto(local)||esObjeto(nube)){
+    const a=esObjeto(local)?local:{},b=esObjeto(nube)?nube:{},salida={};
+    new Set([...Object.keys(a),...Object.keys(b)]).forEach(k=>{
+      salida[k]=Object.prototype.hasOwnProperty.call(a,k)&&Object.prototype.hasOwnProperty.call(b,k)
+        ?combinarObjetosSinPerderLocales(a[k],b[k])
+        :Object.prototype.hasOwnProperty.call(b,k)?b[k]:a[k];
+    });
+    return salida;
+  }
+  return nube===undefined||nube===null||nube===""?local:nube;
+}
+
 async function cargarDatosPlanilla(division,mes){
 
   const version=++versionCarga;
@@ -2846,51 +2871,63 @@ async function cargarDatosPlanilla(division,mes){
 
   jugadorasDivision=lista;
 
-  let cargadoDeNube=false;
+  let dataLocal={};
+  const raw=localStorage.getItem("testeos_adiur_"+clave);
+  if(raw){
+    try{dataLocal=JSON.parse(raw)||{};}
+    catch(error){console.warn("No se pudo leer el respaldo local de testeos:",error);}
+  }
 
+  let dataNube={};
   if(nubeActiva&&db){
     try{
-      const ref=doc(db,"testeos_adiur",clave);
-      const snap=await getDoc(ref);
-
+      const snap=await getDoc(doc(db,"testeos_adiur",clave));
       if(version!==versionCarga)return;
-
-      if(snap.exists()){
-        const data=snap.data();
-
-        columnasActuales=
-          Array.isArray(data.columnas)&&data.columnas.length
-            ?data.columnas
-            :JSON.parse(JSON.stringify(COLUMNAS_POR_DEFECTO));
-
-        valoresActuales=data.valores||{};
-        cargadoDeNube=true;
-      }
+      if(snap.exists())dataNube=snap.data()||{};
     }catch(error){
       console.warn("Error leyendo Firestore:",error);
     }
   }
 
-  if(!cargadoDeNube){
+  // Combinar los valores locales y remotos para no perder mediciones que
+  // todavía no se hubieran sincronizado desde otro navegador.
+  const columnasLocales=Array.isArray(dataLocal.columnas)?dataLocal.columnas:[];
+  const columnasNube=Array.isArray(dataNube.columnas)?dataNube.columnas:[];
+  const mapaColumnas=new Map(columnasLocales.filter(x=>x&&x.id).map(x=>[String(x.id),x]));
+  columnasNube.forEach(x=>{
+    if(x&&x.id)mapaColumnas.set(String(x.id),x);
+  });
+  const columnasCombinadas=mapaColumnas.size
+    ?[...mapaColumnas.values()]
+    :JSON.parse(JSON.stringify(dataNube.columnas||dataLocal.columnas||COLUMNAS_POR_DEFECTO));
+  const valoresCombinados=combinarObjetosSinPerderLocales(dataLocal.valores||{},dataNube.valores||{});
 
-    const raw=localStorage.getItem("testeos_adiur_"+clave);
+  columnasActuales=columnasCombinadas.length
+    ?columnasCombinadas
+    :JSON.parse(JSON.stringify(COLUMNAS_POR_DEFECTO));
+  valoresActuales=valoresCombinados;
 
-    if(raw){
-      try{
-        const data=JSON.parse(raw);
+  const payloadCombinado={
+    ...dataLocal,
+    ...dataNube,
+    division,
+    mes,
+    columnas:columnasActuales,
+    valores:valoresActuales,
+    actualizadoPor:usuarioGuardado,
+    ultimaActualizacion:new Date().toISOString()
+  };
+  localStorage.setItem("testeos_adiur_"+clave,JSON.stringify(payloadCombinado));
 
-        columnasActuales=
-          data.columnas||JSON.parse(JSON.stringify(COLUMNAS_POR_DEFECTO));
-
-        valoresActuales=data.valores||{};
-      }catch(error){
-        columnasActuales=JSON.parse(JSON.stringify(COLUMNAS_POR_DEFECTO));
-        valoresActuales={};
-      }
-    }else{
-      columnasActuales=JSON.parse(JSON.stringify(COLUMNAS_POR_DEFECTO));
-      valoresActuales={};
-    }
+  const tieneDatosLocales=Object.keys(dataLocal).length>0;
+  const necesitaSubir=tieneDatosLocales&&(
+    !dataNube.columnas||
+    JSON.stringify(columnasCombinadas)!==JSON.stringify(dataNube.columnas)||
+    JSON.stringify(valoresCombinados)!==JSON.stringify(dataNube.valores||{})
+  );
+  if(nubeActiva&&db&&necesitaSubir){
+    try{await setDoc(doc(db,"testeos_adiur",clave),payloadCombinado);}
+    catch(error){console.error("No se pudieron recuperar los datos locales de testeos:",error);}
   }
 
   if(version!==versionCarga)return;
