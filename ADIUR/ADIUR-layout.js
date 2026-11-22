@@ -459,8 +459,7 @@
     event.preventDefault();
     event.stopImmediatePropagation();
     if (window.confirm("¿Querés cerrar la sesión de ADIUR?")) {
-      localStorage.removeItem("usuarioADIUR");
-      window.location.href = "ADIUR-Loing.html";
+      importarCerrarSesionADIUR();
     }
   });
   separador.appendChild(salir);
