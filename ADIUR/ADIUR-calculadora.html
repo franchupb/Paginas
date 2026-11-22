@@ -2216,6 +2216,9 @@ function obtenerPlanesAtemporales() {
 function savePlans() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(plans));
+    if (typeof window.guardarCalculadoraNube === "function") {
+      window.guardarCalculadoraNube();
+    }
     return true;
   } catch (error) {
     console.error("No se pudo guardar la calculadora:", error);
@@ -2227,6 +2230,9 @@ function savePlans() {
 function saveTrainingDays() {
   try {
     localStorage.setItem(DAYS_KEY, JSON.stringify(trainingDays));
+    if (typeof window.guardarCalculadoraNube === "function") {
+      window.guardarCalculadoraNube();
+    }
     return true;
   } catch (error) {
     console.error("No se pudieron guardar los días:", error);
@@ -2237,6 +2243,25 @@ function saveTrainingDays() {
 
 plans = obtenerPlanesAtemporales();
 trainingDays = loadJSON(DAYS_KEY, {});
+
+window.obtenerPlanesCalculadora = () => plans;
+window.obtenerDiasCalculadora = () => trainingDays;
+window.aplicarCalculadoraNube = datos => {
+  plans = datos.plans && typeof datos.plans === "object" ? datos.plans : plans;
+  trainingDays = datos.trainingDays && typeof datos.trainingDays === "object" ? datos.trainingDays : trainingDays;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(plans));
+    localStorage.setItem(DAYS_KEY, JSON.stringify(trainingDays));
+    if (datos.volume !== undefined && datos.volume !== "") {
+      localStorage.setItem(VOLUME_STORAGE_KEY, String(datos.volume));
+      if ($("volumeDesired")) $("volumeDesired").value = String(datos.volume);
+    }
+  } catch (error) {
+    console.warn("No se pudo guardar la copia local recuperada de la calculadora.", error);
+  }
+  if (typeof renderDays === "function") renderDays();
+  if (typeof actualizarCalculadoraVolumen === "function") actualizarCalculadoraVolumen();
+};
 
 let huboCambiosEnDias = false;
 
@@ -3199,6 +3224,9 @@ function actualizarCalculadoraVolumen() {
 
   try {
     localStorage.setItem(VOLUME_STORAGE_KEY, String(volumen));
+    if (typeof window.guardarCalculadoraNube === "function") {
+      window.guardarCalculadoraNube();
+    }
   } catch (error) {
     console.warn("No se pudo guardar el volumen deseado.", error);
   }
@@ -3378,6 +3406,93 @@ inicializarCalculadora();
 </script>
 
 
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCc0dPIEkaKxbHoRC2gZK412dXVGPOdTI",
+  authDomain: "adiur-b1913.firebaseapp.com",
+  projectId: "adiur-b1913",
+  storageBucket: "adiur-b1913.firebasestorage.app",
+  messagingSenderId: "884643321144",
+  appId: "1:884643321144:web:ba3c314de3a1c9e3545dcd",
+  measurementId: "G-58LL26YXPM"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const ref = doc(db, "calculadoraADIUR", "principal");
+
+function unirPlanes(local, nube) {
+  if (Array.isArray(local) || Array.isArray(nube)) {
+    const a = Array.isArray(local) ? local : [], b = Array.isArray(nube) ? nube : [];
+    if (a.every(x => x && typeof x === "object" && x.id) &&
+        b.every(x => x && typeof x === "object" && x.id)) {
+      const mapa = new Map(b.map(x => [String(x.id), x]));
+      a.forEach(x => mapa.set(String(x.id), mapa.has(String(x.id))
+        ? unirPlanes(x, mapa.get(String(x.id))) : x));
+      return [...mapa.values()];
+    }
+    return Array.from({length:Math.max(a.length,b.length)},(_,i)=>
+      a[i]===undefined?b[i]:b[i]===undefined?a[i]:unirPlanes(a[i],b[i]));
+  }
+  const esObj=v=>v&&typeof v==="object"&&!Array.isArray(v);
+  if(esObj(local)||esObj(nube)){
+    const a=esObj(local)?local:{},b=esObj(nube)?nube:{},out={};
+    new Set([...Object.keys(a),...Object.keys(b)]).forEach(k=>{
+      out[k]=Object.prototype.hasOwnProperty.call(a,k)&&Object.prototype.hasOwnProperty.call(b,k)
+        ?unirPlanes(a[k],b[k])
+        :Object.prototype.hasOwnProperty.call(b,k)?b[k]:a[k];
+    });
+    return out;
+  }
+  return nube===undefined||nube===null||nube===""?local:nube;
+}
+
+let cola = Promise.resolve();
+window.guardarCalculadoraNube = function() {
+  const payload = {
+    plans: window.obtenerPlanesCalculadora ? window.obtenerPlanesCalculadora() : {},
+    trainingDays: window.obtenerDiasCalculadora ? window.obtenerDiasCalculadora() : {},
+    volume: localStorage.getItem("calculadoraADIURVolumenDeseadoV1") || ""
+  };
+  cola = cola.catch(()=>{}).then(()=>setDoc(ref,{...payload,actualizadoEn:new Date().toISOString()}));
+  cola.catch(error=>console.error("No se pudo guardar la calculadora en Firestore:",error));
+  return cola;
+};
+
+(async()=>{
+  try{
+    const snap=await getDoc(ref);
+    const nube=snap.exists()?snap.data():{};
+    const localPlans=JSON.parse(localStorage.getItem("calculadoraADIURPlanAtemporalV1")||"{}");
+    const localDays=JSON.parse(localStorage.getItem("calculadoraADIURDiasV1")||"{}");
+    const plans=unirPlanes(localPlans,nube.plans||{});
+    const trainingDays=Object.keys(nube.trainingDays||{}).length?nube.trainingDays:localDays;
+    const localVolume=localStorage.getItem("calculadoraADIURVolumenDeseadoV1")||"";
+    const volume=nube.volume!==undefined&&nube.volume!==""?String(nube.volume):localVolume;
+
+    localStorage.setItem("calculadoraADIURPlanAtemporalV1",JSON.stringify(plans));
+    localStorage.setItem("calculadoraADIURDiasV1",JSON.stringify(trainingDays));
+    if(volume!=="")localStorage.setItem("calculadoraADIURVolumenDeseadoV1",volume);
+
+    if(typeof window.aplicarCalculadoraNube==="function"){
+      window.aplicarCalculadoraNube({plans,trainingDays,volume});
+    }
+    // Publicar la unión solo después de recuperar primero el estado local.
+    if(JSON.stringify(plans)!==JSON.stringify(nube.plans||{}) ||
+       JSON.stringify(trainingDays)!==JSON.stringify(nube.trainingDays||{}) ||
+       String(volume)!==String(nube.volume||"")){
+      await window.guardarCalculadoraNube();
+    }
+    console.info("ADIUR: calculadora recuperada y sincronizada con Firestore.");
+  }catch(error){
+    console.error("No se pudo sincronizar la calculadora. Se mantiene la copia local.",error);
+  }
+})();
+</script>
 
 </body>
 </html>
