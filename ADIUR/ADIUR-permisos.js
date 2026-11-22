@@ -11,8 +11,8 @@
   const LOGIN_URL = "ADIUR-Loing.html";
   const INICIO_URL = "ADIUR-Pagina Principal.html";
   const normalizar = value => String(value ?? "")
-    .normalize("NFD").replace(/[\\u0300-\\u036f]/g, "")
-    .toLowerCase().replace(/[\\s._-]+/g, "").trim();
+    .normalize("NFD").replace(/[\u0300-\\u036f]/g, "")
+    .toLowerCase().replace(/[\s._-]+/g, "").trim();
 
   // ÚNICO LUGAR PARA CONFIGURAR USUARIOS Y SUS PERMISOS.
   // Las contraseñas nunca se guardan aquí: las administra Firebase Authentication.
@@ -78,13 +78,13 @@
   };
   function normalizarDivision(value) {
     const key = String(value || "").normalize("NFD")
-      .replace(/[\\u0300-\\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+      .replace(/[\u0300-\\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
     return DIVISIONES[key] || null;
   }
   function categoriaDeTexto(value) {
     const direct = normalizarDivision(value);
     if (direct) return direct;
-    const match = String(value || "").match(/(?:^|[^a-z0-9])(sub\\s*10|sub\\s*12|sub\\s*14|sub\\s*16|s10|s12|s14|s16|primera)(?:$|[^a-z0-9])/i);
+    const match = String(value || "").match(/(?:^|[^a-z0-9])(sub\s*10|sub\s*12|sub\s*14|sub\s*16|s10|s12|s14|s16|primera)(?:$|[^a-z0-9])/i);
     return match ? normalizarDivision(match[1]) : null;
   }
   function paginaActual() {
