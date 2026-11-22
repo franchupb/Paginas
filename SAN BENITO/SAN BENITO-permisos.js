@@ -343,7 +343,7 @@
   });
   observer.observe(document.documentElement, { childList: true, subtree: true });
 
-  window.SAN BENITO_PERMISOS = Object.freeze({
+  window["SAN BENITO_PERMISOS"] = Object.freeze({
     usuario: rol === "jugadora_s14" ? "Bianca Domínguez" : usuario,
     rol,
     division: divisionPermitida,
