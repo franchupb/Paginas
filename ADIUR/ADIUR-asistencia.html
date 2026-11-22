@@ -2877,6 +2877,10 @@ async function guardarDiasEntrenamiento() {
       claveDiasEntrenamiento(categoria),
       JSON.stringify(dias)
     );
+    localStorage.setItem(
+      claveDiasEntrenamiento(categoria) + "_actualizadoEn",
+      new Date().toISOString()
+    );
   } catch (error) {
     console.error("Error al guardar localmente:", error);
   }
@@ -2934,16 +2938,22 @@ function escucharDiasEntrenamientoNube(categoria) {
         const datos = snapshot.data();
 
         if (Array.isArray(datos.dias)) {
-          diasEntrenamiento = [...new Set(
-            datos.dias
-              .map(Number)
-              .filter(d => Number.isInteger(d) && d >= 0 && d <= 6)
-          )];
+          const claveLocal = claveDiasEntrenamiento(categoria);
+          const fechaLocal = Date.parse(localStorage.getItem(claveLocal + "_actualizadoEn") || "") || 0;
+          const fechaNube = Date.parse(datos.actualizadoEn || "") || 0;
 
-          localStorage.setItem(
-            claveDiasEntrenamiento(categoria),
-            JSON.stringify(diasEntrenamiento)
-          );
+          if (fechaLocal > fechaNube) {
+            diasEntrenamiento = cargarDiasEntrenamiento(categoria);
+            await guardarDiasEntrenamiento();
+          } else {
+            diasEntrenamiento = [...new Set(
+              datos.dias
+                .map(Number)
+                .filter(d => Number.isInteger(d) && d >= 0 && d <= 6)
+            )];
+            localStorage.setItem(claveLocal, JSON.stringify(diasEntrenamiento));
+            localStorage.setItem(claveLocal + "_actualizadoEn", datos.actualizadoEn || new Date().toISOString());
+          }
 
           renderizarDiasSemana();
           renderizarMatriz();
@@ -3005,14 +3015,71 @@ function renderizarDiasSemana() {
    SESIONES DE ASISTENCIA (SINCRONIZADAS EN FIRESTORE)
 ===================================================== */
 
-let sesiones = {};
+const CLAVE_SESIONES_LOCAL = "asistenciaADIUR_sesiones_v1";
 
-onSnapshot(collection(db, "asistenciaADIUR"), (snapshot) => {
-  snapshot.forEach((docSnap) => {
-    sesiones[docSnap.id] = docSnap.data();
+function cargarSesionesLocales() {
+  try {
+    const datos = JSON.parse(localStorage.getItem(CLAVE_SESIONES_LOCAL) || "{}");
+    return datos && typeof datos === "object" ? datos : {};
+  } catch (error) {
+    console.warn("No se pudo leer el respaldo local de asistencias:", error);
+    return {};
+  }
+}
+
+function guardarSesionesLocales() {
+  try {
+    localStorage.setItem(CLAVE_SESIONES_LOCAL, JSON.stringify(sesiones));
+  } catch (error) {
+    console.warn("No se pudo guardar el respaldo local de asistencias:", error);
+  }
+}
+
+let sesiones = cargarSesionesLocales();
+
+onSnapshot(collection(db, "asistenciaADIUR"), async (snapshot) => {
+  const remotas = {};
+  snapshot.forEach(docSnap => { remotas[docSnap.id] = docSnap.data(); });
+  const combinadas = { ...remotas };
+  const pendientes = [];
+
+  Object.entries(sesiones).forEach(([id, local]) => {
+    const nube = remotas[id];
+    if (!nube) {
+      combinadas[id] = local;
+      pendientes.push([id, local]);
+      return;
+    }
+
+    const tLocal = Date.parse(local.actualizadoEn || "") || 0;
+    const tNube = Date.parse(nube.actualizadoEn || "") || 0;
+    const localEsMasNuevo = tLocal > tNube;
+    combinadas[id] = {
+      ...local,
+      ...nube,
+      asistencias: {
+        ...(localEsMasNuevo ? nube.asistencias : local.asistencias || {}),
+        ...(localEsMasNuevo ? local.asistencias || {} : nube.asistencias || {})
+      },
+      actualizadoEn: localEsMasNuevo ? local.actualizadoEn : nube.actualizadoEn
+    };
+    if (localEsMasNuevo) pendientes.push([id, combinadas[id]]);
   });
+
+  sesiones = combinadas;
+  guardarSesionesLocales();
   renderizarMatriz();
   renderizarSeguimientoIndividual();
+
+  for (const [id, sesion] of pendientes) {
+    try {
+      await setDoc(doc(db, "asistenciaADIUR", id), sesion);
+    } catch (error) {
+      console.error("No se pudo recuperar una sesión local de asistencia:", id, error);
+    }
+  }
+}, error => {
+  console.error("Error al sincronizar las asistencias desde Firestore:", error);
 });
 
 function claveSesion(categoria, fecha) {
@@ -3067,6 +3134,11 @@ window.guardarTodoManual = async function() {
   boton.innerHTML = "⏳ Guardando todas las categorías...";
 
   try {
+    Object.values(sesiones).forEach(sesion => {
+      if (sesion) sesion.actualizadoEn = new Date().toISOString();
+    });
+    guardarSesionesLocales();
+
     const promesas = Object.keys(sesiones).map(clave => {
       const sesion = sesiones[clave];
       if (!sesion) return Promise.resolve();
@@ -3539,6 +3611,8 @@ function guardarEstadoJugadora(jugadora, fecha, nuevoEstado) {
   } else {
     delete sesion.asistencias[clave];
   }
+  sesion.actualizadoEn = new Date().toISOString();
+  guardarSesionesLocales();
 }
 
 const ESTADOS_CICLICOS = [
