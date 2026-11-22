@@ -431,7 +431,8 @@ function normalizarRegistro(r,i=0){
         pasadas:pares.map(p=>p.tiempo),
         fc10Pasadas:pares.map(p=>Number.isInteger(p.fc10)&&p.fc10>=0?p.fc10:null),
         observaciones:String(r.observaciones||""),
-        creadoEn:r.creadoEn||""
+        creadoEn:r.creadoEn||"",
+        actualizadoEn:r.actualizadoEn||""
     };
 }
 function cargarRegistros(){
