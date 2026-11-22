@@ -32,11 +32,7 @@
   }
 
   const u = normalizar(usuario);
-  const rol = ["fran", "francisco", "franciscoperezbasla"].includes(u)
-    ? "admin"
-    : u === "toto" ? "ct_s16"
-    : ["bianca", "biancadominguez"].includes(u) ? "jugadora_s14"
-    : "desconocido";
+  const rol = u === "fran" ? "admin" : "desconocido";
 
   if (rol === "desconocido") {
     try { localStorage.removeItem(SESSION_KEY); } catch (_) {}
