@@ -11,7 +11,7 @@
   const LOGIN_URL = "ADIUR-Loing.html";
   const INICIO_URL = "ADIUR-Pagina Principal.html";
   const normalizar = value => String(value ?? "")
-    .normalize("NFD").replace(/[\u0300-\\u036f]/g, "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase().replace(/[\s._-]+/g, "").trim();
 
   // ÚNICO LUGAR PARA CONFIGURAR USUARIOS Y SUS PERMISOS.
@@ -78,7 +78,7 @@
   };
   function normalizarDivision(value) {
     const key = String(value || "").normalize("NFD")
-      .replace(/[\u0300-\\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+      .replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
     return DIVISIONES[key] || null;
   }
   function categoriaDeTexto(value) {
