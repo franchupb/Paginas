@@ -1365,6 +1365,11 @@ function obtenerEstructuraEncuestas() {
 
 function guardarEstructuraEncuestas(datos) {
   localStorage.setItem("diasEncuestasADIUR", JSON.stringify(datos));
+  if (typeof window.guardarEstructuraEncuestasNube === "function") {
+    window.guardarEstructuraEncuestasNube(datos).catch(error =>
+      console.error("No se pudo sincronizar la estructura de encuestas:", error)
+    );
+  }
 }
 
 function obtenerRespuestas() {
@@ -1377,6 +1382,11 @@ function obtenerRespuestas() {
 
 function guardarRespuestas(respuestas) {
   localStorage.setItem("respuestasEncuestasSemanales", JSON.stringify(respuestas));
+  if (typeof window.guardarRespuestasEncuestasNube === "function") {
+    window.guardarRespuestasEncuestasNube(respuestas).catch(error =>
+      console.error("No se pudieron sincronizar las respuestas de encuestas:", error)
+    );
+  }
 }
 
 /* =====================================================
@@ -1894,6 +1904,104 @@ window.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCc0dPIEkaKxbHoRC2gZK412dXVGPOdTI",
+  authDomain: "adiur-b1913.firebaseapp.com",
+  projectId: "adiur-b1913",
+  storageBucket: "adiur-b1913.firebasestorage.app",
+  messagingSenderId: "884643321144",
+  appId: "1:884643321144:web:ba3c314de3a1c9e3545dcd",
+  measurementId: "G-58LL26YXPM"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const refEstructura = doc(db, "encuestasADIUR", "estructura");
+const refRespuestas = doc(db, "encuestasADIUR", "respuestas");
+
+function unirSinPerder(local, nube) {
+  if (Array.isArray(local) || Array.isArray(nube)) {
+    const a = Array.isArray(local) ? local : [];
+    const b = Array.isArray(nube) ? nube : [];
+    if (a.every(x => x && typeof x === "object" && x.id) &&
+        b.every(x => x && typeof x === "object" && x.id)) {
+      const mapa = new Map(b.map(x => [String(x.id), x]));
+      a.forEach(x => {
+        const id = String(x.id);
+        mapa.set(id, mapa.has(id) ? unirSinPerder(x, mapa.get(id)) : x);
+      });
+      return [...mapa.values()];
+    }
+    return Array.from({length: Math.max(a.length,b.length)}, (_,i) =>
+      a[i] === undefined ? b[i] : b[i] === undefined ? a[i] : unirSinPerder(a[i],b[i])
+    );
+  }
+  const obj = v => v && typeof v === "object" && !Array.isArray(v);
+  if (obj(local) || obj(nube)) {
+    const a = obj(local) ? local : {}, b = obj(nube) ? nube : {}, out = {};
+    new Set([...Object.keys(a),...Object.keys(b)]).forEach(k => {
+      out[k] = Object.prototype.hasOwnProperty.call(a,k) && Object.prototype.hasOwnProperty.call(b,k)
+        ? unirSinPerder(a[k],b[k])
+        : Object.prototype.hasOwnProperty.call(b,k) ? b[k] : a[k];
+    });
+    return out;
+  }
+  return nube === undefined || nube === null || nube === "" ? local : nube;
+}
+
+function leerLocal(clave, fallback) {
+  try { return JSON.parse(localStorage.getItem(clave) || "null") ?? fallback; }
+  catch { return fallback; }
+}
+
+window.guardarEstructuraEncuestasNube = async datos =>
+  setDoc(refEstructura, { datos, actualizadoEn: new Date().toISOString() });
+window.guardarRespuestasEncuestasNube = async datos =>
+  setDoc(refRespuestas, { datos, actualizadoEn: new Date().toISOString() });
+
+(async () => {
+  try {
+    const [snapE, snapR] = await Promise.all([getDoc(refEstructura), getDoc(refRespuestas)]);
+    const localE = leerLocal("diasEncuestasADIUR", {});
+    const localR = leerLocal("respuestasEncuestasSemanales", {});
+    const nubeE = snapE.exists() ? snapE.data().datos || {} : {};
+    const nubeR = snapR.exists() ? snapR.data().datos || {} : {};
+    const combinadaE = unirSinPerder(localE, nubeE);
+    const combinadaR = unirSinPerder(localR, nubeR);
+
+    localStorage.setItem("diasEncuestasADIUR", JSON.stringify(combinadaE));
+    localStorage.setItem("respuestasEncuestasSemanales", JSON.stringify(combinadaR));
+    if (typeof window.renderizarCalendarioSemana === "function") window.renderizarCalendarioSemana();
+
+    // Solo se escribe la unión después de haber leído nube y navegador.
+    if (JSON.stringify(combinadaE) !== JSON.stringify(nubeE)) await window.guardarEstructuraEncuestasNube(combinadaE);
+    if (JSON.stringify(combinadaR) !== JSON.stringify(nubeR)) await window.guardarRespuestasEncuestasNube(combinadaR);
+
+    onSnapshot(refEstructura, snap => {
+      if (!snap.exists()) return;
+      const actual = leerLocal("diasEncuestasADIUR", {});
+      const combinado = unirSinPerder(actual, snap.data().datos || {});
+      localStorage.setItem("diasEncuestasADIUR", JSON.stringify(combinado));
+      if (typeof window.renderizarCalendarioSemana === "function") window.renderizarCalendarioSemana();
+    });
+    onSnapshot(refRespuestas, snap => {
+      if (!snap.exists()) return;
+      const actual = leerLocal("respuestasEncuestasSemanales", {});
+      const combinado = unirSinPerder(actual, snap.data().datos || {});
+      localStorage.setItem("respuestasEncuestasSemanales", JSON.stringify(combinado));
+      if (typeof window.renderizarCalendarioSemana === "function") window.renderizarCalendarioSemana();
+    });
+    console.info("ADIUR: encuestas y respuestas sincronizadas con Firestore.");
+  } catch (error) {
+    console.error("No se pudieron recuperar las encuestas desde Firestore. Se conserva la copia local.", error);
+  }
+})();
+</script>
 
 </body>
 </html>
