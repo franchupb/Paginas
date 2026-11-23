@@ -938,6 +938,65 @@ body.immersive .board-studio .pitch{display:block!important;flex:1 1 auto!import
  .board-studio .add-rival-btn{flex-basis:22px!important;width:22px!important}
 }
 
+
+/* FIX DEFINITIVO: mantener visibles ADIUR, herramientas y rival en la misma barra */
+@media(max-width:760px){
+ .board-studio>.controlbar{
+  display:grid!important;
+  grid-template-columns:52px minmax(0,1fr) 80px!important;
+  grid-template-areas:"own tools rival"!important;
+  align-items:center!important;
+  justify-content:stretch!important;
+  gap:3px!important;
+  width:100%!important;
+  height:50px!important;min-height:50px!important;flex-basis:50px!important;
+  padding:4px 5px!important;overflow:hidden!important;
+ }
+ .board-studio>.controlbar>.own-formation{
+  grid-area:own!important;display:flex!important;justify-content:flex-start!important;
+  width:52px!important;min-width:0!important;flex:initial!important;margin:0!important;
+ }
+ .board-studio>.controlbar>.rival-formation{
+  grid-area:rival!important;display:flex!important;justify-content:flex-end!important;
+  width:80px!important;min-width:0!important;flex:initial!important;margin:0!important;gap:2px!important;
+ }
+ .board-studio .control-label{display:none!important}
+ .board-studio .controlbar select{
+  display:block!important;flex:1 1 auto!important;width:100%!important;min-width:0!important;max-width:none!important;
+  height:29px!important;padding:0 3px!important;font-size:8px!important;
+ }
+ .board-studio .rival-formation .add-rival-btn{
+  display:grid!important;flex:0 0 22px!important;width:22px!important;min-width:22px!important;
+  height:27px!important;min-height:27px!important;font-size:15px!important;
+ }
+ .board-studio>.controlbar>.top-tools{
+  grid-area:tools!important;display:flex!important;flex:initial!important;
+  width:100%!important;max-width:100%!important;min-width:0!important;
+  justify-content:space-evenly!important;gap:0!important;padding:0!important;
+  overflow:hidden!important;
+ }
+ .board-studio .top-tools .tool{
+  display:flex!important;flex:1 1 0!important;width:auto!important;min-width:0!important;
+  max-width:25px!important;height:34px!important;min-height:34px!important;padding:1px 0!important;
+ }
+ .board-studio .top-tools .tool span{font-size:14px!important}
+ .board-studio .top-tools .tool small{display:none!important}
+ .board-studio .top-separator{display:block!important;flex:0 0 1px!important;width:1px!important;height:18px!important;margin:0 1px!important}
+ .board-studio .top-tools .palette{display:flex!important;flex:0 0 auto!important;gap:4px!important;padding:0 1px!important}
+ .board-studio .top-tools .swatch{flex:0 0 10px!important;width:10px!important;height:10px!important}
+ .board-studio .quick-history{display:flex!important;flex:0 0 auto!important;gap:1px!important}
+ .board-studio .quick-history-btn{flex:0 0 18px!important;width:18px!important;height:22px!important;font-size:13px!important}
+ body.immersive .board-studio>.controlbar{display:grid!important;height:50px!important;min-height:50px!important;flex-basis:50px!important}
+}
+@media(max-width:390px){
+ .board-studio>.controlbar{grid-template-columns:48px minmax(0,1fr) 74px!important;gap:2px!important;padding-right:3px!important;padding-left:3px!important}
+ .board-studio>.controlbar>.own-formation{width:48px!important}
+ .board-studio>.controlbar>.rival-formation{width:74px!important}
+ .board-studio .rival-formation .add-rival-btn{flex-basis:20px!important;width:20px!important;min-width:20px!important}
+ .board-studio .top-tools .tool{max-width:22px!important}
+ .board-studio .top-tools .palette{gap:3px!important}
+}
+
 </style>
 </head>
 <body>
