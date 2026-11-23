@@ -4693,7 +4693,8 @@ function abrirVistaAmpliada(indice) {
   $("modalTitulo").textContent = rutina.nombre || "Rutina sin título";
   $("modalSubtitulo").textContent = division + " · Bloque " + rutina.semanas + " Semanas";
 
-  $("controlPersonasRutina").classList.toggle("oculto", !esStaff);
+  const puedePrepararImpresionMultiple = esStaff || window.ADIUR_PERMISOS?.rol === "jugadora";
+  $("controlPersonasRutina").classList.toggle("oculto", !puedePrepararImpresionMultiple);
 
   renderizarPlanillaVistaActual();
 
