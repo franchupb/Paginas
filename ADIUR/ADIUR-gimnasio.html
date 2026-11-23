@@ -3411,6 +3411,11 @@ function guardarDB() {
     // Siempre conservar una copia local.
     localStorage.setItem(KEY, JSON.stringify(db));
 
+    // Los perfiles de jugadora son exclusivamente de consulta: nunca escriben en Firestore.
+    if (esJugadora || window.ADIUR_PERMISOS?.rol === "jugadora") {
+      return true;
+    }
+
     // No sobrescribir Firebase si la carga inicial falló.
     if (!nubeListaParaGuardar) {
       console.warn(
@@ -3588,7 +3593,7 @@ function puedeEditarEstructura() {
 }
 
 function puedeEditarValores() {
-  return esStaff || (esJugadora && modoSelect.value === "individual");
+  return esStaff;
 }
 
 function mostrarEstado(mensaje) {
