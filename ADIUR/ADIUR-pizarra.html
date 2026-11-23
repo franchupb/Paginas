@@ -651,6 +651,101 @@ body.immersive .immersive-launch{min-height:32px}
  .tool-grid{grid-template-columns:1fr}
 }
 
+
+/* ===== ADIUR TACTICAL · INTERFAZ 2026 ===== */
+:root{--board-ink:#202329;--board-muted:#858b94;--board-line:#e8e9ec;--board-soft:#f7f8fa;--board-orange:#f47721}
+.intro{display:none!important}
+.main{height:calc(100dvh - 84px)!important;min-height:0!important;padding:0!important;background:#f3f4f6!important}
+.pizarra-shell{display:flex!important;flex-direction:column!important;width:100%!important;height:100%!important;max-width:none!important;margin:0!important}
+.board-studio{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;min-width:0!important;min-height:0!important;height:100%!important;overflow:hidden!important;border:0!important;border-radius:0!important;background:#f4f5f6!important;box-shadow:none!important}
+.board-topline{display:flex;flex:0 0 54px;align-items:center;justify-content:space-between;gap:14px;padding:7px 18px;border-bottom:1px solid #e5e6e9;background:linear-gradient(110deg,#fff 0%,#fff 70%,#fff5ef 100%)}
+.board-brand,.board-top-actions{display:flex;align-items:center;gap:10px}
+.board-brand-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:linear-gradient(145deg,#ffad78,#f47721 68%,#dc5e0b);color:#fff;font-size:17px;font-weight:900;box-shadow:0 4px 10px #d65c2035,inset 0 1px #ffffff80}
+.board-brand strong{display:block;color:#25282d;font-size:11px;font-weight:900;letter-spacing:1.1px}
+.board-brand em{color:#e36b20;font-style:normal}
+.board-brand small{display:block;margin-top:3px;color:#999fa7;font-size:7px;font-weight:800;letter-spacing:1.35px}
+.board-live{display:flex;align-items:center;gap:6px;color:#8b9199;font-size:8px;font-weight:900;letter-spacing:.8px}
+.board-live i{width:6px;height:6px;border-radius:50%;background:#35a875;box-shadow:0 0 0 3px #35a8751c}
+.immersive-launch{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:34px;padding:0 13px;border:1px solid #efb18c;border-radius:10px;background:linear-gradient(115deg,#fff 0%,#fffaf6 45%,#ffdfca 100%);color:#8c461f;font:800 9px Arial;box-shadow:0 3px 9px #783b1b12,inset 0 1px #fff;cursor:pointer;transition:.18s}
+.immersive-launch span{font-size:17px}.immersive-launch:hover{border-color:#e87935;transform:translateY(-1px);box-shadow:0 5px 13px #783b1b20}.immersive-launch[aria-pressed=true]{background:linear-gradient(115deg,#ffe9dc,#f47721);color:#71300d}
+.controlbar{display:flex!important;flex:0 0 auto!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;flex-wrap:nowrap!important;min-height:65px!important;padding:8px 15px!important;border:0!important;border-bottom:1px solid #e5e6e9!important;background:linear-gradient(180deg,#fff 0%,#fafbfc 100%)!important;box-shadow:0 3px 12px #17171708!important}
+.control-group{display:flex!important;align-items:center!important;gap:7px!important;flex:0 0 auto!important}
+.formation-control,.rival-formation{padding:5px 8px!important;border:1px solid #e8c5af!important;border-radius:12px!important;background:linear-gradient(145deg,#fff 0%,#fffaf7 55%,#ffe6d6 100%)!important;box-shadow:0 2px 7px #9a4d2110,inset 0 1px #fff!important}
+.control-label{font-size:8px!important;font-weight:900!important;letter-spacing:.9px!important;color:#9b6748!important}
+.controlbar select{height:34px!important;min-width:88px!important;padding:0 26px 0 10px!important;border:1px solid #e8bda2!important;border-radius:8px!important;background:#fff!important;color:#35383d!important;font-size:10px!important;font-weight:800!important}
+.top-tools{display:flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;min-width:0!important;padding:4px 8px!important;border:1px solid #ece0d8!important;border-radius:15px!important;background:linear-gradient(120deg,#fff 0%,#fffdfb 55%,#fff1e8 100%)!important;box-shadow:0 3px 10px #3120160b,inset 0 1px #fff!important}
+.top-tools .tool{display:flex!important;flex:0 0 48px!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;min-height:46px!important;padding:4px 3px!important;border:1px solid #ead8cb!important;border-radius:10px!important;background:linear-gradient(145deg,#fff 0%,#fffaf6 65%,#ffe9dc 100%)!important;color:#6d5141!important;box-shadow:0 2px 5px #57321b0c,inset 0 1px #fff!important;transition:.16s!important}
+.top-tools .tool span{font-size:18px!important;line-height:1}.top-tools .tool small{font-size:7px!important;font-weight:900!important;letter-spacing:.15px}
+.top-tools .tool:hover{border-color:#e9a276!important;background:linear-gradient(145deg,#fff,#ffe1ce)!important;color:#a8440c!important;transform:translateY(-1px)}
+.top-tools .tool.active{border-color:#ed955e!important;background:linear-gradient(145deg,#fff0e7 0%,#ffc49f 100%)!important;color:#8a3d12!important;box-shadow:0 3px 8px #b9572528,inset 0 1px #fff!important}
+.top-separator{width:1px!important;height:32px!important;margin:0 2px!important;background:#e5d3c7!important}
+.top-tools .palette{display:flex!important;align-items:center!important;gap:10px!important;padding:0 4px!important}
+.top-tools .swatch{width:17px!important;height:17px!important;flex:0 0 17px!important;border:2px solid white!important;box-shadow:0 0 0 1px #c8b3a5!important}
+.top-tools .swatch.active{outline:2px solid #ed782e!important;outline-offset:2px!important}
+.quick-history{display:flex!important;align-items:center!important;gap:5px!important}
+.quick-history-btn{display:grid!important;place-items:center!important;width:31px!important;height:31px!important;border:1px solid #e8c7b2!important;border-radius:9px!important;background:linear-gradient(145deg,#fff 0%,#fff8f3 55%,#ffe2d0 100%)!important;color:#85441f!important;font-size:17px!important;box-shadow:0 2px 5px #67371a10,inset 0 1px #fff!important}
+.quick-history-btn:hover{border-color:#e87935!important;background:linear-gradient(145deg,#fff,#ffd9c0)!important}.quick-history-btn:disabled{opacity:.3!important}
+.rival-formation{background:linear-gradient(145deg,#fff 0%,#fafbfc 55%,#eceff2 100%)!important;border-color:#dfe2e6!important}
+.rival-formation .control-label{color:#747d87!important}
+.rival-formation select{border-color:#d9dfe5!important}
+.add-rival-btn,.reset-btn{min-height:32px!important;padding:0 9px!important;border:1px solid #e9b08d!important;border-radius:8px!important;background:linear-gradient(145deg,#fff,#ffdfca)!important;color:#874017!important;font-size:9px!important;font-weight:900!important}
+.reset-btn{min-width:32px!important;padding:0 8px!important}
+.workspace{display:block!important;flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;background:#347b43!important}
+.pitch-stage{display:flex!important;flex-direction:column!important;width:100%!important;height:100%!important;min-height:0!important;padding:0!important;background:#347b43!important}
+.pitch-wrap{display:flex!important;flex:1 1 auto!important;align-items:stretch!important;justify-content:stretch!important;min-width:0!important;min-height:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#347b43!important}
+.pitch{width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+.rival-strip{position:absolute!important;z-index:8!important;left:14px!important;bottom:14px!important;padding:9px 12px!important;border:1px solid #edc4a9!important;border-radius:12px!important;background:linear-gradient(110deg,#fff 0%,#fff8f3 60%,#ffe2d0 100%)!important;box-shadow:0 8px 25px #17271b35!important}
+.show-controls{display:none!important}
+body.controls-hidden .controlbar{display:flex!important}
+body.immersive{overflow:hidden!important;background:#111!important}
+body.immersive .barra-superior,body.immersive #sidebar,body.immersive .capa-sidebar,body.immersive .intro{display:none!important}
+body.immersive .contenedor{display:block!important;width:100vw!important;height:100dvh!important;min-height:0!important}
+body.immersive .main{position:fixed!important;inset:0!important;z-index:9999!important;width:100vw!important;height:100dvh!important;min-height:0!important;padding:0!important;background:#eef0f2!important}
+body.immersive .pizarra-shell{width:100%!important;height:100%!important}
+body.immersive .board-studio{width:100%!important;height:100%!important;max-height:100%!important;border:0!important;border-radius:0!important}
+body.immersive .board-topline{flex-basis:48px!important;min-height:48px!important}
+body.immersive .controlbar{display:flex!important;flex-wrap:nowrap!important}
+body.immersive .workspace{display:block!important;min-height:0!important}
+body.immersive .pitch-stage,body.immersive .pitch-wrap{min-height:0!important}
+body.immersive .pitch{height:100%!important;min-height:0!important;aspect-ratio:auto!important}
+@media(max-width:1050px){
+ .controlbar{gap:7px!important;padding:7px 9px!important}
+ .top-tools{gap:3px!important;padding:4px!important}
+ .top-tools .tool{flex-basis:42px!important;min-height:42px!important}
+ .formation-control,.rival-formation{gap:5px!important;padding:5px!important}
+ .controlbar select{min-width:75px!important}
+}
+@media(max-width:760px){
+ .main{height:calc(100dvh - 72px)!important}
+ .controlbar{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-areas:"own rival" "tools tools"!important;gap:6px!important;padding:7px!important}
+ .own-formation{grid-area:own!important}.rival-formation{grid-area:rival!important;justify-content:flex-end!important}
+ .top-tools{grid-area:tools!important;justify-self:center!important;max-width:100%!important;overflow-x:auto!important}
+ .top-tools .tool{flex:0 0 39px!important;min-height:37px!important}
+ .top-tools .tool span{font-size:15px!important}.top-tools .tool small{font-size:6px!important}
+ .top-tools .swatch{width:14px!important;height:14px!important;flex-basis:14px!important}
+ .quick-history-btn{width:27px!important;height:27px!important}
+ .board-live{display:none}
+ .rival-strip{left:7px!important;right:7px!important;bottom:7px!important;display:flex;flex-wrap:wrap;gap:6px!important}
+ body.immersive .controlbar{display:grid!important}
+ body.immersive .board-topline{flex-basis:43px!important;min-height:43px!important;padding:5px 9px!important}
+}
+@media(max-width:430px){
+ .board-brand small{display:none}
+ .board-brand-icon{width:29px;height:29px}
+ .immersive-launch{min-height:31px;padding:0 9px;font-size:8px}
+ .controlbar{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+ .formation-control,.rival-formation{gap:3px!important;padding:4px!important}
+ .controlbar select{min-width:0!important;width:100%!important;height:28px!important;font-size:8px!important}
+ .control-label{font-size:7px!important}
+ .add-rival-btn{padding:0 5px!important;font-size:8px!important}
+ .top-tools{gap:2px!important;padding:3px!important}
+ .top-tools .tool{flex-basis:34px!important;min-height:34px!important}
+ .top-tools .tool small{font-size:5.5px!important}
+ .top-separator{margin:0!important}
+ .top-tools .palette{gap:7px!important}
+ .quick-history{gap:3px!important}.quick-history-btn{width:23px!important;height:25px!important}
+}
+
 </style>
 </head>
 <body>
@@ -668,35 +763,29 @@ body.immersive .immersive-launch{min-height:32px}
 <section class="intro"><div><div class="kicker">ADIUR FEMENINO · COMPETENCIA</div><h2>Pizarra táctica</h2><p>Diseñá movimientos, organizá estructuras y visualizá cada fase del juego.</p></div><div class="intro-tag">● ESPACIO DE TRABAJO TÁCTICO</div></section>
 <section class="studio" aria-label="Pizarra táctica">
 
-<div class="pizarra-actions">
-<button class="immersive-launch" id="toggleImmersive" type="button" aria-pressed="false" title="Activar modo inmersivo"><span>⛶</span><small>Modo inmersivo</small></button>
-<button id="showControls" class="show-controls" type="button" aria-expanded="false">☷ Mostrar herramientas</button>
+<section class="studio board-studio" aria-label="Pizarra táctica">
+<div class="board-topline">
+<div class="board-brand"><span class="board-brand-icon">A</span><div><strong>ADIUR <em>TACTICAL</em></strong><small>ESPACIO DE PLANIFICACIÓN</small></div></div>
+<div class="board-top-actions"><span class="board-live"><i></i> EDITOR ACTIVO</span><button class="immersive-launch" id="toggleImmersive" type="button" aria-pressed="false" title="Activar modo inmersivo"><span>⛶</span><small>Modo inmersivo</small></button></div>
 </div>
-<div class="workspace">
-<aside class="controlbar" aria-label="Panel lateral de herramientas">
-<div class="control-group formation-control own-formation"><span class="control-label">FORMACIÓN ADIUR</span><select id="formationOwn" aria-label="Formación ADIUR"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select></div>
-<div class="sidebar-tools" aria-label="Herramientas de dibujo">
-<div class="sidebar-section-label">HERRAMIENTAS</div>
-<div class="tool-grid">
+<div class="controlbar" aria-label="Barra superior de herramientas">
+<div class="control-group formation-control own-formation"><span class="control-label">ADIUR</span><select id="formationOwn" aria-label="Formación ADIUR"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select></div>
+<div class="top-tools" aria-label="Herramientas de dibujo">
 <button class="tool active" data-tool="select" type="button" title="Mover fichas"><span>↖</span><small>Mover</small></button>
 <button class="tool" data-tool="line" type="button" title="Dibujar una línea"><span>／</span><small>Línea</small></button>
 <button class="tool" data-tool="arrow" type="button" title="Dibujar una flecha"><span>➜</span><small>Flecha</small></button>
 <button class="tool" data-tool="dash" type="button" title="Dibujar un trazo discontinuo"><span>┄</span><small>Trazo</small></button>
 <button class="tool" data-tool="free" type="button" title="Dibujar a mano alzada"><span>✎</span><small>Lápiz</small></button>
 <button class="tool" data-tool="zone" type="button" title="Dibujar una zona"><span>◯</span><small>Zona</small></button>
-</div>
-</div>
-<div class="sidebar-section">
-<div class="sidebar-section-label">COLOR DE TRAZO</div>
+<span class="top-separator"></span>
 <div class="palette" aria-label="Color de dibujo"><button class="swatch active" data-color="#f47721" style="background:#f47721" aria-label="Naranja" type="button"></button><button class="swatch" data-color="#e53935" style="background:#e53935" aria-label="Rojo" type="button"></button><button class="swatch" data-color="#171717" style="background:#171717" aria-label="Negro" type="button"></button></div>
-</div>
-<div class="sidebar-section">
-<div class="sidebar-section-label">HISTORIAL</div>
+<span class="top-separator history-separator"></span>
 <div class="quick-history" aria-label="Historial de edición"><button class="quick-history-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button><button class="quick-history-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button><button class="quick-history-btn clear" id="clearDrawings" type="button" title="Borrar trazos" aria-label="Borrar trazos">⌫</button></div>
 </div>
-<div class="control-group rival-formation"><span class="control-label">FORMACIÓN RIVAL</span><select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select><button class="btn add-rival-btn" id="addRival" type="button">＋ Incorporar rival</button><button class="btn reset-btn" id="resetPositions" type="button" title="Reubicar posiciones" aria-label="Reubicar posiciones">↺ Reubicar fichas</button></div>
-<button class="toolbar-hide" id="hideControls" type="button" title="Ocultar barra lateral"><span>‹</span><small>Ocultar panel</small></button>
-</aside>
+<div class="control-group rival-formation"><span class="control-label">RIVAL</span><select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select><button class="btn add-rival-btn" id="addRival" type="button">＋ Rival</button><button class="btn reset-btn" id="resetPositions" type="button" title="Reubicar posiciones" aria-label="Reubicar posiciones">↺</button></div>
+</div>
+<button id="showControls" class="show-controls" type="button" aria-expanded="false">☷ Mostrar herramientas</button>
+<div class="workspace">
 <section class="pitch-stage">
 <div class="pitch-wrap"><div class="pitch" id="pitch">
 <svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg><canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div>
@@ -705,8 +794,7 @@ body.immersive .immersive-launch{min-height:32px}
 <span id="status" class="status-hidden" aria-live="polite">11 posiciones iniciales listas</span>
 </section>
 </div>
-</main>
-</div>
+</section>
 <script>
 (function(){
 "use strict";
@@ -764,9 +852,9 @@ function hideToolbar(){document.body.classList.add("controls-hidden");syncImmers
 function showToolbar(){document.body.classList.remove("controls-hidden");syncImmersive();}
 hideControls.addEventListener("click",hideToolbar);
 showControls.addEventListener("click",showToolbar);
-immersive.addEventListener("click",async function(){var on=document.body.classList.contains("immersive");if(on){document.body.classList.remove("immersive");showToolbar();if(document.fullscreenElement&&document.exitFullscreen)try{await document.exitFullscreen();}catch(e){}}else{document.body.classList.add("immersive");hideToolbar();if(document.documentElement.requestFullscreen)try{await document.documentElement.requestFullscreen();}catch(e){}}syncImmersive();setTimeout(resize,120);});
-document.addEventListener("fullscreenchange",function(){if(!document.fullscreenElement&&document.body.classList.contains("immersive")){document.body.classList.remove("immersive");showToolbar();}syncImmersive();setTimeout(resize,120);});
-document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();$("undo").click();}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();$("redo").click();}else if(e.key==="Escape"&&document.body.classList.contains("immersive")){document.body.classList.remove("immersive");showToolbar();syncImmersive();setTimeout(resize,120);}});
+immersive.addEventListener("click",async function(){var on=document.body.classList.contains("immersive");if(on){document.body.classList.remove("immersive");if(document.fullscreenElement&&document.exitFullscreen)try{await document.exitFullscreen();}catch(e){}}else{document.body.classList.add("immersive");var target=$(".board-studio");if(target&&target.requestFullscreen)try{await target.requestFullscreen();}catch(e){}}syncImmersive();setTimeout(resize,180);});
+document.addEventListener("fullscreenchange",function(){if(!document.fullscreenElement&&document.body.classList.contains("immersive"))document.body.classList.remove("immersive");syncImmersive();setTimeout(resize,180);});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();$("undo").click();}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();$("redo").click();}else if(e.key==="Escape"&&document.body.classList.contains("immersive")){document.body.classList.remove("immersive");syncImmersive();setTimeout(resize,180);}});
 setField();renderPlayers();syncHistory();if(window.ResizeObserver)new ResizeObserver(resize).observe(pitch);window.addEventListener("resize",resize);syncImmersive();requestAnimationFrame(resize);
 })();
 </script>
