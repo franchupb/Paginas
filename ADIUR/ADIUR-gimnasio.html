@@ -4968,12 +4968,9 @@ async function sincronizarGimnasioConNube() {
     rutinasIndividualesPreparadas.clear();
     asegurarRutinasGenerales(divisionSelect.value);
 
-    localStorage.setItem(KEY, JSON.stringify(db));
-
     // Habilitar la nube recién después de terminar la lectura y combinación.
+    // guardarDB realiza la única persistencia local y la sincronización remota.
     nubeListaParaGuardar = true;
-
-    // Subir la base combinada (también crea el documento si todavía no existe).
     guardarDB();
 
     rutinaActual = obtenerRutinaActual() || crearRutina();
