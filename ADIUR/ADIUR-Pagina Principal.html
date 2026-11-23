@@ -1310,27 +1310,31 @@ a {
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
    CONEXIÓN A FIRESTORE (adiur-b1913)
 ===================================================== */
 const firebaseConfig = {
-  projectId: "adiur-b1913",
-  appId: "1:1032379124859:web:adiur-fem-web",
+  apiKey: "AIzaSyCc0dPIEkaKxbHoRC2CgZK412dXVGPOdTI",
   authDomain: "adiur-b1913.firebaseapp.com",
-  storageBucket: "adiur-b1913.appspot.com"
+  projectId: "adiur-b1913",
+  storageBucket: "adiur-b1913.firebasestorage.app",
+  messagingSenderId: "884643321144",
+  appId: "1:884643321144:web:ba3c314de3a1c9e3545dcd",
+  measurementId: "G-58LL26YXPM"
 };
 
 let db = null;
 let nubeActiva = false;
 try {
-  const app = initializeApp(firebaseConfig);
+  // Reutiliza la misma app Firebase inicializada por ADIUR-auth.js.
+  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   db = getFirestore(app);
   nubeActiva = true;
 } catch (e) {
-  console.warn("Modo local activo:", e);
+  console.warn("No se pudo iniciar Firestore:", e);
 }
 
 let cachePartidosNube = [];
@@ -1340,34 +1344,10 @@ let cacheJugadorasNube = [];
    USUARIO Y PERMISOS
 ===================================================== */
 
-const usuarioGuardado = localStorage.getItem("usuarioADIUR");
-
-if (!usuarioGuardado) {
-  window.location.href = "ADIUR-Loing.html";
-}
-
-const usuarioNormalizado = (usuarioGuardado || "").trim().toLowerCase();
-
-const esFran = ["fran", "francisco", "francisco perez basla"].includes(usuarioNormalizado);
-const esToto = usuarioNormalizado === "toto";
-
-const esBianca = [
-  "biancadominguez",
-  "bianca"
-].includes(usuarioNormalizado);
-
-const nombreMostrar = usuarioGuardado || "Usuario";
-
-document.getElementById("nombreUsuario").textContent = nombreMostrar;
-document.getElementById("saludoUsuario").textContent = nombreMostrar;
-document.getElementById("avatarUsuario").textContent =
-  nombreMostrar.charAt(0).toUpperCase();
-
-document.getElementById("rolUsuario").textContent =
-  esFran ? "Administrador" :
-  esToto ? "Cuerpo técnico" :
-  esBianca ? "Jugadora · Sub 14" :
-  "Club ADIUR";
+// La sesión ahora la valida Firebase mediante ADIUR-permisos.js.
+// No exigir el antiguo usuarioADIUR de localStorage: provocaba volver al login.
+const usuarioGuardado = localStorage.getItem("usuarioADIUR") || "";
+const usuarioNormalizado = usuarioGuardado.trim().toLowerCase();
 
 document.getElementById("fechaHoy").textContent =
   new Intl.DateTimeFormat("es-AR", {
@@ -1423,16 +1403,7 @@ function inicializarPreferencias() {
   document.getElementById("filtroCumpleanos").value = "Todas";
 }
 
-/* Permisos de visualización del menú */
-
-if (esBianca) {
-  document.getElementById("grupoPlantel")?.remove();
-  document.getElementById("grupoRendimientos")?.remove();
-
-  document.querySelectorAll("[data-ocultar-bianca]").forEach(enlace => {
-    enlace.style.display = "none";
-  });
-}
+/* Los permisos del menú se centralizan en ADIUR-permisos.js. */
 
 window.cerrarSesion = async function(event) {
   event?.preventDefault();
