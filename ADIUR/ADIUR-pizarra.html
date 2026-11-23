@@ -835,6 +835,38 @@ body,.studio,.board-studio,.board-topline,.controlbar,.top-tools,
  .add-rival-btn{flex-basis:30px!important;width:30px!important;height:30px!important}
 }
 
+
+/* Ajuste solicitado: controles en una sola barra y botones de historial/rival */
+.controlbar{
+ display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+ align-items:center!important;justify-content:flex-start!important;gap:clamp(6px,1.1vw,16px)!important;
+ width:100%!important;min-width:0!important;overflow-x:auto!important;overflow-y:hidden!important;
+ white-space:nowrap!important;background:#fff!important;scrollbar-width:none!important
+}
+.controlbar::-webkit-scrollbar{display:none!important}
+.controlbar>.control-group,.controlbar>.top-tools{flex:0 0 auto!important}
+.controlbar>.rival-formation{margin-left:auto!important}
+.quick-history{display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:5px!important}
+.quick-history-btn{
+ background:#f47721!important;border:1px solid #f47721!important;color:#fff!important;
+ box-shadow:none!important;border-radius:7px!important
+}
+.quick-history-btn:hover,.quick-history-btn:focus-visible{
+ background:#dc5e0b!important;border-color:#dc5e0b!important;color:#fff!important
+}
+.quick-history-btn:disabled{opacity:.35!important}
+.add-rival-btn{
+ background:#f47721!important;border:1px solid #f47721!important;color:#171717!important;
+ box-shadow:none!important;border-radius:7px!important
+}
+.add-rival-btn:hover,.add-rival-btn[aria-pressed=true]{
+ background:#dc5e0b!important;border-color:#dc5e0b!important;color:#171717!important
+}
+@media(max-width:760px){
+ .controlbar{display:flex!important;flex-wrap:nowrap!important;justify-content:flex-start!important;gap:8px!important;overflow-x:auto!important}
+ .controlbar>.rival-formation{margin-left:auto!important}
+}
+
 </style>
 </head>
 <body>
