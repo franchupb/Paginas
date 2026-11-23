@@ -2218,6 +2218,7 @@ async function obtenerInfoLesionesJugadora(jugadora) {
 ===================================================== */
 window.renderizarVistaActiva = async function() {
   const modulo = document.getElementById("filtroModulo").value;
+  if(modulo!=="integral")versionRenderIntegral++;
   if (modulo === "integral") {
     await renderizarPanelIntegral();
   } else if (modulo === "partidos") {
@@ -2766,7 +2767,8 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 /* CONSOLIDADO INDIVIDUAL · INFORMES + TESTEOS + LESIONES */
 const CACHE_FUENTES_INTEGRAL={partidos:{at:0,data:[]},lesiones:{at:0,data:[]},planillas:new Map()};
-const TTL_FUENTES_INTEGRAL=15000;\nlet versionRenderIntegral=0;
+const TTL_FUENTES_INTEGRAL=15000;
+let versionRenderIntegral=0;
 function claveCategoriaIntegral(valor){return normalizarTexto(valor).replace(/[^a-z0-9]/g,"");}
 function escaparIntegral(valor){return String(valor??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function numeroIntegral(valor){if(valor===null||valor===undefined||String(valor).trim()==="")return null;const n=Number(String(valor).replace(",", "."));return Number.isFinite(n)?n:null;}
@@ -2857,9 +2859,11 @@ function eventosDeJugadoraIntegral(eventos,jugadora){
  return (Array.isArray(eventos)?eventos:[]).filter(e=>{const n=normalizarTexto(typeof e.jugadora==="object"?(e.jugadora.nombre||e.jugadora.nombreCompleto):e.jugadora);return n===normalizarTexto(jugadora.nombreCompleto)||n===normalizarTexto(jugadora.id);});
 }
 async function renderizarPanelIntegral(){
+ const version=++versionRenderIntegral;
  const division=document.getElementById("filtroDivision").value,jugadoras=obtenerJugadorasFiltradasActuales(),tbody=document.getElementById("cuerpoIntegral"),estado=document.getElementById("estadoIntegral");
  tbody.innerHTML='<tr><td colspan="10" class="integral-empty">Consolidando las fuentes de datos…</td></tr>';
  const [partidos,lesiones,planillas]=await Promise.all([obtenerPartidosIntegral(),obtenerLesionesIntegral(),obtenerPlanillasIntegral(division)]);
+ if(version!==versionRenderIntegral||document.getElementById("filtroModulo").value!=="integral"||document.getElementById("filtroDivision").value!==division)return;
  const partidosDiv=partidos.filter(p=>categoriaRegistroIntegral(p)===claveCategoriaIntegral(division)),resumen=[];
  for(const j of jugadoras){
   const regs=partidosDiv.map(p=>({p,reg:registroPartidoIntegral(p,j,division)})).filter(x=>x.reg);
