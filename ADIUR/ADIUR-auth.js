@@ -6,7 +6,7 @@ import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCc5dPIEkaKxbHoRO2CgZK412dXVGPOdTI",
+  apiKey: "AIzaSyCc0dPIEkaKxbHoRC2CgZK412dXVGPOdTI",
   authDomain: "adiur-b1913.firebaseapp.com",
   projectId: "adiur-b1913",
   storageBucket: "adiur-b1913.firebasestorage.app",
