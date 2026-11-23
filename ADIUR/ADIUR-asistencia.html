@@ -2405,18 +2405,10 @@ function normalizarCategoria(valor) {
 const usuarioNormalizado = normalizarTexto(usuarioGuardado)
   .replace(/[^a-z0-9]/g, "");
 
-const esFran = [
-  "fran",
-  "francisco",
-  "franciscoperezbasla"
-].includes(usuarioNormalizado);
-
-const esToto = usuarioNormalizado === "toto";
-
-const esBianca = [
-  "bianca",
-  "biancadominguez"
-].includes(usuarioNormalizado);
+const rolADIUR = localStorage.getItem("rolADIUR") || "";
+const esFran = rolADIUR === "admin";
+const esToto = rolADIUR === "cuerpo_tecnico";
+const esBianca = rolADIUR === "jugadora";
 
 const nombreMostrar = usuarioGuardado || "Usuario";
 
@@ -2431,18 +2423,12 @@ document.getElementById("rolUsuario").textContent =
   esBianca ? "Jugadora · Sub 14" :
   "Club ADIUR";
 
-if (!esFran && !esToto && usuarioGuardado) {
+if (usuarioGuardado && !["admin", "coordinadora", "cuerpo_tecnico", "jugadora"].includes(rolADIUR)) {
   window.location.href = "ADIUR-Pagina Principal.html";
 }
 
-if (esBianca) {
-  document.getElementById("grupoPlantel")?.remove();
-  document.getElementById("grupoRendimientos")?.remove();
-
-  document.querySelectorAll("[data-ocultar-bianca]").forEach(enlace => {
-    enlace.style.display = "none";
-  });
-}
+// El menú y la visualización de datos propios de cada jugadora se aplican
+// desde ADIUR-permisos.js para todos los perfiles de jugadora.
 
 /* =====================================================
    MENÚ Y SESIÓN
