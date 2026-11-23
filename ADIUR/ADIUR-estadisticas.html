@@ -1145,6 +1145,18 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
   html{scroll-behavior:auto}
   *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
 }
+
+/* ESTADÍSTICAS · INTERFAZ INTEGRAL ÚNICA */
+#panelFiltrosPrincipales .campo-filtro:has(#filtroModulo),
+#panelFiltrosPrincipales .campo-filtro:has(#filtroDivision),
+#panelFiltrosPrincipales .campo-filtro:has(#filtroMesAsistencia),
+#panelFiltrosPrincipales .campo-filtro:has(#filtroCompetencia),
+#panelFiltrosPrincipales .campo-filtro:has(#filtroPosicion),
+#contenedorAccionesAdmin{display:none!important}
+#panelFiltrosPrincipales .controles-filtros{display:block!important}
+#panelFiltrosPrincipales .campo-filtro:has(#filtroJugadoraIndividual){display:block!important;max-width:560px}
+#panelFichaJugadora.activa{display:block!important}
+@media(max-width:520px){#panelFiltrosPrincipales .campo-filtro:has(#filtroJugadoraIndividual){max-width:none}}
 </style>
 </head>
 
@@ -1354,7 +1366,7 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
             <option value="Todas" selected>Todas las categorías</option>
             <option value="Sub 10">Sub 10</option>
             <option value="Sub 12">Sub 12</option>
-            <option value="Sub 14" selected>Sub 14</option>
+            <option value="Sub 14">Sub 14</option>
             <option value="Sub 16">Sub 16</option>
             <option value="Primera">Primera</option>
           </select>
@@ -1833,25 +1845,10 @@ function obtenerJugadoras() {
 }
 
 function obtenerJugadorasFiltradasActuales() {
-  const divisionSeleccionada = document.getElementById("filtroDivision").value;
-  const filtroPos = document.getElementById("filtroPosicion").value;
-  const jugadoraSelId = document.getElementById("filtroJugadoraIndividual").value;
-  const divNorm = divisionSeleccionada.toLowerCase().replace(/\s+/g, "");
-
+  const jugadoraSelId = document.getElementById("filtroJugadoraIndividual")?.value || "";
   return obtenerJugadoras()
-    .filter(j => !divisionSeleccionada || divNorm === "todas" || (j.categoria || "").toLowerCase().replace(/\s+/g, "") === divNorm)
-    .filter(j => {
-      if (jugadoraSelId && String(j.id) !== String(jugadoraSelId)) return false;
-      if (filtroPos === "todas") return true;
-      const pos = (j.posicion || "").trim().toLowerCase();
-      if (filtroPos === "arqueras") return pos.includes("arquera");
-      if (filtroPos === "defensoras") return pos.includes("defensora");
-      if (filtroPos === "mediocampistas") return pos.includes("mediocampista");
-      if (filtroPos === "delanteras") return pos.includes("delantera");
-      if (filtroPos === "polivalentes") return pos.includes("polivalente") || pos.includes("polifuncional");
-      return true;
-    })
-    .sort((a, b) => a.nombreCompleto.localeCompare(b.nombreCompleto));
+    .filter(j => !jugadoraSelId || String(j.id) === String(jugadoraSelId))
+    .sort((a, b) => String(a.nombreCompleto || "").localeCompare(String(b.nombreCompleto || ""), "es"));
 }
 
 function normalizarTexto(txt) {
@@ -1973,27 +1970,28 @@ window.cambiarDivision = function() {
   renderizarVistaActiva();
 };
 
-function actualizarSelectorJugadorasDivision(division) {
+function actualizarSelectorJugadorasDivision() {
   const selectJug = document.getElementById("filtroJugadoraIndividual");
-  const todas = !division || normalizarTexto(division) === "todas";
-  const divNorm = normalizarTexto(division).replace(/\s+/g, "");
-  const jugadorasDiv = obtenerJugadoras()
-    .filter(j => todas || normalizarTexto(j.categoria).replace(/\s+/g, "") === divNorm)
-    .sort((a, b) => a.nombreCompleto.localeCompare(b.nombreCompleto));
-
+  if (!selectJug) return;
+  const anterior = selectJug.value;
+  const todas = obtenerJugadoras().filter(j => j && j.id !== undefined && j.id !== null)
+    .sort((a,b)=>String(a.nombreCompleto||"").localeCompare(String(b.nombreCompleto||""),"es"));
   selectJug.innerHTML = '<option value="">Todas las jugadoras · visión general del club</option>';
-  jugadorasDiv.forEach(j => {
-    const opt = document.createElement("option");
-    opt.value = j.id;
-    opt.textContent = `${j.nombreCompleto} · ${j.categoria || "Sin categoría"}`;
+  todas.forEach(j => {
+    const opt=document.createElement("option");
+    opt.value=String(j.id);
+    opt.textContent=`${j.nombreCompleto||"Jugadora"} · ${j.categoria||"Sin categoría"}`;
     selectJug.appendChild(opt);
   });
+  if(anterior && todas.some(j=>String(j.id)===anterior))selectJug.value=anterior;
 }
 
 /* =====================================================
    CONSOLIDACIÓN DE DATOS POR JUGADORA
 ===================================================== */
+let versionFichaIntegral = 0;
 window.seleccionarJugadoraFicha = async function(jugadoraId) {
+  const versionFicha = ++versionFichaIntegral;
   const selectJug = document.getElementById("filtroJugadoraIndividual");
   if (selectJug.value !== jugadoraId) selectJug.value = jugadoraId;
 
@@ -2021,14 +2019,20 @@ window.seleccionarJugadoraFicha = async function(jugadoraId) {
   grid.innerHTML = `<div class="ficha-vacio">Cargando información de la jugadora...</div>`;
   panel.classList.add("activa");
 
+  const fallback = etiqueta => ({html:`<div class="ficha-vacio">No se pudo cargar esta sección (${etiqueta}). Volvé a intentarlo.</div>`});
+  const seguro = (promesa, etiqueta) => Promise.resolve(promesa).catch(error => {
+    console.error("Error al cargar ficha integral · "+etiqueta,error);
+    return fallback(etiqueta);
+  });
   const [datosTesteos, datosAsistencia, datosInformes, datosPartidosExt, datosTiempos, datosLesiones] = await Promise.all([
-    obtenerInfoTesteosJugadora(jugadora),
-    obtenerInfoAsistenciaJugadora(jugadora, moduloActivo === "asistencia" ? mesAsistencia : "total"),
-    obtenerInfoInformesJugadora(jugadora),
-    obtenerInfoPartidosExternosJugadora(jugadora),
-    obtenerInfoTiemposJugadora(jugadora),
-    obtenerInfoLesionesJugadora(jugadora)
+    seguro(obtenerInfoTesteosJugadora(jugadora),"testeos"),
+    seguro(obtenerInfoAsistenciaJugadora(jugadora,"total"),"asistencia"),
+    seguro(obtenerInfoInformesJugadora(jugadora),"informes"),
+    seguro(obtenerInfoPartidosExternosJugadora(jugadora),"partidos"),
+    seguro(obtenerInfoTiemposJugadora(jugadora),"tiempos"),
+    seguro(obtenerInfoLesionesJugadora(jugadora),"lesiones")
   ]);
+  if(versionFicha!==versionFichaIntegral || String(selectJug.value)!==String(jugadoraId))return;
 
   let tarjetasHtml = "";
 
@@ -2161,7 +2165,7 @@ async function obtenerTodosInformesExternos() {
 
 async function obtenerInfoPartidosExternosJugadora(jugadora) {
   const partidos = await obtenerTodosPartidosExternos();
-  const divNorm = jugadora.categoria.toLowerCase().replace(/\s+/g, "");
+  const divNorm = (jugadora.categoria || "").toLowerCase().replace(/\s+/g, "");
 
   const deJugadora = partidos.filter(p => {
     if (!p) return false;
@@ -3015,12 +3019,19 @@ window.cerrarModal = function(id) {
 };
 
 window.addEventListener("DOMContentLoaded", async () => {
-  await sincronizarJugadorasDesdeBase();
-  document.getElementById("filtroModulo").value = "integral";
-  document.getElementById("filtroDivision").value = "Todas";
-  document.getElementById("filtroPosicion").value = "todas";
-  cambiarModuloFiltro(true);
-  cambiarDivision();
+  try {
+    await sincronizarJugadorasDesdeBase();
+    document.getElementById("filtroModulo").value = "integral";
+    document.getElementById("filtroDivision").value = "Todas";
+    document.getElementById("filtroPosicion").value = "todas";
+    actualizarSelectorJugadorasDivision("Todas");
+    cambiarModuloFiltro(true);
+    await renderizarVistaActiva();
+  } catch(error) {
+    console.error("No se pudo iniciar Estadísticas:",error);
+    const estado=document.getElementById("estadoIntegral");
+    if(estado)estado.textContent="No se pudo completar la carga inicial. Revisá la conexión y actualizá la página.";
+  }
 });
 /* CONSOLIDADO INDIVIDUAL · INFORMES + TESTEOS + LESIONES */
 const CACHE_FUENTES_INTEGRAL={partidos:{at:0,data:[]},lesiones:{at:0,data:[]},planillas:new Map()};
@@ -3217,6 +3228,16 @@ async function renderizarPanelIntegral(){
  buscar.oninput=filtrar;filtrar();
  estado.textContent="Club completo · "+partidosDiv.length+" informes de partido · "+resumen.filter(x=>x.test).length+"/"+jugadoras.length+" jugadoras con testeos · "+resumen.reduce((a,x)=>a+x.casos.length,0)+" registros de lesiones. Los guiones indican datos no cargados.";
 }
+
+/* Mantener el resumen general separado de la ficha individual. */
+const renderizarPanelIntegralBase = renderizarPanelIntegral;
+renderizarPanelIntegral = async function() {
+  const seleccion = document.getElementById("filtroJugadoraIndividual")?.value || "";
+  const resultado = await renderizarPanelIntegralBase();
+  const panel = document.getElementById("panelIntegral");
+  if (panel) panel.style.display = seleccion ? "none" : "block";
+  return resultado;
+};
 
 
 </script>
