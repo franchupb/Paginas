@@ -361,6 +361,9 @@
             puedeGestionarUsuarios: base.puedeGestionarUsuarios
           });
           aplicarPermisos();
+          window.dispatchEvent(new CustomEvent("adiur-permisos-listos", {
+            detail: window.ADIUR_PERMISOS
+          }));
           if (!refrescoInicialRealizado) {
             refrescoInicialRealizado = true;
             if (paginaActual() === "adiur-asistencia.html") {
