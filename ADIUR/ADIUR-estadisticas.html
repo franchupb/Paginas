@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f47721">
 <title>Estadísticas · ADIUR FEMENINO</title>
-<script src="ADIUR-permisos.js?v=20261123f"></script>
+<script src="ADIUR-permisos.js?v=20261123g"></script>
 <style>
 :root{--naranja:#f47721;--naranja-oscuro:#dc5e0b;--naranja-claro:#fff0e6;--negro:#171717;--gris:#f4f5f7;--gris-texto:#747474;--borde:#e8e8e8;--blanco:#fff;--verde:#18794e;--rojo:#b42318}
 *{box-sizing:border-box}body{margin:0;background:var(--gris);color:var(--negro);font-family:Arial,Helvetica,sans-serif}button,select,input{font:inherit}.barra-superior{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:15px;min-height:84px;padding:12px 25px;background:#fff;border-bottom:1px solid var(--borde)}.boton-menu{width:42px;height:42px;border:0;border-radius:9px;background:#fff;font-size:27px;cursor:pointer}.logo-superior{width:55px;height:55px;object-fit:contain;border-radius:50%}.titulo-superior{flex:1;min-width:0}.titulo-superior h1{margin:0 0 5px;font-size:23px;font-weight:900;letter-spacing:.5px}.titulo-superior p{margin:0;color:var(--gris-texto);font-size:13px}.perfil{display:flex;align-items:center;gap:10px;min-width:0}.avatar{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--negro);color:#fff;font-size:14px;font-weight:900}.nombre-perfil{font-size:13px;font-weight:800}.rol-perfil{margin-top:4px;color:var(--gris-texto);font-size:11px}.contenedor{display:flex;min-height:calc(100vh - 84px)}#sidebar{flex:0 0 258px;width:258px;min-height:calc(100vh - 84px);background:#fff;border-right:1px solid var(--borde)}.contenido{width:100%;max-width:1600px;margin:0 auto;padding:30px}.encabezado-seccion{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:22px}.encabezado-seccion h2{margin:0 0 7px;font-size:25px;font-weight:900}.encabezado-seccion p{max-width:800px;margin:0;color:var(--gris-texto);font-size:14px;line-height:1.5}.selector-panel,.panel,.metric-card,.bloque-datos{background:#fff;border:1px solid var(--borde);border-radius:15px}.selector-panel{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 20px;margin-bottom:20px}.selector-panel label{display:block;margin-bottom:7px;font-size:11px;font-weight:900;letter-spacing:.6px;color:#555}.selector-panel select{width:min(100%,460px);min-height:46px;padding:10px 13px;border:1px solid #ddd;border-radius:10px;background:#fff;font-weight:700;outline:none}.selector-panel select:focus{border-color:var(--naranja);box-shadow:0 0 0 3px #f477211c}.estado-carga{color:var(--gris-texto);font-size:12px;text-align:right}.metricas{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px;margin-bottom:20px}.metric-card{padding:17px 18px}.metric-card small{display:block;color:var(--gris-texto);font-size:10px;font-weight:900;letter-spacing:.7px}.metric-card strong{display:block;margin:9px 0 5px;font-size:29px;line-height:1.1}.metric-card span{color:var(--gris-texto);font-size:11px}.panel{padding:20px;margin-bottom:20px}.panel-titulo{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}.panel-titulo h3{margin:0 0 5px;font-size:17px}.panel-titulo p{margin:0;color:var(--gris-texto);font-size:12px;line-height:1.5}.tabla-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:720px}th{padding:11px 10px;background:#f8f8f8;color:#666;text-align:left;font-size:10px;letter-spacing:.5px}td{padding:12px 10px;border-bottom:1px solid #eee;font-size:12px}tbody tr:last-child td{border-bottom:0}.jugadora-link{padding:0;border:0;background:none;color:var(--negro);font-weight:800;text-align:left;cursor:pointer}.jugadora-link:hover{color:var(--naranja-oscuro)}.pill{display:inline-flex;align-items:center;padding:4px 8px;border-radius:20px;background:var(--naranja-claro);color:var(--naranja-oscuro);font-size:10px;font-weight:800}.vacio{padding:25px 12px;color:var(--gris-texto);text-align:center;font-size:13px}.ficha{display:none}.ficha.activa{display:block}.ficha-cabecera{display:flex;align-items:center;justify-content:space-between;gap:15px;padding-bottom:17px;margin-bottom:17px;border-bottom:1px solid var(--borde)}.identidad{display:flex;align-items:center;gap:13px}.ficha-avatar{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--naranja-claro);color:var(--naranja-oscuro);font-size:18px;font-weight:900}.ficha-cabecera h3{margin:0 0 5px;font-size:19px}.ficha-cabecera p{margin:0;color:var(--gris-texto);font-size:12px}.btn-secundario{padding:9px 12px;border:1px solid var(--borde);border-radius:9px;background:#fff;font-size:12px;font-weight:800;cursor:pointer}.ficha-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.bloque-datos{padding:16px}.bloque-datos h4{margin:0 0 7px;font-size:13px}.bloque-datos .cantidad{float:right;color:var(--naranja-oscuro);font-weight:900}.bloque-datos p{margin:0;color:var(--gris-texto);font-size:12px;line-height:1.5}.lista-registros{margin-top:10px}.registro{padding:9px 0;border-top:1px solid #eee;font-size:11px;line-height:1.45}.registro strong{display:block;font-size:11px}.pie-estado{padding:12px 2px;color:var(--gris-texto);font-size:11px;line-height:1.5}.oculto{display:none!important}
@@ -24,20 +24,21 @@
 <main class="contenido">
 <section class="encabezado-seccion"><div><h2>Estadísticas del club</h2><p>Una mirada integral de todas las categorías y áreas de seguimiento. Seleccioná una jugadora para consultar su información deportiva, física y de salud.</p></div></section>
 <section class="selector-panel">
-<div><label for="selectorJugadora">CONSULTAR JUGADORA</label><select id="selectorJugadora"><option value="">Todas las jugadoras · visión general del club</option></select></div>
+<div class="selector-campo"><label for="selectorCategoria">FILTRAR POR CATEGORÍA</label><select id="selectorCategoria"><option value="">Todas las categorías</option></select></div>
+<div class="selector-campo" id="campoJugadora"><label for="selectorJugadora">CONSULTAR JUGADORA</label><select id="selectorJugadora"><option value="">Todas las jugadoras · visión general del club</option></select></div>
 <div class="estado-carga" id="estadoCarga" role="status" aria-live="polite">Conectando con los registros del club…</div>
 </section>
 <section id="vistaGeneral">
 <div class="metricas">
 <article class="metric-card"><small>JUGADORAS ACTIVAS</small><strong id="mJugadoras">—</strong><span>Plantel completo de ADIUR</span></article>
-<article class="metric-card"><small>PARTIDOS REGISTRADOS</small><strong id="mPartidos">—</strong><span>Fixture y competencia</span></article>
+<article class="metric-card"><small>INFORMES REGISTRADOS</small><strong id="mInformes">—</strong><span>Encuentros cargados</span></article>
 <article class="metric-card"><small>GOLES REGISTRADOS</small><strong id="mGoles">—</strong><span>Según informes cargados</span></article>
-<article class="metric-card"><small>ASISTENCIAS</small><strong id="mAsistencia">—</strong><span>Registros de entrenamiento</span></article>
-<article class="metric-card"><small>LESIONES ACTIVAS</small><strong id="mLesiones">—</strong><span>Casos en seguimiento</span></article>
+<article class="metric-card"><small>ASISTENCIAS</small><strong id="mAsistencia">—</strong><span>Presentes registrados</span></article>
+<article class="metric-card"><small>TESTEOS CARGADOS</small><strong id="mTesteos">—</strong><span>Planillas de evaluación</span></article><article class="metric-card"><small>LESIONES ACTIVAS</small><strong id="mLesiones">—</strong><span>Casos en seguimiento</span></article>
 </div>
 <section class="panel">
 <div class="panel-titulo"><div><h3>Resumen del plantel</h3><p>Información consolidada de todas las categorías. Elegí una jugadora para abrir su ficha integral.</p></div></div>
-<div class="tabla-wrap"><table><thead><tr><th>JUGADORA</th><th>CATEGORÍA</th><th>POSICIÓN</th><th>PARTIDOS</th><th>GOLES</th><th>ASISTENCIA</th><th>TIEMPOS</th><th>LESIONES</th></tr></thead><tbody id="tablaJugadoras"><tr><td colspan="8" class="vacio">Cargando jugadoras…</td></tr></tbody></table></div>
+<div class="tabla-wrap"><table><thead><tr><th>JUGADORA</th><th>CATEGORÍA</th><th>POSICIÓN</th><th>INFORMES</th><th>GOLES</th><th>ASISTENCIAS</th><th>TESTEOS</th><th>LESIONES</th></tr></thead><tbody id="tablaJugadoras"><tr><td colspan="8" class="vacio">Cargando jugadoras…</td></tr></tbody></table></div>
 </section>
 </section>
 <section class="panel ficha" id="fichaJugadora">
@@ -55,114 +56,204 @@ const firebaseConfig={apiKey:"AIzaSyCc0dPIEkaKxbHoRC2gZK412dXVGPOdTI",authDomain
 const app=getApps().length?getApps()[0]:initializeApp(firebaseConfig);
 const db=getFirestore(app);
 const $=id=>document.getElementById(id);
-const nombresColecciones=["partidos","informes","asistenciaADIUR","tiemposRendimiento","lesiones","testeos_adiur"];
-const datos={jugadoras:[],partidos:[],informes:[],asistenciaADIUR:[],tiemposRendimiento:[],lesiones:[],testeos_adiur:[]};
+const FUENTES=["informes","asistenciaADIUR","testeos_adiur","lesiones"];
+const datos={jugadoras:[],informes:[],asistenciaADIUR:[],testeos_adiur:[],lesiones:[]};
+let permisos=null;
+let categoriaActiva="";
 const texto=v=>String(v??"").trim();
 const normalizar=v=>texto(v).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
 const nombreJ=j=>texto(j.nombreCompleto||j.nombre_completo||j.nombreYApellido||j.nombre_y_apellido||[j.nombre||j.nombres,j.apellido||j.apellidos].filter(Boolean).join(" ")||j.jugadora||j.nombre);
-const categoriaJ=j=>texto(j.categoria||j.division||j.categoriaDeportiva||j.divisionNombre||"Sin categoría");
+const categoriaJ=j=>texto(j.categoria||j.division||j.categoriaDeportiva||j.divisionNombre||j.category||"Sin categoría");
 const posicionJ=j=>texto(j.posicion||j.puesto||j.demarcacion||"—");
-const activoJ=j=>j.activa!==false&&j.activo!==false&&j.estado!=="Inactiva"&&j.estado!=="inactiva";
-function aNumero(v){if(typeof v==="number"&&Number.isFinite(v))return v;const n=Number(String(v??"").replace(",", "."));return Number.isFinite(n)?n:0}
-function esc(v){return texto(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function identidadCoincide(obj,j){
- if(!obj||typeof obj!=="object")return false;
- const ids=[j.id,j.uid,j.jugadoraId,j.idJugadora].filter(Boolean).map(normalizar);
- const nombres=[nombreJ(j),j.nombre,j.apellido].filter(Boolean).map(normalizar);
- const claves=["jugadoraId","idJugadora","id_jugadora","playerId","uid","jugadora_id","jugadora","nombreJugadora","nombre_jugadora","nombre","nombreCompleto","nombre_completo","jugadoraNombre"];
- for(const k of claves){const v=obj[k];if(v&&typeof v==="object"){if(identidadCoincide(v,j))return true;continue}const n=normalizar(v);if(n&&(ids.includes(n)||nombres.includes(n)))return true}
+const activoJ=j=>j.activa!==false&&j.activo!==false&&!/^(inactiva|inactivo|baja)$/i.test(texto(j.estado));
+const esc=v=>texto(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ordenCategorias=["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
+function normalizarCategoria(v){const n=normalizar(v);return ({sub10:"Sub 10",s10:"Sub 10",sub12:"Sub 12",s12:"Sub 12",sub14:"Sub 14",s14:"Sub 14",sub16:"Sub 16",s16:"Sub 16",primera:"Primera"})[n]||texto(v)}
+function categoriasPermitidas(){
+ if(!permisos)return [];
+ if(permisos.rol==="jugadora")return (permisos.categorias||[]).map(normalizarCategoria);
+ if(permisos.rol==="cuerpo_tecnico")return (permisos.categorias||[]).map(normalizarCategoria);
+ return ordenCategorias;
+}
+function jugadorasVisibles(){
+ let lista=datos.jugadoras.filter(activoJ);
+ const permitidas=categoriasPermitidas();
+ if(permitidas.length)lista=lista.filter(j=>permitidas.some(c=>normalizar(c)===normalizar(categoriaJ(j))));
+ if(categoriaActiva)lista=lista.filter(j=>normalizar(categoriaJ(j))===normalizar(categoriaActiva));
+ if(permisos?.rol==="jugadora"){
+  const propia=normalizar(permisos.jugadora||permisos.nombre||permisos.usuario);
+  lista=lista.filter(j=>normalizar(nombreJ(j))===propia);
+ }
+ return lista;
+}
+function idsJugador(j){
+ return [j.id,j.uid,j.jugadoraId,j.idJugadora].filter(Boolean).map(normalizar);
+}
+function clavesNombre(j){
+ return [nombreJ(j),j.nombre,j.apellido,[j.nombre,j.apellido].filter(Boolean).join(" ")].filter(Boolean).map(normalizar);
+}
+function coincideIdentidad(o,j){
+ if(!o||typeof o!=="object")return false;
+ const ids=idsJugador(j),nombres=clavesNombre(j);
+ const keys=["jugadoraId","idJugadora","id_jugadora","playerId","uid","jugadora_id","jugadora","nombreJugadora","nombre_jugadora","nombre","nombreCompleto","nombre_completo","jugadoraNombre","atleta"];
+ for(const k of keys){
+  const v=o[k];
+  if(v&&typeof v==="object"){if(coincideIdentidad(v,j))return true;continue}
+  const n=normalizar(v);
+  if(n&&(ids.includes(n)||nombres.includes(n)))return true;
+ }
  return false;
 }
-function buscarNodos(obj,j,out=[],seen=new Set()){
- if(!obj||typeof obj!=="object"||seen.has(obj))return out;seen.add(obj);
- if(Array.isArray(obj)){obj.forEach(x=>buscarNodos(x,j,out,seen));return out}
- if(identidadCoincide(obj,j)){out.push(obj);return out}
- Object.values(obj).forEach(v=>buscarNodos(v,j,out,seen));return out;
-}
-function contarJugadora(coleccion,j){return datos[coleccion].reduce((n,doc)=>n+buscarNodos(doc,j,[]).length,0)}
-function sumaCampo(coleccion,j,campos){let total=0;datos[coleccion].forEach(d=>buscarNodos(d,j,[]).forEach(o=>campos.forEach(k=>{if(o[k]!==undefined)total+=aNumero(o[k])})));return total}
-function fechaRegistro(o){return texto(o.fecha||o.fechaInicio||o.dia||o.createdAt||o.fechaPartido||"")}
-function resumenRegistro(o){
- const titulo=o.rival||o.equipoRival||o.contrincante||o.tipo||o.lesion||o.prueba||o.ejercicio||o.area||o.competencia||o.torneo||o.nombre||"Registro";
- const detalle=[o.resultado,o.tiempo||o.marca,o.estado,o.recuperacion].filter(Boolean).join(" · ");
- return {titulo,detalle,fecha:fechaRegistro(o)};
-}
-function registrosDe(coleccion,j){
- const hallados=[];datos[coleccion].forEach(d=>buscarNodos(d,j,[]).forEach(o=>hallados.push(o)));
- const vistos=new Set();return hallados.filter(o=>{const k=JSON.stringify(o);if(vistos.has(k))return false;vistos.add(k);return true}).sort((a,b)=>fechaRegistro(b).localeCompare(fechaRegistro(a)));
-}
-function renderGeneral(){
- const jugadoras=datos.jugadoras.filter(activoJ);
- $("mJugadoras").textContent=jugadoras.length;
- $("mPartidos").textContent=datos.partidos.length;
- $("mGoles").textContent=datos.informes.reduce((s,d)=>s+buscarTodosNumeros(d,["goles","gol"]).reduce((a,n)=>a+n,0),0);
- const presentes=datos.asistenciaADIUR.reduce((s,d)=>s+contarEstados(d,["presente","presente","asistio","asistió"]),0);
- $("mAsistencia").textContent=presentes;
- $("mLesiones").textContent=datos.lesiones.filter(l=>!/(alta|recuperada|cerrada|finalizada)/i.test(texto(l.estado||l.recuperacion||"activa"))).length;
- const rows=jugadoras.slice().sort((a,b)=>nombreJ(a).localeCompare(nombreJ(b),"es")).map(j=>{
-  const pj=contarJugadora("informes",j), goles=sumaCampo("informes",j,["goles","gol"]), asist=contarJugadora("asistenciaADIUR",j), tiempos=contarJugadora("tiemposRendimiento",j), lesiones=contarJugadora("lesiones",j);
-  return '<tr><td><button class="jugadora-link" type="button" data-jugadora="'+esc(j.id)+'">'+esc(nombreJ(j)||"Sin nombre")+'</button></td><td><span class="pill">'+esc(categoriaJ(j))+'</span></td><td>'+esc(posicionJ(j))+'</td><td>'+pj+'</td><td>'+goles+'</td><td>'+asist+'</td><td>'+tiempos+'</td><td>'+lesiones+'</td></tr>';
- }).join("");
- $("tablaJugadoras").innerHTML=rows||'<tr><td colspan="8" class="vacio">No hay jugadoras activas cargadas.</td></tr>';
- $("tablaJugadoras").querySelectorAll("[data-jugadora]").forEach(b=>b.addEventListener("click",()=>seleccionarJugadora(b.dataset.jugadora)));
- $("selectorJugadora").innerHTML='<option value="">Todas las jugadoras · visión general del club</option>'+jugadoras.slice().sort((a,b)=>nombreJ(a).localeCompare(nombreJ(b),"es")).map(j=>'<option value="'+esc(j.id)+'">'+esc(nombreJ(j))+' · '+esc(categoriaJ(j))+'</option>').join("");
-}
-function buscarTodosNumeros(obj,keys,out=[],seen=new Set()){
- if(!obj||typeof obj!=="object"||seen.has(obj))return out;seen.add(obj);
- if(Array.isArray(obj)){obj.forEach(x=>buscarTodosNumeros(x,keys,out,seen));return out}
- Object.entries(obj).forEach(([k,v])=>{if(keys.includes(normalizar(k))&&(typeof v==="number"||/^\d+$/.test(String(v))))out.push(aNumero(v));else if(v&&typeof v==="object")buscarTodosNumeros(v,keys,out,seen)});
+function buscarRegistros(obj,j,out=[],seen=new Set()){
+ if(!obj||typeof obj!=="object"||seen.has(obj))return out;
+ seen.add(obj);
+ if(Array.isArray(obj)){obj.forEach(x=>buscarRegistros(x,j,out,seen));return out}
+ if(coincideIdentidad(obj,j)){out.push(obj);return out}
+ const claves=[...idsJugador(j),...clavesNombre(j)];
+ Object.entries(obj).forEach(([k,v])=>{
+  if(claves.includes(normalizar(k))){out.push(v&&typeof v==="object"?v:{valor:v});return}
+  if(v&&typeof v==="object")buscarRegistros(v,j,out,seen);
+ });
  return out;
 }
-function contarEstados(obj,estados){
- let n=0;const visit=(v)=>{if(!v)return;if(typeof v==="string"){if(estados.includes(normalizar(v)))n++;return}if(Array.isArray(v)){v.forEach(visit);return}if(typeof v==="object")Object.values(v).forEach(visit)};visit(obj);return n;
+function registrosDe(fuente,j){
+ const salida=[];
+ (datos[fuente]||[]).forEach(d=>buscarRegistros(d,j,salida));
+ const vistos=new Set();
+ return salida.filter(o=>{const k=JSON.stringify(o);if(vistos.has(k))return false;vistos.add(k);return true});
 }
-function bloqueFicha(titulo,coleccion,j,descripcion){
- const lista=registrosDe(coleccion,j), items=lista.slice(0,4).map(o=>{const r=resumenRegistro(o);return '<div class="registro"><strong>'+esc(r.titulo)+'</strong>'+esc([r.fecha,r.detalle].filter(Boolean).join(" · ")||"Registro disponible")+'</div>'}).join("");
+function documentosDe(fuente,lista){
+ const docs=datos[fuente]||[];
+ return docs.filter(d=>lista.some(j=>buscarRegistros(d,j,[]).length>0));
+}
+function buscarNumeros(obj,keys,out=[],seen=new Set()){
+ if(!obj||typeof obj!=="object"||seen.has(obj))return out;seen.add(obj);
+ if(Array.isArray(obj)){obj.forEach(x=>buscarNumeros(x,keys,out,seen));return out}
+ Object.entries(obj).forEach(([k,v])=>{if(keys.includes(normalizar(k))&&v!==""&&v!==null&&Number.isFinite(Number(String(v).replace(",","."))))out.push(Number(String(v).replace(",",".")));else if(v&&typeof v==="object")buscarNumeros(v,keys,out,seen)});
+ return out;
+}
+function contarPresentes(obj){
+ let total=0;
+ const recorrer=(v,k="")=>{
+  if(v===null||v===undefined)return;
+  if(typeof v==="string"){
+   if(/^(presente|asistio|asistio|presentejustificado)$/i.test(normalizar(v)))total++;
+   return;
+  }
+  if(Array.isArray(v)){v.forEach(x=>recorrer(x,k));return}
+  if(typeof v==="object"){Object.entries(v).forEach(([key,val])=>recorrer(val,key));return}
+  if(typeof v==="boolean"&&v===true&&/presen|asist/i.test(k))total++;
+ };
+ recorrer(obj);return total;
+}
+function fechaRegistro(o){return texto(o.fecha||o.fechaInicio||o.dia||o.createdAt||o.fechaPartido||o.fechaLesion||o.ultimaActualizacion||"")}
+function tituloRegistro(o){return texto(o.rival||o.equipoRival||o.contrincante||o.tipo||o.lesion||o.prueba||o.ejercicio||o.area||o.competencia||o.torneo||o.nombre||o.mes||o.division||"Registro")}
+function detalleRegistro(o){return [o.resultado,o.minutos!==undefined?String(o.minutos)+" min":"",o.goles!==undefined?String(o.goles)+" goles":"",o.tiempo||o.marca,o.estado,o.recuperacion,o.mes].filter(Boolean).join(" · ")}
+function bloqueFicha(titulo,fuente,j,descripcion){
+ const lista=registrosDe(fuente,j).sort((a,b)=>fechaRegistro(b).localeCompare(fechaRegistro(a)));
+ const items=lista.slice(0,8).map(o=>'<div class="registro"><strong>'+esc(tituloRegistro(o))+'</strong>'+esc([fechaRegistro(o),detalleRegistro(o)].filter(Boolean).join(" · ")||"Registro disponible")+'</div>').join("");
  return '<article class="bloque-datos"><h4>'+titulo+' <span class="cantidad">'+lista.length+'</span></h4><p>'+descripcion+'</p><div class="lista-registros">'+(items||'<div class="registro">Sin registros asociados a esta jugadora.</div>')+'</div></article>';
 }
+function renderSelectorCategorias(){
+ const select=$("selectorCategoria");
+ const permitidas=categoriasPermitidas();
+ const disponibles=ordenCategorias.filter(c=>permitidas.some(p=>normalizar(p)===normalizar(c))&&datos.jugadoras.some(j=>normalizar(categoriaJ(j))===normalizar(c)));
+ const esJugador=permisos?.rol==="jugadora";
+ select.innerHTML=(esJugador?"":'<option value="">Todas las categorías permitidas</option>')+disponibles.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
+ if(categoriaActiva&&!disponibles.some(c=>normalizar(c)===normalizar(categoriaActiva)))categoriaActiva="";
+ select.value=categoriaActiva;
+ select.disabled=esJugador||disponibles.length<=1;
+ if(esJugador&&disponibles.length)select.value=disponibles[0];
+}
+function renderGeneral(){
+ const jugadoras=jugadorasVisibles();
+ const informes=documentosDe("informes",jugadoras);
+ const asistencias=datos.asistenciaADIUR.filter(d=>jugadoras.some(j=>buscarRegistros(d,j,[]).length>0));
+ const testeos=documentosDe("testeos_adiur",jugadoras);
+ const lesiones=documentosDe("lesiones",jugadoras);
+ $("mJugadoras").textContent=jugadoras.length;
+ $("mInformes").textContent=informes.length;
+ $("mGoles").textContent=informes.reduce((s,d)=>s+buscarNumeros(d,["goles","gol"]).reduce((a,n)=>a+n,0),0);
+ $("mAsistencia").textContent=asistencias.reduce((s,d)=>s+contarPresentes(d),0);
+ $("mTesteos").textContent=testeos.length;
+ $("mLesiones").textContent=lesiones.filter(l=>!/(alta|recuperada|cerrada|finalizada)/i.test(texto(l.estado||l.recuperacion||"activa"))).length;
+ const rows=jugadoras.slice().sort((a,b)=>nombreJ(a).localeCompare(nombreJ(b),"es")).map(j=>{
+  const inf=registrosDe("informes",j),asis=registrosDe("asistenciaADIUR",j),test=registrosDe("testeos_adiur",j),les=registrosDe("lesiones",j);
+  const goles=inf.reduce((s,o)=>s+buscarNumeros(o,["goles","gol"]).reduce((a,n)=>a+n,0),0);
+  return '<tr><td><button class="jugadora-link" type="button" data-jugadora="'+esc(j.id)+'">'+esc(nombreJ(j)||"Sin nombre")+'</button></td><td><span class="pill">'+esc(categoriaJ(j))+'</span></td><td>'+esc(posicionJ(j))+'</td><td>'+inf.length+'</td><td>'+goles+'</td><td>'+asis.reduce((s,o)=>s+contarPresentes(o),0)+'</td><td>'+test.length+'</td><td>'+les.length+'</td></tr>';
+ }).join("");
+ $("tablaJugadoras").innerHTML=rows||'<tr><td colspan="8" class="vacio">No hay jugadoras para la categoría seleccionada.</td></tr>';
+ $("tablaJugadoras").querySelectorAll("[data-jugadora]").forEach(b=>b.addEventListener("click",()=>seleccionarJugadora(b.dataset.jugadora)));
+ const selector=$("selectorJugadora");
+ selector.innerHTML='<option value="">Todas las jugadoras · visión general</option>'+jugadoras.slice().sort((a,b)=>nombreJ(a).localeCompare(nombreJ(b),"es")).map(j=>'<option value="'+esc(j.id)+'">'+esc(nombreJ(j))+' · '+esc(categoriaJ(j))+'</option>').join("");
+ if(permisos?.rol==="jugadora"){
+  selector.value=jugadoras[0]?.id||"";
+  selector.disabled=true;
+  $("campoJugadora").classList.add("oculto");
+  if(jugadoras[0])seleccionarJugadora(jugadoras[0].id);
+  else $("estadoCarga").textContent="No se encontró tu ficha de jugadora en el plantel.";
+ }else{
+  $("campoJugadora").classList.remove("oculto");
+  selector.disabled=false;
+ }
+}
 function seleccionarJugadora(id){
- const j=datos.jugadoras.find(x=>String(x.id)===String(id));if(!j)return;
+ const j=jugadorasVisibles().find(x=>String(x.id)===String(id));if(!j)return;
  $("vistaGeneral").classList.add("oculto");$("fichaJugadora").classList.add("activa");
- $("fichaAvatar").textContent=(nombreJ(j)||"J").charAt(0).toUpperCase();$("fichaNombre").textContent=nombreJ(j);
- $("fichaMeta").textContent=categoriaJ(j)+" · "+posicionJ(j);
+ $("fichaAvatar").textContent=(nombreJ(j)||"J").charAt(0).toUpperCase();
+ $("fichaNombre").textContent=nombreJ(j);$("fichaMeta").textContent=categoriaJ(j)+" · "+posicionJ(j);
  $("fichaGrid").innerHTML=
-  bloqueFicha("Partidos e informes","informes",j,"Participación, minutos, goles y tarjetas registrados en competencia.")+
-  bloqueFicha("Fixture y partidos","partidos",j,"Partidos y convocatorias vinculados a la jugadora.")+
-  bloqueFicha("Asistencia","asistenciaADIUR",j,"Presencias y registros de entrenamiento.")+
-  bloqueFicha("Tiempos y rendimiento","tiemposRendimiento",j,"Pasadas, marcas y controles físicos.")+
-  bloqueFicha("Testeos físicos","testeos_adiur",j,"Evaluaciones y mediciones físicas.")+
-  bloqueFicha("Lesiones","lesiones",j,"Casos y evolución de seguimiento físico.");
+  bloqueFicha("Informes de partidos","informes",j,"Minutos, goles, tarjetas y participación registrados en competencia.")+
+  bloqueFicha("Asistencia","asistenciaADIUR",j,"Presencias y sesiones de entrenamiento.")+
+  bloqueFicha("Testeos físicos","testeos_adiur",j,"Planillas, pruebas y mediciones físicas.")+
+  bloqueFicha("Lesiones","lesiones",j,"Casos y evolución del seguimiento de lesiones.");
+ $("cerrarFicha").hidden=permisos?.rol==="jugadora";
  window.scrollTo({top:0,behavior:"smooth"});
 }
-function volverGeneral(){$("selectorJugadora").value="";$("fichaJugadora").classList.remove("activa");$("vistaGeneral").classList.remove("oculto");}
+function volverGeneral(){
+ $("selectorJugadora").value="";
+ $("fichaJugadora").classList.remove("activa");$("vistaGeneral").classList.remove("oculto");
+}
+$("selectorCategoria").addEventListener("change",e=>{
+ categoriaActiva=e.target.value||"";
+ $("selectorJugadora").value="";
+ $("fichaJugadora").classList.remove("activa");$("vistaGeneral").classList.remove("oculto");
+ renderGeneral();
+});
 $("selectorJugadora").addEventListener("change",e=>{if(e.target.value)seleccionarJugadora(e.target.value);else volverGeneral()});
 $("cerrarFicha").addEventListener("click",volverGeneral);
-window.addEventListener("adiur-permisos-listos",e=>{
- const p=e.detail||window.ADIUR_PERMISOS;if(!p)return;
- const nombre=p.nombre||p.usuario||"Usuario";$("nombreUsuario").textContent=nombre;$("avatarUsuario").textContent=nombre.charAt(0).toUpperCase();
+function aplicarPerfil(p){
+ if(!p)return;permisos=p;
+ const nombre=p.nombre||p.usuario||"Usuario";
+ $("nombreUsuario").textContent=nombre;$("avatarUsuario").textContent=nombre.charAt(0).toUpperCase();
  $("rolUsuario").textContent=({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[p.rol]||"Club ADIUR";
-});
+ if(datos.jugadoras.length){renderSelectorCategorias();renderGeneral();}
+}
+window.addEventListener("adiur-permisos-listos",e=>aplicarPerfil(e.detail||window.ADIUR_PERMISOS));
 async function leerColeccion(nombre){
- try{const snap=await getDocs(collection(db,nombre));return snap.docs.map(d=>({id:d.id,...d.data()}))}
- catch(error){console.warn("Estadísticas: no se pudo leer "+nombre,error);return null}
+ const snap=await getDocs(collection(db,nombre));
+ return snap.docs.map(d=>({id:d.id,...d.data()}));
 }
 async function iniciar(){
- $("estadoCarga").textContent="Leyendo información del club…";
- const resultado=await Promise.allSettled([leerColeccion("jugadoras"),...nombresColecciones.map(leerColeccion)]);
- let fallos=[];
- resultado.slice(1).forEach((r,i)=>{const nombre=nombresColecciones[i];if(r.status==="fulfilled"&&Array.isArray(r.value))datos[nombre]=r.value;else fallos.push(nombre)});
- if(resultado[0].status==="fulfilled"&&Array.isArray(resultado[0].value))datos.jugadoras=resultado[0].value;
+ if(window.ADIUR_PERMISOS)aplicarPerfil(window.ADIUR_PERMISOS);
+ $("estadoCarga").textContent="Leyendo Informes, Asistencia, Testeos y Lesiones…";
+ const resultados=await Promise.allSettled([leerColeccion("jugadoras"),...FUENTES.map(leerColeccion)]);
+ const fallos=[];
+ if(resultados[0].status==="fulfilled")datos.jugadoras=resultados[0].value;
+ else fallos.push("jugadoras");
+ resultados.slice(1).forEach((r,i)=>{if(r.status==="fulfilled")datos[FUENTES[i]]=r.value;else fallos.push(FUENTES[i]);});
  if(!datos.jugadoras.length){
-  try{const snap=await getDoc(doc(db,"plantel","jugadoras"));if(snap.exists()&&Array.isArray(snap.data().lista))datos.jugadoras=snap.data().lista.map((j,i)=>({...j,id:j.id||"plantel-"+i}))}catch(e){fallos.push("plantel")}
+  try{const snap=await getDoc(doc(db,"plantel","jugadoras"));if(snap.exists()&&Array.isArray(snap.data().lista))datos.jugadoras=snap.data().lista.map((j,i)=>({...j,id:j.id||"plantel-"+i}));}catch(e){fallos.push("plantel");}
  }
- renderGeneral();
- const ok=nombresColecciones.length-fallos.length;
- $("estadoCarga").textContent=fallos.length?"Datos parciales · "+ok+"/"+nombresColecciones.length+" fuentes disponibles":"Datos actualizados · "+ok+" fuentes consultadas";
- $("pieEstado").textContent=fallos.length?"Algunas fuentes no respondieron: "+fallos.join(", ")+". El resto de la información sigue disponible.":"Consulta de solo lectura. Se muestran datos existentes; los campos sin registro no se interpretan como cero.";
- if(!datos.jugadoras.length)$("tablaJugadoras").innerHTML='<tr><td colspan="8" class="vacio">No se encontraron jugadoras en la colección jugadoras ni en plantel/jugadoras.</td></tr>';
+ if(!permisos&&window.ADIUR_PERMISOS)aplicarPerfil(window.ADIUR_PERMISOS);
+ renderSelectorCategorias();renderGeneral();
+ const ok=FUENTES.length-fallos.filter(x=>FUENTES.includes(x)).length;
+ $("estadoCarga").textContent=fallos.length?"Datos parciales · "+ok+"/"+FUENTES.length+" fuentes estadísticas disponibles":"Datos actualizados · 4/4 fuentes estadísticas consultadas";
+ $("pieEstado").textContent=fallos.length?"No se pudieron leer: "+fallos.join(", ")+". Los datos de las demás fuentes siguen visibles.":"Estadísticas en modo lectura. Fuentes: Informes, Asistencia, Testeos y Lesiones.";
+ if(!datos.jugadoras.length)$("tablaJugadoras").innerHTML='<tr><td colspan="8" class="vacio">No se encontró el plantel en Firestore.</td></tr>';
 }
-iniciar().catch(error=>{$("estadoCarga").textContent="No se pudo cargar el resumen";$("tablaJugadoras").innerHTML='<tr><td colspan="8" class="vacio">Ocurrió un error al consultar los registros. Revisá la consola del navegador.</td></tr>';console.error("Error al iniciar Estadísticas:",error)});
+iniciar().catch(error=>{$("estadoCarga").textContent="No se pudieron cargar las estadísticas";$("tablaJugadoras").innerHTML='<tr><td colspan="8" class="vacio">Ocurrió un error al consultar los registros. Revisá la consola del navegador.</td></tr>';console.error("Error al iniciar Estadísticas:",error)});
 </script>
-<script type="module" src="ADIUR-layout.js?v=20261123i"></script>
+<script type="module" src="ADIUR-layout.js?v=20261123j"></script>
 </body>
 </html>
