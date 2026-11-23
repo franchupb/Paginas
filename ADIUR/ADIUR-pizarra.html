@@ -236,6 +236,57 @@ body.immersive .studio{border-radius:0}
 .top-tools .palette{gap:10px}
 @media(max-width:620px){.player{width:clamp(25px,6vw,33px);height:clamp(25px,6vw,33px)}}
 
+
+/* Barra de herramientas compacta: historial junto a colores, sin pie inferior */
+.controlbar{grid-template-columns:minmax(125px,1fr) auto minmax(150px,1fr);min-height:58px}
+.top-tools{justify-self:center;gap:5px}
+.quick-history{display:flex;align-items:center;gap:5px;margin-left:2px}
+.quick-history-btn{display:grid;place-items:center;width:29px;height:29px;padding:0;border:1px solid #e2e4e7;border-radius:8px;background:#f7f8f9;color:#34383d;font:700 17px Arial;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.quick-history-btn:hover{border-color:#f3b58e;background:#fff4eb;color:#c6530b}
+.quick-history-btn:active{transform:scale(.96)}
+.quick-history-btn:disabled{opacity:.32;cursor:not-allowed}
+.quick-history-btn.clear{font-size:15px;color:#777}
+.formation-control{gap:8px;padding:5px 7px 5px 11px;border:1px solid #e7e8ea;border-radius:10px;background:#f8f9fa}
+.formation-control .control-label{color:#777;font-size:8px;letter-spacing:.8px;white-space:nowrap}
+.formation-control select{min-width:84px;height:31px;padding:0 27px 0 10px;border:1px solid #e1e3e6;border-radius:7px;background:#fff;color:#25282c;font-size:10px;font-weight:800;box-shadow:0 1px 2px #00000008}
+.formation-control select:focus,.rival-strip select:focus{border-color:#f47721;outline:0;box-shadow:0 0 0 3px #f477211a}
+.rival-strip{gap:10px;padding:8px 14px;background:#f8f9fa}
+.rival-strip>strong{display:flex;align-items:center;gap:7px;color:#34383d;font-size:9px;letter-spacing:.8px}
+.rival-strip>strong:before{content:"";width:8px;height:8px;border-radius:50%;background:#343b43;box-shadow:0 0 0 3px #343b4315}
+.rival-strip small{color:#858990;font-size:9px}
+.rival-strip select{min-width:90px;height:31px;border:1px solid #e1e3e6;border-radius:7px;background:#fff;font-size:10px;font-weight:800}
+.rival-strip .btn{min-height:31px;border-radius:7px}
+.pitch-stage{padding-bottom:0}
+.pitch-meta{margin-bottom:0}
+.pitch-wrap{padding-bottom:7px}
+@media(max-width:900px){
+ .controlbar{grid-template-columns:auto minmax(0,1fr) auto;gap:6px}
+ .quick-history{gap:3px}.quick-history-btn{width:26px;height:26px;font-size:15px}
+ .formation-control{gap:4px;padding:4px 5px}
+ .formation-control .control-label{font-size:7px}
+ .formation-control select{min-width:70px;height:28px}
+}
+@media(max-width:620px){
+ .controlbar{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"tools tools" "actions formation";gap:3px 7px}
+ .top-tools{grid-area:tools;justify-self:center;gap:2px}
+ .top-tools .tool{flex-basis:41px}
+ .top-tools .palette{gap:8px}
+ .history-separator{margin:0 2px}
+ .quick-history{gap:3px}.quick-history-btn{width:25px;height:25px}
+ .formation-control{border-radius:8px;padding:3px 5px}
+ .formation-control select{height:27px;min-width:72px;width:72px;font-size:8px}
+ .rival-strip{gap:7px;padding:7px 8px}
+ .rival-strip small{flex:1 1 100%;order:3}
+ .rival-strip select{flex:1;min-width:75px;height:28px}
+ .rival-strip .btn{min-height:28px;padding:0 7px;font-size:8px}
+}
+@media(max-width:390px){
+ .top-tools .tool{flex-basis:37px}.top-tools .tool span{font-size:14px}
+ .top-tools .tool small{font-size:6px}
+ .quick-history-btn{width:23px;height:23px}
+ .top-tools .palette{gap:6px}
+}
+
 </style>
 </head>
 <body>
@@ -272,6 +323,12 @@ body.immersive .studio{border-radius:0}
 <div class="palette" aria-label="Color de dibujo">
 <button class="swatch active" data-color="#f47721" style="background:#f47721" aria-label="Naranja" type="button"></button><button class="swatch" data-color="#e53935" style="background:#e53935" aria-label="Rojo" type="button"></button><button class="swatch" data-color="#171717" style="background:#171717" aria-label="Negro" type="button"></button>
 </div>
+<span class="top-separator history-separator"></span>
+<div class="quick-history" aria-label="Historial de edición">
+<button class="quick-history-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button>
+<button class="quick-history-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button>
+<button class="quick-history-btn clear" id="clearDrawings" type="button" title="Borrar trazos" aria-label="Borrar trazos">⌫</button>
+</div>
 </div>
 <div class="control-group formation-control"><span class="control-label">FORMACIÓN ADIUR</span><select id="formationOwn" aria-label="Formación ADIUR"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select></div>
 </div>
@@ -282,16 +339,10 @@ body.immersive .studio{border-radius:0}
 <div class="pitch-wrap"><div class="pitch" id="pitch">
 <svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg><canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div>
 </div></div>
-<div class="pitch-footer"><span><strong id="playerCount">11</strong> fichas en cancha</span><span>Arrastrá las fichas para ajustar la estructura</span></div>
+ 
 </section>
 </div>
-<div class="historybar" aria-label="Historial de acciones">
-<span class="history-label">EDICIÓN</span>
-<button class="btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶ Deshacer</button>
-<button class="btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷ Rehacer</button>
-<button class="btn" id="clearDrawings" type="button" title="Borrar todos los trazos">⌫ Borrar trazos</button>
-</div>
-<footer class="studio-foot"><span>ADIUR FEMENINO · PIZARRA TÁCTICA</span><span class="shortcuts">Ctrl + Z deshacer · Ctrl + Y rehacer · Esc salir</span><span id="saveState">CAMBIOS SIN GUARDAR</span></footer>
+ 
 </section>
 </div>
 </main>
@@ -319,10 +370,10 @@ var formations={
 var players=formations["4-3-3"].map(function(p,i){return{id:"own-"+(i+1),team:"own",number:String(i+1),x:p[0],y:p[1]};});
 var drawings=[],tool="select",color="#f47721",lineWidth=4,selected=null,drawing=false,start=null,points=[],history=[],future=[];
 var clone=function(v){return JSON.parse(JSON.stringify(v));};
-function status(t){$("status").textContent=t;$("saveState").textContent="CAMBIOS SIN GUARDAR";}
+function status(t){$("status").textContent=t;}
 function syncHistory(){$("undo").disabled=!history.length;$("redo").disabled=!future.length;}
 function snapshot(){history.push({players:clone(players),drawings:clone(drawings)});if(history.length>80)history.shift();future=[];syncHistory();}
-function syncCount(){$("playerCount").textContent=players.length;}
+function syncCount(){}
 function setField(){$("fieldSvg").innerHTML='<g fill="none" stroke="#f7fff7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="12" width="876" height="576"/><line x1="450" y1="12" x2="450" y2="588"/><circle cx="450" cy="300" r="88"/><circle cx="450" cy="300" r="4" fill="#f7fff7" stroke="none"/><rect x="12" y="150" width="165" height="300"/><rect x="12" y="225" width="55" height="150"/><rect x="723" y="150" width="165" height="300"/><rect x="833" y="225" width="55" height="150"/><circle cx="122" cy="300" r="4" fill="#f7fff7" stroke="none"/><circle cx="778" cy="300" r="4" fill="#f7fff7" stroke="none"/><path d="M177 226 A78 78 0 0 1 177 374 M723 226 A78 78 0 0 0 723 374"/><path d="M12 30 A18 18 0 0 0 30 12 M870 12 A18 18 0 0 0 888 30 M12 570 A18 18 0 0 1 30 588 M870 588 A18 18 0 0 1 888 570"/><rect x="-8" y="260" width="20" height="80"/><rect x="888" y="260" width="20" height="80"/></g>';}
 function coords(e){var r=pitch.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};}
 function drawOne(d,g,w,h){var x=d.x*w,y=d.y*h,X=d.X*w,Y=d.Y*h;g.save();g.strokeStyle=d.color;g.fillStyle=d.color;g.lineWidth=4;g.lineCap="round";g.lineJoin="round";g.setLineDash(d.type==="dash"?[10,8]:[]);g.beginPath();if(d.type==="free"){(d.points||[]).forEach(function(p,i){if(i)g.lineTo(p.x*w,p.y*h);else g.moveTo(p.x*w,p.y*h);});}else if(d.type==="zone"){g.ellipse((x+X)/2,(y+Y)/2,Math.max(2,Math.abs(X-x)/2),Math.max(2,Math.abs(Y-y)/2),0,0,Math.PI*2);}else{g.moveTo(x,y);g.lineTo(X,Y);if(d.type==="arrow"){var a=Math.atan2(Y-y,X-x),len=20;g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a-.5),Y-len*Math.sin(a-.5));g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a+.5),Y-len*Math.sin(a+.5));}}g.stroke();g.restore();}
