@@ -423,84 +423,112 @@
   if (ARCHIVO_ACTUAL !== PRINCIPAL.toLowerCase()) {
     const paginas = {
       "adiur-jugadoras.html": {
+        controlesCategoria: ["categoriaPrincipal"],
+        ocultarSelectores: [".selector-categoria-principal"],
         selector: ".encabezado-pagina",
         eyebrow: "PLANTEL · EQUIPO",
         titulo: "Plantel de jugadoras",
         descripcion: "Administrá la información personal y deportiva de ADIUR FEMENINO."
       },
       "adiur-asistencia.html": {
+        controlesCategoria: ["filtroCategoria"],
+        ocultarSelectores: [".selector-categoria-panel"],
         selector: ".cabecera-pagina",
         eyebrow: "PLANTEL · ASISTENCIA",
         titulo: "Asistencia mensual",
         descripcion: "Registrá la asistencia por categoría y consultá el seguimiento individual de cada jugadora al final de la página."
       },
       "adiur-calendario.html": {
+        controlesCategoria: ["categoria"],
+        ocultarSelectores: [".selector-categoria"],
         selector: ".encabezado-calendario",
         eyebrow: "ENTRENAMIENTO · CALENDARIO",
         titulo: "Calendario de actividades",
         descripcion: "Organizá y consultá las actividades de cada categoría en un solo lugar."
       },
       "adiur-planificacion.html": {
+        controlesCategoria: ["selectCategoria"],
+        ocultarSelectores: [".campo-control.panel-categoria"],
         selector: ".cabecera-pagina",
         eyebrow: "ENTRENAMIENTO · PLANIFICACIÓN",
         titulo: "Planificación de microciclos",
         descripcion: "Organizá las sesiones semanales y consultá los contenidos técnicos y físicos de cada categoría."
       },
       "adiur-gimnasio.html": {
+        controlesCategoria: ["division"],
+        ocultarSelectores: [".selector-categoria-superior"],
         selector: ".cabecera-pagina",
         eyebrow: "ENTRENAMIENTO · FUERZA",
         titulo: "Gimnasio",
         descripcion: "Creá, organizá y consultá las rutinas de fuerza del plantel."
       },
       "adiur-calculadora.html": {
+        controlesCategoria: ["division"],
+        ocultarSelectores: [".field.campo-categoria"],
         selector: ".cabecera-pagina",
         eyebrow: "ENTRENAMIENTO · CARGAS",
         titulo: "Calculadora de cargas y volúmenes",
         descripcion: "Calculadora atemporal para registrar distancias, pasadas y tiempos de trabajo."
       },
       "adiur-partidos.html": {
+        controlesCategoria: ["filtroDivision"],
+        ocultarSelectores: [".filters .field:nth-child(2)"],
         selector: ".page-heading",
         eyebrow: "COMPETENCIA · FIXTURE",
         titulo: "Fixture de competencia",
         descripcion: "Organizá los partidos por división, competición y fecha del torneo."
       },
       "adiur-informes.html": {
+        controlesCategoria: ["division","filtroDivisionPartidos","filtroDivisionEstadisticas"],
+        ocultarSelectores: [".selector-categoria-general, #filtroDivisionPartidos, #filtroDivisionEstadisticas"],
         selector: ".page-heading",
         eyebrow: "COMPETENCIA · INFORMES",
         titulo: "Informes de partidos",
         descripcion: "Una planilla más simple para registrar cada encuentro, organizar la formación y mantener el seguimiento de minutos, goles y tarjetas de cada jugadora."
       },
       "adiur-estadisticas.html": {
+        controlesCategoria: ["selectorCategoria"],
+        ocultarSelectores: ["#selectorCategoria"],
         selector: ".encabezado-seccion",
         eyebrow: "COMPETENCIA · ANÁLISIS",
         titulo: "Estadísticas del club",
         descripcion: "Consultá el rendimiento general y la evolución de cada jugadora a partir de los registros de competencia, asistencia, testeos, tiempos y lesiones."
       },
       "adiur-pizarra.html": {
+        controlesCategoria: ["division"],
+        ocultarSelectores: [".match-controls .control:first-child"],
         selector: ".page-header",
         eyebrow: "COMPETENCIA · ESTRATEGIA",
         titulo: "Pizarra táctica",
         descripcion: "Diseñá y guardá movimientos tácticos para ADIUR Femenino."
       },
       "adiur-testeos.html": {
+        controlesCategoria: ["selectDivision"],
+        ocultarSelectores: [".selector-categoria"],
         selector: ".encabezado",
         eyebrow: "RENDIMIENTOS · TESTEOS",
         titulo: "Testeos y evaluaciones físicas",
         descripcion: "Registrá los resultados y consultá la evolución física de cada jugadora."
       },
       "adiur-tiempos.html": {
+        controlesCategoria: ["selectorCategoriaGlobal"],
+        ocultarSelectores: [".selector-categoria-principal"],
         selector: ".page-heading",
         eyebrow: "RENDIMIENTOS · TIEMPOS",
         titulo: "Tiempos y rendimiento físico",
         descripcion: "Consultá las pasadas, analizá los resultados y registrá la evolución física de cada jugadora en un solo lugar."
       },
       "adiur-encuestas.html": {
+        controlesCategoria: ["filtroCategoria"],
+        ocultarSelectores: ["#bloqueCategoria"],
         selector: ".cabecera-pagina",
         eyebrow: "RENDIMIENTOS · SEGUIMIENTO DIARIO",
         titulo: "Encuestas del plantel",
         descripcion: "Publicá encuestas, consultá respuestas y hacé el seguimiento del bienestar y la carga de entrenamiento."
       },
       "lesiones.html": {
+        controlesCategoria: ["selectorCategoriaGlobal"],
+        ocultarSelectores: [".selector-categoria-principal"],
         selector: ".page-heading",
         eyebrow: "SALUD DEPORTIVA · SEGUIMIENTO",
         titulo: "Salud y disponibilidad deportiva",
@@ -560,14 +588,13 @@
         return categorias;
       }
       function controlesCategoria() {
-        return Array.from(document.querySelectorAll("select")).filter(select => select !== selectorGlobal && (idsCategoria.has(select.id) || categoriaEnOpciones(select)));
+        return controlesOriginales.filter(select => select.isConnected && select !== selectorGlobal);
       }
       function ocultarControlOriginal(select) {
         select.classList.add("adiur-categoria-integrada");
         const etiqueta = select.id ? document.querySelector('label[for="' + CSS.escape(select.id) + '"]') : null;
         if (etiqueta) etiqueta.classList.add("adiur-categoria-integrada");
-        const envoltorio = select.closest(".selector-campo,.filtro-item,.campo-formulario,.form-group,.campo");
-        if (envoltorio && envoltorio.querySelectorAll("select,input,textarea,button").length === 1) envoltorio.classList.add("adiur-categoria-integrada");
+
       }
       function sincronizarControlesCategoria() {
         const categoria = selectorGlobal.value;
