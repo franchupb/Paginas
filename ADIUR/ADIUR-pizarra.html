@@ -531,6 +531,126 @@ body.immersive.controls-hidden .show-controls{top:12px}
  .quick-history-btn{width:20px!important;height:20px!important}
 }
 
+
+/* ===== PIZARRA · PANEL LATERAL Y ACCESO INMERSIVO INDEPENDIENTE ===== */
+.pizarra-actions{
+ display:flex!important;align-items:center;justify-content:flex-end;gap:9px;
+ flex:0 0 48px;min-height:48px;padding:5px 14px;
+ border-bottom:1px solid #e8e9eb;background:linear-gradient(180deg,#fff 0%,#fafafa 100%);
+}
+.immersive-launch{
+ display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:34px;padding:0 14px;
+ border:1px solid #e9a77f;border-radius:10px;
+ background:linear-gradient(115deg,#fff 0%,#fffaf6 42%,#ffd7bd 100%);
+ color:#874017;font:800 10px Arial;letter-spacing:.2px;
+ box-shadow:inset 0 1px 0 #fff,0 3px 9px #7b3b1b16;cursor:pointer;transition:.18s;
+}
+.immersive-launch span{font-size:17px;line-height:1}
+.immersive-launch:hover{border-color:#e87935;background:linear-gradient(115deg,#fff 0%,#ffe7d8 45%,#f7a875 100%);transform:translateY(-1px)}
+.immersive-launch[aria-pressed="true"]{background:linear-gradient(115deg,#ffe7d8 0%,#f47721 100%);color:#71300d}
+.workspace{
+ display:grid!important;grid-template-columns:224px minmax(0,1fr)!important;
+ grid-template-rows:minmax(0,1fr)!important;flex:1!important;min-height:0!important;overflow:hidden!important;
+}
+.controlbar{
+ position:relative!important;inset:auto!important;transform:none!important;
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
+ gap:13px!important;width:auto!important;min-width:0!important;min-height:0!important;
+ padding:14px 12px!important;overflow-y:auto!important;overflow-x:hidden!important;
+ border:0!important;border-right:1px solid #eadfd8!important;border-radius:0!important;
+ background:linear-gradient(180deg,#fff 0%,#fffdfb 48%,#fff5ee 100%)!important;
+ box-shadow:5px 0 18px #3521160a!important;
+}
+.formation-control,.rival-formation{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:7px!important;
+ width:100%!important;padding:10px!important;border:1px solid #e9c2a9!important;border-radius:12px!important;
+ background:linear-gradient(145deg,#fff 0%,#fffaf6 55%,#ffe5d3 100%)!important;
+ box-shadow:0 3px 9px #a24b1b0c,inset 0 1px 0 #fff!important;
+}
+.control-label{font-size:8px!important;letter-spacing:.8px!important;color:#9a684c!important}
+.formation-control select,.rival-formation select{
+ width:100%!important;min-width:0!important;height:34px!important;padding:0 9px!important;
+ border:1px solid #e8b18f!important;border-radius:8px!important;background:#fff!important;
+ font-size:10px!important;
+}
+.sidebar-tools,.sidebar-section{display:flex;flex-direction:column;gap:8px}
+.sidebar-section-label{color:#9b765f;font-size:8px;font-weight:900;letter-spacing:1px}
+.tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.controlbar .tool{
+ display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;
+ gap:8px!important;min-width:0!important;min-height:40px!important;padding:0 9px!important;
+ border:1px solid #e9c2a9!important;border-radius:9px!important;
+ background:linear-gradient(145deg,#fff 0%,#fffaf6 55%,#ffe5d3 100%)!important;
+ color:#70472f!important;box-shadow:0 2px 5px #743c1b0c,inset 0 1px 0 #fff!important;
+}
+.controlbar .tool span{font-size:17px!important;line-height:1}
+.controlbar .tool small{font-size:9px!important;font-weight:800!important}
+.controlbar .tool:hover{border-color:#e99562!important;background:linear-gradient(145deg,#fff 0%,#ffd9c0 100%)!important;color:#a8440c!important}
+.controlbar .tool.active{border-color:#e87935!important;background:linear-gradient(145deg,#ffe2cf 0%,#f47721 100%)!important;color:#71300d!important;box-shadow:0 3px 8px #a94d1b24,inset 0 1px 0 #fff!important}
+.controlbar .palette{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:13px!important;padding:5px 2px!important}
+.controlbar .swatch{width:21px!important;height:21px!important;flex:0 0 21px!important}
+.controlbar .quick-history{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.controlbar .quick-history-btn{width:100%!important;height:34px!important;border:1px solid #e5ae8c!important;border-radius:9px!important;background:linear-gradient(145deg,#fff 0%,#ffe4d2 100%)!important;color:#873e18!important}
+.controlbar .quick-history-btn:disabled{opacity:.35!important}
+.controlbar .add-rival-btn,.controlbar .reset-btn{
+ display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:33px!important;
+ border:1px solid #e7a77d!important;border-radius:8px!important;background:linear-gradient(145deg,#fff 0%,#ffd9c0 100%)!important;
+ color:#813b16!important;font-size:9px!important;font-weight:800!important;
+}
+.toolbar-hide{
+ display:flex;align-items:center;justify-content:center;gap:7px;min-height:33px;margin-top:auto;padding:0 10px;
+ border:1px solid #e7c7b4;border-radius:9px;background:linear-gradient(145deg,#fff 0%,#fff0e7 100%);
+ color:#8a4b29;font:800 9px Arial;cursor:pointer;
+}
+.toolbar-hide span{font-size:16px}
+.pitch-stage{position:relative!important;display:flex!important;flex-direction:column!important;min-width:0!important;min-height:0!important;padding:0!important;background:#347b43!important}
+.pitch-wrap{flex:1!important;align-items:stretch!important;justify-content:stretch!important;min-height:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#347b43!important}
+.pitch{width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+.rival-strip{position:absolute!important;z-index:8!important;left:12px!important;bottom:12px!important;display:flex;align-items:center;gap:8px;padding:9px 11px!important;border:1px solid #e8b18f!important;border-radius:11px!important;background:linear-gradient(120deg,#fff 0%,#fff7f1 55%,#ffe0cb 100%)!important;box-shadow:0 5px 18px #17271b2b!important}
+.rival-strip[hidden]{display:none!important}
+.pizarra-actions .show-controls{position:static!important;transform:none!important;display:none;min-height:33px;padding:0 12px}
+body.controls-hidden .controlbar{display:none!important}
+body.controls-hidden .workspace{grid-template-columns:minmax(0,1fr)!important}
+body.controls-hidden .pizarra-actions .show-controls{display:inline-flex!important}
+body.immersive .main{padding:0!important}
+body.immersive .pizarra-actions{flex:0 0 43px;min-height:43px;padding:4px 10px}
+body.immersive .controlbar{display:none!important}
+body.immersive .workspace{grid-template-columns:minmax(0,1fr)!important}
+body.immersive .pitch-stage,body.immersive .pitch-wrap{min-height:0!important}
+body.immersive .pitch{height:100%!important;min-height:0!important;aspect-ratio:auto!important}
+body.immersive .immersive-launch{min-height:32px}
+@media(max-width:760px){
+ .pizarra-actions{flex-basis:42px;min-height:42px;padding:4px 8px}
+ .workspace{grid-template-columns:154px minmax(0,1fr)!important}
+ .controlbar{gap:9px!important;padding:9px 7px!important}
+ .formation-control,.rival-formation{padding:7px!important}
+ .controlbar .tool{min-height:36px!important;gap:5px!important;padding:0 6px!important}
+ .controlbar .tool span{font-size:15px!important}
+ .controlbar .tool small{font-size:8px!important}
+ .sidebar-section-label{font-size:7px}
+ .controlbar .swatch{width:18px!important;height:18px!important;flex-basis:18px!important}
+ .rival-strip{left:6px!important;right:6px!important;bottom:6px!important;flex-wrap:wrap}
+}
+@media(max-width:480px){
+ .workspace{grid-template-columns:128px minmax(0,1fr)!important}
+ .controlbar{gap:7px!important;padding:7px 5px!important}
+ .formation-control,.rival-formation{padding:6px!important}
+ .control-label{font-size:7px!important}
+ .formation-control select,.rival-formation select{height:30px!important;font-size:9px!important}
+ .tool-grid{gap:4px}
+ .controlbar .tool{min-height:34px!important;gap:4px!important;padding:0 4px!important}
+ .controlbar .tool span{font-size:14px!important}
+ .controlbar .tool small{font-size:7px!important}
+ .controlbar .quick-history{gap:4px}
+ .controlbar .quick-history-btn{height:30px!important}
+ .controlbar .add-rival-btn,.controlbar .reset-btn{font-size:8px!important}
+ .toolbar-hide{font-size:8px}
+}
+@media(max-width:360px){
+ .workspace{grid-template-columns:112px minmax(0,1fr)!important}
+ .tool-grid{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -548,34 +668,41 @@ body.immersive.controls-hidden .show-controls{top:12px}
 <section class="intro"><div><div class="kicker">ADIUR FEMENINO · COMPETENCIA</div><h2>Pizarra táctica</h2><p>Diseñá movimientos, organizá estructuras y visualizá cada fase del juego.</p></div><div class="intro-tag">● ESPACIO DE TRABAJO TÁCTICO</div></section>
 <section class="studio" aria-label="Pizarra táctica">
 
+<div class="pizarra-actions">
+<button class="immersive-launch" id="toggleImmersive" type="button" aria-pressed="false" title="Activar modo inmersivo"><span>⛶</span><small>Modo inmersivo</small></button>
+<button id="showControls" class="show-controls" type="button" aria-expanded="false">☷ Mostrar herramientas</button>
+</div>
 <div class="workspace">
-<section class="pitch-stage">
-<div class="pitch-wrap"><div class="pitch" id="pitch">
-<svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg><canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div>
-</div></div>
-<div class="controlbar">
+<aside class="controlbar" aria-label="Panel lateral de herramientas">
 <div class="control-group formation-control own-formation"><span class="control-label">FORMACIÓN ADIUR</span><select id="formationOwn" aria-label="Formación ADIUR"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select></div>
-<div class="top-tools" aria-label="Herramientas de dibujo">
+<div class="sidebar-tools" aria-label="Herramientas de dibujo">
+<div class="sidebar-section-label">HERRAMIENTAS</div>
+<div class="tool-grid">
 <button class="tool active" data-tool="select" type="button" title="Mover fichas"><span>↖</span><small>Mover</small></button>
 <button class="tool" data-tool="line" type="button" title="Dibujar una línea"><span>／</span><small>Línea</small></button>
 <button class="tool" data-tool="arrow" type="button" title="Dibujar una flecha"><span>➜</span><small>Flecha</small></button>
 <button class="tool" data-tool="dash" type="button" title="Dibujar un trazo discontinuo"><span>┄</span><small>Trazo</small></button>
 <button class="tool" data-tool="free" type="button" title="Dibujar a mano alzada"><span>✎</span><small>Lápiz</small></button>
 <button class="tool" data-tool="zone" type="button" title="Dibujar una zona"><span>◯</span><small>Zona</small></button>
-<span class="top-separator"></span>
-<div class="palette" aria-label="Color de dibujo"><button class="swatch active" data-color="#f47721" style="background:#f47721" aria-label="Naranja" type="button"></button><button class="swatch" data-color="#e53935" style="background:#e53935" aria-label="Rojo" type="button"></button><button class="swatch" data-color="#171717" style="background:#171717" aria-label="Negro" type="button"></button></div>
-<span class="top-separator history-separator"></span>
-<div class="quick-history" aria-label="Historial de edición"><button class="quick-history-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button><button class="quick-history-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button><button class="quick-history-btn clear" id="clearDrawings" type="button" title="Borrar trazos" aria-label="Borrar trazos">⌫</button></div>
-<button class="tool immersive-tool" id="toggleImmersive" type="button" aria-pressed="false" title="Activar modo inmersivo"><span>⛶</span><small>Inmersivo</small></button>
-<button class="tool toolbar-hide" id="hideControls" type="button" title="Ocultar barra"><span>⌃</span><small>Ocultar</small></button>
 </div>
-<div class="control-group rival-formation"><span class="control-label">FORMACIÓN RIVAL</span><select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select><button class="btn add-rival-btn" id="addRival" type="button">＋ Rival</button><button class="btn reset-btn" id="resetPositions" type="button" title="Reubicar posiciones" aria-label="Reubicar posiciones">↺</button></div>
-<button id="showControls" class="show-controls" type="button" aria-expanded="false">☷ Mostrar herramientas</button>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-section-label">COLOR DE TRAZO</div>
+<div class="palette" aria-label="Color de dibujo"><button class="swatch active" data-color="#f47721" style="background:#f47721" aria-label="Naranja" type="button"></button><button class="swatch" data-color="#e53935" style="background:#e53935" aria-label="Rojo" type="button"></button><button class="swatch" data-color="#171717" style="background:#171717" aria-label="Negro" type="button"></button></div>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-section-label">HISTORIAL</div>
+<div class="quick-history" aria-label="Historial de edición"><button class="quick-history-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button><button class="quick-history-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button><button class="quick-history-btn clear" id="clearDrawings" type="button" title="Borrar trazos" aria-label="Borrar trazos">⌫</button></div>
+</div>
+<div class="control-group rival-formation"><span class="control-label">FORMACIÓN RIVAL</span><select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select><button class="btn add-rival-btn" id="addRival" type="button">＋ Incorporar rival</button><button class="btn reset-btn" id="resetPositions" type="button" title="Reubicar posiciones" aria-label="Reubicar posiciones">↺ Reubicar fichas</button></div>
+<button class="toolbar-hide" id="hideControls" type="button" title="Ocultar barra lateral"><span>‹</span><small>Ocultar panel</small></button>
+</aside>
+<section class="pitch-stage">
+<div class="pitch-wrap"><div class="pitch" id="pitch">
+<svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg><canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div>
+</div></div>
 <div class="rival-strip" id="rivalPanel" hidden><strong>RIVAL ACTIVO</strong><button class="btn primary" id="confirmRival" type="button">Aplicar formación</button><button class="btn" id="removeRival" type="button">Quitar rival</button></div>
 <span id="status" class="status-hidden" aria-live="polite">11 posiciones iniciales listas</span>
-</section>
-</div>
- 
 </section>
 </div>
 </main>
