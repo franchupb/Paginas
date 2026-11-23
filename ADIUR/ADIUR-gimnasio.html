@@ -2662,6 +2662,8 @@ window.firebaseGimnasioReady = (async () => {
 
   const {
     getFirestore,
+    collection,
+    getDocs,
     doc,
     getDoc,
     setDoc,
@@ -2688,6 +2690,15 @@ const firebaseConfig = {
     const resultado = await getDoc(referenciaCloud);
     if (resultado.exists()) return resultado.data().datos || null;
     return null;
+  };
+
+  // El plantel se consulta desde la misma colección que usa Jugadoras y Asistencia.
+  window.cargarJugadorasGimnasioNube = async () => {
+    const snapshot = await getDocs(collection(dbCloud, "jugadoras"));
+    return snapshot.docs.map(docSnap => ({
+      id: docSnap.id,
+      ...docSnap.data()
+    }));
   };
 
   let colaGuardado = Promise.resolve();
@@ -2762,6 +2773,7 @@ let esJugadora = detectarRol(usuario) === "jugadora";
 let esStaff = !esJugadora;
 
 let jugadoraSesion = null;
+let jugadorasNubeCache = null;
 let db = cargarDB();
   // Solo se permite guardar en Firebase después de confirmar
 // que la carga inicial desde la nube terminó correctamente.
@@ -2997,6 +3009,7 @@ function esBianca(obj) {
 }
 
 function detectarRol(obj) {
+  if (window.ADIUR_PERMISOS?.rol === "jugadora") return "jugadora";
   if (obj === usuario && localStorage.getItem("rolADIUR") === "jugadora") return "jugadora";
   if (esBianca(obj)) return "jugadora";
 
@@ -3014,6 +3027,9 @@ function detectarRol(obj) {
 }
 
 function leerJugadoras() {
+  if (Array.isArray(jugadorasNubeCache) && jugadorasNubeCache.length) {
+    return jugadorasNubeCache;
+  }
   try {
     const datos = JSON.parse(localStorage.getItem(PLAYERS_KEY) || "[]");
 
@@ -3039,7 +3055,8 @@ function nombreJugadora(jugadora) {
 }
 
 function divisionJugadora(jugadora) {
-  const valor = jugadora?.division || jugadora?.categoria || jugadora?.división || "Sub 14";
+  const valor = jugadora?.division || jugadora?.categoria || jugadora?.división ||
+    window.ADIUR_PERMISOS?.categorias?.[0] || "Sub 14";
 
   return DIVISIONES.find(division =>
     normalizar(division) === normalizar(valor)
@@ -3063,16 +3080,6 @@ function registroEsBianca(jugadora) {
 
 function obtenerTodasLasJugadoras() {
   const resultado = [...leerJugadoras()];
-
-  if (!resultado.some(registroEsBianca)) {
-    resultado.push({
-      id: "bianca",
-      usuario: "bianca",
-      nombreCompleto: "Bianca Dominguez",
-      division: "Sub 14"
-    });
-  }
-
   const vistos = new Set();
 
   return resultado.filter(jugadora => {
@@ -3087,19 +3094,21 @@ function obtenerTodasLasJugadoras() {
 
 function buscarJugadoraSesion() {
   const jugadoras = obtenerTodasLasJugadoras();
+  const permisos = window.ADIUR_PERMISOS;
 
-  if (localStorage.getItem("rolADIUR") === "jugadora") {
-    const claveUsuario = normalizar(usuario?.usuario || usuario?.username || usuario?.nombre || "").replace(/[\s._-]+/g, "");
-    const equivalencias = {
-      guadaluped: "Guadalupe Demaria",
-      jazmind: "Jazmin De Nicola Forte"
-    };
-    const nombrePropio = equivalencias[claveUsuario];
-    if (nombrePropio) {
-      return jugadoras.find(j => normalizar(nombreJugadora(j)) === normalizar(nombrePropio) ||
-        normalizar(j.usuario || "") === claveUsuario) || null;
-    }
-    if (esBianca(usuario)) return jugadoras.find(registroEsBianca) || null;
+  if (permisos?.rol === "jugadora") {
+    const normalizarClave = valor => normalizar(valor).replace(/[^a-z0-9]/g, "");
+    const nombrePropio = normalizarClave(permisos.jugadora || "");
+    const usuarioPropio = normalizarClave(permisos.usuario || usuario?.usuario || usuario?.nombre || "");
+    const encontrada = jugadoras.find(jugadora => {
+      const nombre = normalizarClave(nombreJugadora(jugadora));
+      const usuarioRegistro = normalizarClave(
+        jugadora.usuario || jugadora.username || jugadora.nombreUsuario || jugadora.login || ""
+      );
+      return (nombrePropio && nombre === nombrePropio) ||
+        (usuarioPropio && usuarioRegistro === usuarioPropio);
+    });
+    return encontrada || null;
   }
 
   const clavesSesion = [
