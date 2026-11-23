@@ -3367,6 +3367,7 @@ function obtenerActividad(cat, fecha) {
 ===================================================== */
 
 function abrirEditor(fecha) {
+    if (window.ADIUR_PERMISOS?.rol === "jugadora") return;
     fechaSeleccionada = fecha;
 
     const actividad = obtenerActividad(categoria.value, fecha);
@@ -3540,6 +3541,7 @@ function renderizarCalendario() {
         Math.ceil((desplazamiento + cantidadDias) / 7) * 7;
 
     const hoy = fechaEnFormato(new Date());
+    const vistaSoloLectura = window.ADIUR_PERMISOS?.rol === "jugadora";
 
     for (let i = 0; i < totalCeldas; i++) {
         let numeroDia;
@@ -3590,30 +3592,23 @@ function renderizarCalendario() {
         numero.textContent = numeroDia;
         celda.appendChild(numero);
 
-        /* Botón para agregar o modificar */
-
-        const botonEvento = document.createElement("button");
-
-        botonEvento.type = "button";
-        botonEvento.className = "boton-agregar";
-        botonEvento.textContent = actividad ? "✎" : "+";
-        botonEvento.title = actividad
-            ? "Modificar evento"
-            : "Agregar evento";
-
-        botonEvento.setAttribute(
-            "aria-label",
-            actividad
-                ? "Modificar evento del " + fecha
-                : "Agregar evento el " + fecha
-        );
-
-        botonEvento.addEventListener("click", event => {
-            event.stopPropagation();
-            abrirEditor(fecha);
-        });
-
-        celda.appendChild(botonEvento);
+        /* Los perfiles de jugadora solo consultan el calendario. */
+        if (!vistaSoloLectura) {
+            const botonEvento = document.createElement("button");
+            botonEvento.type = "button";
+            botonEvento.className = "boton-agregar";
+            botonEvento.textContent = actividad ? "✎" : "+";
+            botonEvento.title = actividad ? "Modificar evento" : "Agregar evento";
+            botonEvento.setAttribute(
+                "aria-label",
+                actividad ? "Modificar evento del " + fecha : "Agregar evento el " + fecha
+            );
+            botonEvento.addEventListener("click", event => {
+                event.stopPropagation();
+                abrirEditor(fecha);
+            });
+            celda.appendChild(botonEvento);
+        }
 
         /* Renderizar tarjeta correspondiente */
 
@@ -3630,14 +3625,13 @@ function renderizarCalendario() {
 
         /* Abrir el editor al seleccionar el día */
 
-        celda.addEventListener("click", event => {
-            if (
-                event.target === celda ||
-                event.target.classList.contains("numero-dia")
-            ) {
-                abrirEditor(fecha);
-            }
-        });
+        if (!vistaSoloLectura) {
+            celda.addEventListener("click", event => {
+                if (event.target === celda || event.target.classList.contains("numero-dia")) {
+                    abrirEditor(fecha);
+                }
+            });
+        }
 
         diasCalendario.appendChild(celda);
     }
