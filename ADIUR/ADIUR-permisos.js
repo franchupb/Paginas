@@ -335,8 +335,47 @@
         try {
           const perfil = await modulo.obtenerPerfilADIUR(user);
           if (!perfil) { await modulo.cerrarSesionADIUR(); location.replace(LOGIN_URL); return; }
-          const clave = normalizar(perfil.usuario || "");
-          const base = USUARIOS[clave];
+          const clave = normalizar(
+            perfil.usuario ||
+            String(user.email || "").split("@")[0] ||
+            perfil.nombreUsuario ||
+            perfil.nombre ||
+            ""
+          );
+          let base = USUARIOS[clave];
+
+          // Compatibilidad con perfiles de Firestore ya creados con variantes
+          // de nombre/rol. No se expulsa una cuenta activa solo porque su
+          // identificador no coincida literalmente con la clave de la matriz.
+          if (!base && perfil.activo === true) {
+            const rolCrudo = normalizar(perfil.rol || perfil.tipo || "");
+            const roles = {
+              admin: "admin", administrador: "admin",
+              coordinadora: "coordinadora", coordinador: "coordinadora",
+              cuerpotecnico: "cuerpo_tecnico", tecnico: "cuerpo_tecnico",
+              jugadora: "jugadora"
+            };
+            const rol = roles[rolCrudo] || null;
+            let categorias = perfil.categorias ?? perfil.categoria ?? [];
+            if (!Array.isArray(categorias)) categorias = categorias ? [categorias] : [];
+            categorias = categorias.map(normalizarDivision).filter(Boolean);
+            if (rol && (rol === "admin" || rol === "coordinadora" || categorias.length)) {
+              const nombre = String(perfil.nombre || perfil.nombreCompleto || perfil.usuario || user.email?.split("@")[0] || "Usuario").trim();
+              base = {
+                usuario: String(perfil.usuario || user.email?.split("@")[0] || clave),
+                nombre,
+                rol,
+                categorias: rol === "admin" || rol === "coordinadora"
+                  ? ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"]
+                  : categorias,
+                jugadora: perfil.jugadora || (rol === "jugadora" ? nombre : null),
+                puedeGestionarUsuarios: rol === "admin",
+                puedeEditar: ["admin", "coordinadora", "cuerpo_tecnico"].includes(rol),
+                puedeEliminar: ["admin", "coordinadora"].includes(rol)
+              };
+            }
+          }
+
           if (!base || perfil.activo !== true) {
             await modulo.cerrarSesionADIUR();
             location.replace(LOGIN_URL);
