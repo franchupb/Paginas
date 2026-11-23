@@ -94,6 +94,7 @@
   let perfilActivo = null;
   let configActiva = null;
   let observerDOM = null;
+  let refrescoInicialRealizado = false;
 
   function mostrarPerfil() {
     if (!perfilActivo || !configActiva) return;
@@ -141,7 +142,7 @@
       const opcion = Array.from(select.options || []).find(option =>
         configActiva.categorias.includes(categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent))
       );
-      if (opcion) {
+      if (opcion && select.value !== opcion.value) {
         select.value = opcion.value;
         select.dispatchEvent(new Event("change", { bubbles: true }));
       }
@@ -190,7 +191,17 @@
     if (pagina === "adiur-calendario.html") {
       document.body.classList.add("adiur-vista-calendario-jugadora");
       const modal = document.getElementById("fondoModal");
-      if (modal) modal.hidden = true;
+      if (modal) {
+        modal.classList.remove("visible");
+        modal.hidden = true;
+      }
+    }
+    if (pagina === "adiur-asistencia.html") {
+      document.querySelectorAll("#cuerpoTabla button[data-fecha][data-jugadora]").forEach(el => {
+        el.disabled = true;
+        el.setAttribute("aria-disabled", "true");
+        el.title = "Solo consulta: cada jugadora puede ver sus propias asistencias";
+      });
     }
 
     if (pagina === "adiur-partidos.html") {
@@ -319,6 +330,19 @@
             puedeGestionarUsuarios: base.puedeGestionarUsuarios
           });
           aplicarPermisos();
+          if (!refrescoInicialRealizado) {
+            refrescoInicialRealizado = true;
+            if (paginaActual() === "adiur-asistencia.html") {
+              window.renderizarMatriz?.();
+              window.renderizarSeguimientoIndividual?.();
+            } else if (paginaActual() === "adiur-partidos.html") {
+              window.renderizarFixture?.();
+            } else if (paginaActual() === "adiur-testeos.html") {
+              window.renderizarEstadisticas?.();
+            } else if (paginaActual() === "adiur-gimnasio.html") {
+              window.renderizarBiblioteca?.();
+            }
+          }
           if (!observerDOM) {
             observerDOM = new MutationObserver(() => aplicarPermisos());
             observerDOM.observe(document.documentElement, { childList: true, subtree: true });
