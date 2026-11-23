@@ -927,6 +927,42 @@ body{background:#f3f5f8}.contenido{max-width:1740px;margin:30px auto;padding:0 2
 @media(max-width:520px){.contenido{padding:0 11px 32px}.integral-panel{padding:14px}.integral-metrics{gap:7px}.integral-metrics article{padding:11px}.integral-metrics strong{font-size:23px}}
 
 .integral-test-marks{display:block;max-width:220px;margin-top:4px;color:#818c9a;font-size:8px;line-height:1.5;white-space:normal}
+
+
+/* ESTADÍSTICAS · PANEL ÚNICO DEL CLUB */
+#panelFiltrosPrincipales{padding:17px 20px;margin-bottom:18px;border-radius:13px;box-shadow:0 2px 10px rgba(20,25,35,.035)}
+#panelFiltrosPrincipales .controles-filtros{display:block;margin:0}
+#panelFiltrosPrincipales .campo-filtro{display:none}
+#panelFiltrosPrincipales .campo-filtro:has(#filtroJugadoraIndividual){display:block;max-width:520px}
+#panelFiltrosPrincipales .campo-filtro:has(#filtroJugadoraIndividual) label{font-size:10px;letter-spacing:.65px;color:#606977;margin-bottom:8px}
+#filtroJugadoraIndividual{min-height:48px;border:1px solid #e3a06e!important;background:#fffaf6!important;color:#282b31!important;font-weight:700!important;border-radius:10px!important;font-size:14px!important}
+#panelFiltrosPrincipales .acciones-tabla{display:none!important}
+#panelIntegral{display:block!important;margin-bottom:20px;padding:22px;border:1px solid #e7e8eb;border-radius:14px;box-shadow:0 3px 14px rgba(20,25,35,.035)}
+#panelIntegral .integral-heading{padding-bottom:15px;border-bottom:1px solid #eceef1;margin-bottom:16px}
+#panelIntegral .integral-kicker{color:#d86b24;letter-spacing:1.2px}
+#panelIntegral .integral-heading h3{font-size:22px;letter-spacing:-.45px;color:#202329}
+#panelIntegral .integral-heading p{font-size:12px;color:#737984}
+#panelIntegral .integral-live{background:#fff8f2;border-color:#f5e1d1;color:#a8541b}
+#panelIntegral .integral-metrics{grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+#panelIntegral .integral-metrics article{background:#fff;border:1px solid #e9eaed;border-radius:11px;padding:14px}
+#panelIntegral .integral-metrics small{font-size:9px;color:#777e88;letter-spacing:.45px}
+#panelIntegral .integral-metrics strong{font-size:26px;color:#202329}
+#panelIntegral .integral-table-head{margin-top:7px}
+#panelIntegral .integral-table-head h4{font-size:14px;color:#25282e}
+#panelIntegral .integral-table-head p{font-size:11px}
+#panelIntegral .integral-table-head input{border-radius:8px;min-height:38px}
+#panelIntegral .integral-table-wrap{border-radius:9px}
+#panelIntegral .integral-table th{font-size:9px;letter-spacing:.35px;color:#69717d}
+#panelIntegral .integral-table td{font-size:11px}
+#panelIntegral .integral-open{background:#fff1e7;color:#bd5718;border:1px solid #f3d4bd;border-radius:7px;padding:7px 10px;font-weight:800}
+#panelFichaJugadora{margin:0 0 24px;border:1px solid #e6e7ea;border-radius:14px;box-shadow:0 3px 14px rgba(20,25,35,.035)}
+#panelFichaJugadora .ficha-header{border-bottom:1px solid #eceef1}
+#panelFichaJugadora .ficha-avatar{border-radius:12px;background:#f47721}
+#panelFichaJugadora .ficha-card{background:#fff;border:1px solid #e8e9ec;border-radius:10px}
+#panelFichaJugadora .ficha-card-titulo{font-size:12px;letter-spacing:.15px}
+#panelFichaJugadora .ficha-card-titulo a{color:#c65c18}
+#bloquePartidosEInformes,#panelTablaEstadisticas,.contenido>.panel:not(#panelFiltrosPrincipales){display:none!important}
+@media(max-width:760px){#panelFiltrosPrincipales{padding:14px}#panelIntegral{padding:15px}#panelIntegral .integral-heading{align-items:flex-start}#panelIntegral .integral-live{display:none}#panelIntegral .integral-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}#panelIntegral .integral-metrics article:last-child{grid-column:span 2}#panelIntegral .integral-table-head{align-items:stretch;flex-direction:column}#panelIntegral .integral-table-head input{width:100%}#panelFichaJugadora{padding:15px}}
 </style>
 <script src="ADIUR-permisos.js?v=20261123d">
 </script>
@@ -1293,12 +1329,12 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
     <div class="encabezado-seccion">
       <div>
         <h2>Estadísticas y rendimiento deportivo</h2>
-        <p>Una visión integral del plantel para analizar participación, evolución y seguimiento individual. Seleccioná una categoría y explorá los datos de cada módulo.</p>
+        <p>Un seguimiento completo del club: partidos, asistencia, rendimiento físico, testeos y lesiones. Elegí una jugadora para consultar toda su evolución.</p>
       </div>
     </div>
 
     <!-- FILTROS PRINCIPALES -->
-    <div class="panel">
+    <div class="panel" id="panelFiltrosPrincipales">
       <div class="controles-filtros">
         <div class="campo-filtro">
           <label for="filtroModulo">Área de análisis</label>
@@ -1313,8 +1349,9 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
         </div>
 
         <div class="campo-filtro">
-          <label for="filtroDivision">Categoría</label>
+          <label for="filtroDivision">Categoría interna</label>
           <select id="filtroDivision" onchange="cambiarDivision()">
+            <option value="Todas" selected>Todas las categorías</option>
             <option value="Sub 10">Sub 10</option>
             <option value="Sub 12">Sub 12</option>
             <option value="Sub 14" selected>Sub 14</option>
@@ -1344,9 +1381,9 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
         </div>
 
         <div class="campo-filtro">
-          <label for="filtroJugadoraIndividual">Ficha individual</label>
-          <select id="filtroJugadoraIndividual" onchange="seleccionarJugadoraFicha(this.value)">
-            <option value="">-- Ver todas / Elegir jugadora --</option>
+          <label for="filtroJugadoraIndividual">Seleccionar jugadora</label>
+          <select id="filtroJugadoraIndividual" class="filtro-destacado" onchange="seleccionarJugadoraFicha(this.value)">
+            <option value="">Todas las jugadoras · visión general del club</option>
           </select>
         </div>
 
@@ -1378,18 +1415,18 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
 
     <section class="integral-panel" id="panelIntegral">
       <div class="integral-heading">
-        <div><span class="integral-kicker">ADIUR FEMENINO · PERFORMANCE</span><h3>Rendimiento integral del plantel</h3><p>Indicadores consolidados por categoría a partir de Informes, Testeos y el historial de Lesiones.</p></div>
+        <div><span class="integral-kicker">ADIUR FEMENINO · PERFORMANCE</span><h3 id="tituloIntegral">Panorama general del club</h3><p id="subtituloIntegral">Indicadores consolidados de todas las categorías y áreas de seguimiento.</p></div>
         <div class="integral-live"><span></span>Fuentes del club</div>
       </div>
       <div class="integral-metrics">
-        <article><small>JUGADORAS EN VISTA</small><strong id="integralTotalJugadoras">—</strong><span>Según los filtros aplicados</span></article>
-        <article><small>PARTICIPACIONES</small><strong id="integralTotalPartidos">—</strong><span>Acumuladas en las jugadoras visibles</span></article>
-        <article><small>MINUTOS JUGADOS</small><strong id="integralTotalMinutos">—</strong><span>Acumulado en Informes</span></article>
+        <article><small>JUGADORAS</small><strong id="integralTotalJugadoras">—</strong><span>Plantel completo del club</span></article>
+        <article><small>PARTICIPACIONES</small><strong id="integralTotalPartidos">—</strong><span>Partidos disputados registrados</span></article>
+        <article><small>MINUTOS JUGADOS</small><strong id="integralTotalMinutos">—</strong><span>Acumulado en informes</span></article>
         <article><small>GOLES</small><strong id="integralTotalGoles">—</strong><span>Registrados en Informes</span></article>
-        <article><small>CASOS EN SEGUIMIENTO</small><strong id="integralCasosActivos">—</strong><span>Según estado registrado</span></article>
+        <article><small>LESIONES ACTIVAS</small><strong id="integralCasosActivos">—</strong><span>Casos que continúan en seguimiento</span></article>
       </div>
       <div class="integral-table-head">
-        <div><h4>Plantel · comparación individual</h4><p>Consultá los indicadores disponibles y abrí la ficha de cada jugadora.</p></div>
+        <div><h4>Resumen del plantel</h4><p>Comparación general de partidos, goles, testeos y estado de lesiones. Seleccioná un nombre para abrir su ficha integral.</p></div>
         <input id="buscarIntegral" type="search" placeholder="Buscar jugadora..." aria-label="Buscar jugadora en estadísticas">
       </div>
       <div class="integral-table-wrap"><table class="integral-table"><thead><tr><th>JUGADORA</th><th>POSICIÓN</th><th>PJ</th><th>MIN</th><th>G</th><th>🟨</th><th>🟥</th><th>TESTEOS / MARCAS RECIENTES</th><th>SALUD / LESIONES</th><th></th></tr></thead><tbody id="cuerpoIntegral"><tr><td colspan="10" class="integral-empty">Preparando el consolidado de la categoría…</td></tr></tbody></table></div>
@@ -1789,7 +1826,7 @@ function obtenerJugadorasFiltradasActuales() {
   const divNorm = divisionSeleccionada.toLowerCase().replace(/\s+/g, "");
 
   return obtenerJugadoras()
-    .filter(j => (j.categoria || "").toLowerCase().replace(/\s+/g, "") === divNorm)
+    .filter(j => !divisionSeleccionada || divNorm === "todas" || (j.categoria || "").toLowerCase().replace(/\s+/g, "") === divNorm)
     .filter(j => {
       if (jugadoraSelId && String(j.id) !== String(jugadoraSelId)) return false;
       if (filtroPos === "todas") return true;
@@ -1925,16 +1962,17 @@ window.cambiarDivision = function() {
 
 function actualizarSelectorJugadorasDivision(division) {
   const selectJug = document.getElementById("filtroJugadoraIndividual");
-  const divNorm = division.toLowerCase().replace(/\s+/g, "");
+  const todas = !division || normalizarTexto(division) === "todas";
+  const divNorm = normalizarTexto(division).replace(/\s+/g, "");
   const jugadorasDiv = obtenerJugadoras()
-    .filter(j => j.categoria.toLowerCase().replace(/\s+/g, "") === divNorm)
+    .filter(j => todas || normalizarTexto(j.categoria).replace(/\s+/g, "") === divNorm)
     .sort((a, b) => a.nombreCompleto.localeCompare(b.nombreCompleto));
 
-  selectJug.innerHTML = `<option value="">-- Elegir jugadora de ${division} (${jugadorasDiv.length}) --</option>`;
+  selectJug.innerHTML = '<option value="">Todas las jugadoras · visión general del club</option>';
   jugadorasDiv.forEach(j => {
     const opt = document.createElement("option");
     opt.value = j.id;
-    opt.textContent = `${j.nombreCompleto} (${j.posicion})`;
+    opt.textContent = `${j.nombreCompleto} · ${j.categoria || "Sin categoría"}`;
     selectJug.appendChild(opt);
   });
 }
@@ -2966,6 +3004,8 @@ window.cerrarModal = function(id) {
 window.addEventListener("DOMContentLoaded", async () => {
   await sincronizarJugadorasDesdeBase();
   document.getElementById("filtroModulo").value = "integral";
+  document.getElementById("filtroDivision").value = "Todas";
+  document.getElementById("filtroPosicion").value = "todas";
   cambiarModuloFiltro(true);
   cambiarDivision();
 });
@@ -3076,7 +3116,7 @@ function registroTesteoIntegral(planillas,jugadora){
 }
 function registroPartidoIntegral(partido,jugadora,division){
  const lista=Array.isArray(partido.jugadoras)?partido.jugadoras:[];
- for(const reg of lista){const cat=categoriaRegistroIntegral(reg)||categoriaRegistroIntegral(partido);if(cat!==claveCategoriaIntegral(division))continue;if(mismaJugadoraIntegral(reg,jugadora))return reg;}
+ for(const reg of lista){const cat=categoriaRegistroIntegral(reg)||categoriaRegistroIntegral(partido);if(division&&cat!==claveCategoriaIntegral(division))continue;if(mismaJugadoraIntegral(reg,jugadora))return reg;}
  return null;
 }
 function eventosDeJugadoraIntegral(eventos,jugadora){
@@ -3085,20 +3125,41 @@ function eventosDeJugadoraIntegral(eventos,jugadora){
 }
 async function renderizarPanelIntegral(){
  const version=++versionRenderIntegral;
- const division=document.getElementById("filtroDivision").value,jugadoras=obtenerJugadorasFiltradasActuales(),tbody=document.getElementById("cuerpoIntegral"),estado=document.getElementById("estadoIntegral");
- tbody.innerHTML='<tr><td colspan="10" class="integral-empty">Consolidando las fuentes de datos…</td></tr>';
- let partidos,lesiones,planillas;
+ const division=document.getElementById("filtroDivision").value;
+ const categoriaFiltrada=division&&claveCategoriaIntegral(division)!=="todas";
+ const jugadoras=obtenerJugadorasFiltradasActuales();
+ const tbody=document.getElementById("cuerpoIntegral"),estado=document.getElementById("estadoIntegral");
+ const seleccion=document.getElementById("filtroJugadoraIndividual").value;
+ const titulo=document.getElementById("tituloIntegral"),subtitulo=document.getElementById("subtituloIntegral");
+ if(titulo)titulo.textContent=seleccion?"Resumen individual":"Panorama general del club";
+ if(subtitulo)subtitulo.textContent=seleccion
+   ?"Resumen de la información registrada en todas las áreas para esta jugadora."
+   :"Información consolidada de todas las categorías: competencia, asistencia, rendimiento físico, testeos y lesiones.";
+ tbody.innerHTML='<tr><td colspan="10" class="integral-empty">Consolidando la información del club…</td></tr>';
+ let partidos,lesiones,planillasPorCategoria=[];
  try{
-  [partidos,lesiones,planillas]=await Promise.all([obtenerPartidosIntegral(),obtenerLesionesIntegral(),obtenerPlanillasIntegral(division)]);
+  const categorias=[...new Set(obtenerJugadoras().map(j=>j.categoria).filter(Boolean))];
+  [partidos,lesiones]=await Promise.all([obtenerPartidosIntegral(),obtenerLesionesIntegral()]);
+  planillasPorCategoria=await Promise.all(categorias.map(c=>obtenerPlanillasIntegral(c)));
  }catch(error){
   console.error("No se pudo consolidar el rendimiento:",error);
-  if(version===versionRenderIntegral){tbody.innerHTML='<tr><td colspan="10" class="integral-empty">No se pudieron leer las fuentes de datos. Revisá la conexión y volvé a intentar.</td></tr>';estado.textContent="Error al consultar las fuentes del club.";}return;
+  if(version===versionRenderIntegral){tbody.innerHTML='<tr><td colspan="10" class="integral-empty">No se pudieron leer todas las fuentes. Revisá la conexión e intentá nuevamente.</td></tr>';estado.textContent="No se pudo completar la consulta de las fuentes del club.";}return;
  }
- if(version!==versionRenderIntegral||document.getElementById("filtroModulo").value!=="integral"||document.getElementById("filtroDivision").value!==division)return;
- const competencia=competenciaRealIntegral(division,document.getElementById("filtroCompetencia").value);
- const partidosDiv=partidos.filter(p=>{const cat=categoriaRegistroIntegral(p);const categoriaOk=cat?cat===claveCategoriaIntegral(division):(Array.isArray(p.jugadoras)?p.jugadoras:[]).some(reg=>categoriaRegistroIntegral(reg)===claveCategoriaIntegral(division));if(!categoriaOk)return false;if(!competencia)return true;return competenciaCoincideIntegral(p.torneo||p.competicion||p.competencia||"",competencia);}),resumen=[];
+ if(version!==versionRenderIntegral||document.getElementById("filtroDivision").value!==division||document.getElementById("filtroJugadoraIndividual").value!==seleccion)return;
+ const competencia=categoriaFiltrada?competenciaRealIntegral(division,document.getElementById("filtroCompetencia").value):"";
+ const partidosDiv=partidos.filter(p=>{
+  if(categoriaFiltrada){
+   const cat=categoriaRegistroIntegral(p);
+   const categoriaOk=cat?cat===claveCategoriaIntegral(division):(Array.isArray(p.jugadoras)?p.jugadoras:[]).some(reg=>categoriaRegistroIntegral(reg)===claveCategoriaIntegral(division));
+   if(!categoriaOk)return false;
+  }
+  if(!competencia)return true;
+  return competenciaCoincideIntegral(p.torneo||p.competicion||p.competencia||"",competencia);
+ });
+ const planillas=planillasPorCategoria.flat();
+ const resumen=[];
  for(const j of jugadoras){
-  const regs=partidosDiv.map(p=>({p,reg:registroPartidoIntegral(p,j,division)})).filter(x=>x.reg);
+  const regs=partidosDiv.map(p=>({p,reg:registroPartidoIntegral(p,j,categoriaFiltrada?division:"")})).filter(x=>x.reg);
   let pj=0,min=0,goles=0,amarillas=0,rojas=0;
   regs.forEach(({p,reg})=>{
    const minutos=numeroIntegral(reg.minutos),g=numeroIntegral(reg.goles),a=numeroIntegral(reg.amarillas),r=numeroIntegral(reg.rojas);
@@ -3109,18 +3170,18 @@ async function renderizarPanelIntegral(){
    const golesValor=eventosGolesPartido.length?eventosGoles:g;
    const amarillasValor=eventosTarjetasPartido.length?eventosTarjetas.filter(e=>/amarilla/i.test(String(e.tipo||e.tarjeta||""))).length:a;
    const rojasValor=eventosTarjetasPartido.length?eventosTarjetas.filter(e=>/roja/i.test(String(e.tipo||e.tarjeta||""))).length:r;
-   const jugo=reg.jugo===true||["si","sí","true","1"].includes(normalizarTexto(reg.jugo))||
-    (minutos!==null&&minutos>0)||(golesValor!==null&&golesValor>0)||eventosGoles>0||
-    (amarillasValor!==null&&amarillasValor>0)||(rojasValor!==null&&rojasValor>0)||eventosTarjetas.length>0;
+   const jugo=reg.jugo===true||["si","sí","true","1"].includes(normalizarTexto(reg.jugo))||(minutos!==null&&minutos>0)||(golesValor!==null&&golesValor>0)||eventosGoles>0||(amarillasValor!==null&&amarillasValor>0)||(rojasValor!==null&&rojasValor>0)||eventosTarjetas.length>0;
    if(jugo)pj++;
    if(minutos!==null)min+=minutos;
    if(golesValor!==null)goles+=golesValor;
    if(amarillasValor!==null)amarillas+=amarillasValor;
    if(rojasValor!==null)rojas+=rojasValor;
   });
-  const casos=lesiones.filter(l=>{const cat=categoriaRegistroIntegral(l);return cat===claveCategoriaIntegral(division)&&mismaJugadoraIntegral(l,j);}).sort((a,b)=>String(b.fecha||b.fechaInicio||"").localeCompare(String(a.fecha||a.fechaInicio||"")));
+  const casos=lesiones.filter(l=>(!categoriaFiltrada||categoriaRegistroIntegral(l)===claveCategoriaIntegral(division))&&mismaJugadoraIntegral(l,j))
+   .sort((a,b)=>String(b.fecha||b.fechaInicio||"").localeCompare(String(a.fecha||a.fechaInicio||"")));
   const activos=casos.filter(l=>!["alta deportiva confirmada","caso cerrado"].includes(normalizarTexto(l.estado)));
-  resumen.push({j,pj,min,goles,amarillas,rojas,conDatosPartido:regs.length>0,casos,activos,test:registroTesteoIntegral(planillas,j)});
+  const planillasJugadora=planillas.filter(p=>!categoriaFiltrada||claveCategoriaIntegral(p.division||p.categoria)===claveCategoriaIntegral(division));
+  resumen.push({j,pj,min,goles,amarillas,rojas,conDatosPartido:regs.length>0,casos,activos,test:registroTesteoIntegral(planillasJugadora,j)});
  }
  const suma=k=>resumen.reduce((a,x)=>a+(Number(x[k])||0),0);
  document.getElementById("integralTotalJugadoras").textContent=jugadoras.length;
@@ -3129,18 +3190,19 @@ async function renderizarPanelIntegral(){
  document.getElementById("integralTotalGoles").textContent=partidosDiv.length?suma("goles"):"—";
  document.getElementById("integralCasosActivos").textContent=resumen.reduce((a,x)=>a+x.activos.length,0);
  const render=lista=>{
-  if(!lista.length){tbody.innerHTML='<tr><td colspan="10" class="integral-empty">No hay jugadoras para los filtros seleccionados.</td></tr>';return;}
+  if(!lista.length){tbody.innerHTML='<tr><td colspan="10" class="integral-empty">No hay jugadoras para mostrar.</td></tr>';return;}
   tbody.innerHTML=lista.map(x=>{
-   const j=x.j,ini=j.nombreCompleto.trim().split(/\s+/).slice(0,2).map(z=>z[0]||"").join("").toUpperCase(),test=x.test?x.test.mes:"—";
+   const j=x.j,ini=String(j.nombreCompleto||"J").trim().split(/\s+/).slice(0,2).map(z=>z[0]||"").join("").toUpperCase(),test=x.test?x.test.mes:"—";
    const marcas=x.test?x.test.columnas.slice(0,3).map(c=>{const vals=[c.id,c.segundoId].filter(Boolean).map(id=>x.test.valores[id]).filter(v=>v!==undefined&&v!==null&&String(v).trim()!=="");return escaparIntegral(c.label||c.nombre||c.id)+": "+escaparIntegral(vals.join(" / "));}).join(" · "):"Sin planilla cargada";
    const status=x.activos.length?'<span class="integral-badge active">'+x.activos.length+' caso(s) activo(s)</span>':x.casos.length?'<span class="integral-badge closed">Historial cerrado</span>':'<span class="integral-badge">Sin casos registrados</span>';
-   return '<tr><td><div class="integral-player"><span class="integral-avatar">'+escaparIntegral(ini)+'</span><div><strong>'+escaparIntegral(j.nombreCompleto)+'</strong><small>'+escaparIntegral(j.categoria||division)+'</small></div></div></td><td>'+escaparIntegral(j.posicion||"Sin asignar")+'</td><td class="integral-num">'+(x.conDatosPartido?x.pj:"—")+'</td><td class="integral-num">'+(x.conDatosPartido?x.min:"—")+'</td><td class="integral-num">'+(x.conDatosPartido?x.goles:"—")+'</td><td>'+(x.conDatosPartido?x.amarillas:"—")+'</td><td>'+(x.conDatosPartido?x.rojas:"—")+'</td><td><strong>'+escaparIntegral(test)+'</strong><small class="integral-test-marks">'+marcas+'</small></td><td>'+status+'</td><td><button class="integral-open" type="button" data-integral-id="'+escaparIntegral(j.id)+'">Ver ficha</button></td></tr>';
+   return '<tr><td><div class="integral-player"><span class="integral-avatar">'+escaparIntegral(ini)+'</span><div><strong>'+escaparIntegral(j.nombreCompleto)+'</strong><small>'+escaparIntegral(j.categoria||"Sin categoría")+'</small></div></div></td><td>'+escaparIntegral(j.posicion||"Sin asignar")+'</td><td class="integral-num">'+(x.conDatosPartido?x.pj:"—")+'</td><td class="integral-num">'+(x.conDatosPartido?x.min:"—")+'</td><td class="integral-num">'+(x.conDatosPartido?x.goles:"—")+'</td><td>'+(x.conDatosPartido?x.amarillas:"—")+'</td><td>'+(x.conDatosPartido?x.rojas:"—")+'</td><td><strong>'+escaparIntegral(test)+'</strong><small class="integral-test-marks">'+marcas+'</small></td><td>'+status+'</td><td><button class="integral-open" type="button" data-integral-id="'+escaparIntegral(j.id)+'">Ver ficha</button></td></tr>';
   }).join("");
   tbody.querySelectorAll("[data-integral-id]").forEach(btn=>btn.addEventListener("click",()=>seleccionarJugadoraFicha(btn.dataset.integralId)));
  };
- const buscar=document.getElementById("buscarIntegral"),filtrar=()=>{const q=normalizarTexto(buscar.value);render(resumen.filter(x=>normalizarTexto(x.j.nombreCompleto).includes(q)));};
+ const buscar=document.getElementById("buscarIntegral");
+ const filtrar=()=>{const q=normalizarTexto(buscar.value);render(resumen.filter(x=>normalizarTexto(x.j.nombreCompleto).includes(q)));};
  buscar.oninput=filtrar;filtrar();
- estado.textContent="Fuente: "+partidosDiv.length+" informes de partido · "+resumen.filter(x=>x.test).length+"/"+jugadoras.length+" jugadoras con planilla de testeo · "+resumen.reduce((a,x)=>a+x.casos.length,0)+" registros de lesión. Los guiones indican ausencia de datos, no rendimiento cero.";
+ estado.textContent="Club completo · "+partidosDiv.length+" informes de partido · "+resumen.filter(x=>x.test).length+"/"+jugadoras.length+" jugadoras con testeos · "+resumen.reduce((a,x)=>a+x.casos.length,0)+" registros de lesiones. Los guiones indican datos no cargados.";
 }
 
 
