@@ -2882,7 +2882,13 @@ async function renderizarPanelIntegral(){
  const version=++versionRenderIntegral;
  const division=document.getElementById("filtroDivision").value,jugadoras=obtenerJugadorasFiltradasActuales(),tbody=document.getElementById("cuerpoIntegral"),estado=document.getElementById("estadoIntegral");
  tbody.innerHTML='<tr><td colspan="10" class="integral-empty">Consolidando las fuentes de datos…</td></tr>';
- const [partidos,lesiones,planillas]=await Promise.all([obtenerPartidosIntegral(),obtenerLesionesIntegral(),obtenerPlanillasIntegral(division)]);
+ let partidos,lesiones,planillas;
+ try{
+  [partidos,lesiones,planillas]=await Promise.all([obtenerPartidosIntegral(),obtenerLesionesIntegral(),obtenerPlanillasIntegral(division)]);
+ }catch(error){
+  console.error("No se pudo consolidar el rendimiento:",error);
+  if(version===versionRenderIntegral){tbody.innerHTML='<tr><td colspan="10" class="integral-empty">No se pudieron leer las fuentes de datos. Revisá la conexión y volvé a intentar.</td></tr>';estado.textContent="Error al consultar las fuentes del club.";}return;
+ }
  if(version!==versionRenderIntegral||document.getElementById("filtroModulo").value!=="integral"||document.getElementById("filtroDivision").value!==division)return;
  const competencia=competenciaRealIntegral(division,document.getElementById("filtroCompetencia").value);
  const partidosDiv=partidos.filter(p=>{const cat=categoriaRegistroIntegral(p);const categoriaOk=cat?cat===claveCategoriaIntegral(division):(Array.isArray(p.jugadoras)?p.jugadoras:[]).some(reg=>categoriaRegistroIntegral(reg)===claveCategoriaIntegral(division));if(!categoriaOk)return false;if(!competencia)return true;return claveCategoriaIntegral(p.torneo||p.competicion||p.competencia||"")===claveCategoriaIntegral(competencia);}),resumen=[];
