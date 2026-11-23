@@ -126,6 +126,13 @@ body.pizarra-inmersiva .board{background:#131d28;border-color:#2b3d50}body.pizar
 @media(max-width:620px){.page-header{padding:19px 17px}.page-header h2{font-size:23px}.workspace{grid-template-columns:1fr}.tools{background:#182431}.pitchwrap{min-height:220px;padding:5px}.player{width:30px;height:30px;font-size:10px}body.pizarra-inmersiva .tools{background:#182431}}
 
 </style>
+
+<style id="adiur-pizarra-layout-fix">
+.contenedor{display:flex;align-items:stretch;min-height:calc(100vh - 84px);width:100%}
+#sidebar{flex:0 0 258px;min-width:0}
+.main{flex:1 1 auto;min-width:0;width:calc(100% - 258px);margin:0!important;align-self:stretch}
+@media(max-width:760px){.contenedor{display:block;min-height:calc(100vh - 72px)}#sidebar{position:fixed!important;z-index:150}.main{width:100%;margin:0!important}}
+</style>
 </head>
 <body>
 <header class="barra-superior">
@@ -136,6 +143,7 @@ body.pizarra-inmersiva .board{background:#131d28;border-color:#2b3d50}body.pizar
 </header>
 <div class="capa-sidebar" id="capaSidebar" aria-hidden="true"></div>
 <aside class="sidebar" id="sidebar" aria-label="Navegación principal"></aside>
+<div class="contenedor" id="layoutContenedor">
 <main class="main" id="main">
 <header class="page-header">
 <div><span class="eyebrow">COMPETENCIA · ESTRATEGIA</span><h2>Pizarra táctica</h2><p>Armá jugadas, ubicá a las jugadoras y explicá movimientos con una cancha amplia y herramientas simples.</p></div>
@@ -160,6 +168,7 @@ body.pizarra-inmersiva .board{background:#131d28;border-color:#2b3d50}body.pizar
 </section>
 <section class="saved"><div class="saved-head"><div><strong>Pizarras guardadas en este dispositivo</strong><small>Podés recuperar o eliminar cada pizarra desde este navegador.</small></div><span id="savedCount"></span></div><div class="saved-list" id="savedList"><span class="empty">Todavía no hay pizarras guardadas.</span></div></section>
 </main>
+</div>
 <script>
 (()=>{
 "use strict";
