@@ -2763,11 +2763,17 @@ function compararJugadorasPorApellido(a, b) {
 function jugadorasCategoriaActual() {
   if (!categoriaSeleccionada) return [];
 
-  const activas = jugadoras.filter(j =>
+  let activas = jugadoras.filter(j =>
     esJugadoraActiva(j) &&
     normalizarCategoria(j.categoria) ===
     normalizarCategoria(categoriaSeleccionada)
   );
+
+  const permisos = window.ADIUR_PERMISOS;
+  if (permisos?.rol === "jugadora" && permisos.jugadora) {
+    const nombrePropio = normalizarTexto(permisos.jugadora);
+    activas = activas.filter(j => normalizarTexto(j.nombre) === nombrePropio);
+  }
 
   return activas.sort((a, b) => {
     if (ordenLista === "puesto") {
@@ -3888,7 +3894,7 @@ function renderizarSelectorJugadoras() {
     return;
   }
 
-  select.disabled = false;
+  select.disabled = window.ADIUR_PERMISOS?.rol === "jugadora";
 
   select.innerHTML = jugadorasVisibles.map(jugadora => `
     <option value="${escaparHTML(claveJugadora(jugadora))}">
@@ -3900,9 +3906,11 @@ function renderizarSelectorJugadoras() {
     jugadora => claveJugadora(jugadora) === claveGuardada
   );
 
-  const claveSeleccionada = existeGuardada
-    ? claveGuardada
-    : claveJugadora(jugadorasVisibles[0]);
+  const esJugadora = window.ADIUR_PERMISOS?.rol === "jugadora";
+  const clavePropia = esJugadora ? claveJugadora(jugadorasVisibles[0]) : null;
+  const claveSeleccionada = esJugadora
+    ? clavePropia
+    : existeGuardada ? claveGuardada : claveJugadora(jugadorasVisibles[0]);
 
   select.value = claveSeleccionada;
 
@@ -4057,6 +4065,7 @@ function renderizarSeguimientoIndividual() {
 
     </div>
 
+${window.ADIUR_PERMISOS?.rol === "jugadora" ? "" : `
     <!-- PROMEDIO DE TODA LA DIVISIÓN -->
 
     <div class="metrica-periodo-titulo">
@@ -4098,6 +4107,9 @@ function renderizarSeguimientoIndividual() {
       </div>
 
     </div>
+
+
+    `}
 
     <div class="individual-aclaracion">
 
