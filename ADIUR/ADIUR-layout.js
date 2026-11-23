@@ -494,14 +494,6 @@
         titulo: "Estadísticas del club",
         descripcion: "Consultá el rendimiento general y la evolución de cada jugadora a partir de los registros de competencia, asistencia, testeos, tiempos y lesiones."
       },
-      "adiur-pruebas.html": {
-        controlesCategoria: ["selectDivision"],
-        ocultarSelectores: [".selector-categoria"],
-        selector: ".encabezado",
-        eyebrow: "RENDIMIENTOS · TESTEOS",
-        titulo: "Testeos y evaluaciones físicas",
-        descripcion: "Registrá los resultados y consultá la evolución física de cada jugadora."
-      },
       "adiur-testeos.html": {
         controlesCategoria: ["selectDivision"],
         ocultarSelectores: [".selector-categoria"],
@@ -562,108 +554,79 @@
           <label for="adiurCategoriaGlobal">CATEGORÍA DEL PLANTEL</label>
           <select id="adiurCategoriaGlobal" aria-label="Seleccionar categoría"></select>
         </div>`;
-      const controlesOriginales = (configPagina.controlesCategoria || [])
-        .map(id => document.getElementById(id))
-        .filter(Boolean);
-
-      // Se utiliza el selector real de la página como selector principal.
-      // Así se conservan sus listeners originales y no hay un segundo <select>
-      // que dependa de sincronizaciones artificiales para actualizar el plantel.
-      const controlPrincipal = controlesOriginales[0] || null;
+      const controlesOriginales = (configPagina.controlesCategoria || []).map(id => document.getElementById(id)).filter(Boolean);
       const depositoControles = document.createElement("div");
       depositoControles.hidden = true;
       depositoControles.className = "adiur-controles-categoria-ocultos";
       zonaPrincipal.appendChild(depositoControles);
-
-      const panelControl = panel.querySelector(".adiur-panel-control");
-      const etiquetaGlobal = panelControl.querySelector("label");
-      const selectorGlobal = controlPrincipal || document.createElement("select");
-
-      if (controlPrincipal) {
-        etiquetaGlobal.htmlFor = controlPrincipal.id;
-        panelControl.appendChild(controlPrincipal);
-        controlesOriginales.slice(1).forEach(select => depositoControles.appendChild(select));
-      } else {
-        selectorGlobal.id = "adiurCategoriaGlobal";
-        selectorGlobal.setAttribute("aria-label", "Seleccionar categoría");
-        panelControl.appendChild(selectorGlobal);
+      controlesOriginales.forEach(select => depositoControles.appendChild(select));
+      const encabezadoOriginal = zonaPrincipal.querySelector(configPagina.selector);
+      if (encabezadoOriginal) {
+        const bloquesConAcciones = Array.from(encabezadoOriginal.children).filter(nodo => nodo.matches("button, a.boton-principal, a.btn") || (nodo.querySelector && nodo.querySelector("button, a.boton-principal, a.btn")));
+        if (bloquesConAcciones.length) {
+          const acciones = document.createElement("div");
+          acciones.className = "adiur-panel-acciones";
+          bloquesConAcciones.forEach(nodo => acciones.appendChild(nodo));
+          panel.appendChild(acciones);
+        }
+        encabezadoOriginal.remove();
       }
-
+      zonaPrincipal.insertBefore(panel, zonaPrincipal.firstChild);
       const categorias = ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
-      const normalizarCategoriaGlobal = valor => String(valor || "")
-        .normalize("NFD")
-        .split("")
-        .filter(caracter => { const codigo = caracter.charCodeAt(0); return codigo < 0x0300 || codigo > 0x036f; })
-        .join("")
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, "");
-
+      const idsCategoria = new Set(["categoriaPrincipal","filtroCategoria","categoria","selectCategoria","division","filtroDivision","filtroDivisionPartidos","filtroDivisionEstadisticas","selectDivision","selectorCategoriaGlobal","selectorCategoria","filtroCategoriaEstadisticas"]);
+      const normalizarCategoriaGlobal = valor => String(valor || "").normalize("NFD").split("").filter(caracter => { const codigo = caracter.charCodeAt(0); return codigo < 0x0300 || codigo > 0x036f; }).join("").toLowerCase().replace(/[^a-z0-9]/g,"");
+      const categoriaEnOpciones = select => Array.from(select.options || []).some(option => categorias.some(cat => normalizarCategoriaGlobal(option.value || option.textContent) === normalizarCategoriaGlobal(cat)));
+      const selectorGlobal = panel.querySelector("#adiurCategoriaGlobal");
       (configPagina.ocultarSelectores || []).forEach(selector => {
         document.querySelectorAll(selector).forEach(nodo => {
-          // Si la configuración histórica apunta al propio selector (como en
-          // Estadísticas), no ocultar el control que ahora vive en el panel.
-          if (nodo === selectorGlobal || nodo === panel || nodo.contains(selectorGlobal) || nodo.contains(panel)) return;
-          nodo.classList.add("adiur-categoria-integrada");
+          if (nodo !== panel && !nodo.contains(panel)) nodo.classList.add("adiur-categoria-integrada");
         });
       });
-
       function categoriasAutorizadas() {
-        const perfil = window.ADIUR_PERMISOS;
-        if (perfil && ["jugadora", "cuerpo_tecnico"].includes(perfil.rol)) {
-          const permitidas = new Set((perfil.categorias || []).map(normalizarCategoriaGlobal));
-          return categorias.filter(categoria => permitidas.has(normalizarCategoriaGlobal(categoria)));
+        const p = window.ADIUR_PERMISOS;
+        if (p && ["jugadora","cuerpo_tecnico"].includes(p.rol)) {
+          const permitidas = new Set((p.categorias || []).map(normalizarCategoriaGlobal));
+          return categorias.filter(c => permitidas.has(normalizarCategoriaGlobal(c)));
         }
         return categorias;
       }
-
-      function controlesSecundarios() {
-        return controlesOriginales.slice(1).filter(select => select.isConnected);
+      function controlesCategoria() {
+        return controlesOriginales.filter(select => select.isConnected && select !== selectorGlobal);
       }
-
+      function ocultarControlOriginal(select) {
+        select.classList.add("adiur-categoria-integrada");
+        const etiqueta = select.id ? document.querySelector('label[for="' + CSS.escape(select.id) + '"]') : null;
+        if (etiqueta) {
+          const campo = etiqueta.closest(".campo,.field,.selector-campo,.filtro-item");
+          const otrosControles = campo ? campo.querySelectorAll("input,select,textarea,button") : [];
+          if (campo && otrosControles.length === 0) campo.classList.add("adiur-categoria-integrada");
+          etiqueta.classList.add("adiur-categoria-integrada");
+        }
+      }
       function sincronizarControlesCategoria() {
-        if (!selectorGlobal || !selectorGlobal.value) return;
         const categoria = selectorGlobal.value;
-        controlesSecundarios().forEach(select => {
-          const opcion = Array.from(select.options || []).find(option =>
-            normalizarCategoriaGlobal(option.value || option.textContent) === normalizarCategoriaGlobal(categoria)
-          );
+        controlesCategoria().forEach(select => {
+          ocultarControlOriginal(select);
+          const opcion = Array.from(select.options || []).find(option => normalizarCategoriaGlobal(option.value || option.textContent) === normalizarCategoriaGlobal(categoria));
           if (!opcion || select.value === opcion.value) return;
           select.value = opcion.value;
           select.dispatchEvent(new Event("change", { bubbles: true }));
         });
       }
-
       function configurarSelectorGlobal() {
         const disponibles = categoriasAutorizadas();
-        const valorActual = selectorGlobal.value;
-        let anterior = valorActual || "";
-        if (!anterior) {
-          try { anterior = localStorage.getItem("adiurCategoriaGlobal") || ""; } catch (_) {}
-        }
-
-        selectorGlobal.replaceChildren(...disponibles.map(categoria => new Option(categoria, categoria)));
-        const elegida = disponibles.find(categoria =>
-          normalizarCategoriaGlobal(categoria) === normalizarCategoriaGlobal(anterior)
-        );
+        const anterior = selectorGlobal.value || localStorage.getItem("adiurCategoriaGlobal") || "";
+        selectorGlobal.replaceChildren(...disponibles.map(c => new Option(c,c)));
+        const elegida = disponibles.find(c => normalizarCategoriaGlobal(c) === normalizarCategoriaGlobal(anterior));
         selectorGlobal.value = elegida || disponibles[0] || "";
         selectorGlobal.disabled = disponibles.length <= 1;
-
-        if (!selectorGlobal.value) {
-          selectorGlobal.replaceChildren(new Option("Sin categorías disponibles", ""));
-          selectorGlobal.disabled = true;
-        }
-
+        if (!selectorGlobal.value) { selectorGlobal.innerHTML = '<option value="">Sin categorías disponibles</option>'; selectorGlobal.disabled = true; }
         sincronizarControlesCategoria();
       }
-
       selectorGlobal.addEventListener("change", () => {
         try { localStorage.setItem("adiurCategoriaGlobal", selectorGlobal.value); } catch (_) {}
         sincronizarControlesCategoria();
       });
-
-      // Algunas páginas reconstruyen filtros secundarios al cambiar la división.
-      // El observador solo sincroniza esos controles; nunca reemplaza el selector
-      // visible ni vuelve a seleccionar Sub 10 por su cuenta.
       const observerCategorias = new MutationObserver(() => sincronizarControlesCategoria());
       observerCategorias.observe(zonaPrincipal, { childList: true, subtree: true });
       window.addEventListener("adiur-permisos-listos", configurarSelectorGlobal);
