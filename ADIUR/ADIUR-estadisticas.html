@@ -2912,16 +2912,21 @@ async function renderizarPanelIntegral(){
   let pj=0,min=0,goles=0,amarillas=0,rojas=0;
   regs.forEach(({p,reg})=>{
    const minutos=numeroIntegral(reg.minutos),g=numeroIntegral(reg.goles),a=numeroIntegral(reg.amarillas),r=numeroIntegral(reg.rojas);
-   const eventosGoles=eventosDeJugadoraIntegral(p.golesEventos,j).length;
-   const eventosTarjetas=eventosDeJugadoraIntegral(p.tarjetasEventos,j);
+   const eventosGolesPartido=(Array.isArray(p.golesEventos)?p.golesEventos:[]).filter(e=>e&&e.jugadora);
+   const eventosGoles=eventosDeJugadoraIntegral(eventosGolesPartido,j).length;
+   const eventosTarjetasPartido=(Array.isArray(p.tarjetasEventos)?p.tarjetasEventos:[]).filter(e=>e&&e.jugadora);
+   const eventosTarjetas=eventosDeJugadoraIntegral(eventosTarjetasPartido,j);
+   const golesValor=eventosGolesPartido.length?eventosGoles:g;
+   const amarillasValor=eventosTarjetasPartido.length?eventosTarjetas.filter(e=>/amarilla/i.test(String(e.tipo||e.tarjeta||""))).length:a;
+   const rojasValor=eventosTarjetasPartido.length?eventosTarjetas.filter(e=>/roja/i.test(String(e.tipo||e.tarjeta||""))).length:r;
    const jugo=reg.jugo===true||["si","sí","true","1"].includes(normalizarTexto(reg.jugo))||
-    (minutos!==null&&minutos>0)||(g!==null&&g>0)||eventosGoles>0||
-    (a!==null&&a>0)||(r!==null&&r>0)||eventosTarjetas.length>0;
+    (minutos!==null&&minutos>0)||(golesValor!==null&&golesValor>0)||eventosGoles>0||
+    (amarillasValor!==null&&amarillasValor>0)||(rojasValor!==null&&rojasValor>0)||eventosTarjetas.length>0;
    if(jugo)pj++;
    if(minutos!==null)min+=minutos;
-   goles+=g!==null?g:eventosGoles;
-   amarillas+=a!==null?a:eventosTarjetas.filter(e=>/amarilla/i.test(String(e.tipo||e.tarjeta||""))).length;
-   rojas+=r!==null?r:eventosTarjetas.filter(e=>/roja/i.test(String(e.tipo||e.tarjeta||""))).length;
+   if(golesValor!==null)goles+=golesValor;
+   if(amarillasValor!==null)amarillas+=amarillasValor;
+   if(rojasValor!==null)rojas+=rojasValor;
   });
   const casos=lesiones.filter(l=>{const cat=categoriaRegistroIntegral(l);return cat===claveCategoriaIntegral(division)&&mismaJugadoraIntegral(l,j);}).sort((a,b)=>String(b.fecha||b.fechaInicio||"").localeCompare(String(a.fecha||a.fechaInicio||"")));
   const activos=casos.filter(l=>!["alta deportiva confirmada","caso cerrado"].includes(normalizarTexto(l.estado)));
