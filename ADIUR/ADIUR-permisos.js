@@ -96,7 +96,7 @@
   let observerDOM = null;
   let temporizadorObserverDOM = null;
   let refrescoInicialRealizado = false;
-  let permisosInicialesAplicados = false;
+  let permisosAplicadosTrasLayout = false;
 
   function mostrarPerfil() {
     if (!perfilActivo || !configActiva) return;
@@ -319,7 +319,6 @@
     aplicarCategorias();
     aplicarSoloLectura();
     aplicarAccesosPagina();
-    permisosInicialesAplicados = true;
   }
 
   async function iniciarControlFirebase() {
@@ -364,6 +363,9 @@
             puedeGestionarUsuarios: base.puedeGestionarUsuarios
           });
           aplicarPermisos();
+          // Si el layout ya existe, esta aplicación también cubre el menú.
+          // Si todavía no existe, se volverá a aplicar una sola vez al terminar.
+          permisosAplicadosTrasLayout = !!window.ADIUR_LAYOUT_LISTO;
           window.dispatchEvent(new CustomEvent("adiur-permisos-listos", {
             detail: window.ADIUR_PERMISOS
           }));
@@ -423,7 +425,10 @@
 
   function mostrarPaginaAutorizada() {
     if (!configActiva) return;
-    if (!permisosInicialesAplicados) aplicarPermisos();
+    if (!permisosAplicadosTrasLayout) {
+      aplicarPermisos();
+      permisosAplicadosTrasLayout = true;
+    }
     document.documentElement.classList.remove("adiur-permisos-pendientes");
     document.getElementById("adiur-espera-permisos")?.remove();
   }
