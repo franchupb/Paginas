@@ -2357,7 +2357,7 @@ let puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolADIUR)
 let puedeEliminar = ["admin", "coordinadora"].includes(rolADIUR);
 
 // Categorías visibles en Partidos: se toma primero la matriz central de permisos.
-window.addEventListener("adiur-permisos-listos", (evento) => {
+function sincronizarPerfilPartidos(evento) {
     const perfil = evento.detail || window.ADIUR_PERMISOS;
     if (!perfil) return;
     usuarioGuardado = String(perfil.usuario || perfil.nombre || leerUsuario()).trim();
@@ -2377,7 +2377,9 @@ window.addEventListener("adiur-permisos-listos", (evento) => {
     const borrar=document.getElementById("btnEliminarModo");
     if(borrar) borrar.style.display=puedeEliminar ? "inline-flex" : "none";
     window.renderizarFixture?.();
-});
+}
+window.addEventListener("adiur-permisos-listos", sincronizarPerfilPartidos);
+if (window.ADIUR_PERMISOS) sincronizarPerfilPartidos({ detail: window.ADIUR_PERMISOS });
 
 function obtenerCategoriasVisiblesPartidos() {
     const perfil = window.ADIUR_PERMISOS;
