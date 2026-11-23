@@ -407,6 +407,10 @@
   inicio.className = "menu-inicio";
   inicio.href = PRINCIPAL;
   inicio.innerHTML = '<span class="icono-inicio" aria-hidden="true">⌂</span>INICIO';
+  if (normalizarArchivo(PRINCIPAL.toLowerCase()) === actual) {
+    inicio.classList.add("activo");
+    inicio.setAttribute("aria-current", "page");
+  }
   sidebar.appendChild(inicio);
 
   grupos.forEach(grupo => {
