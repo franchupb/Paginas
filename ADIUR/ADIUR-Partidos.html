@@ -1752,7 +1752,7 @@ body.eliminando .btn-puntos {
     }
 }
 </style>
-<script src="ADIUR-permisos.js?v=20261122j"></script>
+<script src="ADIUR-permisos.js?v=20261122k"></script>
 </head>
 
 <body>
@@ -2355,6 +2355,37 @@ function esToto() { return rolADIUR === "cuerpo_tecnico"; }
 function esBianca() { return rolADIUR === "jugadora"; }
 const puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolADIUR);
 const puedeEliminar = ["admin", "coordinadora"].includes(rolADIUR);
+
+// Categorías visibles en Partidos: se toma primero la matriz central de permisos.
+function obtenerCategoriasVisiblesPartidos() {
+    const perfil = window.ADIUR_PERMISOS;
+    let categorias = Array.isArray(perfil?.categorias) ? perfil.categorias : null;
+
+    if (!categorias) {
+        try {
+            const guardadas = JSON.parse(localStorage.getItem("categoriasADIUR") || "null");
+            if (Array.isArray(guardadas)) categorias = guardadas;
+        } catch (_) {}
+    }
+
+    // Admin y coordinadoras conservan la vista completa.
+    if (!categorias || !["cuerpo_tecnico", "jugadora"].includes(rolADIUR)) {
+        return [...DIVISIONES];
+    }
+
+    const permitidas = new Set(categorias.map(valor =>
+        String(valor || "").normalize("NFD")
+            .replace(/[\\u0300-\\u036f]/g, "")
+            .toLowerCase().replace(/[^a-z0-9]/g, "")
+    ));
+
+    return DIVISIONES.filter(division => {
+        const clave = division.normalize("NFD")
+            .replace(/[\\u0300-\\u036f]/g, "")
+            .toLowerCase().replace(/[^a-z0-9]/g, "");
+        return permitidas.has(clave);
+    });
+}
 
 /* Información del usuario */
 
@@ -2973,11 +3004,15 @@ function actualizarContadoresCategorias() {
         "Sub 16": "contadorSub16",
         "Primera": "contadorPrimera"
     };
+    const visibles = new Set(obtenerCategoriasVisiblesPartidos());
 
     Object.entries(contadores).forEach(([division, id]) => {
         const elemento = document.getElementById(id);
-
-        if (elemento) {
+        if (!elemento) return;
+        const tarjeta = elemento.closest(".stat");
+        const permitido = visibles.has(division);
+        if (tarjeta) tarjeta.hidden = !permitido;
+        if (permitido) {
             elemento.textContent = partidos.filter(
                 partido => partido.division === division
             ).length;
@@ -3466,12 +3501,23 @@ function renderizarFixture() {
     const busqueda = document.getElementById("busqueda")
         .value.trim().toLowerCase();
 
-    const divisionFiltro = document.getElementById("filtroDivision").value;
-    const competicionFiltro = document.getElementById("filtroCompeticion").value;
+    const categoriasVisibles = obtenerCategoriasVisiblesPartidos();
+    const permitidas = new Set(categoriasVisibles);
+    const filtroCategoria = document.getElementById("filtroDivision");
+    let divisionFiltro = filtroCategoria.value;
 
+    // Nunca permitir que el fixture muestre una división ajena al perfil,
+    // incluso si quedó seleccionada en una sesión anterior.
+    if (!permitidas.has(divisionFiltro)) {
+        divisionFiltro = categoriasVisibles.length === DIVISIONES.length ? "" : "";
+        filtroCategoria.value = divisionFiltro;
+    }
+
+    const competicionFiltro = document.getElementById("filtroCompeticion").value;
     actualizarContadoresCategorias();
 
     const filtrados = partidos.filter(p => {
+        if (!permitidas.has(p.division)) return false;
         const coincideDivision = !divisionFiltro || p.division === divisionFiltro;
         const coincideCompeticion =
             !competicionFiltro || p.competicion === competicionFiltro;
