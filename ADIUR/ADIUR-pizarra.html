@@ -748,51 +748,117 @@ body.immersive .pitch{height:100%!important;min-height:0!important;aspect-ratio:
 
 
 
-/* ===== LAYOUT DEFINITIVO · BARRA UNICA + CANCHA INMERSIVA ===== */
-.board-studio{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;min-width:0!important;min-height:0!important;width:100%!important;height:100%!important;overflow:hidden!important;background:#fff!important}
-.board-studio>.board-topline{display:flex;flex:0 0 42px;align-items:center;justify-content:space-between;min-height:42px;padding:4px 12px;border-bottom:1px solid #e8e8e8;background:#fff}
+
+/* ===== REDISEÑO LIMPIO: UNA SOLA FILA DE CONTROLES ===== */
+.board-studio{
+ position:relative!important;display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+ width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;background:#fff!important;
+}
+.board-studio>.board-topline{
+ position:relative!important;inset:auto!important;display:flex!important;flex:0 0 42px!important;
+ align-items:center!important;justify-content:space-between!important;min-height:42px!important;
+ padding:4px 12px!important;border:0!important;border-bottom:1px solid #e8e8e8!important;
+ border-radius:0!important;background:#fff!important;box-shadow:none!important;
+}
+.board-studio>.board-topline .board-brand-icon{background:#f47721!important;box-shadow:none!important}
+.board-studio>.board-topline .board-live{display:none!important}
+.board-studio>.board-topline .immersive-launch{
+ background:#fff!important;border:1px solid #dedede!important;border-radius:7px!important;
+ color:#222!important;box-shadow:none!important;transform:none!important
+}
+.board-studio>.board-topline .immersive-launch:hover,
+.board-studio>.board-topline .immersive-launch[aria-pressed=true]{background:#fff!important;border-color:#f47721!important;color:#222!important}
 .board-studio>.controlbar{
- display:flex!important;flex:0 0 54px!important;flex-direction:row!important;flex-wrap:nowrap!important;
- align-items:center!important;justify-content:flex-start!important;gap:clamp(6px,1vw,14px)!important;
- width:100%!important;min-width:0!important;min-height:54px!important;padding:5px 12px!important;
+ position:relative!important;inset:auto!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ transform:none!important;z-index:5!important;display:flex!important;flex:0 0 56px!important;
+ flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;
+ justify-content:space-between!important;gap:10px!important;width:100%!important;min-width:0!important;
+ min-height:56px!important;height:56px!important;margin:0!important;padding:5px 12px!important;
  overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;
- border:0!important;border-bottom:1px solid #e8e8e8!important;background:#fff!important;
+ border:0!important;border-bottom:1px solid #e8e8e8!important;border-radius:0!important;
+ background:#fff!important;background-image:none!important;box-shadow:none!important;
  scrollbar-width:none!important
 }
 .board-studio>.controlbar::-webkit-scrollbar{display:none!important}
+.board-studio>.controlbar>*{position:relative!important;inset:auto!important;transform:none!important;flex:0 0 auto!important;min-width:0!important}
 .board-studio>.controlbar>.own-formation,
-.board-studio>.controlbar>.top-tools,
-.board-studio>.controlbar>.rival-formation{display:flex!important;flex:0 0 auto!important;flex-direction:row!important;align-items:center!important;min-width:0!important}
-.board-studio>.controlbar>.own-formation{gap:6px!important}
-.board-studio>.controlbar>.top-tools{justify-content:center!important;gap:3px!important;padding:0!important;margin:0!important}
-.board-studio>.controlbar>.rival-formation{gap:6px!important;margin-left:auto!important}
-.board-studio .control-label{color:#777!important;font-size:8px!important;font-weight:800!important;letter-spacing:.6px!important}
-.board-studio .controlbar select{height:32px!important;min-width:84px!important;width:auto!important;padding:0 24px 0 9px!important;border:1px solid #dedede!important;border-radius:7px!important;background:#fff!important;color:#222!important;font:700 10px Manrope,'DM Sans',Arial,sans-serif!important}
+.board-studio>.controlbar>.rival-formation{
+ display:flex!important;flex-direction:row!important;align-items:center!important;gap:7px!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:0!important;
+ background:#fff!important;background-image:none!important;box-shadow:none!important
+}
+.board-studio>.controlbar>.own-formation{margin-right:auto!important}
+.board-studio>.controlbar>.top-tools{
+ display:flex!important;flex:1 1 auto!important;flex-direction:row!important;align-items:center!important;
+ justify-content:center!important;gap:5px!important;min-width:max-content!important;
+ margin:0!important;padding:0 8px!important;border:0!important;border-radius:0!important;
+ background:#fff!important;background-image:none!important;box-shadow:none!important
+}
+.board-studio>.controlbar>.rival-formation{margin-left:auto!important}
+.board-studio .control-label{display:inline!important;color:#777!important;font:800 9px Manrope,'DM Sans',Arial,sans-serif!important;letter-spacing:.6px!important}
+.board-studio .controlbar select{
+ display:block!important;flex:0 0 auto!important;width:auto!important;min-width:88px!important;height:34px!important;
+ padding:0 25px 0 9px!important;border:1px solid #dedede!important;border-radius:7px!important;
+ background:#fff!important;background-image:none!important;color:#222!important;
+ font:700 10px Manrope,'DM Sans',Arial,sans-serif!important;box-shadow:none!important
+}
+.board-studio .controlbar select:focus{outline:0!important;border-color:#f47721!important;box-shadow:0 0 0 2px #f4772118!important}
 .board-studio .top-tools .tool{
- display:flex!important;flex:0 0 42px!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
- gap:2px!important;min-height:42px!important;padding:3px 1px!important;border:1px solid transparent!important;
- border-radius:7px!important;background:#fff!important;color:#62666b!important;box-shadow:none!important
+ display:flex!important;flex:0 0 43px!important;flex-direction:column!important;align-items:center!important;
+ justify-content:center!important;gap:2px!important;width:43px!important;min-height:42px!important;height:42px!important;
+ margin:0!important;padding:3px 1px!important;border:1px solid transparent!important;border-radius:7px!important;
+ background:#fff!important;background-image:none!important;color:#555!important;box-shadow:none!important;transform:none!important
 }
 .board-studio .top-tools .tool span{font-size:18px!important;line-height:1!important}
-.board-studio .top-tools .tool small{font:700 8px Manrope,'DM Sans',Arial,sans-serif!important}
-.board-studio .top-tools .tool.active{border-color:#f47721!important;background:#fff4ed!important;color:#c6530b!important}
-.board-studio .top-tools .tool:hover{border-color:#e8e8e8!important;background:#fafafa!important}
-.board-studio .top-separator{display:block!important;flex:0 0 1px!important;width:1px!important;height:26px!important;margin:0 3px!important;background:#e4e4e4!important}
-.board-studio .top-tools .palette{display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:8px!important;padding:0 2px!important}
-.board-studio .top-tools .swatch{flex:0 0 14px!important;width:14px!important;height:14px!important}
-.board-studio .quick-history{display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:4px!important;margin:0!important}
-.board-studio .quick-history-btn{display:grid!important;flex:0 0 29px!important;place-items:center!important;width:29px!important;height:29px!important;padding:0!important;border:1px solid #f47721!important;border-radius:7px!important;background:#f47721!important;color:#fff!important;font:20px Arial,sans-serif!important;box-shadow:none!important}
+.board-studio .top-tools .tool small{color:inherit!important;font:700 8px Manrope,'DM Sans',Arial,sans-serif!important}
+.board-studio .top-tools .tool:hover{border-color:#e8e8e8!important;background:#fff!important;color:#222!important}
+.board-studio .top-tools .tool.active{border-color:#f47721!important;background:#fff!important;color:#c6530b!important;box-shadow:none!important}
+.board-studio .top-separator{display:block!important;flex:0 0 1px!important;width:1px!important;height:26px!important;margin:0 3px!important;background:#e5e5e5!important}
+.board-studio .top-tools .palette{display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:9px!important;margin:0!important;padding:0 3px!important;background:#fff!important}
+.board-studio .top-tools .swatch{display:block!important;flex:0 0 15px!important;width:15px!important;height:15px!important;margin:0!important}
+.board-studio .quick-history{display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:5px!important;margin:0!important;padding:0!important;background:#fff!important}
+.board-studio .quick-history-btn{
+ display:grid!important;flex:0 0 30px!important;place-items:center!important;width:30px!important;height:30px!important;
+ margin:0!important;padding:0!important;border:1px solid #f47721!important;border-radius:7px!important;
+ background:#f47721!important;background-image:none!important;color:#fff!important;
+ font:20px Arial,sans-serif!important;box-shadow:none!important
+}
 .board-studio .quick-history-btn:hover{border-color:#dc5e0b!important;background:#dc5e0b!important;color:#fff!important}
 .board-studio .quick-history-btn:disabled{opacity:.35!important}
-.board-studio .add-rival-btn{display:grid!important;flex:0 0 32px!important;place-items:center!important;width:32px!important;height:32px!important;padding:0!important;border:1px solid #f47721!important;border-radius:7px!important;background:#f47721!important;color:#171717!important;font-size:19px!important;font-weight:900!important;box-shadow:none!important}
-.board-studio .add-rival-btn:hover,.board-studio .add-rival-btn[aria-pressed=true]{border-color:#dc5e0b!important;background:#dc5e0b!important;color:#171717!important}
-.board-studio>.workspace{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;min-width:0!important;min-height:0!important;overflow:hidden!important}
-.board-studio .pitch-stage{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;min-width:0!important;min-height:0!important;padding:0!important}
-.board-studio .pitch-wrap{display:flex!important;flex:1 1 auto!important;align-items:stretch!important;justify-content:stretch!important;min-width:0!important;min-height:0!important;padding:5px 8px!important;border:0!important;border-radius:0!important;background:#f4f5f4!important}
-.board-studio .pitch{flex:1 1 auto!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important}
-#showControls{display:none!important}
+.board-studio .add-rival-btn{
+ display:grid!important;flex:0 0 34px!important;place-items:center!important;width:34px!important;height:34px!important;
+ margin:0!important;padding:0!important;border:1px solid #f47721!important;border-radius:7px!important;
+ background:#f47721!important;background-image:none!important;color:#171717!important;
+ font:900 20px Arial,sans-serif!important;box-shadow:none!important;cursor:pointer
+}
+.board-studio .add-rival-btn:hover,.board-studio .add-rival-btn[aria-pressed=true]{
+ border-color:#dc5e0b!important;background:#dc5e0b!important;color:#171717!important
+}
+.board-studio>.workspace{
+ position:relative!important;inset:auto!important;display:flex!important;flex:1 1 auto!important;
+ flex-direction:column!important;width:100%!important;height:auto!important;min-width:0!important;
+ min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;background:#fff!important
+}
+.board-studio .pitch-stage{
+ position:relative!important;inset:auto!important;display:flex!important;flex:1 1 auto!important;
+ flex-direction:column!important;width:100%!important;height:100%!important;min-width:0!important;
+ min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;background:#347b43!important
+}
+.board-studio .pitch-wrap{
+ position:relative!important;inset:auto!important;display:flex!important;flex:1 1 auto!important;
+ align-items:stretch!important;justify-content:stretch!important;width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;margin:0!important;padding:2px!important;overflow:hidden!important;
+ border:0!important;border-radius:0!important;background:#347b43!important
+}
+.board-studio .pitch{
+ position:relative!important;display:block!important;flex:1 1 auto!important;width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;max-height:none!important;margin:0!important;
+ aspect-ratio:auto!important;border:0!important;border-radius:0!important
+}
+.board-studio #showControls{display:none!important}
 
-/* Modo inmersivo: desaparece toda la cabecera de marca; quedan solo barra y cancha */
+/* Inmersivo: solo la barra de controles y la cancha. Sin marca ni cabecera. */
 body.immersive{overflow:hidden!important;background:#fff!important}
 body.immersive .barra-superior,
 body.immersive #sidebar,
@@ -802,23 +868,39 @@ body.immersive .board-studio>.board-topline,
 body.immersive .studio-head,
 body.immersive .studio-foot,
 body.immersive #showControls{display:none!important}
-body.immersive .contenedor{display:block!important;width:100%!important;height:100dvh!important;min-height:100dvh!important}
-body.immersive .main{position:fixed!important;inset:0!important;z-index:99999!important;display:flex!important;width:100vw!important;height:100dvh!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;background:#fff!important}
-body.immersive .pizarra-shell{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;margin:0!important}
-body.immersive .studio{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;border:0!important;border-radius:0!important;box-shadow:none!important}
-body.immersive .board-studio{display:flex!important;flex:1 1 auto!important;width:100%!important;height:100%!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important}
-body.immersive .board-studio>.controlbar{display:flex!important;flex:0 0 52px!important;flex-wrap:nowrap!important;min-height:52px!important;height:52px!important;overflow-x:auto!important;overflow-y:hidden!important;padding:4px 10px!important}
-body.immersive .board-studio>.workspace{display:flex!important;flex:1 1 auto!important;min-height:0!important;overflow:hidden!important}
-body.immersive .board-studio .pitch-stage{display:flex!important;flex:1 1 auto!important;min-height:0!important;padding:0!important}
-body.immersive .board-studio .pitch-wrap{display:flex!important;flex:1 1 auto!important;min-height:0!important;padding:2px!important;background:#347b43!important}
-body.immersive .board-studio .pitch{display:block!important;flex:1 1 auto!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important;border-radius:0!important}
+body.immersive .contenedor{display:block!important;width:100vw!important;height:100dvh!important;min-height:100dvh!important}
+body.immersive .main{
+ position:fixed!important;inset:0!important;z-index:99999!important;display:flex!important;
+ width:100vw!important;height:100dvh!important;min-height:0!important;margin:0!important;padding:0!important;
+ overflow:hidden!important;background:#fff!important
+}
+body.immersive .pizarra-shell,
+body.immersive .studio,
+body.immersive .board-studio{
+ position:relative!important;display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+ width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+ max-width:none!important;margin:0!important;padding:0!important;overflow:hidden!important;
+ border:0!important;border-radius:0!important;background:#fff!important;box-shadow:none!important
+}
+body.immersive .board-studio>.controlbar{
+ position:relative!important;inset:auto!important;display:flex!important;flex:0 0 54px!important;
+ flex-wrap:nowrap!important;width:100%!important;height:54px!important;min-height:54px!important;
+ overflow-x:auto!important;overflow-y:hidden!important;background:#fff!important;background-image:none!important
+}
+body.immersive .board-studio>.workspace{position:relative!important;display:flex!important;flex:1 1 auto!important;min-height:0!important;overflow:hidden!important}
+body.immersive .board-studio .pitch-stage{position:relative!important;display:flex!important;flex:1 1 auto!important;min-height:0!important}
+body.immersive .board-studio .pitch-wrap{position:relative!important;display:flex!important;flex:1 1 auto!important;min-height:0!important;padding:1px!important}
+body.immersive .board-studio .pitch{display:block!important;flex:1 1 auto!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important}
+
+/* En móvil se conservan las tres zonas en la misma línea; iconos compactos. */
 @media(max-width:760px){
- .board-studio>.controlbar{flex-basis:47px!important;min-height:47px!important;height:47px!important;gap:5px!important;padding:4px 6px!important}
- .board-studio>.controlbar>.own-formation,.board-studio>.controlbar>.rival-formation{gap:3px!important}
+ .board-studio>.controlbar{flex-basis:48px!important;height:48px!important;min-height:48px!important;gap:5px!important;padding:4px 6px!important;justify-content:flex-start!important}
+ .board-studio>.controlbar>.own-formation{margin-right:0!important}
+ .board-studio>.controlbar>.top-tools{flex:0 0 auto!important;min-width:max-content!important;justify-content:center!important;gap:1px!important;padding:0 3px!important}
+ .board-studio>.controlbar>.rival-formation{margin-left:auto!important}
  .board-studio .control-label{display:none!important}
- .board-studio .controlbar select{width:59px!important;min-width:59px!important;height:29px!important;padding:0 16px 0 5px!important;font-size:9px!important}
- .board-studio .top-tools{gap:0!important}
- .board-studio .top-tools .tool{flex:0 0 27px!important;width:27px!important;min-height:34px!important;height:34px!important;padding:2px 0!important}
+ .board-studio .controlbar select{width:66px!important;min-width:66px!important;height:29px!important;padding:0 16px 0 5px!important;font-size:9px!important}
+ .board-studio .top-tools .tool{flex:0 0 29px!important;width:29px!important;height:34px!important;min-height:34px!important;padding:2px 0!important}
  .board-studio .top-tools .tool span{font-size:16px!important}
  .board-studio .top-tools .tool small{display:none!important}
  .board-studio .top-separator{height:21px!important;margin:0 1px!important}
@@ -826,19 +908,17 @@ body.immersive .board-studio .pitch{display:block!important;flex:1 1 auto!import
  .board-studio .top-tools .swatch{flex-basis:12px!important;width:12px!important;height:12px!important}
  .board-studio .quick-history{gap:2px!important}
  .board-studio .quick-history-btn{flex-basis:24px!important;width:24px!important;height:25px!important;font-size:17px!important}
- .board-studio .add-rival-btn{flex-basis:26px!important;width:26px!important;height:28px!important;font-size:17px!important}
- body.immersive .board-studio>.controlbar{display:flex!important;flex-wrap:nowrap!important;flex-basis:47px!important;height:47px!important;min-height:47px!important}
- body.immersive .board-studio>.board-topline{display:none!important}
- body.immersive .board-studio .pitch-wrap{padding:1px!important}
+ .board-studio .add-rival-btn{flex-basis:27px!important;width:27px!important;height:29px!important;font-size:18px!important}
+ body.immersive .board-studio>.controlbar{flex-basis:48px!important;height:48px!important;min-height:48px!important}
 }
 @media(max-width:390px){
  .board-studio>.controlbar{gap:3px!important;padding-right:4px!important;padding-left:4px!important}
- .board-studio .controlbar select{width:53px!important;min-width:53px!important}
- .board-studio .top-tools .tool{flex-basis:25px!important;width:25px!important}
+ .board-studio .controlbar select{width:59px!important;min-width:59px!important}
+ .board-studio .top-tools .tool{flex-basis:26px!important;width:26px!important}
  .board-studio .top-tools .palette{gap:5px!important}
  .board-studio .top-tools .swatch{flex-basis:11px!important;width:11px!important;height:11px!important}
  .board-studio .quick-history-btn{flex-basis:22px!important;width:22px!important}
- .board-studio .add-rival-btn{flex-basis:24px!important;width:24px!important}
+ .board-studio .add-rival-btn{flex-basis:25px!important;width:25px!important}
 }
 
 </style>
