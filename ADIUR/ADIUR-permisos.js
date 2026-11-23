@@ -222,6 +222,11 @@
     }
 
     if (pagina === "adiur-partidos.html") {
+      ["contadorSub10", "contadorSub12", "contadorSub14", "contadorPrimera"].forEach(id => {
+        const contador = document.getElementById(id);
+        const tarjeta = contador?.closest(".stat");
+        if (tarjeta) tarjeta.hidden = true;
+      });
       ["btnNuevo", "btnEliminarModo"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.hidden = true;
