@@ -584,7 +584,9 @@
       const categorias = ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
       const normalizarCategoriaGlobal = valor => String(valor || "")
         .normalize("NFD")
-        .replace(/[\\u0300-\\u036f]/g, "")
+        .split("")
+        .filter(caracter => { const codigo = caracter.charCodeAt(0); return codigo < 0x0300 || codigo > 0x036f; })
+        .join("")
         .toLowerCase()
         .replace(/[^a-z0-9]/g, "");
 
