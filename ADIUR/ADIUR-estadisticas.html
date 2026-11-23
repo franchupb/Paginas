@@ -1630,6 +1630,13 @@ function normalizarTexto(txt) {
 function normalizarNombreIntegral(valor) {
   return normalizarTexto(valor).replace(/\s+/g, " ");
 }
+function nombresPosiblesJugadoraIntegral(j){
+  const base=String(j?.nombre||"").trim(),apellido=String(j?.apellido||j?.apellidos||"").trim();
+  const nombres=[j?.nombreCompleto,j?.nombre_completo,j?.nombreYApellido,j?.nombre_y_apellido];
+  if(base&&apellido)nombres.push(base+" "+apellido);
+  else if(base)nombres.push(base);
+  return [...new Set(nombres.map(normalizarNombreIntegral).filter(Boolean))];
+}
 
 function coincideJugadora(registro, jugadora) {
   const idJug = normalizarTexto(jugadora.id);
@@ -2781,7 +2788,7 @@ function mismaJugadoraIntegral(reg,j){
  const ids=[reg.id,reg.jugadoraId,reg.idJugadora,reg.uid,jugadora?.id].map(normalizarTexto).filter(Boolean);
  const nombres=[reg.nombre,reg.nombreCompleto,reg.jugadora,reg.nombreJugadora,reg.alumna,jugadora?.nombre,jugadora?.nombreCompleto]
   .map(normalizarNombreIntegral).filter(Boolean);
- return ids.includes(normalizarTexto(j.id))||nombres.includes(normalizarNombreIntegral(j.nombreCompleto));
+ return ids.includes(normalizarTexto(j.id))||nombres.some(nombre=>nombresPosiblesJugadoraIntegral(j).includes(nombre));
 }
 function categoriaRegistroIntegral(reg){return claveCategoriaIntegral(reg?.division||reg?.categoria||"");}
 async function obtenerPartidosIntegral(){
@@ -2835,10 +2842,10 @@ async function obtenerPlanillasIntegral(division){
  return salida;
 }
 function registrosTesteosJugadoraIntegral(planillas,jugadora){
- const nombre=normalizarNombreIntegral(jugadora.nombreCompleto);
+ const nombres=nombresPosiblesJugadoraIntegral(jugadora);
  return (Array.isArray(planillas)?planillas:[]).map(item=>{
   const valores=item?.valores||{};
-  const key=Object.keys(valores).find(k=>normalizarNombreIntegral(k)===nombre||normalizarTexto(k)===normalizarTexto(jugadora.id));
+  const key=Object.keys(valores).find(k=>nombres.includes(normalizarNombreIntegral(k))||normalizarTexto(k)===normalizarTexto(jugadora.id));
   if(!key)return null;
   const v=valores[key]||{};
   const columnas=(item.columnas||[]).filter(c=>{
