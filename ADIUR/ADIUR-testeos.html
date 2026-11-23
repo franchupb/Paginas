@@ -2431,10 +2431,11 @@ if(!usuarioGuardado){
 
 const usuarioNormalizado=usuarioGuardado.toLowerCase();
 
-const esFran=["fran","francisco","francisco perez basla"].includes(usuarioNormalizado);
-const esToto=usuarioNormalizado==="toto";
-const esBianca=["biancadominguez","bianca"].includes(usuarioNormalizado);
-const puedeEditar=esFran||esToto;
+const rolADIUR=localStorage.getItem("rolADIUR")||"";
+const esFran=rolADIUR==="admin";
+const esToto=rolADIUR==="cuerpo_tecnico";
+const esBianca=rolADIUR==="jugadora";
+const puedeEditar=["admin","coordinadora","cuerpo_tecnico"].includes(rolADIUR);
 
 /* =====================================================
    PERMISOS DE VISUALIZACIÓN DEL MENÚ
