@@ -484,4 +484,14 @@
   window.addEventListener("adiur-layout-listo", mostrarPaginaAutorizada, { once: true });
   iniciarControlFirebase();
   if (window.ADIUR_LAYOUT_LISTO) mostrarPaginaAutorizada();
+
+  // Respaldo visual: si el layout compartido falla en una página puntual,
+  // una cuenta ya autenticada y autorizada no debe quedar con toda la pantalla
+  // invisible indefinidamente.
+  setTimeout(() => {
+    if (configActiva && document.documentElement.classList.contains("adiur-permisos-pendientes")) {
+      console.error("ADIUR: el layout no confirmó su inicialización; se habilita la vista autorizada como respaldo.");
+      mostrarPaginaAutorizada();
+    }
+  }, 3500);
 })();
