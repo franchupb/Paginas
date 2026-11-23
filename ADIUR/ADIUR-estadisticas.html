@@ -2198,8 +2198,8 @@ async function obtenerInfoTiemposJugadora(jugadora) {
       const fecha = t.fecha || "";
       return `
         <div class="dato-fila">
-          <span class="etiqueta">${prueba} ${fecha ? `(${fecha})` : ""}</span>
-          <strong>${marca}</strong>
+          <span class="etiqueta">${escaparIntegral(prueba)} ${fecha ? `(${escaparIntegral(fecha)})` : ""}</span>
+          <strong>${escaparIntegral(marca)}</strong>
         </div>
       `;
     }).join("") + `</div>`
