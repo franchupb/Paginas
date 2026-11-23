@@ -1075,10 +1075,10 @@ body{background:#f2f4f6;color:var(--coach-ink)}
 }
 
 
-.briefing-panel{max-width:1600px;margin:0 auto 14px;padding:15px 17px;border:1px solid var(--coach-line);border-radius:13px;background:#fff;box-shadow:0 2px 8px rgba(23,33,43,.035)}
+.briefing-panel{display:block!important;position:relative;z-index:4;width:100%;max-width:1600px;margin:0 auto 16px;padding:15px 17px;border:1px solid var(--coach-line);border-radius:13px;background:#fff;box-shadow:0 2px 8px rgba(23,33,43,.035)}
 .briefing-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
-.briefing-heading h3{font-size:15px;font-weight:850;color:#1c2732;margin:3px 0}.briefing-heading p{font-size:11px;color:#74808b;line-height:1.4}
-.briefing-kicker{font-size:9px;letter-spacing:1px;font-weight:850;color:#bd5b1b}
+.briefing-heading h3{font-size:18px;font-weight:850;color:#1c2732;margin:3px 0}.briefing-heading p{font-size:11px;color:#74808b;line-height:1.4}
+.briefing-kicker{display:inline-block;font-size:10px;letter-spacing:1px;font-weight:850;color:#bd5b1b}
 .briefing-display{display:flex;align-items:center;gap:7px;white-space:nowrap;font-size:11px;font-weight:750;color:#52606d}.briefing-display input{accent-color:#f47721;width:16px;height:16px}
 .briefing-fields{display:grid;grid-template-columns:minmax(150px,.7fr) minmax(250px,2fr) auto;gap:10px;align-items:end}
 .briefing-fields>label{display:flex;flex-direction:column;gap:5px;font-size:9px;font-weight:850;letter-spacing:.6px;color:#75818c}
@@ -1784,6 +1784,15 @@ body{background:var(--fondo)}
   <label><input type="checkbox" id="capaDibujos" checked> Trazados</label>
 </section>
 
+  <section class="briefing-panel" aria-label="Consigna de la charla técnica">
+    <div class="briefing-heading"><div><span class="briefing-kicker">MENSAJE DEL CUERPO TÉCNICO</span><h3>Consigna de juego</h3><p>Definí qué querés que el equipo recuerde en esta situación. Podés mostrarlo sobre la cancha durante la charla.</p></div><label class="briefing-display"><input type="checkbox" id="mostrarConsigna" checked> Mostrar en la cancha</label></div>
+    <div class="briefing-fields">
+      <label>FASE DEL JUEGO<select id="faseJuego"><option>Salida</option><option>Ataque organizado</option><option>Defensa organizada</option><option>Transición ofensiva</option><option>Transición defensiva</option><option>ABP ofensiva</option><option>ABP defensiva</option><option>Reanudación</option></select></label>
+      <label class="briefing-message">CONSIGNA PRINCIPAL<textarea id="textoConsigna" maxlength="220" rows="2" placeholder="Ej. Cuando la pelota va al lateral, extremo opuesto ataca el segundo palo."></textarea></label>
+      <button type="button" class="briefing-apply" id="aplicarConsigna">Mostrar consigna en cancha</button>
+    </div><div class="briefing-hint" id="estadoConsigna" role="status" aria-live="polite">La consigna se guarda junto con la pizarra y las escenas.</div>
+  </section>
+
 <section class="sequence-panel" aria-label="Secuencia táctica">
     <div class="sequence-intro">
       <span class="sequence-kicker">DISEÑO DE JUGADAS</span>
@@ -1804,14 +1813,7 @@ body{background:var(--fondo)}
     </div>
   </section>
 
-  <section class="briefing-panel" aria-label="Consigna de la charla técnica">
-    <div class="briefing-heading"><div><span class="briefing-kicker">MENSAJE DEL CUERPO TÉCNICO</span><h3>Consigna de juego</h3><p>Definí qué querés que el equipo recuerde en esta situación. Podés mostrarlo sobre la cancha durante la charla.</p></div><label class="briefing-display"><input type="checkbox" id="mostrarConsigna" checked> Mostrar en la cancha</label></div>
-    <div class="briefing-fields">
-      <label>FASE DEL JUEGO<select id="faseJuego"><option>Salida</option><option>Ataque organizado</option><option>Defensa organizada</option><option>Transición ofensiva</option><option>Transición defensiva</option><option>ABP ofensiva</option><option>ABP defensiva</option><option>Reanudación</option></select></label>
-      <label class="briefing-message">CONSIGNA PRINCIPAL<textarea id="textoConsigna" maxlength="220" rows="2" placeholder="Ej. Cuando la pelota va al lateral, extremo opuesto ataca el segundo palo."></textarea></label>
-      <button type="button" class="briefing-apply" id="aplicarConsigna">Actualizar consigna</button>
-    </div><div class="briefing-hint" id="estadoConsigna" role="status" aria-live="polite">La consigna se guarda junto con la pizarra y las escenas.</div>
-  </section>
+
 
   <section class="board-wrapper">
 
@@ -3689,6 +3691,6 @@ renderizarEscenasTacticas();
 
 
 
-<script type="module" src="ADIUR-layout.js?v=20261123n"></script>
+<script type="module" src="ADIUR-layout.js?v=20261123o"></script>
 </body>
 </html>
