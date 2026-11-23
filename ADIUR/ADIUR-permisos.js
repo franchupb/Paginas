@@ -94,7 +94,9 @@
   let perfilActivo = null;
   let configActiva = null;
   let observerDOM = null;
+  let temporizadorObserverDOM = null;
   let refrescoInicialRealizado = false;
+  let permisosInicialesAplicados = false;
 
   function mostrarPerfil() {
     if (!perfilActivo || !configActiva) return;
@@ -317,6 +319,7 @@
     aplicarCategorias();
     aplicarSoloLectura();
     aplicarAccesosPagina();
+    permisosInicialesAplicados = true;
   }
 
   async function iniciarControlFirebase() {
@@ -379,9 +382,22 @@
               window.renderizarBiblioteca?.();
             }
           }
-          if (!observerDOM) {
-            observerDOM = new MutationObserver(() => aplicarPermisos());
-            observerDOM.observe(document.documentElement, { childList: true, subtree: true });
+          // Solo los perfiles con restricciones necesitan vigilar controles que
+          // se creen dinámicamente. Se agrupan las mutaciones para no recorrer
+          // todo el documento decenas de veces durante un render.
+          const necesitaVigilanciaDOM =
+            base.rol === "cuerpo_tecnico" ||
+            (base.rol === "jugadora" && paginaActual() !== "adiur-gimnasio.html");
+
+          if (necesitaVigilanciaDOM && !observerDOM) {
+            observerDOM = new MutationObserver(() => {
+              if (temporizadorObserverDOM) clearTimeout(temporizadorObserverDOM);
+              temporizadorObserverDOM = setTimeout(() => {
+                temporizadorObserverDOM = null;
+                aplicarPermisos();
+              }, 120);
+            });
+            observerDOM.observe(document.body, { childList: true, subtree: true });
           }
           if (window.ADIUR_LAYOUT_LISTO) mostrarPaginaAutorizada();
         } catch (error) {
@@ -407,7 +423,7 @@
 
   function mostrarPaginaAutorizada() {
     if (!configActiva) return;
-    aplicarPermisos();
+    if (!permisosInicialesAplicados) aplicarPermisos();
     document.documentElement.classList.remove("adiur-permisos-pendientes");
     document.getElementById("adiur-espera-permisos")?.remove();
   }
