@@ -2839,7 +2839,7 @@ function renderizarSelectorCategorias() {
     return;
   }
 
-  selector.disabled = false;
+  selector.disabled = categoriasVisibles.length === 1;
 
   selector.innerHTML = categoriasVisibles.map(categoria => `
     <option value="${escaparHTML(categoria)}">
