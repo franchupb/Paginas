@@ -585,6 +585,11 @@
       const normalizarCategoriaGlobal = valor => String(valor || "").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
       const categoriaEnOpciones = select => Array.from(select.options || []).some(option => categorias.some(cat => normalizarCategoriaGlobal(option.value || option.textContent) === normalizarCategoriaGlobal(cat)));
       const selectorGlobal = panel.querySelector("#adiurCategoriaGlobal");
+      (configPagina.ocultarSelectores || []).forEach(selector => {
+        document.querySelectorAll(selector).forEach(nodo => {
+          if (nodo !== panel && !nodo.contains(panel)) nodo.classList.add("adiur-categoria-integrada");
+        });
+      });
       function categoriasAutorizadas() {
         const p = window.ADIUR_PERMISOS;
         if (p && ["jugadora","cuerpo_tecnico"].includes(p.rol)) {
@@ -599,8 +604,12 @@
       function ocultarControlOriginal(select) {
         select.classList.add("adiur-categoria-integrada");
         const etiqueta = select.id ? document.querySelector('label[for="' + CSS.escape(select.id) + '"]') : null;
-        if (etiqueta) etiqueta.classList.add("adiur-categoria-integrada");
-
+        if (etiqueta) {
+          const campo = etiqueta.closest(".campo,.field,.selector-campo,.filtro-item");
+          const otrosControles = campo ? campo.querySelectorAll("input,select,textarea,button") : [];
+          if (campo && otrosControles.length === 0) campo.classList.add("adiur-categoria-integrada");
+          etiqueta.classList.add("adiur-categoria-integrada");
+        }
       }
       function sincronizarControlesCategoria() {
         const categoria = selectorGlobal.value;
