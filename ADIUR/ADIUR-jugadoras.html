@@ -1889,8 +1889,8 @@
         snapshot.forEach((docSnap) => {
           const data = docSnap.data();
           jugadoras.push({
-            id: docSnap.id,
             ...data,
+            id: docSnap.id,
             nombre: data.nombre || data.nombreCompleto || data.nombre_completo ||
               [data.nombres, data.apellido || data.apellidos].filter(Boolean).join(" "),
             categoria: data.categoria || data.division || data.categoría ||
