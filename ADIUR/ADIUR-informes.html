@@ -6503,6 +6503,18 @@ window.addEventListener("storage",evento=>{
   const dbInformes = getFirestore(app);
 
 
+  // Esperar a que Firebase restaure la sesión y el control central confirme
+  // el perfil antes de consultar colecciones protegidas.
+  function esperarPermisosADIUR() {
+    if (window.ADIUR_PERMISOS) return Promise.resolve(window.ADIUR_PERMISOS);
+    return new Promise(resolve => {
+      window.addEventListener("adiur-permisos-listos", evento => {
+        resolve(evento.detail || window.ADIUR_PERMISOS || null);
+      }, { once: true });
+    });
+  }
+
+  esperarPermisosADIUR().then(() => {
   // ESCUCHAR LA COLECCIÓN DE JUGADORAS
 
   onSnapshot(
@@ -6541,6 +6553,23 @@ window.addEventListener("storage",evento=>{
     }
 
   );
+
+  // Fixture compartido: Informes debe leer la misma colección en la nube que
+  // utiliza Partidos, no depender del localStorage de este dispositivo.
+  onSnapshot(collection(dbInformes, "partidos"), snapshot => {
+    const fixtureNube = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    try {
+      localStorage.setItem("fixtureADIUR", JSON.stringify(fixtureNube));
+    } catch (error) {
+      console.warn("No se pudo guardar la copia local del fixture:", error);
+    }
+    partidosFixture = cargarFixture();
+    actualizarSelectorFixture();
+    console.info("ADIUR Informes: fixture recibido desde Firestore:", fixtureNube.length);
+  }, error => {
+    console.error("No se pudo cargar el fixture de Partidos para Informes:", error);
+    mostrarMensaje("No se pudo consultar el fixture de Partidos (" + (error?.code || "error") + ").", "error");
+  });
 
   // Sincronización de informes: comparte la colección que consume Estadísticas.
   const coleccionInformes = collection(dbInformes, "informes_partidos");
@@ -6581,6 +6610,9 @@ window.addEventListener("storage",evento=>{
     }
   }, error => {
     console.error("Error al sincronizar informes en Firestore:", error);
+  });
+  }).catch(error => {
+    console.error("No se pudo iniciar la sincronización de Informes:", error);
   });
 
 </script>
