@@ -1958,22 +1958,28 @@ async function obtenerInfoPartidosExternosJugadora(jugadora) {
 
 /* --- 1. EXTRAER DATOS DE ADIUR-testeos.html --- */
 async function obtenerInfoTesteosJugadora(jugadora) {
-  const planillas = await obtenerPlanillasIntegral(jugadora.categoria);
-  const encontrado = registroTesteoIntegral(planillas, jugadora);
-  if (!encontrado) return { encontrado:false, html:'<div class="ficha-vacio">Sin testeos registrados para esta jugadora.</div>' };
+  const planillas=await obtenerPlanillasIntegral(jugadora.categoria);
+  const historial=registrosTesteosJugadoraIntegral(planillas,jugadora);
+  if(!historial.length)return {encontrado:false,html:'<div class="ficha-vacio">Sin testeos registrados para esta jugadora.</div>'};
 
-  const peso = numeroIntegral(encontrado.valores.peso);
-  let altura = numeroIntegral(encontrado.valores.altura);
-  if (altura !== null && altura > 3) altura /= 100;
-  const imc = peso !== null && altura !== null && altura > 0 ? (peso / (altura * altura)).toFixed(2) : "—";
-  const itemsVisibles = encontrado.columnas.filter(c => !c.esComp && !c.esCalculadoIMC).slice(0,8).map(c => {
-    const valores=[c.id,c.segundoId].filter(Boolean).map(id=>encontrado.valores[id]).filter(v=>v!==undefined&&v!==null&&String(v).trim()!=="");
-    if(!valores.length)return "";
-    return '<div class="dato-fila"><span class="etiqueta">'+escaparIntegral((c.grupo||"TESTEO")+" · "+(c.label||c.nombre||c.id))+'</span><strong>'+escaparIntegral(valores.join(" / "))+'</strong></div>';
-  }).filter(Boolean).join("");
-  return {encontrado:true,mes:encontrado.mes,valores:encontrado.valores,imc,
-    html:'<div class="dato-fila"><span class="etiqueta">Último período evaluado</span><strong>'+escaparIntegral(encontrado.mes)+'</strong></div>'+itemsVisibles+
-    '<div class="dato-fila"><span class="etiqueta">I.M.C. calculado</span><strong>'+escaparIntegral(imc)+'</strong></div>'};
+  const ultimo=historial[0],peso=numeroIntegral(ultimo.valores.peso);
+  let altura=numeroIntegral(ultimo.valores.altura);
+  if(altura!==null&&altura>3)altura/=100;
+  const imc=peso!==null&&altura!==null&&altura>0?(peso/(altura*altura)).toFixed(2):"—";
+
+  const htmlHistorial=historial.slice(0,6).map(item=>{
+    const marcas=item.columnas.filter(c=>!c.esComp&&!c.esCalculadoIMC).slice(0,7).map(c=>{
+      const vals=[c.id,c.segundoId].filter(Boolean).map(id=>item.valores[id]).filter(v=>v!==undefined&&v!==null&&String(v).trim()!=="");
+      if(!vals.length)return "";
+      return '<div class="dato-fila"><span class="etiqueta">'+escaparIntegral((c.grupo||"TESTEO")+" · "+(c.label||c.nombre||c.id))+'</span><strong>'+escaparIntegral(vals.join(" / "))+'</strong></div>';
+    }).filter(Boolean).join("");
+    return '<div class="ficha-item-box"><strong>'+escaparIntegral(item.mes)+'</strong>'+marcas+'</div>';
+  }).join("");
+
+  return {encontrado:true,mes:ultimo.mes,valores:ultimo.valores,imc,
+    html:'<div class="dato-fila"><span class="etiqueta">Períodos con mediciones</span><strong>'+historial.length+'</strong></div>'+
+    '<div class="dato-fila"><span class="etiqueta">I.M.C. último período</span><strong>'+escaparIntegral(imc)+'</strong></div>'+
+    '<div class="ficha-lista-items">'+htmlHistorial+'</div>'};
 }
 
 
@@ -2851,18 +2857,23 @@ async function obtenerPlanillasIntegral(division){
  CACHE_FUENTES_INTEGRAL.planillas.set(division,{at:Date.now(),data:salida});
  return salida;
 }
-function registroTesteoIntegral(planillas,jugadora){
- for(const item of planillas){
-  const valores=item.data?.valores||{};
-  const key=Object.keys(valores).find(k=>normalizarNombreIntegral(k)===normalizarNombreIntegral(jugadora.nombreCompleto)||normalizarTexto(k)===normalizarTexto(jugadora.id));
-  if(!key)continue;const v=valores[key]||{};
-  const columnas=(item.data.columnas||[]).filter(c=>{
-   if(c.esComp||c.esCalculadoIMC)return false;
+function registrosTesteosJugadoraIntegral(planillas,jugadora){
+ const nombre=normalizarNombreIntegral(jugadora.nombreCompleto);
+ return (Array.isArray(planillas)?planillas:[]).map(item=>{
+  const valores=item?.valores||{};
+  const key=Object.keys(valores).find(k=>normalizarNombreIntegral(k)===nombre||normalizarTexto(k)===normalizarTexto(jugadora.id));
+  if(!key)return null;
+  const v=valores[key]||{};
+  const columnas=(item.columnas||[]).filter(c=>{
+   if(!c||c.esComp||c.esCalculadoIMC)return false;
    return [c.id,c.segundoId].filter(Boolean).some(id=>v[id]!==""&&v[id]!==null&&v[id]!==undefined);
   });
-  if(columnas.length||Object.values(v).some(x=>x!==""&&x!==null&&x!==undefined))return {mes:item.mes,valores:v,columnas};
- }
- return null;
+  const tieneDato=columnas.length||Object.values(v).some(x=>x!==""&&x!==null&&x!==undefined);
+  return tieneDato?{mes:item.mes,fecha:item.fechaGuardado||item.ultimaActualizacion||"",valores:v,columnas}:null;
+ }).filter(Boolean);
+}
+function registroTesteoIntegral(planillas,jugadora){
+ return registrosTesteosJugadoraIntegral(planillas,jugadora)[0]||null;
 }
 function registroPartidoIntegral(partido,jugadora,division){
  const lista=Array.isArray(partido.jugadoras)?partido.jugadoras:[];
