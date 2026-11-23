@@ -3806,15 +3806,34 @@ function iniciarPartidosConSesion() {
     }, { once: true });
 }
 
-actualizarCompeticionesFormulario();
-actualizarFiltroCompeticion();
-actualizarContadoresCategorias();
-renderizarFixture();
-iniciarPartidosConSesion();
+function iniciarInterfazPartidos() {
+    try {
+        actualizarCompeticionesFormulario();
+        actualizarFiltroCompeticion();
+        actualizarContadoresCategorias();
+        renderizarFixture();
+    } catch (error) {
+        console.error("Error al iniciar la interfaz de Partidos:", error);
+        const principal = document.querySelector("main");
+        if (principal) {
+            const aviso = document.createElement("div");
+            aviso.className = "empty";
+            aviso.innerHTML = '<div class="empty-icon">⚠️</div><h3>No se pudo iniciar Partidos</h3><p>La sesión está activa, pero ocurrió un error al preparar el fixture. Revisá la consola para identificar el módulo afectado.</p>';
+            principal.prepend(aviso);
+        }
+    }
+    iniciarPartidosConSesion();
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", iniciarInterfazPartidos, { once: true });
+} else {
+    iniciarInterfazPartidos();
+}
 </script>
 
 
 
-<script type="module" src="ADIUR-layout.js?v=20261123n"></script>
+<script type="module" src="ADIUR-layout.js?v=20261123partidosfix1"></script>
 </body>
 </html>
