@@ -3517,7 +3517,7 @@ function actualizarCapasPizarra(){
   pitch.classList.toggle("ocultar-dibujos",!document.getElementById("capaDibujos").checked);
 }
 ["capaAdiur","capaRival","capaPelota","capaDibujos"].forEach(id=>{
-  document.getElementById(id)?.addEventListener("change",()=>{actualizarCapasPizarra();revisionPizarra++;});
+  document.getElementById(id)?.addEventListener("change",actualizarCapasPizarra);
 });
 
 /* =========================================================
