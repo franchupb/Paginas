@@ -3089,7 +3089,7 @@ function buscarJugadoraSesion() {
   const jugadoras = obtenerTodasLasJugadoras();
 
   if (localStorage.getItem("rolADIUR") === "jugadora") {
-    const claveUsuario = normalizar(usuario?.usuario || usuario?.username || usuario?.nombre || "");
+    const claveUsuario = normalizar(usuario?.usuario || usuario?.username || usuario?.nombre || "").replace(/[\s._-]+/g, "");
     const equivalencias = {
       guadaluped: "Guadalupe Demaria",
       jazmind: "Jazmin De Nicola Forte"
