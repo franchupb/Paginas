@@ -2093,32 +2093,6 @@ main{max-width:1720px;margin:30px auto;padding:0 30px 56px}
 </select>
 </div>
 
-                    <div class="separador-form">Situación actual y disponibilidad</div>
-                    <div class="campo span-4">
-<label for="estado">ESTADO DEL CASO *</label>
-<select id="estado" required>
-<option value="Pendiente de evaluación">Pendiente de evaluación</option>
-<option value="En tratamiento / rehabilitación">En tratamiento / rehabilitación</option>
-<option value="Entrenamiento adaptado">Entrenamiento adaptado</option>
-<option value="Reintegro progresivo">Reintegro progresivo</option>
-<option value="Alta deportiva confirmada">Alta deportiva confirmada</option>
-<option value="Caso cerrado">Caso cerrado</option>
-</select>
-</div>
-                    <div class="campo span-6">
-<label for="autorizacionRetorno">AUTORIZACIÓN DE RETORNO DEPORTIVO</label>
-<select id="autorizacionRetorno">
-<option value="No evaluada / no consta">No evaluada / no consta</option>
-<option value="Sin autorización documentada">Sin autorización documentada</option>
-<option value="Autorización profesional documentada">Autorización profesional documentada</option>
-</select>
-<small>La página registra la autorización; no determina aptitud deportiva.</small>
-</div>
-                    <div class="campo span-6">
-<label for="profesional">PROFESIONAL / CENTRO DE ATENCIÓN (SI CORRESPONDE)</label>
-<input id="profesional" maxlength="180" placeholder="Nombre o institución">
-</div>
-
                     <div class="campo span-6">
 <label for="descripcion">INCIDENTE Y SÍNTOMAS REFERIDOS *</label>
 <textarea id="descripcion" maxlength="2500" required placeholder="Qué ocurrió, cuándo aparecieron las molestias y qué refiere la jugadora. Evitá conclusiones diagnósticas no confirmadas.">
@@ -2522,7 +2496,7 @@ function mostrarAviso(m){$("avisoFormulario").textContent=m;$("avisoFormulario")
 function limpiarAviso(){$("avisoFormulario").textContent="";$("avisoFormulario").classList.add("oculto");}
 function formularioLimpio(){
     idEditando=null;$('formLesion').reset();$('fechaLesion').value=fechaHoy();$('contexto').value="Entrenamiento";$('lado').value="No aplica";
-    $('mecanismo').value="No determinado";$('gravedad').value="No evaluada";$('estado').value="Pendiente de evaluación";$('autorizacionRetorno').value="No evaluada / no consta";
+    $('mecanismo').value="No determinado";$('gravedad').value="No evaluada";
     $('tituloFormulario').textContent="Registrar lesión o incidente";$('estadoFormulario').textContent="NUEVO CASO";$('btnGuardar').textContent="Guardar caso";
     $('panelFormulario').classList.add("oculto");limpiarAviso();poblarJugadoras();
 }
@@ -2533,8 +2507,7 @@ function editarRegistro(id){
     formularioLimpio();idEditando=r.id;poblarJugadoras(r.jugadora);
     const jug=jugadorasBase.find(j=>j.nombre===r.jugadora&&j.categoria===r.categoria);if(jug)$('jugadora').value=jug.id;
     $('fechaLesion').value=r.fecha;$('contexto').value=r.contexto;$('zona').value=r.zona;$('lado').value=r.lado;$('tipoLesion').value=r.tipo;
-    $('mecanismo').value=r.mecanismo;$('gravedad').value=r.gravedad;$('estado').value=r.estado;$('autorizacionRetorno').value=r.autorizacionRetorno;
-    $('profesional').value=r.profesional;$('descripcion').value=r.descripcion;$('atencionInicial').value=r.atencionInicial;$('restricciones').value=r.restricciones;$('observaciones').value=r.observaciones;
+    $('mecanismo').value=r.mecanismo;$('gravedad').value=r.gravedad;$('descripcion').value=r.descripcion;$('atencionInicial').value=r.atencionInicial;$('restricciones').value=r.restricciones;$('observaciones').value=r.observaciones;
     $('tituloFormulario').textContent="Editar ficha de lesión";$('estadoFormulario').textContent="EDITANDO";$('btnGuardar').textContent="Guardar cambios";
     $('panelFormulario').classList.remove("oculto");$('panelFormulario').scrollIntoView({behavior:"smooth",block:"start"});
 }
@@ -2542,31 +2515,18 @@ $('formLesion').addEventListener('submit',e=>{
     e.preventDefault();limpiarAviso();
     if(!categoriaActual()){mostrarAviso("Seleccioná una categoría antes de guardar.");return;}
     const jug=jugadoraSeleccionada();if(!jug||jug.categoria!==categoriaActual()){mostrarAviso("Seleccioná una jugadora de la categoría elegida.");$('jugadora').focus();return;}
-    const fecha=$('fechaLesion').value,estado=$('estado').value,autorizacion=$('autorizacionRetorno').value;
+    const fecha=$('fechaLesion').value;
     if(!fecha){mostrarAviso("Ingresá la fecha del incidente.");return;}
     if(fecha>fechaHoy()){mostrarAviso("La fecha del incidente no puede estar en el futuro.");return;}
     if(!$('zona').value||!$('tipoLesion').value||!$('descripcion').value.trim()){mostrarAviso("Completá zona corporal, tipo/clasificación y la descripción del incidente.");return;}
-    if(estado==="Alta deportiva confirmada"&&autorizacion!=="Autorización profesional documentada"){
-        mostrarAviso("Para registrar un alta deportiva, indicá que existe autorización profesional documentada. La página no determina por sí misma el alta.");$('autorizacionRetorno').focus();return;
-    }
     const anterior=registros,editando=idEditando!==null,viejo=editando?registros.find(r=>r.id===idEditando):null;
-    const nuevo={id:idEditando||crearId(),jugadora:jug.nombre,jugadoraId:jug.id,categoria:jug.categoria,fecha,fechaRetorno:CERRADOS.has(estado)?(viejo?.fechaRetorno||""):"",contexto:$('contexto').value,zona:$('zona').value.trim(),lado:$('lado').value,tipo:$('tipoLesion').value,mecanismo:$('mecanismo').value,gravedad:$('gravedad').value,estado,autorizacionRetorno:autorizacion,profesional:$('profesional').value.trim(),descripcion:$('descripcion').value.trim(),atencionInicial:$('atencionInicial').value.trim(),restricciones:$('restricciones').value.trim(),observaciones:$('observaciones').value.trim(),seguimientos:viejo?.seguimientos||[],rutina:viejo?.rutina||[],creadoEn:viejo?.creadoEn||new Date().toISOString(),actualizadoEn:new Date().toISOString()};
+    const estado=viejo?.estado||"Pendiente de evaluación";
+    const nuevo={id:idEditando||crearId(),jugadora:jug.nombre,jugadoraId:jug.id,categoria:jug.categoria,fecha,fechaRetorno:viejo?.fechaRetorno||"",contexto:$('contexto').value,zona:$('zona').value.trim(),lado:$('lado').value,tipo:$('tipoLesion').value,mecanismo:$('mecanismo').value,gravedad:$('gravedad').value,estado,autorizacionRetorno:viejo?.autorizacionRetorno||"No evaluada / no consta",profesional:viejo?.profesional||"",descripcion:$('descripcion').value.trim(),atencionInicial:$('atencionInicial').value.trim(),restricciones:$('restricciones').value.trim(),observaciones:$('observaciones').value.trim(),seguimientos:viejo?.seguimientos||[],rutina:viejo?.rutina||[],creadoEn:viejo?.creadoEn||new Date().toISOString(),actualizadoEn:new Date().toISOString()};
     if(editando)registros=registros.map(r=>r.id===idEditando?nuevo:r);else registros=[nuevo,...registros];
     if(!guardarRegistros()){registros=anterior;return;}
     $('panelFormulario').classList.add("oculto");formularioLimpio();actualizarTodo();toast(editando?"Ficha de lesión actualizada.":"Caso registrado correctamente.");$('panelRegistros').scrollIntoView({behavior:"smooth",block:"start"});
 });
 function eliminarRegistro(id){const r=registros.find(x=>x.id===String(id));if(!r||r.categoria!==categoriaActual())return;if(!confirm(`¿Eliminar definitivamente la ficha de ${r.jugadora} del ${fechaBonita(r.fecha)}? Esta acción también elimina su historial de controles y no se puede deshacer.`))return;const anterior=registros;registros=registros.filter(x=>x.id!==r.id);if(!guardarRegistros()){registros=anterior;return;}actualizarTodo();toast("Ficha eliminada.");}
-function htmlEntradaRutina(e={}){
-    const tipos=["Fuerza / control","Movilidad","Estabilidad","Propiocepción","Cardiorrespiratorio","Técnica adaptada","Otro"];
-    return `<article class="rutina-ejercicio"><div class="rutina-ejercicio-cabecera"><strong>Ejercicio</strong><button type="button" class="btn btn-danger btn-small" data-accion="quitar-ejercicio-rutina">Quitar</button></div><div class="rutina-grid">
-    <div class="campo wide"><label>Nombre del ejercicio *</label><input data-campo="ejercicio" maxlength="160" value="${escapeHTML(e.ejercicio||"")}" placeholder="Ej. movilidad de tobillo"></div>
-    <div class="campo"><label>Tipo</label><select data-campo="tipo">${tipos.map(t=>`<option ${t===(e.tipo||"Fuerza / control")?'selected':''}>${escapeHTML(t)}</option>`).join("")}</select></div>
-    <div class="campo"><label>Series</label><input data-campo="series" type="number" min="1" max="30" step="1" value="${escapeHTML(e.series??"")}" placeholder="Ej. 3"></div>
-    <div class="campo"><label>Repeticiones</label><input data-campo="repeticiones" maxlength="60" value="${escapeHTML(e.repeticiones??"")}" placeholder="Ej. 8 por lado"></div>
-    <div class="campo"><label>Tiempo (seg)</label><input data-campo="duracion" type="number" min="0" max="7200" step="1" value="${escapeHTML(e.duracion??"")}" placeholder="Opcional"></div>
-    <div class="campo wide"><label>Carga / intensidad indicada</label><input data-campo="carga" maxlength="120" value="${escapeHTML(e.carga||"")}" placeholder="Ej. peso, banda o intensidad indicada"></div>
-    <div class="campo full"><label>Indicaciones / adaptación</label><textarea data-campo="indicaciones" maxlength="1000" placeholder="Rango, técnica, pausas, adaptación o indicación profesional documentada">${escapeHTML(e.indicaciones||"")}</textarea></div></div></article>`;
-}
 function htmlDiarioSeguimiento(r){
     ordenarSeguimientos(r);
     const entradas=r.seguimientos||[];
@@ -2591,7 +2551,7 @@ function abrirDetalle(id, seguimientoEdicionId=null){
     const seguimientoEdicion=seguimientoEdicionId?r.seguimientos.find(s=>s.id===String(seguimientoEdicionId)):null;
     $('modalTitulo').textContent=r.jugadora;$('modalSubtitulo').textContent=`${r.categoria} · Incidente ${fechaBonita(r.fecha)} · ${r.zona}`;
     const dias=diasCaso(r);
-    const campos=[['Estado',r.estado],['Tipo',r.tipo],['Zona / lado',`${r.zona} · ${r.lado}`],['Contexto',r.contexto],['Gravedad informada',r.gravedad],['Días transcurridos',dias===null?'—':dias],['Autorización de retorno',r.autorizacionRetorno],['Profesional / centro',r.profesional||'No consignado']];
+    const campos=[['Tipo',r.tipo],['Zona / lado',r.zona+' · '+r.lado],['Contexto',r.contexto],['Gravedad informada',r.gravedad],['Días transcurridos',dias===null?'—':dias]];
     const dato=(et,v)=>`<div class="detalle-card"><small>${escapeHTML(et.toUpperCase())}</small><strong>${escapeHTML(v||'—')}</strong></div>`;
     $('modalBody').innerHTML=`
         <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px"><span class="badge badge-naranja">${escapeHTML(r.zona)}</span><span class="badge ${estadoBadge(r.estado)}">${escapeHTML(r.estado)}</span><span class="badge badge-gris">${escapeHTML(r.contexto)}</span></div>
@@ -2602,7 +2562,6 @@ function abrirDetalle(id, seguimientoEdicionId=null){
         <div class="modal-seccion"><h4>Observaciones iniciales del cuerpo técnico</h4><div class="detalle-texto">${escapeHTML(r.observaciones||'Sin observaciones.')}</div></div>
         <div class="modal-seccion"><h4>Diario de evolución (${r.seguimientos.length} jornadas)</h4><p style="margin:-4px 0 13px;color:var(--gris-texto);font-size:11px;line-height:1.6">Registrá por fecha qué actividad se realizó y cómo respondió la jugadora. Las jornadas se numeran en orden cronológico.</p>${htmlDiarioSeguimiento(r)}</div>
         <div class="modal-seccion"><h4>Agregar jornada al seguimiento</h4>${htmlFormularioDiario(r,seguimientoEdicion)}</div>
-        <div class="modal-seccion"><h4>Rutina adaptada para este expediente</h4><p style="margin:-4px 0 13px;color:var(--gris-texto);font-size:11px;line-height:1.6">Diseñá y guardá la rutina que corresponda, con ejercicios, series, repeticiones, tiempo, carga e indicaciones individualizadas.</p>${htmlFormularioRutina(r)}</div>
         <div class="modal-footer"><button type="button" class="btn btn-secondary" id="btnEditarDesdeDetalle" data-id="${escapeHTML(r.id)}">Editar ficha</button><button type="button" class="btn btn-secondary" id="btnImprimirDetalle">Imprimir ficha</button><button type="button" class="btn btn-secondary" id="btnCerrarDetalleAbajo">Cerrar</button></div>`;
     $('modalDetalle').classList.add("visible");
     $('btnEditarDesdeDetalle').addEventListener('click',()=>{cerrarDetalle();editarRegistro(r.id);});
@@ -2654,34 +2613,6 @@ $('modalBody').addEventListener('click',e=>{
         if(!guardarRegistros()){registros=anterior;actualizarTodo();abrirDetalle(id);return;}
         actualizarTodo();abrirDetalle(id);toast("Jornada eliminada.");return;
     }
-    if(accion==="agregar-ejercicio-rutina"){
-        const lista=$('listaRutina');if(!lista)return;
-        lista.insertAdjacentHTML('beforeend',htmlEntradaRutina());
-        const campo=lista.lastElementChild?.querySelector('[data-campo="ejercicio"]');if(campo)campo.focus();
-        return;
-    }
-    if(accion==="quitar-ejercicio-rutina"){
-        const fila=boton.closest('.rutina-ejercicio');if(fila)fila.remove();
-    }
-});
-$('modalBody').addEventListener('submit',e=>{
-    if(e.target.id!=="formRutina")return;e.preventDefault();
-    const form=e.target,id=form.dataset.id,r=registros.find(x=>x.id===id);if(!r)return;
-    const aviso=$('avisoRutina');aviso.classList.add('oculto');
-    const filas=[...form.querySelectorAll('.rutina-ejercicio')],rutina=[];let error="";
-    filas.forEach(fila=>{
-        const obtener=campo=>fila.querySelector(`[data-campo="${campo}"]`)?.value?.trim()||"";
-        const ejercicio=obtener('ejercicio'),tipo=obtener('tipo')||"Fuerza / control",series=obtener('series'),repeticiones=obtener('repeticiones'),duracion=obtener('duracion'),carga=obtener('carga'),indicaciones=obtener('indicaciones');
-        if(!ejercicio){if(series||repeticiones||duracion||carga||indicaciones)error="Completá el nombre de cada ejercicio que tenga otros datos cargados, o quitá esa fila vacía.";return;}
-        if(series&&(!Number.isInteger(Number(series))||Number(series)<1||Number(series)>30)){error="Las series deben ser un número entero entre 1 y 30.";return;}
-        if(duracion&&(!Number.isFinite(Number(duracion))||Number(duracion)<0||Number(duracion)>7200)){error="El tiempo debe estar entre 0 y 7200 segundos.";return;}
-        rutina.push({id:crearId(),ejercicio,tipo,series,repeticiones,duracion,carga,indicaciones});
-    });
-    if(error){aviso.textContent=error;aviso.classList.remove('oculto');return;}
-    if(!rutina.length){aviso.textContent="Agregá al menos un ejercicio con nombre antes de guardar la rutina.";aviso.classList.remove('oculto');return;}
-    const anterior=registros.map(x=>x.id===id?{...x,rutina:[...(x.rutina||[])]}:x);
-    r.rutina=rutina;r.actualizadoEn=new Date().toISOString();
-    if(!guardarRegistros()){registros=anterior;return;}actualizarTodo();abrirDetalle(id);toast("Rutina del expediente guardada.");
 });
 $('tbodyLesiones').addEventListener('click',e=>{const b=e.target.closest('button[data-accion]');if(!b)return;if(b.dataset.accion==="ver")abrirDetalle(b.dataset.id);if(b.dataset.accion==="editar")editarRegistro(b.dataset.id);if(b.dataset.accion==="eliminar")eliminarRegistro(b.dataset.id);});
 $('btnNuevaLesion').addEventListener('click',abrirFormulario);$('btnCancelar').addEventListener('click',()=>{formularioLimpio();toast("Formulario cerrado.");});$('btnLimpiar').addEventListener('click',()=>{if(idEditando!==null&&!confirm("¿Descartar los cambios de esta ficha?"))return;formularioLimpio();toast("Campos limpiados.");});$('btnLimpiarFiltros').addEventListener('click',()=>{filtroIdsOperativo=null;$('buscar').value="";$('filtroEstado').value="TODOS";$('filtroZona').value="TODAS";renderizarTabla();});['buscar','filtroEstado','filtroZona'].forEach(id=>$(id).addEventListener(id==='buscar'?'input':'change',()=>{filtroIdsOperativo=null;renderizarTabla();}));
