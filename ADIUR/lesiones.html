@@ -2635,8 +2635,8 @@ iniciar();
 </script>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, onSnapshot, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCc0dPIEkaKxbHoRC2CgZK412dXVGPOdTI",
@@ -2665,15 +2665,14 @@ let inicializado = false;
 let idsNube = new Set();
 
 window.sincronizarLesionesNube = async function(lista) {
+    // Sincronización no destructiva: las diferencias con localStorage nunca
+    // eliminan expedientes de Firestore. Las bajas deben ser acciones explícitas.
     const actuales = Array.isArray(lista) ? lista : [];
-    const idsLocales = new Set(actuales.map(r => String(r.id)));
     for (const registro of actuales) {
-        await setDoc(doc(db, "lesiones", String(registro.id)), registro);
+        if (!registro || registro.id == null) continue;
+        await setDoc(doc(db, "lesiones", String(registro.id)), registro, { merge: true });
+        idsNube.add(String(registro.id));
     }
-    for (const id of idsNube) {
-        if (!idsLocales.has(id)) await deleteDoc(doc(db, "lesiones", id));
-    }
-    idsNube = idsLocales;
 };
 
 onSnapshot(coleccion, async snapshot => {
