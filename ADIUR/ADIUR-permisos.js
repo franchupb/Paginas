@@ -254,6 +254,15 @@
           // La matriz de este archivo manda sobre rol y categorías. Firestore solo identifica y habilita la cuenta.
           perfilActivo = perfil;
           configActiva = base;
+          // La matriz central es la fuente de verdad también para las páginas
+          // que aún conservan controles de compatibilidad locales.
+          try {
+            localStorage.setItem("usuarioADIUR", String(perfil.usuario || base.usuario || base.nombre));
+            localStorage.setItem("rolADIUR", base.rol);
+            localStorage.setItem("categoriasADIUR", JSON.stringify(base.categorias));
+          } catch (error) {
+            console.warn("No se pudieron sincronizar los permisos locales ADIUR:", error);
+          }
           window.ADIUR_PERMISOS = Object.freeze({
             usuario: base.usuario || perfil.usuario,
             nombre: base.nombre,
