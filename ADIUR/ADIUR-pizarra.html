@@ -253,7 +253,24 @@ body{background:#101518!important}
 .status-hint{margin-left:auto;color:#65747c;font-size:8px;font-weight:800;letter-spacing:1px}
 @media(max-width:850px){.main{padding:9px!important}.controlbar{align-items:stretch;flex-direction:column}.control-actions{justify-content:flex-end}.rival-panel{flex-wrap:wrap}.rival-heading{flex:1 1 100%}.workspace{grid-template-columns:1fr;gap:7px}.tools{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;padding:6px}.tools-caption{grid-column:1/-1;margin:2px}.tool{min-height:43px}.tool-divider{display:none}.colors{grid-column:1/-1;display:flex;justify-content:center;gap:12px;padding:5px}.width-control{grid-column:1/-1;display:flex;flex-direction:row;align-items:center;gap:12px}.width-control input{flex:1}.pitchwrap{min-height:0;padding:3px}.pitch{max-height:none;min-height:0}.player{width:29px;height:29px;font-size:9px}.player small{font-size:7px}.status-hint{display:none}}
 </style>
-</head>
+<style id="pizarra-fichas-3d-y-fullscreen">
+.player{position:absolute;isolation:isolate;border:1px solid rgba(255,255,255,.96);border-radius:50%;font-size:0;overflow:visible;transform:translate(-50%,-50%);transition:filter .16s ease,transform .16s ease;box-shadow:0 2px 0 rgba(0,0,0,.22),0 5px 9px rgba(0,0,0,.35),inset 0 1px 1px rgba(255,255,255,.65)}
+.player::before{content:"";position:absolute;inset:2px;border-radius:50%;pointer-events:none;background:linear-gradient(145deg,rgba(255,255,255,.58),rgba(255,255,255,.08) 34%,rgba(0,0,0,.12) 75%,rgba(0,0,0,.3));box-shadow:inset 0 1px 2px rgba(255,255,255,.65),inset 0 -3px 5px rgba(0,0,0,.25)}
+.player::after{content:"";position:absolute;inset:5px;border:1px solid rgba(255,255,255,.36);border-radius:50%;pointer-events:none}
+.player.own{background:radial-gradient(circle at 32% 23%,#ffbd8c 0,#ff8a43 24%,#f47721 57%,#b94308 100%);border-color:#ffe0c9}
+.player.rival{background:radial-gradient(circle at 32% 23%,#ffb0b4 0,#e46c72 24%,#bd4248 58%,#76242a 100%);border-color:#ffd9da}
+.player-number{position:relative;z-index:1;display:grid;place-items:center;width:100%;height:100%;color:#fff;font-size:13px;font-weight:900;line-height:1;text-shadow:0 1px 2px rgba(0,0,0,.55);font-variant-numeric:tabular-nums}
+.player.selected{outline:2px solid #ffe15a;outline-offset:4px;filter:drop-shadow(0 0 5px rgba(255,225,90,.8));transform:translate(-50%,-50%) scale(1.09)}
+.player:active{cursor:grabbing;filter:brightness(1.08)}
+#toggleImmersive{white-space:nowrap}
+body.pizarra-inmersiva .main{inset:0!important;width:100vw!important;max-width:none!important;padding:10px!important}
+body.pizarra-inmersiva .pizarra-app{display:flex;flex:1 1 auto;flex-direction:column;min-height:0;max-width:none;margin:0;padding:10px;border-radius:6px}
+body.pizarra-inmersiva .workspace{flex:1 1 auto;min-height:0;grid-template-columns:74px minmax(0,1fr)}
+body.pizarra-inmersiva .pitchwrap{min-height:0;flex:1 1 auto}
+body.pizarra-inmersiva .pitch{width:100%;height:100%;max-height:none;min-height:0;aspect-ratio:auto}
+body.pizarra-inmersiva .statusbar{flex:0 0 auto}
+@media(max-width:850px){body.pizarra-inmersiva .workspace{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}body.pizarra-inmersiva .tools{grid-template-columns:repeat(6,minmax(0,1fr))}body.pizarra-inmersiva .pitchwrap{min-height:0}body.pizarra-inmersiva .pitch{height:auto;aspect-ratio:3/2;max-height:none}}
+</style></head>
 <body>
 <header class="barra-superior">
 <button class="boton-menu" id="botonMenu" type="button" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="true">☰</button>
@@ -276,6 +293,7 @@ body{background:#101518!important}
       <button class="icon-control" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button>
       <button class="icon-control" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button>
       <button class="icon-control" id="clearDrawings" type="button" title="Borrar trazos" aria-label="Borrar trazos">⌫</button>
+      <button class="btn-rival" id="toggleImmersive" type="button" aria-pressed="false">⛶ Pantalla completa</button>
     </div>
   </header>
   <div class="rival-panel" id="rivalPanel" hidden>
@@ -285,15 +303,7 @@ body{background:#101518!important}
     <button class="btn-remove-rival" id="removeRival" type="button">Quitar rival</button>
   </div>
   <div class="workspace">
-    <aside class="tools" aria-label="Plantel y herramientas">
-      <section class="roster-control" aria-label="Plantel ADIUR">
-        <div class="tools-caption">PLANTEL ADIUR</div>
-        <p class="roster-hint">La cancha ya tiene sus 11 posiciones. Elegí una ficha y asignale un nombre cuando lo necesites.</p>
-        <select id="categoriaADIUR" aria-label="Categoría para mostrar jugadoras"><option value="">Mostrar nombres de una categoría</option><option>Sub 10</option><option>Sub 12</option><option>Sub 14</option><option>Sub 16</option><option>Primera</option></select>
-        <div id="rosterList" class="roster-list"><div class="roster-empty">Los nombres son opcionales.</div></div>
-        <button id="clearPlayerName" class="btn-remove-rival" type="button">Quitar nombre de la ficha</button>
-      </section>
-      <div class="tool-divider"></div>
+    <aside class="tools" aria-label="Herramientas de dibujo">
       <div class="tools-caption">DIBUJO</div>
       <button class="tool active" data-tool="select" type="button" title="Mover jugadores"><span>↖</span><small>Mover</small></button>
       <button class="tool" data-tool="line" type="button" title="Línea"><span>／</span><small>Línea</small></button>
@@ -311,22 +321,18 @@ body{background:#101518!important}
     </aside>
     <div class="pitchwrap"><div class="pitch" id="pitch"><svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg><canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div></div></div>
   </div>
-  <footer class="statusbar"><span class="status-led"></span><span id="status" role="status" aria-live="polite">Cancha lista · 11 posiciones disponibles. Los nombres se agregan desde Plantel ADIUR.</span><span class="status-hint">ADIUR FEMENINO · TACTICAL BOARD</span></footer>
+  <footer class="statusbar"><span class="status-led"></span><span id="status" role="status" aria-live="polite">Cancha lista · 11 posiciones tácticas disponibles.</span><span class="status-hint">ADIUR FEMENINO · TACTICAL BOARD</span></footer>
 </section>
 </main>
 </div>
 <script type="module">
-import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 (()=>{
 "use strict";
 const $=id=>document.getElementById(id),pitch=$("pitch"),canvas=$("draw"),ctx=canvas.getContext("2d");
-const firebaseConfig={apiKey:"AIzaSyCc0dPIEkaKxbHoRC2CgZK412dXVGPOdTI",authDomain:"adiur-b1913.firebaseapp.com",projectId:"adiur-b1913",storageBucket:"adiur-b1913.firebasestorage.app",messagingSenderId:"884643321144",appId:"1:884643321144:web:ba3c314de3a1c9e3545dcd",measurementId:"G-58LL26YXPM"};
 const usuarioGuardado=localStorage.getItem("usuarioADIUR");
 if(!usuarioGuardado){window.location.href="ADIUR-Loing.html";return;}
 const rolADIUR=localStorage.getItem("rolADIUR")||"";
 if(!["admin","coordinadora","cuerpo_tecnico","jugadora"].includes(rolADIUR)){window.location.href="ADIUR-Pagina Principal.html";return;}
-const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getFirestore(app);
 const formations={
 "4-3-3":[[.12,.50],[.30,.18],[.30,.39],[.30,.61],[.30,.82],[.52,.28],[.52,.50],[.52,.72],[.78,.18],[.82,.50],[.78,.82]],
 "4-4-2":[[.12,.50],[.30,.18],[.30,.39],[.30,.61],[.30,.82],[.53,.18],[.53,.39],[.53,.61],[.53,.82],[.79,.36],[.79,.64]],
@@ -338,48 +344,6 @@ let players=formations["4-3-3"].map((q,i)=>({id:"own-"+(i+1),team:"own",name:"",
 const clone=x=>JSON.parse(JSON.stringify(x)),say=t=>$("status").textContent=t;
 function snapshot(){history.push({players:clone(players),drawings:clone(drawings)});if(history.length>50)history.shift();future=[];buttons()}
 function buttons(){$("undo").disabled=!history.length;$("redo").disabled=!future.length}
-function normalizar(v){return String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"")}
-function categoriaMatch(a,b){return normalizar(a)===normalizar(b)}
-function positionRank(p){const x=normalizar(p);if(x.includes("arquera")||x.includes("portera"))return 0;if(x.includes("defensora")||x.includes("defensa"))return 1;if(x.includes("mediocampista")||x.includes("volante"))return 2;if(x.includes("delantera")||x.includes("delantera"))return 3;return 4}
-function setField(){
- const svg=$("fieldSvg");
- svg.innerHTML='<rect width="900" height="600" fill="#328452"/><g fill="none" stroke="#ffffff" stroke-width="4"><rect x="15" y="15" width="870" height="570"/><line x1="450" y1="15" x2="450" y2="585"/><circle cx="450" cy="300" r="78"/><circle cx="450" cy="300" r="5" fill="#fff"/><rect x="15" y="155" width="135" height="290"/><rect x="15" y="225" width="55" height="150"/><rect x="750" y="155" width="135" height="290"/><rect x="830" y="225" width="55" height="150"/></g>';
-}
-function xy(e){const r=pitch.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height}}
-function drawOne(d,g=ctx){
- const r=pitch.getBoundingClientRect(),x=d.x*r.width,y=d.y*r.height,X=d.X*r.width,Y=d.Y*r.height;
- g.save();g.strokeStyle=d.color;g.fillStyle=d.color;g.lineWidth=d.width;g.lineCap="round";g.lineJoin="round";g.setLineDash(d.type==="dash"?[10,8]:[]);g.beginPath();
- if(d.type==="free"){(d.points||[]).forEach((p,i)=>i?g.lineTo(p.x*r.width,p.y*r.height):g.moveTo(p.x*r.width,p.y*r.height))}
- else if(d.type==="zone")g.ellipse((x+X)/2,(y+Y)/2,Math.max(2,Math.abs(X-x)/2),Math.max(2,Math.abs(Y-y)/2),0,0,Math.PI*2);
- else{g.moveTo(x,y);g.lineTo(X,Y);if(d.type==="arrow"){const a=Math.atan2(Y-y,X-x),len=16+d.width;g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a-.48),Y-len*Math.sin(a-.48));g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a+.48),Y-len*Math.sin(a+.48))}}
- g.stroke();g.restore();
-}
-function paint(){const r=pitch.getBoundingClientRect();if(!r.width||!r.height)return;const d=window.devicePixelRatio||1;ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.restore();ctx.setTransform(d,0,0,d,0,0);drawings.forEach(item=>drawOne(item));if(drawing&&start&&points.length)drawOne({type:tool,x:start.x,y:start.y,X:points.at(-1).x,Y:points.at(-1).y,points,color,width:lineWidth})}
-function renderPlayers(){
- const host=$("players");host.replaceChildren();
- players.forEach(p=>{const el=document.createElement("div");el.className="player "+p.team+(p.id===selected?" selected":"");el.style.left=p.x*100+"%";el.style.top=p.y*100+"%";el.textContent=p.number;if(p.name){const label=document.createElement("small");label.textContent=p.name;el.append(label)}
- el.addEventListener("pointerdown",e=>{if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;host.querySelectorAll(".player").forEach(node=>node.classList.toggle("selected",node===el));const move=v=>{const q=xy(v);p.x=Math.max(.025,Math.min(.975,q.x));p.y=Math.max(.035,Math.min(.965,q.y));el.style.left=p.x*100+"%";el.style.top=p.y*100+"%"};const end=()=>{window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);renderPlayers();say("Posición actualizada");buttons()};window.addEventListener("pointermove",move);window.addEventListener("pointerup",end,{once:true})});
- host.append(el)});
-}
-function resize(){const r=pitch.getBoundingClientRect(),d=window.devicePixelRatio||1;if(!r.width||!r.height)return;canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0);paint()}
-function layoutTeam(team,formation){
- const coords=formations[formation];if(!coords)return;
- const group=players.filter(p=>p.team===team);
- group.forEach((p,i)=>{const q=coords[i];p.x=team==="rival"?1-q[0]:q[0];p.y=q[1]});
-}
-function renderRoster(){
- const host=$("rosterList"),cat=$("categoriaADIUR").value;host.replaceChildren();
- if(!cat){host.innerHTML='<div class="roster-empty">Los nombres son opcionales. Elegí una categoría para ver el plantel.</div>';return}
- const squad=jugadoras.filter(j=>categoriaMatch(j.categoria,cat)&&normalizar(j.estado||"Activo")!=="inactivo"&&normalizar(j.estado||"Activo")!=="lesionado").sort((a,b)=>positionRank(a.posicion)-positionRank(b.posicion)||String(a.nombre).localeCompare(String(b.nombre),"es"));
- if(!squad.length){host.innerHTML='<div class="roster-empty">No hay jugadoras activas en esta categoría.</div>';return}
- squad.forEach(j=>{const b=document.createElement("button");b.type="button";b.className="roster-player";b.innerHTML='<span class="roster-number">'+(j.dorsal||"·")+'</span><span class="roster-name"></span>';b.querySelector(".roster-name").textContent=j.nombre||"Sin nombre";b.addEventListener("click",()=>assignPlayer(j));host.append(b)});
-}
-function assignPlayer(j){
- let target=players.find(p=>p.id===selected&&p.team==="own");
- if(!target)target=players.find(p=>p.team==="own"&&!p.name);
- if(!target){say("Seleccioná una ficha de ADIUR para cambiarle el nombre, o quitá un nombre existente.");return}
- snapshot();target.name=j.nombre;target.playerId=j.id;target.number=String(j.dorsal||target.number);selected=target.id;renderPlayers();renderRoster();paint();say(j.nombre+" asignada a la ficha "+target.number+".");
-}
 function updateOwnFormation(){
  const formation=$("formacionADIUR").value;layoutTeam("own",formation);renderPlayers();paint();say("Formación ADIUR: "+formation+" · 11 posiciones listas.");
 }
@@ -388,13 +352,6 @@ function updateRival(){
  if(formation){formations[formation].forEach((q,i)=>players.push({id:"rival-"+(i+1),team:"rival",name:"Rival "+(i+1),number:String(i+1),x:1-q[0],y:q[1]}))}
  renderPlayers();paint();say("Rival incorporado: 11 posiciones · formación "+formation+".");
 }
-let jugadoras=[];
-function onJugadoras(snapshotData){
- jugadoras=[];snapshotData.forEach(docSnap=>{const d=docSnap.data();jugadoras.push({...d,id:docSnap.id,nombre:d.nombre||d.nombreCompleto||d.nombre_completo||[d.nombres,d.apellido||d.apellidos].filter(Boolean).join(" "),categoria:d.categoria||d.division||d.categoría||d.category||"",posicion:d.posicion||d.puesto||"",estado:d.estado||d.status||"Activo",dorsal:d.dorsal||d.numeroCamiseta||d.numero||""})});
- renderRoster();say("Plantel sincronizado · la cancha conserva sus 11 posiciones.");
-}
-$("categoriaADIUR").addEventListener("change",renderRoster);
-$("clearPlayerName").addEventListener("click",()=>{const p=players.find(x=>x.id===selected&&x.team==="own");if(!p){say("Seleccioná primero una ficha de ADIUR.");return}snapshot();p.name="";delete p.playerId;renderPlayers();paint();say("Nombre quitado de la ficha "+p.number+".")});
 $("formacionADIUR").addEventListener("change",updateOwnFormation);
 $("addRival").addEventListener("click",()=>{$("rivalPanel").hidden=false;$("addRival").hidden=true;say("Elegí la formación rival y agregá sus 11 posiciones.");});
 $("confirmRival").addEventListener("click",updateRival);
@@ -409,8 +366,12 @@ canvas.addEventListener("pointercancel",()=>{drawing=false;points=[];paint()});
 $("undo").addEventListener("click",()=>{if(!history.length)return;future.push({players:clone(players),drawings:clone(drawings)});const s=history.pop();players=s.players;drawings=s.drawings;renderPlayers();paint();buttons();say("Último cambio deshecho.")});
 $("redo").addEventListener("click",()=>{if(!future.length)return;history.push({players:clone(players),drawings:clone(drawings)});const s=future.pop();players=s.players;drawings=s.drawings;renderPlayers();paint();buttons();say("Cambio recuperado.")});
 $("clearDrawings").addEventListener("click",()=>{if(!drawings.length)return;snapshot();drawings=[];paint();say("Trazos borrados.")});
-setField();renderPlayers();renderRoster();buttons();new ResizeObserver(resize).observe(pitch);window.addEventListener("resize",resize);
-onSnapshot(collection(db,"jugadoras"),onJugadoras,error=>{console.error(error);say("No se pudo cargar el plantel desde Firebase. Revisá la conexión o los permisos.")});
+setField();renderPlayers();buttons();new ResizeObserver(resize).observe(pitch);window.addEventListener("resize",resize);
+const immersiveButton=$("toggleImmersive");
+function syncImmersive(){const active=document.body.classList.contains("pizarra-inmersiva");immersiveButton.textContent=active?"⤢ Salir de pantalla completa":"⛶ Pantalla completa";immersiveButton.setAttribute("aria-pressed",String(active))}
+immersiveButton.addEventListener("click",async()=>{const active=document.body.classList.contains("pizarra-inmersiva");if(active){document.body.classList.remove("pizarra-inmersiva");if(document.fullscreenElement&&document.exitFullscreen)try{await document.exitFullscreen()}catch(e){} }else{document.body.classList.add("pizarra-inmersiva");if(document.documentElement.requestFullscreen)try{await document.documentElement.requestFullscreen()}catch(e){} }syncImmersive();setTimeout(resize,80)});
+document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement&&document.body.classList.contains("pizarra-inmersiva"))document.body.classList.remove("pizarra-inmersiva");syncImmersive();setTimeout(resize,80)});
+syncImmersive();
 })();
 </script>
 <script src="ADIUR-layout.js?v=20261123-pizarra4"></script>
