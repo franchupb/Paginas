@@ -448,7 +448,7 @@
       },
       "adiur-planificacion.html": {
         controlesCategoria: ["selectCategoria"],
-        ocultarSelectores: [".campo-control.panel-categoria"],
+        ocultarSelectores: [".panel-semanal"],
         selector: ".cabecera-pagina",
         eyebrow: "ENTRENAMIENTO · PLANIFICACIÓN",
         titulo: "Planificación de microciclos",
