@@ -2929,7 +2929,7 @@ async function cargarDatosPlanilla(division,mes){
     JSON.stringify(columnasCombinadas)!==JSON.stringify(dataNube.columnas)||
     JSON.stringify(valoresCombinados)!==JSON.stringify(dataNube.valores||{})
   );
-  if(nubeActiva&&db&&necesitaSubir){
+  if(window.ADIUR_PERMISOS?.rol !== "jugadora" && nubeActiva&&db&&necesitaSubir){
     try{await setDoc(doc(db,"testeos_adiur",clave),payloadCombinado);}
     catch(error){console.error("No se pudieron recuperar los datos locales de testeos:",error);}
   }
