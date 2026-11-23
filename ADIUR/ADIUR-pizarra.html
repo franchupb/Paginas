@@ -156,6 +156,48 @@ body.pizarra-inmersiva .boardfoot input,body.pizarra-inmersiva .boardfoot textar
 .main{flex:1 1 0;min-width:0;width:auto;max-width:none;margin:0!important;align-self:stretch}
 @media(max-width:760px){.contenedor{display:block;min-height:calc(100vh - 72px)}#sidebar{position:fixed!important;z-index:150}.main{width:100%;margin:0!important}}
 </style>
+
+<style id="pizarra-redisenio">
+:root{--naranja:#f47721;--naranja2:#dc5e0b;--borde:#e7e9ec;--muted:#747b84}
+body{background:#f4f5f7}
+.main{padding:18px!important}
+.pizarra-app{width:100%;max-width:1800px;margin:0 auto;background:#fff;border:1px solid var(--borde);border-radius:15px;padding:14px;box-shadow:0 6px 24px #17171708}
+.selector-equipos{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:2px 2px 13px;border-bottom:1px solid #edf0f2}
+.selector-equipo{display:grid;grid-template-columns:auto minmax(150px,190px) minmax(100px,120px);align-items:center;gap:8px}
+.selector-equipo label,.tools-label,.width-tools label{font-size:9px;font-weight:900;letter-spacing:.8px;color:#69727b}
+.selector-equipo select{height:37px;min-width:0;padding:0 10px;border:1px solid #dfe3e7;border-radius:8px;background:#fff;color:#25282d;font-size:11px;font-weight:700;outline:none}
+.selector-equipo select:focus{border-color:var(--naranja);box-shadow:0 0 0 3px #f4772118}
+.rival-selector{grid-template-columns:auto minmax(115px,150px) minmax(100px,120px)}
+.selector-ayuda{font-size:10px;color:#89919a}
+.acciones-pizarra{display:flex;gap:6px;margin-left:auto}
+.accion-icono{width:36px;height:36px;border:1px solid #e1e5e8;border-radius:8px;background:#fff;color:#30343a;font-size:19px;cursor:pointer}
+.accion-icono:hover:not(:disabled){border-color:var(--naranja);background:#fff5ee;color:#b94e0b}
+.accion-icono:disabled{opacity:.35;cursor:not-allowed}
+.workspace{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;padding-top:13px}
+.tools{display:flex;flex-direction:column;align-items:stretch;gap:5px;padding:9px;background:#f7f8f9;border:1px solid #e8ecef;border-radius:11px;min-width:0}
+.tools-label{text-align:center;margin:2px 0 4px}
+.tool{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;padding:5px 3px;border:1px solid transparent;border-radius:8px;background:transparent;color:#434a52;cursor:pointer}
+.tool span{font-size:20px;line-height:1}
+.tool small{font-size:9px;font-weight:750}
+.tool:hover{background:#fff}
+.tool.active{border-color:#f2c5a5;background:#fff0e6;color:#a9470b;box-shadow:inset 3px 0 var(--naranja)}
+.color-tools{margin-top:8px;padding-top:10px;border-top:1px solid #e2e6e9}
+.colors{display:grid;grid-template-columns:repeat(3,22px);justify-content:center;gap:9px 7px;padding:5px 0}
+.color{width:21px;height:21px;border:2px solid white;border-radius:50%;box-shadow:0 0 0 1px #b8bec5;cursor:pointer}
+.color.active{box-shadow:0 0 0 2px var(--naranja)}
+.color[data-color="#ffffff"]{background:#fff}.color[data-color="#f47721"]{background:#f47721}.color[data-color="#ffe15a"]{background:#ffe15a}.color[data-color="#e94b4b"]{background:#e94b4b}.color[data-color="#55c8ff"]{background:#55c8ff}.color[data-color="#171717"]{background:#171717}
+.width-tools{display:flex;flex-direction:column;gap:7px;margin-top:6px;padding-top:10px;border-top:1px solid #e2e6e9}
+.width-tools input{width:100%;accent-color:var(--naranja)}
+.pitchwrap{display:flex;align-items:center;justify-content:center;min-width:0;min-height:430px;padding:9px;border:1px solid #e0e5e7;border-radius:11px;background:#e9eef0}
+.pitch{position:relative;width:100%;aspect-ratio:3/2;max-height:calc(100vh - 235px);min-height:300px;overflow:hidden;background:#328452;box-shadow:0 3px 15px #0002;touch-action:none}
+.field-svg,.drawing-canvas,#players{position:absolute;inset:0;width:100%;height:100%}.field-svg{pointer-events:none}.drawing-canvas{touch-action:none}#players{pointer-events:none}
+.player{position:absolute;z-index:2;display:grid;place-items:center;width:39px;height:39px;transform:translate(-50%,-50%);border:2px solid #fff;border-radius:50%;color:#fff;font-size:12px;font-weight:900;box-shadow:0 2px 8px #0007;cursor:grab;touch-action:none;user-select:none;pointer-events:auto}
+.player.own{background:#f47721}.player.rival{background:#c83f43}.player.selected{outline:3px solid #ffe15a;outline-offset:3px}
+.player small{position:absolute;top:calc(100% + 3px);left:50%;transform:translateX(-50%);padding:3px 5px;border-radius:4px;background:#17212bea;color:#fff;font-size:9px;font-weight:700;white-space:nowrap;pointer-events:none}
+.estado-pizarra{padding:10px 3px 0;color:#79818a;font-size:10px}
+@media(max-width:1000px){.selector-equipo{grid-template-columns:1fr 1fr}.selector-equipo label{grid-column:1/-1}.selector-ayuda{display:none}.pitch{max-height:none}.pitchwrap{min-height:320px}}
+@media(max-width:650px){.main{padding:10px!important}.pizarra-app{padding:9px;border-radius:11px}.selector-equipos{align-items:stretch;gap:9px}.selector-equipo,.rival-selector{flex:1 1 100%;grid-template-columns:1fr 1fr}.selector-equipo label{grid-column:1/-1}.selector-equipo select{width:100%}.acciones-pizarra{margin-left:0}.workspace{grid-template-columns:1fr;gap:8px}.tools{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;padding:7px}.tools-label{grid-column:1/-1}.tool{min-height:48px}.tool span{font-size:18px}.tool small{font-size:8px}.color-tools{grid-column:1/-1;display:flex;align-items:center;gap:10px;margin:3px 0 0;padding:7px 0 0}.color-tools .tools-label{margin:0;white-space:nowrap}.colors{display:flex;gap:10px;flex-wrap:wrap}.width-tools{grid-column:1/-1;display:flex;flex-direction:row;align-items:center;gap:12px;margin:0;padding:5px 0 0}.width-tools input{flex:1}.pitchwrap{min-height:0;padding:4px}.pitch{min-height:0;max-height:none}.player{width:29px;height:29px;font-size:10px}.player small{font-size:7px}.estado-pizarra{font-size:9px}}
+</style>
 </head>
 <body>
 <header class="barra-superior">
@@ -168,212 +210,120 @@ body.pizarra-inmersiva .boardfoot input,body.pizarra-inmersiva .boardfoot textar
 <div class="contenedor" id="layoutContenedor">
 <aside class="sidebar" id="sidebar" aria-label="Navegación principal"></aside>
 <main class="main" id="main">
-<header class="page-header">
-<div><span class="eyebrow">COMPETENCIA · ESTRATEGIA</span><h2>Pizarra táctica</h2><p>Armá jugadas, ubicá a las jugadoras y explicá movimientos con una cancha amplia y herramientas simples.</p></div>
-<div class="header-actions"><button class="btn" id="immersive" type="button">⛶ Ampliar cancha</button></div>
-</header>
-<section class="toolbar" aria-label="Acciones de la pizarra">
-<button class="btn primary" id="addOwn" type="button">＋ Equipo propio</button><button class="btn" id="addRival" type="button">＋ Rival</button><button class="btn" id="addBall" type="button">⚽ Pelota</button><button class="btn" id="editSelected" type="button">Editar ficha</button><button class="btn danger" id="deleteSelected" type="button">Eliminar ficha</button><span class="toolbar-spacer"></span><button class="btn primary" id="save" type="button">Guardar</button><button class="btn danger" id="clearAll" type="button">Limpiar</button><select id="formation" aria-label="Formación" class="btn" style="min-width:112px"><option value="4-3-3">4-3-3</option><option value="4-4-2">4-4-2</option><option value="4-2-3-1">4-2-3-1</option><option value="3-5-2">3-5-2</option><option value="5-3-2">5-3-2</option></select><button class="btn" id="applyFormation" type="button">Aplicar formación</button>
+<section class="pizarra-app" aria-label="Pizarra táctica">
+  <div class="selector-equipos">
+    <div class="selector-equipo">
+      <label for="categoriaADIUR">PLANTEL ADIUR</label>
+      <select id="categoriaADIUR"><option value="">Seleccionar categoría</option><option>Sub 10</option><option>Sub 12</option><option>Sub 14</option><option>Sub 16</option><option>Primera</option></select>
+      <select id="formacionADIUR" aria-label="Formación ADIUR"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select>
+    </div>
+    <div class="selector-equipo rival-selector">
+      <label for="formacionRival">PLANTEL RIVAL</label>
+      <span class="selector-ayuda">Opcional · convive con ADIUR</span>
+      <select id="formacionRival" aria-label="Formación rival"><option value="">Sin rival</option><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select>
+    </div>
+    <div class="acciones-pizarra"><button class="accion-icono" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button><button class="accion-icono" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button><button class="accion-icono" id="clearDrawings" type="button" title="Borrar trazos" aria-label="Borrar trazos">⌫</button></div>
+  </div>
+  <div class="workspace">
+    <aside class="tools" aria-label="Herramientas de la pizarra">
+      <div class="tools-label">HERRAMIENTAS</div>
+      <button class="tool active" data-tool="select" type="button" title="Seleccionar y mover"><span>↖</span><small>Mover</small></button>
+      <button class="tool" data-tool="line" type="button" title="Dibujar línea"><span>／</span><small>Línea</small></button>
+      <button class="tool" data-tool="arrow" type="button" title="Dibujar flecha"><span>➜</span><small>Flecha</small></button>
+      <button class="tool" data-tool="dash" type="button" title="Dibujar línea discontinua"><span>┄</span><small>Discontinua</small></button>
+      <button class="tool" data-tool="zone" type="button" title="Dibujar zona"><span>◯</span><small>Zona</small></button>
+      <button class="tool" data-tool="free" type="button" title="Lápiz de mano alzada"><span>✎</span><small>Lápiz</small></button>
+      <div class="color-tools"><div class="tools-label">COLOR</div><div class="colors"><button class="color active" data-color="#ffffff" type="button" aria-label="Blanco"></button><button class="color" data-color="#f47721" type="button" aria-label="Naranja"></button><button class="color" data-color="#ffe15a" type="button" aria-label="Amarillo"></button><button class="color" data-color="#e94b4b" type="button" aria-label="Rojo"></button><button class="color" data-color="#55c8ff" type="button" aria-label="Celeste"></button><button class="color" data-color="#171717" type="button" aria-label="Negro"></button></div></div>
+      <div class="width-tools"><label for="lineWidth">GROSOR</label><input id="lineWidth" type="range" min="2" max="10" value="4"></div>
+    </aside>
+    <div class="pitchwrap"><div class="pitch" id="pitch"><svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg><canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div></div></div>
+  </div>
+  <div class="estado-pizarra" id="status" role="status" aria-live="polite">Seleccioná una categoría para cargar la formación de ADIUR.</div>
 </section>
-<section class="board" aria-label="Pizarra de trabajo">
-<div class="boardtop"><div class="board-title"><strong id="sceneTitle">Pizarra de partido</strong><span id="status" role="status" aria-live="polite">Lista para trabajar · guardado local</span></div><div class="boardactions"><button class="btn" id="undo" type="button">↶ Deshacer</button><button class="btn" id="redo" type="button">↷ Rehacer</button><button class="btn" id="png" type="button">Exportar PNG</button><button class="btn" id="print" type="button">Imprimir</button></div></div>
-<div class="workspace">
-<aside class="tools" aria-label="Herramientas de dibujo">
-<div class="toolgroup"><b>SELECCIÓN</b><button class="tool active" data-tool="select" type="button">↖ Seleccionar / mover</button></div>
-<div class="toolgroup"><b>DIBUJO</b><button class="tool" data-tool="free" type="button">✎ Mano alzada</button><button class="tool" data-tool="arrow" type="button">➜ Flecha</button><button class="tool" data-tool="line" type="button">／ Línea</button><button class="tool" data-tool="dash" type="button">┄ Discontinua</button><button class="tool" data-tool="zone" type="button">◯ Zona</button><button class="tool" data-tool="cone" type="button">△ Cono</button></div>
-<div class="toolgroup"><b>TIPO DE CANCHA</b><button class="tool active" data-field="full" type="button">Cancha completa</button><button class="tool" data-field="half" type="button">Media cancha</button><button class="tool" data-field="vertical" type="button">Cancha vertical</button></div>
-<div class="toolgroup"><b>COLOR DEL TRAZO</b><div class="colors"><button class="color active" data-color="#ffffff" type="button" aria-label="Blanco"></button><button class="color" data-color="#f47721" type="button" aria-label="Naranja"></button><button class="color" data-color="#ffe15a" type="button" aria-label="Amarillo"></button><button class="color" data-color="#e94b4b" type="button" aria-label="Rojo"></button><button class="color" data-color="#55c8ff" type="button" aria-label="Celeste"></button></div></div>
-<div class="toolgroup"><b>GROSOR DEL TRAZO</b><div class="width-row"><input id="lineWidth" type="range" min="2" max="10" value="4"><span id="widthValue">4</span></div></div>
-</aside>
-<div class="pitchwrap"><div class="pitch" id="pitch" data-field="full"><svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg><canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div></div></div>
-<aside class="roster" aria-label="Planteles de la pizarra"><h3>Equipos en cancha</h3><p class="roster-hint">Seleccioná una ficha para editarla o moverla desde la cancha.</p><section class="roster-group"><div class="roster-group-title"><span>ADIUR</span><span id="ownCount">0</span></div><div class="roster-list" id="ownRoster"></div></section><section class="roster-group"><div class="roster-group-title"><span>RIVAL</span><span id="rivalCount">0</span></div><div class="roster-list" id="rivalRoster"></div></section><section class="roster-group"><div class="roster-group-title"><span>OTROS</span><span id="otherCount">0</span></div><div class="roster-list" id="otherRoster"></div></section></aside>
-</div>
-<div class="boardfoot"><label>Nombre de la pizarra<input id="boardName" maxlength="80" value="Pizarra de partido"></label><label>Consigna / observaciones<textarea id="notes" rows="2" placeholder="Anotá la idea principal, movimientos o indicaciones…"></textarea></label></div>
-</section>
-<section class="saved"><div class="saved-head"><div><strong>Pizarras guardadas en este dispositivo</strong><small>Podés recuperar o eliminar cada pizarra desde este navegador.</small></div><span id="savedCount"></span></div><div class="saved-list" id="savedList"><span class="empty">Todavía no hay pizarras guardadas.</span></div></section>
 </main>
 </div>
-<script>
+<script type="module">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 (()=>{
 "use strict";
-const $=id=>document.getElementById(id);
-const pitch=$("pitch"),canvas=$("draw"),ctx=canvas.getContext("2d");
-const KEY="adiur_pizarra_tactica_v3",LIST=KEY+"_list";
-const fresh=()=>({name:"Pizarra de partido",notes:"",field:"full",players:[],drawings:[]});
-let data=fresh(),tool="select",color="#ffffff",lineWidth=4,selected=null,drawing=false,start=null,points=[],history=[],future=[];
-const clone=x=>JSON.parse(JSON.stringify(x));
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-const say=t=>$("status").textContent=t;
-function snapshot(){history.push(clone(data));if(history.length>60)history.shift();future=[]}
-function updateHistoryButtons(){$("undo").disabled=!history.length;$("redo").disabled=!future.length}
-function setFieldMarkup(){
- const vertical=data.field==="vertical",svg=$("fieldSvg");
- svg.setAttribute("viewBox",vertical?"0 0 600 900":"0 0 900 600");
- let lines="";
- if(data.field==="half"){
-  lines='<rect x="15" y="15" width="870" height="570"/><rect x="15" y="155" width="135" height="290"/><rect x="15" y="225" width="55" height="150"/><circle cx="150" cy="300" r="5" fill="white"/><path d="M150 190 A110 110 0 0 1 150 410"/>';
- }else if(vertical){
-  lines='<rect x="15" y="15" width="570" height="870"/><line x1="15" y1="450" x2="585" y2="450"/><circle cx="300" cy="450" r="78"/><circle cx="300" cy="450" r="5" fill="white"/><rect x="155" y="15" width="290" height="135"/><rect x="225" y="15" width="150" height="55"/><rect x="155" y="750" width="290" height="135"/><rect x="225" y="830" width="150" height="55"/>';
- }else{
-  lines='<rect x="15" y="15" width="870" height="570"/><line x1="450" y1="15" x2="450" y2="585"/><circle cx="450" cy="300" r="78"/><circle cx="450" cy="300" r="5" fill="white"/><rect x="15" y="155" width="135" height="290"/><rect x="15" y="225" width="55" height="150"/><rect x="750" y="155" width="135" height="290"/><rect x="830" y="225" width="55" height="150"/>';
- }
- svg.innerHTML='<rect width="100%" height="100%" fill="#328452"/><g fill="none" stroke="#ffffff" stroke-width="4">'+lines+'</g>';
- pitch.classList.toggle("vertical",vertical);
-}
-function resizeCanvas(){
- const r=pitch.getBoundingClientRect(),d=window.devicePixelRatio||1;
- if(!r.width||!r.height)return;
- canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);
- ctx.setTransform(d,0,0,d,0,0);paint();
+const $=id=>document.getElementById(id),pitch=$("pitch"),canvas=$("draw"),ctx=canvas.getContext("2d");
+const firebaseConfig={apiKey:"AIzaSyCc0dPIEkaKxbHoRC2CgZK412dXVGPOdTI",authDomain:"adiur-b1913.firebaseapp.com",projectId:"adiur-b1913",storageBucket:"adiur-b1913.firebasestorage.app",messagingSenderId:"884643321144",appId:"1:884643321144:web:ba3c314de3a1c9e3545dcd",measurementId:"G-58LL26YXPM"};
+const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getFirestore(app);
+const formations={
+"4-3-3":[[.12,.50],[.30,.18],[.30,.39],[.30,.61],[.30,.82],[.52,.28],[.52,.50],[.52,.72],[.78,.18],[.82,.50],[.78,.82]],
+"4-4-2":[[.12,.50],[.30,.18],[.30,.39],[.30,.61],[.30,.82],[.53,.18],[.53,.39],[.53,.61],[.53,.82],[.79,.36],[.79,.64]],
+"4-2-3-1":[[.12,.50],[.30,.18],[.30,.39],[.30,.61],[.30,.82],[.48,.38],[.48,.62],[.68,.18],[.68,.50],[.68,.82],[.84,.50]],
+"3-5-2":[[.12,.50],[.30,.25],[.30,.50],[.30,.75],[.52,.12],[.52,.31],[.52,.50],[.52,.69],[.52,.88],[.80,.36],[.80,.64]],
+"5-3-2":[[.12,.50],[.29,.12],[.29,.31],[.29,.50],[.29,.69],[.29,.88],[.55,.28],[.55,.50],[.55,.72],[.82,.36],[.82,.64]]
+};
+let players=[],drawings=[],tool="select",color="#ffffff",lineWidth=4,selected=null,drawing=false,start=null,points=[],history=[],future=[],rivalFormation="";
+const clone=x=>JSON.parse(JSON.stringify(x)),say=t=>$("status").textContent=t;
+function snapshot(){history.push({players:clone(players),drawings:clone(drawings)});if(history.length>50)history.shift();future=[];buttons()}
+function buttons(){$("undo").disabled=!history.length;$("redo").disabled=!future.length}
+function normalizar(v){return String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"")}
+function categoriaMatch(a,b){return normalizar(a)===normalizar(b)}
+function positionRank(p){const x=normalizar(p);if(x.includes("arquera")||x.includes("portera"))return 0;if(x.includes("defensora")||x.includes("defensa"))return 1;if(x.includes("mediocampista")||x.includes("volante"))return 2;if(x.includes("delantera")||x.includes("delantera"))return 3;return 4}
+function setField(){
+ const svg=$("fieldSvg");
+ svg.innerHTML='<rect width="900" height="600" fill="#328452"/><g fill="none" stroke="#ffffff" stroke-width="4"><rect x="15" y="15" width="870" height="570"/><line x1="450" y1="15" x2="450" y2="585"/><circle cx="450" cy="300" r="78"/><circle cx="450" cy="300" r="5" fill="#fff"/><rect x="15" y="155" width="135" height="290"/><rect x="15" y="225" width="55" height="150"/><rect x="750" y="155" width="135" height="290"/><rect x="830" y="225" width="55" height="150"/></g>';
 }
 function xy(e){const r=pitch.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height}}
-function drawOne(item,g=ctx){
- const r=pitch.getBoundingClientRect(),x=item.x*r.width,y=item.y*r.height,X=item.X*r.width,Y=item.Y*r.height;
- g.save();g.strokeStyle=item.color||"#fff";g.fillStyle=item.color||"#fff";g.lineWidth=item.width||4;g.lineCap="round";g.lineJoin="round";g.setLineDash(item.type==="dash"?[10,8]:[]);
- g.beginPath();
- if(item.type==="free"){
-  (item.points||[]).forEach((p,i)=>i?g.lineTo(p.x*r.width,p.y*r.height):g.moveTo(p.x*r.width,p.y*r.height));
- }else if(item.type==="zone"){
-  g.ellipse((x+X)/2,(y+Y)/2,Math.max(2,Math.abs(X-x)/2),Math.max(2,Math.abs(Y-y)/2),0,0,Math.PI*2);
- }else if(item.type==="cone"){
-  g.moveTo(x,y);g.lineTo(X,Y);g.lineTo(x-(Y-y)*.45,y+(X-x)*.45);g.closePath();g.fill();
- }else{
-  g.moveTo(x,y);g.lineTo(X,Y);
-  if(item.type==="arrow"){const a=Math.atan2(Y-y,X-x),len=15+g.lineWidth;g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a-.48),Y-len*Math.sin(a-.48));g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a+.48),Y-len*Math.sin(a+.48))}
- }
+function drawOne(d,g=ctx){
+ const r=pitch.getBoundingClientRect(),x=d.x*r.width,y=d.y*r.height,X=d.X*r.width,Y=d.Y*r.height;
+ g.save();g.strokeStyle=d.color;g.fillStyle=d.color;g.lineWidth=d.width;g.lineCap="round";g.lineJoin="round";g.setLineDash(d.type==="dash"?[10,8]:[]);g.beginPath();
+ if(d.type==="free"){(d.points||[]).forEach((p,i)=>i?g.lineTo(p.x*r.width,p.y*r.height):g.moveTo(p.x*r.width,p.y*r.height))}
+ else if(d.type==="zone")g.ellipse((x+X)/2,(y+Y)/2,Math.max(2,Math.abs(X-x)/2),Math.max(2,Math.abs(Y-y)/2),0,0,Math.PI*2);
+ else{g.moveTo(x,y);g.lineTo(X,Y);if(d.type==="arrow"){const a=Math.atan2(Y-y,X-x),len=16+d.width;g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a-.48),Y-len*Math.sin(a-.48));g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a+.48),Y-len*Math.sin(a+.48))}}
  g.stroke();g.restore();
 }
-function paint(){
- const r=pitch.getBoundingClientRect();if(!r.width||!r.height)return;
- ctx.clearRect(0,0,r.width,r.height);
- data.drawings.forEach(d=>drawOne(d));
- if(drawing&&start&&points.length){
-  const temp={type:tool,x:start.x,y:start.y,X:points[points.length-1].x,Y:points[points.length-1].y,points,color,width:lineWidth};
-  drawOne(temp);
- }
-}
+function paint(){const r=pitch.getBoundingClientRect();if(!r.width||!r.height)return;ctx.clearRect(0,0,r.width,r.height);drawings.forEach(d=>drawOne(d));if(drawing&&start&&points.length)drawOne({type:tool,x:start.x,y:start.y,X:points.at(-1).x,Y:points.at(-1).y,points,color,width:lineWidth})}
 function renderPlayers(){
- const host=$("players");host.innerHTML="";
- const groups={own:$("ownRoster"),rival:$("rivalRoster"),ball:$("otherRoster")};
- Object.values(groups).forEach(g=>g.innerHTML="");
- const counts={own:0,rival:0,ball:0};
- data.players.forEach(p=>{
-  counts[p.team]=(counts[p.team]||0)+1;
-  const list=groups[p.team]||groups.ball;
-  const item=document.createElement("button");item.type="button";item.className="roster-player "+p.team+(p.id===selected?" active":"");
-  const num=document.createElement("span");num.className="roster-number";num.textContent=p.number;
-  const name=document.createElement("span");name.className="roster-name";name.textContent=p.name;
-  item.append(num,name);item.onclick=()=>{selected=p.id;renderPlayers();say("Ficha seleccionada · "+p.name)};list.append(item);
- });
- [["own","ownCount"],["rival","rivalCount"],["ball","otherCount"]].forEach(([k,id])=>$(id).textContent=counts[k]||0);
- [["own","ownRoster","Sin jugadoras"],["rival","rivalRoster","Sin rivales"],["ball","otherRoster","Sin elementos"]].forEach(([k,id,msg])=>{if(!counts[k])$(id).innerHTML='<div class="roster-empty">'+msg+'</div>'});
-
- data.players.forEach(p=>{
-  const el=document.createElement("div");el.className="player "+p.team+(p.id===selected?" selected":"");
-  el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";el.textContent=p.number;
-  const label=document.createElement("small");label.textContent=p.name;el.append(label);
-  el.addEventListener("pointerdown",e=>{
-   if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;el.classList.add("selected");
-   const move=v=>{const q=xy(v);p.x=Math.max(.025,Math.min(.975,q.x));p.y=Math.max(.025,Math.min(.975,q.y));el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%"};
-   const end=()=>{window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);renderPlayers();say("Ficha reubicada");updateHistoryButtons()};
-   window.addEventListener("pointermove",move);window.addEventListener("pointerup",end,{once:true});
-  });
-  el.addEventListener("dblclick",()=>editPlayer(p));
-  host.append(el);
- });
+ const host=$("players");host.replaceChildren();
+ players.forEach(p=>{const el=document.createElement("div");el.className="player "+p.team+(p.id===selected?" selected":"");el.style.left=p.x*100+"%";el.style.top=p.y*100+"%";el.textContent=p.number;const label=document.createElement("small");label.textContent=p.name;el.append(label);
+ el.addEventListener("pointerdown",e=>{if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;const move=v=>{const q=xy(v);p.x=Math.max(.025,Math.min(.975,q.x));p.y=Math.max(.035,Math.min(.965,q.y));el.style.left=p.x*100+"%";el.style.top=p.y*100+"%"};const end=()=>{window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);renderPlayers();say("Posición actualizada");buttons()};window.addEventListener("pointermove",move);window.addEventListener("pointerup",end,{once:true})});
+ host.append(el)});
 }
-function render(){
- $("boardName").value=data.name;$("notes").value=data.notes;$("sceneTitle").textContent=data.name||"Pizarra sin título";
- pitch.dataset.field=data.field;setFieldMarkup();renderPlayers();resizeCanvas();updateHistoryButtons();
+function resize(){const r=pitch.getBoundingClientRect(),d=window.devicePixelRatio||1;if(!r.width||!r.height)return;canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0);paint()}
+function layoutTeam(team,formation){
+ const coords=formations[formation];if(!coords)return;
+ const group=players.filter(p=>p.team===team);
+ group.forEach((p,i)=>{const q=coords[i];p.x=team==="rival"?1-q[0]:q[0];p.y=q[1]});
 }
-function addPlayer(team){
- const count=data.players.filter(p=>p.team===team).length+1;
- const label=team==="own"?"Jugadora "+count:team==="rival"?"Rival "+count:"Pelota";
- const name=team==="ball"?"Pelota":prompt("Nombre de la ficha",label);if(name===null)return;
- const number=team==="ball"?"⚽":prompt("Número de camiseta",String(count));if(number===null)return;
- snapshot();const p={id:uid(),team,name:name.trim()||label,number:String(number).trim()||String(count),x:team==="own"?.28:team==="rival"?.72:.5,y:.12+(count%7)*.115};
- data.players.push(p);selected=p.id;renderPlayers();say("Ficha agregada");
+function updateOwnFormation(){
+ const cat=$("categoriaADIUR").value,formation=$("formacionADIUR").value;
+ if(!cat){players=players.filter(p=>p.team!=="own");renderPlayers();paint();say("Seleccioná una categoría para cargar ADIUR.");return}
+ const squad=jugadoras.filter(j=>categoriaMatch(j.categoria,cat)&&normalizar(j.estado||"Activo")!=="inactivo"&&normalizar(j.estado||"Activo")!=="lesionado").sort((a,b)=>positionRank(a.posicion)-positionRank(b.posicion)||String(a.nombre).localeCompare(String(b.nombre),"es"));
+ snapshot();players=players.filter(p=>p.team!=="own");
+ const coords=formations[formation];
+ squad.slice(0,11).forEach((j,i)=>{const q=coords[i];players.push({id:"own-"+j.id,team:"own",name:j.nombre,number:String(j.dorsal||j.numero||i+1),x:q[0],y:q[1]})});
+ renderPlayers();paint();say(squad.length?("ADIUR · "+cat+" · "+Math.min(squad.length,11)+" de "+squad.length+" jugadoras ubicadas"):"No hay jugadoras activas cargadas en "+cat+".");
 }
-function editPlayer(p){
- const name=prompt("Nombre de la ficha",p.name);if(name===null)return;
- const number=prompt("Número / identificación",p.number);if(number===null)return;
- snapshot();p.name=name.trim()||p.name;p.number=number.trim()||p.number;renderPlayers();say("Ficha actualizada");
+function updateRival(){
+ const formation=$("formacionRival").value;snapshot();players=players.filter(p=>p.team!=="rival");rivalFormation=formation;
+ if(formation){formations[formation].forEach((q,i)=>players.push({id:"rival-"+(i+1),team:"rival",name:"Rival "+(i+1),number:String(i+1),x:1-q[0],y:q[1]}))}
+ renderPlayers();paint();say(formation?"Formación rival "+formation+" agregada a la cancha.":"Se quitó la formación rival.");
 }
-function save(){
- data.name=$("boardName").value.trim()||"Pizarra sin título";data.notes=$("notes").value;
- try{
-  let arr=JSON.parse(localStorage.getItem(LIST)||"[]");const item={id:uid(),name:data.name,updated:new Date().toISOString(),data:clone(data)};
-  const index=arr.findIndex(x=>x.name.toLowerCase()===item.name.toLowerCase());
-  if(index>=0){item.id=arr[index].id;arr[index]=item}else arr.unshift(item);
-  localStorage.setItem(LIST,JSON.stringify(arr.slice(0,40)));localStorage.setItem(KEY,JSON.stringify(data));
-  listSaved();$("sceneTitle").textContent=data.name;say("Pizarra guardada en este dispositivo");
- }catch(e){say("No se pudo guardar: el almacenamiento del navegador está lleno o bloqueado")}
+let jugadoras=[];
+function onJugadoras(snapshotData){
+ jugadoras=[];snapshotData.forEach(docSnap=>{const d=docSnap.data();jugadoras.push({...d,id:docSnap.id,nombre:d.nombre||d.nombreCompleto||d.nombre_completo||[d.nombres,d.apellido||d.apellidos].filter(Boolean).join(" "),categoria:d.categoria||d.division||d.categoría||d.category||"",posicion:d.posicion||d.puesto||"",estado:d.estado||d.status||"Activo",dorsal:d.dorsal||d.numeroCamiseta||d.numero||""})});
+ if($("categoriaADIUR").value)updateOwnFormation();else say("Elegí la categoría para cargar la formación de ADIUR.");
 }
-function listSaved(){
- const host=$("savedList");host.innerHTML="";let arr=[];
- try{arr=JSON.parse(localStorage.getItem(LIST)||"[]")}catch(e){}
- $("savedCount").textContent=arr.length?arr.length+" guardada(s)":"";
- if(!arr.length){host.innerHTML='<span class="empty">Todavía no hay pizarras guardadas.</span>';return}
- arr.forEach(item=>{
-  const wrap=document.createElement("div");wrap.className="saved-item";
-  const open=document.createElement("button");open.type="button";open.textContent=item.name;open.title="Abrir "+item.name;
-  open.onclick=()=>{snapshot();data=clone(item.data);selected=null;render();say("Pizarra recuperada")};
-  const del=document.createElement("button");del.type="button";del.textContent="×";del.title="Eliminar "+item.name;
-  del.onclick=()=>{if(!confirm("¿Eliminar la pizarra guardada «"+item.name+"»?"))return;arr=arr.filter(x=>x.id!==item.id);localStorage.setItem(LIST,JSON.stringify(arr));listSaved()};
-  wrap.append(open,del);host.append(wrap);
- });
-}
-function exportPNG(){
- const rect=pitch.getBoundingClientRect(),scale=2,c=document.createElement("canvas");c.width=Math.round(rect.width*scale);c.height=Math.round(rect.height*scale);
- const g=c.getContext("2d");g.scale(scale,scale);g.fillStyle="#328452";g.fillRect(0,0,rect.width,rect.height);
- const vertical=data.field==="vertical";g.strokeStyle="#fff";g.lineWidth=4;g.beginPath();
- if(data.field==="half"){g.strokeRect(8,8,rect.width-16,rect.height-16);g.strokeRect(8,rect.height*.26,rect.width*.15,rect.height*.48);g.arc(rect.width*.167,rect.height*.5,rect.height*.18,-Math.PI/2,Math.PI/2)}
- else if(vertical){g.strokeRect(8,8,rect.width-16,rect.height-16);g.moveTo(8,rect.height/2);g.lineTo(rect.width-8,rect.height/2);g.arc(rect.width/2,rect.height/2,rect.width*.13,0,Math.PI*2);g.strokeRect(rect.width*.26,8,rect.width*.48,rect.height*.15);g.strokeRect(rect.width*.26,rect.height*.85,rect.width*.48,rect.height*.15)}
- else{g.strokeRect(8,8,rect.width-16,rect.height-16);g.moveTo(rect.width/2,8);g.lineTo(rect.width/2,rect.height-8);g.arc(rect.width/2,rect.height/2,rect.height*.13,0,Math.PI*2);g.strokeRect(8,rect.height*.26,rect.width*.15,rect.height*.48);g.strokeRect(rect.width*.85,rect.height*.26,rect.width*.15,rect.height*.48)}
- g.stroke();
- const fake={getBoundingClientRect:()=>({width:rect.width,height:rect.height})};
- data.drawings.forEach(d=>drawOne(d,g));
- data.players.forEach(p=>{const x=p.x*rect.width,y=p.y*rect.height;g.beginPath();g.arc(x,y,20,0,Math.PI*2);g.fillStyle=p.team==="rival"?"#c83f43":p.team==="ball"?"#fff":"#f47721";g.fill();g.strokeStyle="#fff";g.lineWidth=2;g.stroke();g.fillStyle=p.team==="ball"?"#222":"#fff";g.font="900 13px Arial";g.textAlign="center";g.fillText(p.number,x,y+4);g.font="bold 10px Arial";g.fillText(p.name,x,y+33)});
- const a=document.createElement("a");a.download=(data.name||"ADIUR-Pizarra").replace(/[^\w\-]+/g,"_")+".png";a.href=c.toDataURL("image/png");a.click();say("Imagen PNG exportada");
-}
-
-function applyFormation(){
- const key=$("formation").value,lines={
- "4-3-3":[[.12,.50],[.30,.18],[.30,.39],[.30,.61],[.30,.82],[.52,.28],[.52,.50],[.52,.72],[.78,.18],[.82,.50],[.78,.82]],
- "4-4-2":[[.12,.50],[.30,.18],[.30,.39],[.30,.61],[.30,.82],[.53,.18],[.53,.39],[.53,.61],[.53,.82],[.79,.36],[.79,.64]],
- "4-2-3-1":[[.12,.50],[.30,.18],[.30,.39],[.30,.61],[.30,.82],[.48,.38],[.48,.62],[.68,.18],[.68,.50],[.68,.82],[.84,.50]],
- "3-5-2":[[.12,.50],[.30,.25],[.30,.50],[.30,.75],[.52,.12],[.52,.31],[.52,.50],[.52,.69],[.52,.88],[.80,.36],[.80,.64]],
- "5-3-2":[[.12,.50],[.29,.12],[.29,.31],[.29,.50],[.29,.69],[.29,.88],[.55,.28],[.55,.50],[.55,.72],[.82,.36],[.82,.64]]
- };
- const own=data.players.filter(p=>p.team==="own");
- if(!own.length){say("Agregá primero las jugadoras del equipo propio");return}
- snapshot();own.slice(0,11).forEach((p,i)=>{p.x=lines[key][i][0];p.y=lines[key][i][1]});
- renderPlayers();say("Formación "+key+" aplicada · "+Math.min(own.length,11)+" fichas ubicadas");
-}
-$("applyFormation").onclick=applyFormation;
-
-$("addOwn").onclick=()=>addPlayer("own");$("addRival").onclick=()=>addPlayer("rival");$("addBall").onclick=()=>addPlayer("ball");
-$("editSelected").onclick=()=>{const p=data.players.find(x=>x.id===selected);if(p)editPlayer(p);else say("Seleccioná una ficha primero")};
-$("deleteSelected").onclick=()=>{const i=data.players.findIndex(x=>x.id===selected);if(i<0){say("Seleccioná una ficha primero");return}snapshot();data.players.splice(i,1);selected=null;renderPlayers();say("Ficha eliminada")};
-$("clearAll").onclick=()=>{if(!confirm("¿Querés limpiar las fichas y los trazos de esta pizarra?"))return;snapshot();data.players=[];data.drawings=[];selected=null;paint();renderPlayers();say("Pizarra limpia")};
-$("save").onclick=save;$("undo").onclick=()=>{if(!history.length)return;future.push(clone(data));data=history.pop();render();say("Cambio deshecho")};
-$("redo").onclick=()=>{if(!future.length)return;history.push(clone(data));data=future.pop();render();say("Cambio recuperado")};
-$("png").onclick=exportPNG;$("print").onclick=()=>window.print();
-$("boardName").addEventListener("input",e=>{$("sceneTitle").textContent=e.target.value||"Pizarra sin título";data.name=e.target.value});
-$("notes").addEventListener("input",e=>data.notes=e.target.value);
-$("lineWidth").oninput=e=>{lineWidth=Number(e.target.value);$("widthValue").textContent=lineWidth};
-document.querySelectorAll("[data-tool]").forEach(b=>b.onclick=()=>{tool=b.dataset.tool;document.querySelectorAll("[data-tool]").forEach(x=>x.classList.toggle("active",x===b));say("Herramienta: "+b.textContent.trim())});
-document.querySelectorAll("[data-color]").forEach(b=>b.onclick=()=>{color=b.dataset.color;document.querySelectorAll("[data-color]").forEach(x=>x.classList.toggle("active",x===b))});
-document.querySelectorAll("button[data-field]").forEach(b=>b.onclick=()=>{snapshot();data.field=b.dataset.field;document.querySelectorAll("[data-field]").forEach(x=>x.classList.toggle("active",x===b));render();say("Vista de cancha actualizada")});
+$("categoriaADIUR").addEventListener("change",updateOwnFormation);
+$("formacionADIUR").addEventListener("change",updateOwnFormation);
+$("formacionRival").addEventListener("change",updateRival);
+document.querySelectorAll("[data-tool]").forEach(b=>b.addEventListener("click",()=>{tool=b.dataset.tool;document.querySelectorAll("[data-tool]").forEach(x=>x.classList.toggle("active",x===b));say("Herramienta seleccionada: "+b.querySelector("small").textContent)}));
+document.querySelectorAll("[data-color]").forEach(b=>b.addEventListener("click",()=>{color=b.dataset.color;document.querySelectorAll("[data-color]").forEach(x=>x.classList.toggle("active",x===b))}));
+$("lineWidth").addEventListener("input",e=>lineWidth=Number(e.target.value));
 canvas.addEventListener("pointerdown",e=>{if(tool==="select")return;e.preventDefault();drawing=true;start=xy(e);points=[start];canvas.setPointerCapture(e.pointerId)});
 canvas.addEventListener("pointermove",e=>{if(!drawing)return;const p=xy(e);if(tool==="free")points.push(p);else points=[start,p];paint()});
-canvas.addEventListener("pointerup",e=>{if(!drawing)return;drawing=false;const end=xy(e);if(Math.hypot(end.x-start.x,end.y-start.y)<.004&&tool!=="free"){paint();return}snapshot();if(tool==="free")data.drawings.push({type:"free",points:clone(points),color,width:lineWidth});else data.drawings.push({type:tool,x:start.x,y:start.y,X:end.x,Y:end.y,color,width:lineWidth});points=[];paint();say("Trazo agregado")});
+canvas.addEventListener("pointerup",e=>{if(!drawing)return;drawing=false;const end=xy(e);if(Math.hypot(end.x-start.x,end.y-start.y)<.004&&tool!=="free"){paint();return}snapshot();drawings.push(tool==="free"?{type:"free",points:clone(points),x:start.x,y:start.y,X:end.x,Y:end.y,color,width:lineWidth}:{type:tool,x:start.x,y:start.y,X:end.x,Y:end.y,color,width:lineWidth});points=[];paint();say("Trazo incorporado a la pizarra.")});
 canvas.addEventListener("pointercancel",()=>{drawing=false;points=[];paint()});
-$("immersive").onclick=()=>{document.body.classList.toggle("pizarra-inmersiva");const on=document.body.classList.contains("pizarra-inmersiva");$("immersive").textContent=on?"⤢ Volver a vista normal":"⛶ Ampliar cancha";requestAnimationFrame(resizeCanvas)};
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.body.classList.contains("pizarra-inmersiva")){$("immersive").click()}});
-window.addEventListener("resize",resizeCanvas);
-try{const saved=localStorage.getItem(KEY);if(saved)data={...fresh(),...JSON.parse(saved)}}catch(e){}
-render();listSaved();requestAnimationFrame(resizeCanvas);say("Pizarra lista · cambios guardados al tocar Guardar");
+$("undo").addEventListener("click",()=>{if(!history.length)return;future.push({players:clone(players),drawings:clone(drawings)});const s=history.pop();players=s.players;drawings=s.drawings;renderPlayers();paint();buttons();say("Último cambio deshecho.")});
+$("redo").addEventListener("click",()=>{if(!future.length)return;history.push({players:clone(players),drawings:clone(drawings)});const s=future.pop();players=s.players;drawings=s.drawings;renderPlayers();paint();buttons();say("Cambio recuperado.")});
+$("clearDrawings").addEventListener("click",()=>{if(!drawings.length)return;snapshot();drawings=[];paint();say("Trazos borrados.")});
+setField();buttons();new ResizeObserver(resize).observe(pitch);window.addEventListener("resize",resize);
+onSnapshot(collection(db,"jugadoras"),onJugadoras,error=>{console.error(error);say("No se pudo cargar el plantel desde Firebase. Revisá la conexión o los permisos.")});
 })();
 </script>
 <script src="ADIUR-layout.js?v=20261123-pizarra4"></script>
