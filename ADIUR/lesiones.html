@@ -2375,8 +2375,10 @@ function poblarCategorias(){
 }
 window.aplicarJugadorasNube=function(lista){
     jugadorasNubeBase=(Array.isArray(lista)?lista:[]).map(j=>{
-        const nombre=String(j.nombreCompleto||j.nombreYApellido||j.nombre_y_apellido||j.nombre_completo||
-            ([j.nombres,j.apellido||j.apellidos].filter(Boolean).join(" "))||j.nombre||"").trim();
+        const base=String(j.nombre||j.nombres||"").trim();
+        const apellido=String(j.apellido||j.apellidos||"").trim();
+        const explicito=String(j.nombreCompleto||j.nombre_completo||j.nombreYApellido||j.nombre_y_apellido||"").trim();
+        const nombre=explicito||(base&&apellido&&!normalizar(base).endsWith(normalizar(apellido))?base+" "+apellido:base||apellido);
         const categoria=String(j.categoria||j.categoría||j.division||j.división||j.category||j.divisionNombre||"").trim();
         return {id:String(j.id||normalizar(nombre)+"|"+normalizar(categoria)),nombre,categoria};
     }).filter(j=>j.nombre&&j.categoria);
