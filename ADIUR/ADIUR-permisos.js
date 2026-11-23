@@ -380,8 +380,6 @@
               window.cambiarPestana?.("stats");
             } else if (paginaActual() === "adiur-calendario.html") {
               window.renderizarCalendario?.();
-            } else if (paginaActual() === "adiur-gimnasio.html") {
-              window.renderizarBiblioteca?.();
             }
           }
           // Solo los perfiles con restricciones necesitan vigilar controles que
