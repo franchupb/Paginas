@@ -183,6 +183,36 @@
       color: var(--gris-texto, #747474) !important;
       font-size: 11px !important;
     }
+    .barra-superior .menu-perfil {
+      position: absolute !important;
+      top: calc(100% + 7px) !important;
+      right: 20px !important;
+      z-index: 500 !important;
+      min-width: 190px !important;
+      padding: 7px !important;
+      border: 1px solid #e8e8e8 !important;
+      border-radius: 11px !important;
+      background: #fff !important;
+      box-shadow: 0 10px 30px #00000018 !important;
+    }
+    .barra-superior .menu-perfil[hidden] { display: none !important; }
+    .barra-superior .accion-cerrar-perfil {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      width: 100% !important;
+      min-height: 42px !important;
+      padding: 10px 12px !important;
+      border: 0 !important;
+      border-radius: 8px !important;
+      background: #fff !important;
+      color: #c0392b !important;
+      font-size: 13px !important;
+      font-weight: 750 !important;
+      text-align: left !important;
+      cursor: pointer !important;
+    }
+    .barra-superior .accion-cerrar-perfil:hover { background: #fff2f1 !important; }
 
     .contenedor {
       display: flex !important;
@@ -478,8 +508,6 @@
     sidebar.appendChild(bloque);
   });
 
-  const separador = document.createElement("div");
-  separador.className = "separador-sesion";
   async function importarCerrarSesionADIUR() {
     try {
       const modulo = await import("./ADIUR-auth.js?v=20261122b");
@@ -490,20 +518,61 @@
       alert("No se pudo cerrar la sesión. Intentá nuevamente.");
     }
   }
-  const salir = document.createElement("a");
-  salir.href = "#";
-  salir.id = "cerrarSesion";
-  salir.className = "enlace-cerrar-sesion";
-  salir.innerHTML = '<span class="icono-salir" aria-hidden="true">↪</span>Cerrar sesión';
-  salir.addEventListener("click", event => {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    if (window.confirm("¿Querés cerrar la sesión de ADIUR?")) {
-      importarCerrarSesionADIUR();
+
+  // El cierre de sesión queda asociado al perfil de la barra superior.
+  const perfil = barra.querySelector(".perfil");
+  let menuPerfil = document.getElementById("menuPerfil");
+  if (perfil) {
+    perfil.setAttribute("aria-haspopup", "menu");
+    perfil.setAttribute("aria-expanded", "false");
+    if (!perfil.matches("button, a, [tabindex]")) {
+      perfil.setAttribute("role", "button");
+      perfil.tabIndex = 0;
     }
-  }, true);
-  separador.appendChild(salir);
-  sidebar.appendChild(separador);
+
+    if (!menuPerfil) {
+      menuPerfil = document.createElement("div");
+      menuPerfil.id = "menuPerfil";
+      menuPerfil.className = "menu-perfil";
+      menuPerfil.hidden = true;
+      menuPerfil.innerHTML = '<button type="button" class="accion-cerrar-perfil" id="cerrarSesionPerfil"><span aria-hidden="true">↪</span>Cerrar sesión</button>';
+      perfil.insertAdjacentElement("afterend", menuPerfil);
+    }
+
+    const cerrarMenuPerfil = () => {
+      menuPerfil.hidden = true;
+      perfil.setAttribute("aria-expanded", "false");
+    };
+    const alternarMenuPerfil = () => {
+      menuPerfil.hidden = !menuPerfil.hidden;
+      perfil.setAttribute("aria-expanded", String(!menuPerfil.hidden));
+    };
+
+    perfil.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      alternarMenuPerfil();
+    });
+    if (!perfil.matches("button, a")) {
+      perfil.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          alternarMenuPerfil();
+        }
+      });
+    }
+    menuPerfil.addEventListener("click", event => event.stopPropagation());
+    menuPerfil.querySelector("#cerrarSesionPerfil")?.addEventListener("click", event => {
+      event.preventDefault();
+      if (window.confirm("¿Querés cerrar la sesión de ADIUR?")) importarCerrarSesionADIUR();
+    });
+    document.addEventListener("click", event => {
+      if (!perfil.contains(event.target) && !menuPerfil.contains(event.target)) cerrarMenuPerfil();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") cerrarMenuPerfil();
+    });
+  }
 
   if (overlay) {
     overlay.classList.add("capa-sidebar");
