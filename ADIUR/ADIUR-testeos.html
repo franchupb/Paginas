@@ -4290,13 +4290,24 @@ function actualizarSelectoresStats(){
   `;
   if(pruebas.some(p=>p.id===pruebaAnterior))selectPrueba.value=pruebaAnterior;
 
+  const permisos = window.ADIUR_PERMISOS;
+  const jugadorasPermitidas = permisos?.rol === "jugadora" && permisos.jugadora
+    ? jugadorasDivision.filter(nombre => normalizar(nombre) === normalizar(permisos.jugadora))
+    : jugadorasDivision;
+
   selectJugadora.innerHTML=`
     <option value="">Seleccioná una jugadora activa</option>
-    ${jugadorasDivision.map(nombre=>`
+    ${jugadorasPermitidas.map(nombre=>`
       <option value="${escapeHTML(nombre)}">${escapeHTML(nombre)}</option>
     `).join("")}
   `;
-  selectJugadora.value=jugadorasDivision.includes(jugadoraAnterior)?jugadoraAnterior:"";
+  if (permisos?.rol === "jugadora") {
+    selectJugadora.value = jugadorasPermitidas[0] || "";
+    selectJugadora.disabled = true;
+  } else {
+    selectJugadora.disabled = false;
+    selectJugadora.value=jugadorasPermitidas.includes(jugadoraAnterior)?jugadoraAnterior:"";
+  }
 
   actualizarOpcionesIntentosStats();
 }
