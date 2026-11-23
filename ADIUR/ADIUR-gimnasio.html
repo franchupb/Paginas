@@ -4876,7 +4876,7 @@ function configurarMenu() {
     e.preventDefault();
     if (!confirm("¿Querés cerrar la sesión?")) return;
     try {
-      const modulo = await import("./ADIUR-auth.js?v=20261122b");
+      const modulo = await import("./ADIUR-auth.js?v=20261122c");
       await modulo.cerrarSesionADIUR();
       localStorage.removeItem(SESSION_KEY);
       window.location.href = "ADIUR-Loing.html";
