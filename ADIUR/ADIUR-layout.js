@@ -494,6 +494,14 @@
         titulo: "Estadísticas del club",
         descripcion: "Consultá el rendimiento general y la evolución de cada jugadora a partir de los registros de competencia, asistencia, testeos, tiempos y lesiones."
       },
+      "adiur-pruebas.html": {
+        controlesCategoria: ["selectDivision"],
+        ocultarSelectores: [".selector-categoria"],
+        selector: ".encabezado",
+        eyebrow: "RENDIMIENTOS · TESTEOS",
+        titulo: "Testeos y evaluaciones físicas",
+        descripcion: "Registrá los resultados y consultá la evolución física de cada jugadora."
+      },
       "adiur-testeos.html": {
         controlesCategoria: ["selectDivision"],
         ocultarSelectores: [".selector-categoria"],
