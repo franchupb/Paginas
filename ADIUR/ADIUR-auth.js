@@ -40,7 +40,7 @@ export async function iniciarSesionADIUR(usuario, contrasena) {
   // La identidad real y la autorización siguen dependiendo de Firebase Auth y Firestore.
   try {
     localStorage.setItem("usuarioADIUR", String(datosPerfil.usuario || usuario).trim());
-    if (datosPerfil.rol) localStorage.setItem("rolADIUR", String(datosPerfil.rol).trim());
+    if (datosPerfil.rol) localStorage.setItem("rolADIUR", String(datosPerfil.rol).trim().toLowerCase());
     if (Array.isArray(datosPerfil.categorias)) localStorage.setItem("categoriasADIUR", JSON.stringify(datosPerfil.categorias));
   } catch (error) {
     console.warn("No se pudo guardar el nombre de usuario para compatibilidad:", error);
