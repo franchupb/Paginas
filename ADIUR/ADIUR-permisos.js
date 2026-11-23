@@ -135,7 +135,7 @@
     );
     if (!categoriasPermitidas.size) return;
 
-    const selectores = root.querySelectorAll ? root.querySelectorAll("select") : [];
+    const selectores = root.querySelectorAll ? [ ...(root.matches?.("select") ? [root] : []), ...root.querySelectorAll("select") ] : [];
     selectores.forEach(select => {
       if (!esSelectorCategoria(select)) return;
       Array.from(select.options || []).forEach(option => {
@@ -176,7 +176,7 @@
     if (configActiva?.rol !== "jugadora") return;
     const pagina = paginaActual();
     if (pagina === "adiur-asistencia.html") {
-      document.querySelectorAll("#cuerpoTabla button[data-fecha][data-jugadora]").forEach(el => {
+      root.querySelectorAll("#cuerpoTabla button[data-fecha][data-jugadora]").forEach(el => {
         el.disabled = true;
         el.setAttribute("aria-disabled", "true");
         el.title = "Solo consulta: cada jugadora puede ver sus propias asistencias";
@@ -199,7 +199,7 @@
       "cerrarModal", "cerrarPerfil"
     ]);
 
-    root.querySelectorAll("button, input, select, textarea, [contenteditable=true]").forEach(el => {
+    [...(root.matches?.("button, input, select, textarea, [contenteditable=true]") ? [root] : []), ...root.querySelectorAll("button, input, select, textarea, [contenteditable=true]")].forEach(el => {
       if (permitidos.has(el.id) || el.closest("#controlPersonasRutina")) return;
       const texto = textoControl(el);
       const lectura = el.matches("a, [role=tab]") ||
@@ -222,7 +222,7 @@
       }
     }
     if (pagina === "adiur-asistencia.html") {
-      document.querySelectorAll("#cuerpoTabla button[data-fecha][data-jugadora]").forEach(el => {
+      root.querySelectorAll("#cuerpoTabla button[data-fecha][data-jugadora]").forEach(el => {
         el.disabled = true;
         el.setAttribute("aria-disabled", "true");
         el.title = "Solo consulta: cada jugadora puede ver sus propias asistencias";
@@ -239,7 +239,7 @@
         const el = document.getElementById(id);
         if (el) el.hidden = true;
       });
-      document.querySelectorAll("#contenedorFixture [data-accion]").forEach(el => el.remove());
+      [...(root.matches?.("[data-accion]") ? [root] : []), ...root.querySelectorAll("[data-accion]")].forEach(el => el.remove());
     }
 
     if (pagina === "adiur-gimnasio.html") {
@@ -249,7 +249,7 @@
       });
       const biblioteca = document.getElementById("panelBiblioteca");
       if (biblioteca) biblioteca.hidden = false;
-      document.querySelectorAll("#listaRutinasGuardadas [data-editar-rutina], #listaRutinasGuardadas [data-eliminar-rutina]").forEach(el => el.hidden = true);
+      root.querySelectorAll("#listaRutinasGuardadas [data-editar-rutina], #listaRutinasGuardadas [data-eliminar-rutina]").forEach(el => el.hidden = true);
       ["modalEditar", "modalEliminar"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.hidden = true;
@@ -440,11 +440,33 @@
             (base.rol === "jugadora" && paginaActual() !== "adiur-gimnasio.html");
 
           if (necesitaVigilanciaDOM && !observerDOM) {
-            observerDOM = new MutationObserver(() => {
+            const nodosPendientes = new Set();
+            observerDOM = new MutationObserver(mutaciones => {
+              mutaciones.forEach(mutacion => {
+                mutacion.addedNodes.forEach(nodo => {
+                  if (nodo.nodeType === 1) nodosPendientes.add(nodo);
+                });
+              });
+              if (!nodosPendientes.size) return;
               if (temporizadorObserverDOM) clearTimeout(temporizadorObserverDOM);
               temporizadorObserverDOM = setTimeout(() => {
                 temporizadorObserverDOM = null;
-                aplicarPermisos();
+                const nodos = [...nodosPendientes];
+                nodosPendientes.clear();
+                nodos.forEach(nodo => {
+                  if (!nodo.isConnected) return;
+                  aplicarCategorias(nodo);
+                  aplicarSoloLectura(nodo);
+                  if (base.rol === "cuerpo_tecnico") {
+                    const controles = [
+                      ...(nodo.matches?.("button, a, [role=button]") ? [nodo] : []),
+                      ...nodo.querySelectorAll("button, a, [role=button]")
+                    ];
+                    controles.forEach(el => {
+                      if (PALABRAS_BORRADO.test(textoControl(el))) el.hidden = true;
+                    });
+                  }
+                });
               }, 120);
             });
             observerDOM.observe(document.body, { childList: true, subtree: true });
