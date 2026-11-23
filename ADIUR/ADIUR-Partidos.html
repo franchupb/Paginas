@@ -3007,8 +3007,9 @@ function iniciarSincronizacionNube() {
             actualizarIndicadorGuardado("", "☁️ Datos locales y nube combinados");
         },
         error => {
-            console.warn("No se pudo suscribir a Firestore:", error);
-            actualizarIndicadorGuardado("offline", "💾 Guardado local (sin red)");
+            console.error("No se pudo cargar el fixture desde Firestore:", error);
+            const codigo = error?.code ? " (" + error.code + ")" : "";
+            actualizarIndicadorGuardado("offline", "⚠️ No se pudo cargar la nube" + codigo);
         }
     );
 }
@@ -3790,11 +3791,26 @@ window.addEventListener("storage", event => {
    INICIALIZACIÓN
 ===================================================== */
 
+// El permiso se confirma primero: así Firestore no consulta antes de restaurar
+// la sesión y el fixture se vuelve a dibujar con las categorías reales del perfil.
+window.renderizarFixture = () => renderizarFixture();
+function iniciarPartidosConSesion() {
+    if (window.ADIUR_PERMISOS) {
+        iniciarSincronizacionNube();
+        renderizarFixture();
+        return;
+    }
+    window.addEventListener("adiur-permisos-listos", () => {
+        renderizarFixture();
+        iniciarSincronizacionNube();
+    }, { once: true });
+}
+
 actualizarCompeticionesFormulario();
 actualizarFiltroCompeticion();
 actualizarContadoresCategorias();
 renderizarFixture();
-iniciarSincronizacionNube();
+iniciarPartidosConSesion();
 </script>
 
 
