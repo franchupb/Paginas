@@ -3461,9 +3461,11 @@ function escaparXMLPizarra(valor){
   return String(valor??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c]));
 }
 function imprimirPizarra(){
+  terminarDibujo();
   window.print();
 }
 function exportarPizarraPNG(){
+  terminarDibujo();
   const estado=document.getElementById("estadoGuardadoPizarra");
   try{
     const urlCancha=escaparXMLPizarra(document.getElementById("pitchImage").currentSrc||document.getElementById("pitchImage").src);
