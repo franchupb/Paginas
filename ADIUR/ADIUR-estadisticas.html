@@ -2856,7 +2856,10 @@ function registroTesteoIntegral(planillas,jugadora){
   const valores=item.data?.valores||{};
   const key=Object.keys(valores).find(k=>normalizarNombreIntegral(k)===normalizarNombreIntegral(jugadora.nombreCompleto)||normalizarTexto(k)===normalizarTexto(jugadora.id));
   if(!key)continue;const v=valores[key]||{};
-  const columnas=(item.data.columnas||[]).filter(c=>!c.esComp&&!c.esCalculadoIMC&&v[c.id]!==""&&v[c.id]!==null&&v[c.id]!==undefined);
+  const columnas=(item.data.columnas||[]).filter(c=>{
+   if(c.esComp||c.esCalculadoIMC)return false;
+   return [c.id,c.segundoId].filter(Boolean).some(id=>v[id]!==""&&v[id]!==null&&v[id]!==undefined);
+  });
   if(columnas.length||Object.values(v).some(x=>x!==""&&x!==null&&x!==undefined))return {mes:item.mes,valores:v,columnas};
  }
  return null;
@@ -2878,12 +2881,17 @@ async function renderizarPanelIntegral(){
   const regs=partidosDiv.map(p=>({p,reg:registroPartidoIntegral(p,j,division)})).filter(x=>x.reg);
   let pj=0,min=0,goles=0,amarillas=0,rojas=0;
   regs.forEach(({p,reg})=>{
-   const minutos=numeroIntegral(reg.minutos),jugo=reg.jugo===true||["si","sí","true","1"].includes(normalizarTexto(reg.jugo))||(minutos!==null&&minutos>0);
-   if(jugo)pj++;if(minutos!==null)min+=minutos;
-   const g=numeroIntegral(reg.goles),a=numeroIntegral(reg.amarillas),r=numeroIntegral(reg.rojas);
-   goles+=g!==null?g:eventosDeJugadoraIntegral(p.golesEventos,j).length;
-   amarillas+=a!==null?a:eventosDeJugadoraIntegral(p.tarjetasEventos,j).filter(e=>/amarilla/i.test(String(e.tipo||e.tarjeta||""))).length;
-   rojas+=r!==null?r:eventosDeJugadoraIntegral(p.tarjetasEventos,j).filter(e=>/roja/i.test(String(e.tipo||e.tarjeta||""))).length;
+   const minutos=numeroIntegral(reg.minutos),g=numeroIntegral(reg.goles),a=numeroIntegral(reg.amarillas),r=numeroIntegral(reg.rojas);
+   const eventosGoles=eventosDeJugadoraIntegral(p.golesEventos,j).length;
+   const eventosTarjetas=eventosDeJugadoraIntegral(p.tarjetasEventos,j);
+   const jugo=reg.jugo===true||["si","sí","true","1"].includes(normalizarTexto(reg.jugo))||
+    (minutos!==null&&minutos>0)||(g!==null&&g>0)||eventosGoles>0||
+    (a!==null&&a>0)||(r!==null&&r>0)||eventosTarjetas.length>0;
+   if(jugo)pj++;
+   if(minutos!==null)min+=minutos;
+   goles+=g!==null?g:eventosGoles;
+   amarillas+=a!==null?a:eventosTarjetas.filter(e=>/amarilla/i.test(String(e.tipo||e.tarjeta||""))).length;
+   rojas+=r!==null?r:eventosTarjetas.filter(e=>/roja/i.test(String(e.tipo||e.tarjeta||""))).length;
   });
   const casos=lesiones.filter(l=>{const cat=categoriaRegistroIntegral(l);return (!cat||cat===claveCategoriaIntegral(division))&&mismaJugadoraIntegral(l,j);}).sort((a,b)=>String(b.fecha||b.fechaInicio||"").localeCompare(String(a.fecha||a.fechaInicio||"")));
   const activos=casos.filter(l=>!["alta deportiva confirmada","caso cerrado"].includes(normalizarTexto(l.estado)));
@@ -2899,7 +2907,7 @@ async function renderizarPanelIntegral(){
   if(!lista.length){tbody.innerHTML='<tr><td colspan="10" class="integral-empty">No hay jugadoras para los filtros seleccionados.</td></tr>';return;}
   tbody.innerHTML=lista.map(x=>{
    const j=x.j,ini=j.nombreCompleto.trim().split(/\s+/).slice(0,2).map(z=>z[0]||"").join("").toUpperCase(),test=x.test?x.test.mes:"—";
-   const marcas=x.test?x.test.columnas.slice(0,3).map(c=>escaparIntegral(c.label||c.nombre||c.id)+": "+escaparIntegral(x.test.valores[c.id])).join(" · "):"Sin planilla cargada";
+   const marcas=x.test?x.test.columnas.slice(0,3).map(c=>{const vals=[c.id,c.segundoId].filter(Boolean).map(id=>x.test.valores[id]).filter(v=>v!==undefined&&v!==null&&String(v).trim()!=="");return escaparIntegral(c.label||c.nombre||c.id)+": "+escaparIntegral(vals.join(" / "));}).join(" · "):"Sin planilla cargada";
    const status=x.activos.length?'<span class="integral-badge active">'+x.activos.length+' caso(s) activo(s)</span>':x.casos.length?'<span class="integral-badge closed">Historial cerrado</span>':'<span class="integral-badge">Sin casos registrados</span>';
    return '<tr><td><div class="integral-player"><span class="integral-avatar">'+escaparIntegral(ini)+'</span><div><strong>'+escaparIntegral(j.nombreCompleto)+'</strong><small>'+escaparIntegral(j.categoria||division)+'</small></div></div></td><td>'+escaparIntegral(j.posicion||"Sin asignar")+'</td><td class="integral-num">'+(x.conDatosPartido?x.pj:"—")+'</td><td class="integral-num">'+(x.conDatosPartido?x.min:"—")+'</td><td class="integral-num">'+(x.conDatosPartido?x.goles:"—")+'</td><td>'+(x.conDatosPartido?x.amarillas:"—")+'</td><td>'+(x.conDatosPartido?x.rojas:"—")+'</td><td><strong>'+escaparIntegral(test)+'</strong><small class="integral-test-marks">'+marcas+'</small></td><td>'+status+'</td><td><button class="integral-open" type="button" data-integral-id="'+escaparIntegral(j.id)+'">Ver ficha</button></td></tr>';
   }).join("");
