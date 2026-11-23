@@ -2271,6 +2271,7 @@ const $ = id => document.getElementById(id);
 let registros = [];
 
 let jugadorasBase = [];
+let jugadorasNubeBase = [];
 
 let idEditando = null;
 
@@ -2350,7 +2351,42 @@ window.aplicarLesionesNube=function(lista){
 function leerJugadoras(){const claves=["jugadorasADIUR","jugadoras","jugadorasADIUR_v1","plantelADIUR","baseJugadorasADIUR","adiurJugadoras"];const halladas=[];const esCategoria=k=>/categor[ií]a|division|divisi[oó]n|sub\s*\d+|\bu\s*\d+|\bs\s*\d+|primera|reserva|infantil|juvenil|femenino|mayor/i.test(String(k));const visitar=(v,catHer="")=>{if(Array.isArray(v)){v.forEach(x=>{if(x&&typeof x==="object")visitar(x,catHer);else if(typeof x==="string"&&x.trim())halladas.push({nombre:x.trim(),categoria:catHer});});return;}if(!v||typeof v!=="object")return;const categoria=String(v.categoria||v.categoría||v.division||v.división||v.category||v.equipo||v.categoriaNombre||catHer||"").trim();const nombre=v.nombreCompleto||v.nombreYApellido||v.nombre_y_apellido||v.nombre_apellido||v.apellidoNombre||v.apellido_nombre||v.jugadora||([v.apellido,v.nombre].filter(Boolean).join(", "))||v.nombre;if(typeof nombre==="string"&&nombre.trim()){halladas.push({nombre:nombre.trim(),categoria});return;}Object.entries(v).forEach(([k,x])=>{if(x&&typeof x==="object")visitar(x,esCategoria(k)?String(k):categoria);});};try{for(const k of claves){const raw=localStorage.getItem(k);if(raw)visitar(JSON.parse(raw));}for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k||claves.includes(k)||!/jugadora|plantel/i.test(k))continue;const raw=localStorage.getItem(k);if(raw)try{visitar(JSON.parse(raw));}catch(_){}}}catch(e){console.warn("No se pudo leer la base de jugadoras",e);}const unicas=new Map();halladas.forEach(j=>{if(!j.nombre||!j.categoria)return;const key=normalizar(j.nombre)+"|"+normalizar(j.categoria);if(!unicas.has(key))unicas.set(key,{id:key,nombre:j.nombre,categoria:j.categoria});});return [...unicas.values()].sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"));}
 function categoriaActual(){return $("selectorCategoriaGlobal").value||"";}
 function registrosActuales(){const c=categoriaActual();return c?registros.filter(r=>r.categoria===c):[];}
-function poblarCategorias(){jugadorasBase=leerJugadoras();const select=$("selectorCategoriaGlobal"),anterior=select.value;const categorias=[...new Set(jugadorasBase.map(j=>j.categoria).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));select.replaceChildren(new Option("Seleccioná una categoría para continuar",""));categorias.forEach(c=>select.add(new Option(c,c)));if(categorias.includes(anterior))select.value=anterior;else select.value="";const aviso=$("avisoCategoria");if(!categorias.length){aviso.textContent="No pude detectar categorías en la base de Jugadoras.html. Verificá que las jugadoras tengan una categoría asignada y que ambas páginas compartan el mismo origen (sitio/dominio). Hasta entonces no se habilita la carga para evitar asignar una lesión a una categoría incorrecta.";aviso.classList.remove("oculto");}else{aviso.textContent="Seleccioná una categoría para consultar o cargar casos.";aviso.classList.toggle("oculto",!!select.value);}actualizarAccesoCategoria();}
+function poblarCategorias(){
+    const mapa=new Map();
+    [...leerJugadoras(),...jugadorasNubeBase].forEach(j=>{
+        const key=normalizar(j.nombre)+"|"+normalizar(j.categoria);
+        if(j.nombre&&j.categoria)mapa.set(key,j);
+    });
+    jugadorasBase=[...mapa.values()].sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"));
+    const select=$("selectorCategoriaGlobal"),anterior=select.value;
+    const categorias=[...new Set(jugadorasBase.map(j=>j.categoria).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
+    select.replaceChildren(new Option("Seleccioná una categoría para continuar",""));
+    categorias.forEach(c=>select.add(new Option(c,c)));
+    if(categorias.includes(anterior))select.value=anterior;else select.value="";
+    const aviso=$("avisoCategoria");
+    if(!categorias.length){
+        aviso.textContent="No pude recuperar el plantel. Revisá la conexión con la base de Jugadoras o cargá el plantel en la misma sesión.";
+        aviso.classList.remove("oculto");
+    }else{
+        aviso.textContent="Seleccioná una categoría para consultar o cargar casos.";
+        aviso.classList.toggle("oculto",!!select.value);
+    }
+    actualizarAccesoCategoria();
+}
+window.aplicarJugadorasNube=function(lista){
+    jugadorasNubeBase=(Array.isArray(lista)?lista:[]).map(j=>{
+        const nombre=String(j.nombreCompleto||j.nombreYApellido||j.nombre_y_apellido||j.nombre_completo||
+            ([j.nombres,j.apellido||j.apellidos].filter(Boolean).join(" "))||j.nombre||"").trim();
+        const categoria=String(j.categoria||j.categoría||j.division||j.división||j.category||j.divisionNombre||"").trim();
+        return {id:String(j.id||normalizar(nombre)+"|"+normalizar(categoria)),nombre,categoria};
+    }).filter(j=>j.nombre&&j.categoria);
+    const anterior=categoriaActual();
+    poblarCategorias();
+    if(anterior&&[...$("selectorCategoriaGlobal").options].some(o=>o.value===anterior))$("selectorCategoriaGlobal").value=anterior;
+    poblarJugadoras();
+    actualizarAccesoCategoria();
+    actualizarTodo();
+};
 function actualizarAccesoCategoria(){const elegida=!!categoriaActual();$("contenidoCategoria").classList.toggle("oculto",!elegida);$("btnNuevaLesion").disabled=!elegida;$("avisoCategoria").classList.toggle("oculto",elegida&&jugadorasBase.length>0);if(!elegida){$("panelFormulario").classList.add("oculto");idEditando=null;}}
 function poblarJugadoras(preferida=""){const cat=categoriaActual();const select=$("jugadora");const lista=jugadorasBase.filter(j=>j.categoria===cat);select.replaceChildren(new Option(lista.length?"Seleccioná una jugadora":"No hay jugadoras en esta categoría",""));lista.forEach(j=>{const o=new Option(j.nombre,j.id);o.dataset.nombre=j.nombre;o.dataset.categoria=j.categoria;select.add(o);});if(preferida){const encontrada=lista.find(j=>j.nombre===preferida||j.id===preferida);if(encontrada)select.value=encontrada.id;}$("ayudaJugadoras").textContent=lista.length?`${lista.length} jugadoras disponibles en ${cat}.`:`No se encontraron jugadoras con categoría ${cat} en Jugadoras.html.`;}
 function jugadoraSeleccionada(){const opt=$("jugadora").selectedOptions[0];if(!opt||!opt.value)return null;return jugadorasBase.find(j=>j.id===opt.value)||null;}
@@ -2672,6 +2708,16 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const coleccion = collection(db, "lesiones");
+const coleccionJugadoras = collection(db, "jugadoras");
+
+onSnapshot(coleccionJugadoras, snapshot => {
+    const lista = snapshot.docs.map(d => ({ id:d.id, ...d.data() }));
+    if (typeof window.aplicarJugadorasNube === "function") {
+        window.aplicarJugadorasNube(lista);
+    }
+}, error => {
+    console.warn("No se pudo leer el plantel de Firestore; se conserva la copia local:", error);
+});
 let inicializado = false;
 let idsNube = new Set();
 
