@@ -5288,7 +5288,7 @@ function normalizarPartidoGuardado(p) {
 function extraerRegistrosDeRespaldoInformes(valor) {
   if (Array.isArray(valor)) return valor;
   if (!valor || typeof valor !== "object") return [];
-  for (const propiedad of ["partidos","informes","jornadas","registros","historial"]) {
+  for (const propiedad of ["partidos","informes_partidos","jornadas","registros","historial"]) {
     if (Array.isArray(valor[propiedad])) return valor[propiedad];
   }
   return [];
@@ -6472,7 +6472,7 @@ window.addEventListener("storage",evento=>{
 
   import {
     initializeApp
-  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
   import {
     getFirestore,
@@ -6481,7 +6481,7 @@ window.addEventListener("storage",evento=>{
     doc,
     setDoc,
     deleteDoc
-  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
   // MISMA CONFIGURACIÓN QUE JUGADORAS.HTML
@@ -6543,14 +6543,14 @@ window.addEventListener("storage",evento=>{
   );
 
   // Sincronización de informes: comparte la colección que consume Estadísticas.
-  const coleccionInformes = collection(dbInformes, "informes");
+  const coleccionInformes = collection(dbInformes, "informes_partidos");
   let idsInformesNube = new Set();
 
   window.guardarInformesFirebase = async function(lista) {
     const actuales = Array.isArray(lista) ? lista : [];
     for (const partido of actuales) {
       await setDoc(
-        doc(dbInformes, "informes", String(partido.id)),
+        doc(dbInformes, "informes_partidos", String(partido.id)),
         { ...partido, actualizadoEn: partido.actualizadoEn || new Date().toISOString() },
         { merge: true }
       );
@@ -6560,7 +6560,7 @@ window.addEventListener("storage",evento=>{
   // Solo se elimina de la nube cuando el usuario borra explícitamente ese informe.
   window.eliminarInformeFirebase = async function(id) {
     if (!id) return;
-    await deleteDoc(doc(dbInformes, "informes", String(id)));
+    await deleteDoc(doc(dbInformes, "informes_partidos", String(id)));
   };
 
   onSnapshot(coleccionInformes, async snapshot => {
@@ -6571,7 +6571,7 @@ window.addEventListener("storage",evento=>{
     if (pendientes.length) {
       try {
         for (const partido of pendientes) {
-          await setDoc(doc(dbInformes, "informes", String(partido.id)), partido);
+          await setDoc(doc(dbInformes, "informes_partidos", String(partido.id)), partido);
           idsInformesNube.add(String(partido.id));
         }
         console.info("ADIUR: informes locales recuperados en Firestore:", pendientes.length);
