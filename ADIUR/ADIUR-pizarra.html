@@ -1380,6 +1380,31 @@ body{background:var(--fondo)}
 @media(max-width:900px){.main{padding:0 17px 40px}.sequence-panel{grid-template-columns:1fr}.sequence-controls{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){.main,.main.full{width:100%;max-width:none;margin:20px 0 0;padding:0 12px 32px}}\n@media(max-width:600px){.main,.main.full{margin:19px 0 0;padding:0 11px 32px}.page-header{display:block}.controls.match-controls{padding:13px}.sequence-panel{padding:14px}.sequence-controls{grid-template-columns:1fr}.sequence-actions{display:grid;grid-template-columns:1fr 1fr}.sequence-btn{min-height:38px}.pitch-workspace{padding:8px}.board-top{padding:16px}}
 
+
+/* HERRAMIENTAS DE PRESENTACIÓN Y CAPAS */
+.layer-panel{display:flex;align-items:center;flex-wrap:wrap;gap:14px;margin:0 0 14px;padding:12px 16px;border:1px solid #e2e7ee;border-radius:12px;background:#fff;color:#596575;font-size:10px}
+.layer-panel strong{color:#7a8492;font-size:9px;letter-spacing:1px}
+.layer-panel label{display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-weight:750}
+.layer-panel input{accent-color:#ef7625}
+.pitch.ocultar-adiur .player.own,.pitch.ocultar-rival .player.opponent,.pitch.ocultar-pelota .ball{display:none!important}
+.pitch.ocultar-dibujos .pitch-drawings{visibility:hidden!important}
+.tactic-cone{position:absolute;z-index:25;display:grid;place-items:center;width:28px;height:34px;padding:0;border:0;background:transparent;color:#f97316;font-size:31px;line-height:1;text-shadow:0 1px 2px #0008;cursor:grab;touch-action:none;user-select:none;transform:translate(-50%,-50%)}
+.tactic-cone:active{cursor:grabbing}
+@media(max-width:760px){.layer-panel{gap:9px 13px;padding:11px 12px}.layer-panel strong{width:100%}.quick-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.quick-actions .btn{min-width:0;padding:9px 7px;font-size:10px}}
+@media print{
+  @page{size:landscape;margin:10mm}
+  body{background:#fff!important}
+  .barra-superior,.sidebar,.capa-sidebar,.controls,.layer-panel,.sequence-panel,.page-header,.drawing-drawer{display:none!important}
+  .main,.main.full{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important}
+  .board-wrapper{border:0!important;border-radius:0!important;box-shadow:none!important}
+  .board-top{padding:0 0 10px!important;border:0!important;background:#fff!important}
+  .board-title{font-size:18pt!important}
+  .pitch-workspace{padding:0!important;background:#fff!important}
+  .pitch-area{width:100%!important;border:0!important;box-shadow:none!important}
+  .pitch{width:100%!important;break-inside:avoid}
+  .legend{padding:8px 0!important}
+}
+
 </style>
 <script src="ADIUR-permisos.js?v=20261123d">
 </script>
@@ -1723,6 +1748,9 @@ body{background:var(--fondo)}
       Limpiar pizarra
 
     </button>
+    <button class="btn btn-light" type="button" onclick="agregarConoTactico()">▲ Cono</button>
+    <button class="btn btn-light" type="button" onclick="exportarPizarraPNG()">↓ Exportar PNG</button>
+    <button class="btn btn-light" type="button" onclick="imprimirPizarra()">▣ Imprimir</button>
     </div>
 
 
@@ -1733,7 +1761,15 @@ body{background:var(--fondo)}
   <!-- PIZARRA -->
 
   
-  <section class="sequence-panel" aria-label="Secuencia táctica">
+  <section class="layer-panel" aria-label="Capas de la pizarra">
+  <strong>CAPAS VISIBLES</strong>
+  <label><input type="checkbox" id="capaAdiur" checked> Jugadoras ADIUR</label>
+  <label><input type="checkbox" id="capaRival" checked> Jugadoras rivales</label>
+  <label><input type="checkbox" id="capaPelota" checked> Pelota</label>
+  <label><input type="checkbox" id="capaDibujos" checked> Trazados</label>
+</section>
+
+<section class="sequence-panel" aria-label="Secuencia táctica">
     <div class="sequence-intro">
       <span class="sequence-kicker">DISEÑO DE JUGADAS</span>
       <strong>Secuencia de situaciones</strong>
@@ -1747,6 +1783,7 @@ body{background:var(--fondo)}
         <button type="button" class="sequence-btn" id="actualizarEscena">Actualizar seleccionada</button>
         <button type="button" class="sequence-btn" id="cargarEscena">Abrir escena</button>
         <button type="button" class="sequence-btn sequence-danger" id="eliminarEscena">Eliminar</button>
+        <button type="button" class="sequence-btn" id="duplicarEscena">Duplicar escena</button>
       </div>
       <span class="sequence-status" id="estadoEscenas" role="status" aria-live="polite">Las escenas se guardan en este dispositivo.</span>
     </div>
@@ -2929,6 +2966,7 @@ function obtenerDatosPizarra(){
     });
   });
 
+  const conos = Array.from(pitch.querySelectorAll(".tactic-cone")).map(c=>({left:c.style.left||"50%",top:c.style.top||"50%"}));
   const pelota = document.querySelector(".ball");
 
   return {
@@ -2938,6 +2976,7 @@ function obtenerDatosPizarra(){
     formacionPropia: document.getElementById("formacionPropia").value,
     formacionRival: document.getElementById("formacionRival").value,
     jugadores,
+    conos,
     dibujos:Array.from(svgDibujos.children).filter(el=>el.tagName.toLowerCase()!=="defs"&&el.id!=="lineaTemporal").map(el=>el.outerHTML),
     pelota: pelota ? {
       left: pelota.style.left || "50%",
@@ -3157,6 +3196,11 @@ function aplicarDatosPizarra(datos){
     jugador.dataset.arquero = (j.arquero === true || j.arquero === "true") ? "true" : "false";
   });
 
+  conos.forEach(c=>{
+    if(!c||typeof c!=="object")return;
+    crearConoTactico(normalizarPosicion(c.left,50),normalizarPosicion(c.top,50));
+  });
+
   // Restauración con lista permitida de etiquetas y atributos SVG.
   const etiquetasSVG=new Set(["path","polyline","ellipse","rect","polygon","line","g"]);
   const atributosSVG=new Set(["d","points","cx","cy","rx","ry","x","y","width","height","x1","y1","x2","y2","fill","fill-opacity","stroke","stroke-width","stroke-linecap","stroke-linejoin","stroke-dasharray","marker-end","opacity"]);
@@ -3308,7 +3352,7 @@ function limpiarPizarra(
 
   document
     .querySelectorAll(
-      ".player, .ball"
+      ".player, .ball, .tactic-cone"
     )
     .forEach(
       el=>{
@@ -3387,6 +3431,87 @@ document
     }
   );
 
+
+function crearConoTactico(x=50,y=50){
+  const cono=document.createElement("button");
+  cono.type="button";
+  cono.className="tactic-cone";
+  cono.textContent="▲";
+  cono.title="Cono de entrenamiento · doble clic para quitar";
+  cono.setAttribute("aria-label","Cono de entrenamiento arrastrable");
+  cono.style.left=normalizarPosicion(x,50)+"%";
+  cono.style.top=normalizarPosicion(y,50)+"%";
+  cono.addEventListener("pointerdown",iniciarArrastre);
+  cono.addEventListener("dblclick",()=>{if(confirm("¿Querés quitar este cono?"))cono.remove();});
+  pitch.appendChild(cono);
+  return cono;
+}
+function agregarConoTactico(){
+  crearConoTactico(50,50);
+}
+function escaparXMLPizarra(valor){
+  return String(valor??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c]));
+}
+function imprimirPizarra(){
+  window.print();
+}
+function exportarPizarraPNG(){
+  const estado=document.getElementById("estadoGuardadoPizarra");
+  try{
+    const urlCancha=escaparXMLPizarra(document.getElementById("pitchImage").currentSrc||document.getElementById("pitchImage").src);
+    const visibles=elemento=>getComputedStyle(elemento).display!=="none";
+    const jugadores=Array.from(pitch.querySelectorAll(".player")).filter(visibles).map(j=>{
+      const x=Math.max(0,Math.min(100,parseFloat(j.style.left)||50))*10;
+      const y=Math.max(0,Math.min(100,parseFloat(j.style.top)||50))*6.666667;
+      const rival=j.classList.contains("opponent"),arquero=j.classList.contains("goalkeeper");
+      const fill=arquero?"#facc15":rival?"#27364a":"#ef7625";
+      const color=arquero?"#202631":"#ffffff";
+      const numero=escaparXMLPizarra(j.dataset.numero||"");
+      const nombre=escaparXMLPizarra(j.querySelector(".player-name")?.textContent||"");
+      return '<g><circle cx="'+x+'" cy="'+y+'" r="22" fill="'+fill+'" stroke="#ffffff" stroke-width="3"/><text x="'+x+'" y="'+(y+7)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" font-weight="800" fill="'+color+'">'+numero+'</text>'+(nombre?'<text x="'+x+'" y="'+(y+39)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#17212b" stroke="#ffffff" stroke-width="4" paint-order="stroke">'+nombre+'</text>':"")+'</g>';
+    }).join("");
+    const conos=Array.from(pitch.querySelectorAll(".tactic-cone")).filter(visibles).map(c=>{
+      const x=Math.max(0,Math.min(100,parseFloat(c.style.left)||50))*10,y=Math.max(0,Math.min(100,parseFloat(c.style.top)||50))*6.666667;
+      return '<polygon points="'+x+','+(y-20)+' '+(x-17)+','+(y+17)+' '+(x+17)+','+(y+17)+'" fill="#f97316" stroke="#ffffff" stroke-width="3"/>';
+    }).join("");
+    const pelota=pitch.querySelector(".ball");
+    const pelotaSvg=pelota&&visibles(pelota)?'<text x="'+(Math.max(0,Math.min(100,parseFloat(pelota.style.left)||50))*10)+'" y="'+(Math.max(0,Math.min(100,parseFloat(pelota.style.top)||50))*6.666667+12)+'" text-anchor="middle" font-size="32">⚽</text>':"";
+    const dibujos=pitch.classList.contains("ocultar-dibujos")?"":svgDibujos.innerHTML;
+    const svg='<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="1067" viewBox="0 0 1000 666.6667"><image href="'+urlCancha+'" x="0" y="0" width="1000" height="666.6667" preserveAspectRatio="none"/>'+dibujos+jugadores+conos+pelotaSvg+'</svg>';
+    const svgUrl=URL.createObjectURL(new Blob([svg],{type:"image/svg+xml;charset=utf-8"}));
+    const imagen=new Image();
+    imagen.onload=()=>{
+      try{
+        const canvas=document.createElement("canvas");canvas.width=1600;canvas.height=1067;
+        const ctx=canvas.getContext("2d");ctx.drawImage(imagen,0,0,canvas.width,canvas.height);
+        canvas.toBlob(blob=>{
+          URL.revokeObjectURL(svgUrl);
+          if(!blob){if(estado)estado.textContent="No se pudo generar el PNG.";return;}
+          const pngUrl=URL.createObjectURL(blob),a=document.createElement("a");
+          a.href=pngUrl;a.download="ADIUR-pizarra-"+document.getElementById("division").value.replace(/\s+/g,"-")+".png";
+          document.body.appendChild(a);a.click();a.remove();
+          setTimeout(()=>URL.revokeObjectURL(pngUrl),1500);
+          if(estado)estado.textContent="Imagen PNG preparada correctamente.";
+        },"image/png");
+      }catch(error){URL.revokeObjectURL(svgUrl);if(estado)estado.textContent="No se pudo exportar: "+error.message;}
+    };
+    imagen.onerror=()=>{URL.revokeObjectURL(svgUrl);if(estado)estado.textContent="No se pudo cargar la imagen de cancha para exportar.";};
+    imagen.src=svgUrl;
+  }catch(error){
+    console.error("Error al exportar pizarra:",error);
+    if(estado)estado.textContent="No se pudo exportar la pizarra: "+error.message;
+  }
+}
+function actualizarCapasPizarra(){
+  pitch.classList.toggle("ocultar-adiur",!document.getElementById("capaAdiur").checked);
+  pitch.classList.toggle("ocultar-rival",!document.getElementById("capaRival").checked);
+  pitch.classList.toggle("ocultar-pelota",!document.getElementById("capaPelota").checked);
+  pitch.classList.toggle("ocultar-dibujos",!document.getElementById("capaDibujos").checked);
+}
+["capaAdiur","capaRival","capaPelota","capaDibujos"].forEach(id=>{
+  document.getElementById(id)?.addEventListener("change",actualizarCapasPizarra);
+});
+
 /* =========================================================
    SECUENCIAS TÁCTICAS · GUARDADO LOCAL POR DIVISIÓN
 ========================================================= */
@@ -3439,10 +3564,22 @@ function guardarNuevaEscenaTactica(){
   renderizarEscenasTacticas();
   estadoEscenas("Escena guardada en este dispositivo.");
 }
+function duplicarEscenaTactica(){
+  const lista=leerEscenasTacticas(),original=lista.find(x=>String(x.id)===String(escenaSeleccionadaId));
+  if(!original)return;
+  const id=window.crypto?.randomUUID?crypto.randomUUID():"escena-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);
+  const titulo=((original.titulo||"Escena")+" · copia").slice(0,70);
+  lista.push({id,titulo,fecha:new Date().toISOString(),data:JSON.parse(JSON.stringify(original.data))});
+  if(!guardarEscenasTacticas(lista))return;
+  escenaSeleccionadaId=id;
+  document.getElementById("nombreEscena").value=titulo;
+  renderizarEscenasTacticas();
+  estadoEscenas("Escena duplicada. Ya podés modificar la copia.");
+}
 function actualizarEscenaTactica(){
   const lista=leerEscenasTacticas(),idx=lista.findIndex(x=>String(x.id)===String(escenaSeleccionadaId));
   if(idx<0)return;
-  lista[idx]={...lista[idx],titulo:(document.getElementById("nombreEscena").value||lista[idx].titulo).trim(),fecha:new Date().toISOString(),data:obtenerDatosPizarra()};
+  const nuevoTitulo=(document.getElementById("nombreEscena").value||"").trim()||lista[idx].titulo||"Escena";\n  lista[idx]={...lista[idx],titulo:nuevoTitulo,fecha:new Date().toISOString(),data:obtenerDatosPizarra()};
   if(!guardarEscenasTacticas(lista))return;
   renderizarEscenasTacticas();estadoEscenas("Escena actualizada correctamente.");
 }
@@ -3472,6 +3609,7 @@ document.getElementById("selectorEscena")?.addEventListener("change",e=>{
 });
 document.getElementById("guardarNuevaEscena")?.addEventListener("click",guardarNuevaEscenaTactica);
 document.getElementById("actualizarEscena")?.addEventListener("click",actualizarEscenaTactica);
+document.getElementById("duplicarEscena")?.addEventListener("click",duplicarEscenaTactica);
 document.getElementById("cargarEscena")?.addEventListener("click",cargarEscenaTactica);
 document.getElementById("eliminarEscena")?.addEventListener("click",eliminarEscenaTactica);
 document.getElementById("division")?.addEventListener("change",()=>{
