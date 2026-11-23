@@ -926,6 +926,7 @@ body{background:#f3f5f8}.contenido{max-width:1740px;margin:30px auto;padding:0 2
 @media(max-width:760px){.contenido{padding:0 16px 40px}.integral-heading{display:block}.integral-live{display:inline-flex;margin-top:12px}.integral-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.integral-table-head{align-items:stretch;flex-direction:column}.integral-table-head input{width:100%}}
 @media(max-width:520px){.contenido{padding:0 11px 32px}.integral-panel{padding:14px}.integral-metrics{gap:7px}.integral-metrics article{padding:11px}.integral-metrics strong{font-size:23px}}
 
+.integral-test-marks{display:block;max-width:220px;margin-top:4px;color:#818c9a;font-size:8px;line-height:1.5;white-space:normal}
 </style>
 <script src="ADIUR-permisos.js?v=20261123d">
 /* CONSOLIDADO INDIVIDUAL · INFORMES + TESTEOS + LESIONES */
@@ -1011,6 +1012,7 @@ async function renderizarPanelIntegral(){
   if(!lista.length){tbody.innerHTML='<tr><td colspan="10" class="integral-empty">No hay jugadoras para los filtros seleccionados.</td></tr>';return;}
   tbody.innerHTML=lista.map(x=>{
    const j=x.j,ini=j.nombreCompleto.trim().split(/\s+/).slice(0,2).map(z=>z[0]||"").join("").toUpperCase(),test=x.test?x.test.mes:"—";
+   const marcas=x.test?x.test.columnas.slice(0,3).map(c=>escaparIntegral(c.label||c.nombre||c.id)+": "+escaparIntegral(x.test.valores[c.id])).join(" · "):"Sin planilla cargada";
    const status=x.activos.length?'<span class="integral-badge active">'+x.activos.length+' caso(s) activo(s)</span>':x.casos.length?'<span class="integral-badge closed">Historial cerrado</span>':'<span class="integral-badge">Sin casos registrados</span>';
    return '<tr><td><div class="integral-player"><span class="integral-avatar">'+escaparIntegral(ini)+'</span><div><strong>'+escaparIntegral(j.nombreCompleto)+'</strong><small>'+escaparIntegral(j.categoria||division)+'</small></div></div></td><td>'+escaparIntegral(j.posicion||"Sin asignar")+'</td><td class="integral-num">'+(x.pj||"—")+'</td><td class="integral-num">'+(x.min||"—")+'</td><td class="integral-num">'+(x.goles||"—")+'</td><td>'+(x.amarillas||"—")+'</td><td>'+(x.rojas||"—")+'</td><td>'+escaparIntegral(test)+'</td><td>'+status+'</td><td><button class="integral-open" type="button" data-integral-id="'+escaparIntegral(j.id)+'">Ver ficha</button></td></tr>';
   }).join("");
@@ -1304,7 +1306,7 @@ async function renderizarPanelIntegral(){
         <div><h4>Ficha comparativa del plantel</h4><p>Seleccioná una jugadora para abrir su ficha integral.</p></div>
         <input id="buscarIntegral" type="search" placeholder="Buscar jugadora..." aria-label="Buscar jugadora en estadísticas">
       </div>
-      <div class="integral-table-wrap"><table class="integral-table"><thead><tr><th>JUGADORA</th><th>POSICIÓN</th><th>PJ</th><th>MIN</th><th>G</th><th>🟨</th><th>🟥</th><th>ÚLTIMO TESTEO</th><th>SALUD / LESIONES</th><th></th></tr></thead><tbody id="cuerpoIntegral"><tr><td colspan="10" class="integral-empty">Preparando el consolidado de la categoría…</td></tr></tbody></table></div>
+      <div class="integral-table-wrap"><table class="integral-table"><thead><tr><th>JUGADORA</th><th>POSICIÓN</th><th>PJ</th><th>MIN</th><th>G</th><th>🟨</th><th>🟥</th><th>TESTEOS / MARCAS RECIENTES</th><th>SALUD / LESIONES</th><th></th></tr></thead><tbody id="cuerpoIntegral"><tr><td colspan="10" class="integral-empty">Preparando el consolidado de la categoría…</td></tr></tbody></table></div>
       <div class="integral-foot" id="estadoIntegral">Los datos sin registro se muestran como “—”; no se interpretan como cero.</div>
     </section>
 
@@ -2340,7 +2342,8 @@ async function obtenerInfoLesionesJugadora(jugadora) {
     }
   });
 
-  const deJugadora = lesiones.filter(l => l && coincideJugadora(l, jugadora));
+  const categoriaLesion = claveCategoriaIntegral(jugadora.categoria);
+  const deJugadora = lesiones.filter(l => l && categoriaRegistroIntegral(l) === categoriaLesion && coincideJugadora(l, jugadora));
 
   if (deJugadora.length === 0) {
     return {
