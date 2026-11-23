@@ -1721,7 +1721,7 @@ window.cambiarDivision = function() {
   selectComp.innerHTML = "";
 
   if (division === "Primera") {
-    ["Rosarina", "Copa Santa Fe", "Regional"].forEach(comp => {
+    ["Todas", "Rosarina", "Copa Santa Fe", "Regional"].forEach(comp => {
       let opt = document.createElement("option");
       opt.value = comp;
       opt.textContent = comp;
@@ -2133,6 +2133,8 @@ async function obtenerInfoInformesJugadora(jugadora) {
     const registro = participaciones.find(reg => mismaJugadoraIntegral(reg, jugadora));
     const cat = categoriaRegistroIntegral(inf) || categoriaRegistroIntegral(registro);
     if (cat !== categoria) return false;
+    const competencia=competenciaRealIntegral(jugadora.categoria,document.getElementById("filtroCompetencia").value);
+    if(competencia&&claveCategoriaIntegral(inf.torneo||inf.competicion||inf.competencia||"")!==claveCategoriaIntegral(competencia))return false;
     return !!registro || coincideJugadora(inf, jugadora);
   }).sort((a,b) => String(b.fecha || "").localeCompare(String(a.fecha || "")));
 
@@ -2791,6 +2793,15 @@ function mismaJugadoraIntegral(reg,j){
  return ids.includes(normalizarTexto(j.id))||nombres.some(nombre=>nombresPosiblesJugadoraIntegral(j).includes(nombre));
 }
 function categoriaRegistroIntegral(reg){return claveCategoriaIntegral(reg?.division||reg?.categoria||"");}
+function competenciaRealIntegral(division,valor){
+ const clave=claveCategoriaIntegral(valor);
+ if(!clave||clave==="todas")return "";
+ const esPrimera=claveCategoriaIntegral(division)==="primera";
+ const mapa=esPrimera
+  ?{rosarina:"Fase Regular - ARF",regional:"Torneo Regional AFA"}
+  :{rosarinagrupo:"Rosarina",rosarinacopaoro:"Copa Oro - ARF",rosarinacopaplata:"Copa Plata - ARF"};
+ return mapa[clave]||valor;
+}
 async function obtenerPartidosIntegral(){
  if(Date.now()-CACHE_FUENTES_INTEGRAL.partidos.at<TTL_FUENTES_INTEGRAL)return CACHE_FUENTES_INTEGRAL.partidos.data;
  const base=await obtenerTodosInformesExternos();
@@ -2873,7 +2884,8 @@ async function renderizarPanelIntegral(){
  tbody.innerHTML='<tr><td colspan="10" class="integral-empty">Consolidando las fuentes de datos…</td></tr>';
  const [partidos,lesiones,planillas]=await Promise.all([obtenerPartidosIntegral(),obtenerLesionesIntegral(),obtenerPlanillasIntegral(division)]);
  if(version!==versionRenderIntegral||document.getElementById("filtroModulo").value!=="integral"||document.getElementById("filtroDivision").value!==division)return;
- const partidosDiv=partidos.filter(p=>{const cat=categoriaRegistroIntegral(p);if(cat)return cat===claveCategoriaIntegral(division);return (Array.isArray(p.jugadoras)?p.jugadoras:[]).some(reg=>categoriaRegistroIntegral(reg)===claveCategoriaIntegral(division));}),resumen=[];
+ const competencia=competenciaRealIntegral(division,document.getElementById("filtroCompetencia").value);
+ const partidosDiv=partidos.filter(p=>{const cat=categoriaRegistroIntegral(p);const categoriaOk=cat?cat===claveCategoriaIntegral(division):(Array.isArray(p.jugadoras)?p.jugadoras:[]).some(reg=>categoriaRegistroIntegral(reg)===claveCategoriaIntegral(division));if(!categoriaOk)return false;if(!competencia)return true;return claveCategoriaIntegral(p.torneo||p.competicion||p.competencia||"")===claveCategoriaIntegral(competencia);}),resumen=[];
  for(const j of jugadoras){
   const regs=partidosDiv.map(p=>({p,reg:registroPartidoIntegral(p,j,division)})).filter(x=>x.reg);
   let pj=0,min=0,goles=0,amarillas=0,rojas=0;
