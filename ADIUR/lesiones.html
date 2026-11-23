@@ -2635,7 +2635,7 @@ iniciar();
 </script>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -2648,7 +2648,7 @@ const firebaseConfig = {
     measurementId: "G-58LL26YXPM"
 };
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const coleccion = collection(db, "lesiones");
 const coleccionJugadoras = collection(db, "jugadoras");
@@ -2664,7 +2664,12 @@ onSnapshot(coleccionJugadoras, snapshot => {
 let inicializado = false;
 let idsNube = new Set();
 
-window.eliminarLesionFirebase = async function(id) {\n    if (id == null || String(id).trim() === "") return;\n    await deleteDoc(doc(db, "lesiones", String(id)));\n};\n\nwindow.sincronizarLesionesNube = async function(lista) {
+window.eliminarLesionFirebase = async function(id) {
+    if (id == null || String(id).trim() === "") return;
+    await deleteDoc(doc(db, "lesiones", String(id)));
+};
+
+window.sincronizarLesionesNube = async function(lista) {
     // Sincronización no destructiva: las diferencias con localStorage nunca
     // eliminan expedientes de Firestore. Las bajas deben ser acciones explícitas.
     const actuales = Array.isArray(lista) ? lista : [];
