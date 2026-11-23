@@ -88,6 +88,85 @@ body.immersive .pitch{width:100%;height:100%;min-height:0;max-height:none;aspect
 @media(max-width:620px){.main{padding:9px}.intro{margin-bottom:10px}.intro-tag{display:none}.studio{border-radius:10px}.studio-head{align-items:flex-start;padding:10px}.actions{justify-content:flex-end}.actions .btn{min-height:31px;padding:0 8px;font-size:9px}.brand small{font-size:7px}.controlbar{gap:8px;padding:9px}.control-group{flex:1;min-width:0}.control-group select{flex:1;min-width:0;width:100%}.control-label{font-size:8px}.separator{display:none}.control-actions{width:100%;justify-content:space-between}.workspace{grid-template-columns:1fr}.toolrail{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;padding:7px;border-right:0;border-bottom:1px solid var(--borde)}.rail-label{grid-column:1/-1;margin:2px}.tool{min-height:42px}.tool span{font-size:17px}.rail-divider{display:none}.palette{grid-column:1/-1;display:flex;justify-content:center;gap:14px;padding:7px}.width-control{grid-column:1/-1;flex-direction:row;align-items:center;gap:12px;padding:0 8px}.width-control input{flex:1}.pitch-stage{padding:8px}.pitch-wrap{min-height:0;padding:3px}.pitch{min-height:0;aspect-ratio:3/2}.player{width:28px;height:28px}.player-number{font-size:10px}.pitch-footer{font-size:8px}.studio-foot{font-size:7px}.shortcuts{display:none!important}body.immersive .pitch{height:auto;aspect-ratio:3/2}}
 @media(max-width:380px){.brand strong{font-size:9px}.actions .btn{padding:0 6px}.icon-btn{width:30px}.player{width:25px;height:25px}.player-number{font-size:9px}}
 @media print{.barra-superior,#sidebar,.capa-sidebar,.intro,.studio-head,.controlbar,.toolrail,.rival-strip,.studio-foot{display:none!important}.main{margin:0;padding:0!important;background:#fff}.studio{border:0;box-shadow:none}.pitch-stage{padding:0}.pitch-wrap{padding:0;border:0}.pitch{width:100%;max-height:none;print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+
+/* ===== REDISEÑO FULL-SCREEN · PIZARRA COMO SUPERFICIE PRINCIPAL ===== */
+html,body{width:100%;min-height:100%;overflow-x:hidden}
+body{background:#f7f7f7}
+.contenedor{min-height:calc(100dvh - 84px)!important;height:calc(100dvh - 84px)!important}
+.main{display:flex;flex:1;min-width:0;min-height:0;height:calc(100dvh - 84px);padding:0!important;background:#f7f7f7!important}
+.pizarra-shell{display:flex;flex:1;flex-direction:column;width:100%;max-width:none;height:100%;min-height:0;margin:0}
+.intro{display:none!important}
+.studio{display:flex;flex:1;flex-direction:column;min-height:0;height:100%;overflow:hidden;border:0;border-radius:0;background:#f7f7f7;box-shadow:none}
+.studio-head{flex:0 0 48px;min-height:48px;padding:6px 15px;border-bottom:1px solid #e6e6e6;background:#fff}
+.brand{gap:8px}.brand-mark{width:29px;height:29px;border-radius:8px;font-size:13px}
+.brand strong{font-size:10px}.brand small{font-size:8px}
+.actions{gap:5px}.actions .btn{min-height:30px;padding:0 9px;font-size:9px;border-radius:7px}
+.controlbar{flex:0 0 auto;min-height:43px;gap:9px;padding:5px 12px;border-bottom:1px solid #e6e6e6;background:#fff}
+.control-group{gap:7px}.control-label{font-size:8px}
+.controlbar select,.rival-strip select{height:29px;min-width:90px;font-size:9px;border-radius:6px}
+.control-actions{gap:5px}.control-actions .btn{min-height:29px;padding:0 9px;font-size:9px;border-radius:6px}
+.control-actions .icon-btn{width:29px;height:29px;min-height:29px;border-radius:6px;font-size:15px}
+.rival-strip{flex:0 0 auto;min-height:37px;padding:4px 12px;background:#fff8f3}
+.rival-strip .btn{min-height:28px;padding:0 9px;font-size:9px}
+.workspace{display:grid;grid-template-columns:58px minmax(0,1fr);flex:1;min-height:0;overflow:hidden;background:#f7f7f7}
+.toolrail{z-index:5;gap:4px;padding:9px 5px;border-right:1px solid #e4e4e4;background:#fff}
+.rail-label{margin:2px 0 5px;font-size:7px;letter-spacing:.8px}
+.tool{min-height:44px;gap:3px;border-radius:7px}
+.tool span{font-size:18px}.tool small{font-size:7px}
+.rail-divider{margin:4px 2px}
+.palette{grid-template-columns:repeat(2,15px);gap:8px;padding:4px 0}
+.swatch{width:15px;height:15px}
+.width-control{gap:4px;font-size:7px}
+.pitch-stage{display:flex;flex:1;min-width:0;min-height:0;padding:0;background:#f4f5f4}
+.pitch-meta{flex:0 0 25px;min-height:25px;margin:0;padding:0 12px;background:#f4f5f4;font-size:8px}
+.pitch-meta strong{font-size:9px}
+.pitch-wrap{display:flex;flex:1;align-items:stretch;justify-content:stretch;min-width:0;min-height:0;padding:7px 10px 4px;border:0;border-radius:0;background:#f4f5f4}
+.pitch{width:100%;height:100%;min-height:0;max-height:none;aspect-ratio:auto;border:2px solid #35483a;border-radius:2px;background-color:#dcebdc;background-image:linear-gradient(90deg,#ffffff20 50%,transparent 50%);background-size:10% 100%;box-shadow:0 4px 14px #17271b18}
+.field-svg{width:100%;height:100%}
+.player{width:clamp(30px,3.2vw,47px);height:clamp(30px,3.2vw,47px)}
+.player-number{font-size:clamp(10px,1vw,14px)}
+.pitch-footer{flex:0 0 24px;min-height:24px;padding:2px 12px 5px;background:#f4f5f4;font-size:8px}
+.studio-foot{flex:0 0 25px;min-height:25px;padding:4px 12px;border-top:1px solid #e4e4e4;background:#fff;font-size:7px}
+body.immersive .main{height:100dvh}
+body.immersive .studio{border-radius:0}
+@media(max-width:760px){
+ .contenedor{height:calc(100dvh - 72px)!important;min-height:calc(100dvh - 72px)!important}
+ .main{height:calc(100dvh - 72px);padding:0!important}
+ .studio-head{flex-basis:43px;min-height:43px;padding:5px 8px}
+ .brand-mark{width:26px;height:26px}.brand strong{font-size:9px}.brand small{display:none}
+ .actions .btn{min-height:28px;padding:0 7px;font-size:8px}
+ .controlbar{gap:6px;padding:5px 7px}
+ .control-group{gap:5px}.control-label{font-size:7px}
+ .controlbar select{height:27px;min-width:76px;padding-left:6px;font-size:8px}
+ .control-actions{gap:4px}.control-actions .btn{min-height:27px;padding:0 7px;font-size:8px}
+ .control-actions .icon-btn{width:27px;height:27px;min-height:27px}
+ .workspace{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+ .toolrail{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:4px;min-height:48px;padding:5px 7px;border-right:0;border-bottom:1px solid #e4e4e4;overflow-x:auto;overflow-y:hidden}
+ .rail-label{display:none}
+ .tool{flex:0 0 43px;min-height:37px}
+ .tool span{font-size:16px}.tool small{font-size:7px}
+ .rail-divider{width:1px;height:25px;flex:0 0 1px;margin:0 3px}
+ .palette{display:flex;flex:0 0 auto;gap:9px;padding:0 5px}
+ .swatch{width:15px;height:15px}
+ .width-control{display:flex;flex:0 0 78px;flex-direction:column;gap:1px;min-width:78px;font-size:6px}
+ .width-control input{width:75px;margin:0}
+ .pitch-meta{flex-basis:21px;min-height:21px;padding:0 8px}
+ .pitch-wrap{padding:4px 5px 2px}
+ .pitch{width:100%;height:100%;min-height:0;aspect-ratio:auto}
+ .player{width:clamp(25px,6vw,34px);height:clamp(25px,6vw,34px)}
+ .player-number{font-size:9px}
+ .pitch-footer{flex-basis:20px;min-height:20px;padding:2px 8px;font-size:7px}
+ .studio-foot{flex-basis:21px;min-height:21px;padding:3px 8px}
+ .studio-foot>span:first-child{display:none}
+ .studio-foot{justify-content:flex-end}
+ body.immersive .main{height:100dvh}
+}
+@media(max-width:420px){
+ .brand strong{font-size:8px}.actions{gap:3px}.actions .btn{padding:0 5px;font-size:7px}
+ .control-actions .btn{padding:0 5px;font-size:7px}
+ .pitch-meta span{font-size:7px}
+}
+
 </style>
 </head>
 <body>
@@ -184,7 +263,7 @@ function setField(){$("fieldSvg").innerHTML='<rect x="2" y="2" width="896" heigh
 function coords(e){var r=pitch.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};}
 function drawOne(d,g,w,h){var x=d.x*w,y=d.y*h,X=d.X*w,Y=d.Y*h;g.save();g.strokeStyle=d.color;g.fillStyle=d.color;g.lineWidth=d.width;g.lineCap="round";g.lineJoin="round";g.setLineDash(d.type==="dash"?[10,8]:[]);g.beginPath();if(d.type==="free"){(d.points||[]).forEach(function(p,i){if(i)g.lineTo(p.x*w,p.y*h);else g.moveTo(p.x*w,p.y*h);});}else if(d.type==="zone"){g.ellipse((x+X)/2,(y+Y)/2,Math.max(2,Math.abs(X-x)/2),Math.max(2,Math.abs(Y-y)/2),0,0,Math.PI*2);}else{g.moveTo(x,y);g.lineTo(X,Y);if(d.type==="arrow"){var a=Math.atan2(Y-y,X-x),len=16+d.width;g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a-.5),Y-len*Math.sin(a-.5));g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a+.5),Y-len*Math.sin(a+.5));}}g.stroke();g.restore();}
 function paint(){var r=pitch.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(!r.width||!r.height)return;ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.setTransform(dpr,0,0,dpr,0,0);drawings.forEach(function(d){drawOne(d,ctx,r.width,r.height);});if(drawing&&start&&points.length)drawOne({type:tool,x:start.x,y:start.y,X:points[points.length-1].x,Y:points[points.length-1].y,points:points,color:color,width:lineWidth},ctx,r.width,r.height);}
-function renderPlayers(){var host=$("players");host.replaceChildren();players.forEach(function(p){var el=document.createElement("button");el.type="button";el.className="player "+p.team+(p.id===selected?" selected":"");el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";el.setAttribute("aria-label",(p.team==="own"?"ADIUR":"Rival")+" · ficha "+p.number);el.title=(p.team==="own"?"ADIUR":"Rival")+" · "+p.number;var n=document.createElement("span");n.className="player-number";n.textContent=p.number;el.append(n);el.addEventListener("pointerdown",function(e){if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;renderPlayers();var move=function(v){var q=coords(v);p.x=Math.max(.025,Math.min(.975,q.x));p.y=Math.max(.035,Math.min(.965,q.y));el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";};var end=function(){window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);renderPlayers();status("Posición actualizada");};window.addEventListener("pointermove",move);window.addEventListener("pointerup",end,{once:true});});host.append(el);});syncCount();}
+function renderPlayers(){var host=$("players");host.replaceChildren();players.forEach(function(p){var el=document.createElement("button");el.type="button";el.className="player "+p.team+(p.id===selected?" selected":"");el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";el.setAttribute("aria-label",(p.team==="own"?"ADIUR":"Rival")+" · ficha "+p.number);el.title=(p.team==="own"?"ADIUR":"Rival")+" · "+p.number;var n=document.createElement("span");n.className="player-number";n.textContent=p.number;el.append(n);el.addEventListener("pointerdown",function(e){if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;renderPlayers();var move=function(v){var q=coords(v);p.x=Math.max(.025,Math.min(.975,q.x));p.y=Math.max(.035,Math.min(.965,q.y));el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";};var end=function(){window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);renderPlayers();status("Posición actualizada");};el.classList.add("selected");window.addEventListener("pointermove",move);window.addEventListener("pointerup",end,{once:true});});host.append(el);});syncCount();}
 function resize(){var r=pitch.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(!r.width||!r.height)return;canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);canvas.style.width=r.width+"px";canvas.style.height=r.height+"px";paint();}
 function setFormation(team,formation){var group=players.filter(function(p){return p.team===team;});formations[formation].forEach(function(q,i){if(group[i]){group[i].x=team==="rival"?1-q[0]:q[0];group[i].y=q[1];}});}
 function updateOwn(){snapshot();setFormation("own",$("formationOwn").value);renderPlayers();paint();status("Formación ADIUR "+$("formationOwn").value+" aplicada");}
@@ -217,6 +296,6 @@ document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&e.key
 setField();renderPlayers();syncHistory();if(window.ResizeObserver)new ResizeObserver(resize).observe(pitch);window.addEventListener("resize",resize);syncImmersive();requestAnimationFrame(resize);
 })();
 </script>
-<script src="ADIUR-layout.js?v=20261123-pizarra6"></script>
+<script src="ADIUR-layout.js?v=20261123-pizarra7"></script>
 </body>
 </html>
