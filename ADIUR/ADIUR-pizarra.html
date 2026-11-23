@@ -3518,7 +3518,11 @@ function exportarPizarraPNG(){
     const pelota=pitch.querySelector(".ball");
     const pelotaSvg=pelota&&visibles(pelota)?'<text x="'+(Math.max(0,Math.min(100,parseFloat(pelota.style.left)||50))*10)+'" y="'+(Math.max(0,Math.min(100,parseFloat(pelota.style.top)||50))*6.666667+12)+'" text-anchor="middle" font-size="32">⚽</text>':"";
     const dibujos=pitch.classList.contains("ocultar-dibujos")?"":svgDibujos.innerHTML;
-    const svg='<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="1067" viewBox="0 0 1000 666.6667"><image href="'+urlCancha+'" x="0" y="0" width="1000" height="666.6667" preserveAspectRatio="none"/>'+dibujos+jugadores+conos+pelotaSvg+'</svg>';
+    const fase=escaparXMLPizarra(document.getElementById("faseJuego").value);
+    const texto=escaparXMLPizarra(document.getElementById("textoConsigna").value.trim());
+    const mostrarConsigna=document.getElementById("mostrarConsigna").checked&&!!texto;
+    const consignaSvg=mostrarConsigna?'<g><rect x="680" y="18" width="300" height="94" rx="12" fill="#12202b" fill-opacity=".92" stroke="#ffffff" stroke-opacity=".6"/><rect x="680" y="18" width="6" height="94" rx="3" fill="#f47721"/><text x="704" y="43" font-family="Arial,sans-serif" font-size="13" font-weight="800" letter-spacing="1" fill="#ffb477">'+fase.toLocaleUpperCase("es")+'</text><foreignObject x="704" y="51" width="258" height="50"><div xmlns="http://www.w3.org/1999/xhtml" style="font:700 15px Arial,sans-serif;color:#fff;line-height:1.3">'+texto+'</div></foreignObject></g>':"";
+    const svg='<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="1067" viewBox="0 0 1000 666.6667"><image href="'+urlCancha+'" x="0" y="0" width="1000" height="666.6667" preserveAspectRatio="none"/>'+dibujos+jugadores+conos+pelotaSvg+consignaSvg+'</svg>';
     const svgUrl=URL.createObjectURL(new Blob([svg],{type:"image/svg+xml;charset=utf-8"}));
     const imagen=new Image();
     imagen.onload=()=>{
