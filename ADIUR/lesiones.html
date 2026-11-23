@@ -2539,7 +2539,7 @@ $('formLesion').addEventListener('submit',e=>{
     if(!guardarRegistros()){registros=anterior;return;}
     $('panelFormulario').classList.add("oculto");formularioLimpio();actualizarTodo();toast(editando?"Ficha de lesión actualizada.":"Caso registrado correctamente.");$('panelRegistros').scrollIntoView({behavior:"smooth",block:"start"});
 });
-function eliminarRegistro(id){const r=registros.find(x=>x.id===String(id));if(!r||r.categoria!==categoriaActual())return;if(!confirm(`¿Eliminar definitivamente la ficha de ${r.jugadora} del ${fechaBonita(r.fecha)}? Esta acción también elimina su historial de controles y no se puede deshacer.`))return;const anterior=registros;registros=registros.filter(x=>x.id!==r.id);if(!guardarRegistros()){registros=anterior;return;}actualizarTodo();toast("Ficha eliminada.");}
+async function eliminarRegistro(id){const r=registros.find(x=>x.id===String(id));if(!r||r.categoria!==categoriaActual())return;if(!confirm(`¿Eliminar definitivamente la ficha de ${r.jugadora} del ${fechaBonita(r.fecha)}? Esta acción también elimina su historial de controles y no se puede deshacer.`))return;const anterior=registros;registros=registros.filter(x=>x.id!==r.id);if(!guardarRegistros()){registros=anterior;return;}try{if(typeof window.eliminarLesionFirebase==="function")await window.eliminarLesionFirebase(id);actualizarTodo();toast("Ficha eliminada.");}catch(error){console.error("No se pudo eliminar la ficha de lesiones en Firestore:",error);registros=anterior;guardarRegistros();actualizarTodo();toast("No se pudo eliminar en la nube. Se restauró la ficha local.",true);}}
 function htmlDiarioSeguimiento(r){
     ordenarSeguimientos(r);
     const entradas=r.seguimientos||[];
@@ -2636,7 +2636,7 @@ iniciar();
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCc0dPIEkaKxbHoRC2CgZK412dXVGPOdTI",
@@ -2664,7 +2664,7 @@ onSnapshot(coleccionJugadoras, snapshot => {
 let inicializado = false;
 let idsNube = new Set();
 
-window.sincronizarLesionesNube = async function(lista) {
+window.eliminarLesionFirebase = async function(id) {\n    if (id == null || String(id).trim() === "") return;\n    await deleteDoc(doc(db, "lesiones", String(id)));\n};\n\nwindow.sincronizarLesionesNube = async function(lista) {
     // Sincronización no destructiva: las diferencias con localStorage nunca
     // eliminan expedientes de Firestore. Las bajas deben ser acciones explícitas.
     const actuales = Array.isArray(lista) ? lista : [];
