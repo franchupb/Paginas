@@ -340,10 +340,19 @@
             location.replace(LOGIN_URL);
             return;
           }
+          // Este script se carga en el <head>. Firebase puede restaurar la sesión
+          // antes de que exista <body>; esperar al DOM evita que un acceso válido
+          // termine enviado al Login por un error de inicialización de la interfaz.
+          if (document.readyState === "loading") {
+            await new Promise(resolve => {
+              document.addEventListener("DOMContentLoaded", resolve, { once: true });
+            });
+          }
+
           // La matriz de este archivo manda sobre rol y categorías. Firestore solo identifica y habilita la cuenta.
           perfilActivo = perfil;
           configActiva = base;
-          document.body.classList.toggle("adiur-perfil-jugadora", base.rol === "jugadora");
+          document.body?.classList.toggle("adiur-perfil-jugadora", base.rol === "jugadora");
           // La matriz central es la fuente de verdad también para las páginas
           // que aún conservan controles de compatibilidad locales.
           try {
