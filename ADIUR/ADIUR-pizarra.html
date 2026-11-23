@@ -31,8 +31,8 @@ body{margin:0;background:var(--fondo);color:var(--texto);font-family:Arial,Helve
 .board-title strong{font-size:14px}
 .board-title span{font-size:10px;color:var(--muted)}
 .boardactions{display:flex;gap:6px;flex-wrap:wrap}
-.workspace{display:grid;grid-template-columns:174px minmax(0,1fr);gap:12px;padding-top:12px}
-.tools{display:flex;flex-direction:column;gap:12px;padding:11px;background:#f7f8f9;border:1px solid #e8ecef;border-radius:11px}
+.workspace{display:grid;grid-template-columns:225px minmax(0,1fr);gap:12px;padding-top:12px}
+.tools{display:flex;flex-direction:column;gap:12px;padding:11px;background:#f7f8f9;border:1px solid #e8ecef;border-radius:11px;min-width:0}.roster-control{display:flex;flex-direction:column;gap:8px}.roster-control select{width:100%;min-height:36px;padding:7px 9px;border:1px solid #dce1e5;border-radius:8px;background:#fff;color:#30343a;font-size:10px;font-weight:700}.roster-hint{margin:0;color:#747b84;font-size:10px;line-height:1.45}.roster-list{display:flex;flex-direction:column;gap:5px;max-height:230px;overflow:auto}.roster-player{display:flex;align-items:center;gap:7px;width:100%;padding:6px 7px;border:1px solid #e6e8eb;border-radius:7px;background:#fff;text-align:left;cursor:pointer}.roster-player:hover,.roster-player.active{border-color:#f47721;background:#fff4ec}.roster-number{display:grid;place-items:center;flex:0 0 25px;width:25px;height:25px;border-radius:50%;background:#f47721;color:#fff;font-size:10px;font-weight:900}.roster-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:700;color:#30343a}.roster-empty{padding:8px;border:1px dashed #d9dde1;border-radius:7px;color:#9299a1;font-size:10px;text-align:center}.btn-remove-rival{padding:7px;border:1px solid #e0e3e7;border-radius:7px;background:#fff;color:#727982;font-size:9px;font-weight:700;cursor:pointer}
 .toolgroup{display:flex;flex-direction:column;gap:5px}
 .toolgroup b{font-size:9px;letter-spacing:.8px;color:#737b84}
 .tool{padding:8px 9px;border:1px solid transparent;border-radius:8px;background:transparent;color:#3e454c;text-align:left;font-size:10px;font-weight:700;cursor:pointer}
@@ -146,7 +146,7 @@ body.pizarra-inmersiva .pitchwrap{background:#e9eef0;border-color:#e0e5e7}
 body.pizarra-inmersiva .boardfoot label{color:#68727b}
 body.pizarra-inmersiva .boardfoot input,body.pizarra-inmersiva .boardfoot textarea{background:#fff;border-color:#dce1e5;color:#25282d}
 @media(max-width:1100px){.workspace{grid-template-columns:140px minmax(0,1fr)}.roster{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));max-height:190px}.roster h3,.roster-hint{grid-column:1/-1}}
-@media(max-width:620px){.workspace{grid-template-columns:1fr}.tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.roster{grid-column:auto;grid-template-columns:1fr 1fr;max-height:220px}.roster h3,.roster-hint{grid-column:1/-1}.pitchwrap{min-height:220px;padding:5px}.player{width:30px;height:30px;font-size:10px}body.pizarra-inmersiva .roster{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.workspace{grid-template-columns:1fr}.tools{display:flex;flex-direction:column}.roster-control{grid-column:1/-1}.roster-list{max-height:180px}.roster{grid-column:auto;grid-template-columns:1fr 1fr;max-height:220px}.roster h3,.roster-hint{grid-column:1/-1}.pitchwrap{min-height:220px;padding:5px}.player{width:30px;height:30px;font-size:10px}body.pizarra-inmersiva .roster{grid-template-columns:1fr 1fr}}
 
 </style>
 
@@ -268,8 +268,7 @@ body{background:#101518!important}
 <section class="pizarra-app" aria-label="Pizarra táctica">
   <header class="controlbar">
     <div class="control-team">
-      <span class="micro-label">EQUIPO PRINCIPAL</span>
-      <select id="categoriaADIUR" aria-label="Categoría ADIUR"><option value="">Seleccionar categoría</option><option>Sub 10</option><option>Sub 12</option><option>Sub 14</option><option>Sub 16</option><option>Primera</option></select>
+      <span class="micro-label">FORMACIÓN ADIUR</span>
       <select id="formacionADIUR" aria-label="Formación ADIUR"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select>
     </div>
     <div class="control-actions">
@@ -286,7 +285,15 @@ body{background:#101518!important}
     <button class="btn-remove-rival" id="removeRival" type="button">Quitar rival</button>
   </div>
   <div class="workspace">
-    <aside class="tools" aria-label="Herramientas de dibujo">
+    <aside class="tools" aria-label="Plantel y herramientas">
+      <section class="roster-control" aria-label="Plantel ADIUR">
+        <div class="tools-caption">PLANTEL ADIUR</div>
+        <p class="roster-hint">La cancha ya tiene sus 11 posiciones. Elegí una ficha y asignale un nombre cuando lo necesites.</p>
+        <select id="categoriaADIUR" aria-label="Categoría para mostrar jugadoras"><option value="">Mostrar nombres de una categoría</option><option>Sub 10</option><option>Sub 12</option><option>Sub 14</option><option>Sub 16</option><option>Primera</option></select>
+        <div id="rosterList" class="roster-list"><div class="roster-empty">Los nombres son opcionales.</div></div>
+        <button id="clearPlayerName" class="btn-remove-rival" type="button">Quitar nombre de la ficha</button>
+      </section>
+      <div class="tool-divider"></div>
       <div class="tools-caption">DIBUJO</div>
       <button class="tool active" data-tool="select" type="button" title="Mover jugadores"><span>↖</span><small>Mover</small></button>
       <button class="tool" data-tool="line" type="button" title="Línea"><span>／</span><small>Línea</small></button>
@@ -304,7 +311,7 @@ body{background:#101518!important}
     </aside>
     <div class="pitchwrap"><div class="pitch" id="pitch"><svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg><canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div></div></div>
   </div>
-  <footer class="statusbar"><span class="status-led"></span><span id="status" role="status" aria-live="polite">Seleccioná una categoría para cargar las 11 jugadoras de ADIUR.</span><span class="status-hint">ADIUR FEMENINO · TACTICAL BOARD</span></footer>
+  <footer class="statusbar"><span class="status-led"></span><span id="status" role="status" aria-live="polite">Cancha lista · 11 posiciones disponibles. Los nombres se agregan desde Plantel ADIUR.</span><span class="status-hint">ADIUR FEMENINO · TACTICAL BOARD</span></footer>
 </section>
 </main>
 </div>
@@ -327,7 +334,7 @@ const formations={
 "3-5-2":[[.12,.50],[.30,.25],[.30,.50],[.30,.75],[.52,.12],[.52,.31],[.52,.50],[.52,.69],[.52,.88],[.80,.36],[.80,.64]],
 "5-3-2":[[.12,.50],[.29,.12],[.29,.31],[.29,.50],[.29,.69],[.29,.88],[.55,.28],[.55,.50],[.55,.72],[.82,.36],[.82,.64]]
 };
-let players=[],drawings=[],tool="select",color="#ffffff",lineWidth=4,selected=null,drawing=false,start=null,points=[],history=[],future=[],rivalFormation="";
+let players=formations["4-3-3"].map((q,i)=>({id:"own-"+(i+1),team:"own",name:"",number:String(i+1),x:q[0],y:q[1]})),drawings=[],tool="select",color="#ffffff",lineWidth=4,selected=null,drawing=false,start=null,points=[],history=[],future=[],rivalFormation="";
 const clone=x=>JSON.parse(JSON.stringify(x)),say=t=>$("status").textContent=t;
 function snapshot(){history.push({players:clone(players),drawings:clone(drawings)});if(history.length>50)history.shift();future=[];buttons()}
 function buttons(){$("undo").disabled=!history.length;$("redo").disabled=!future.length}
@@ -350,8 +357,8 @@ function drawOne(d,g=ctx){
 function paint(){const r=pitch.getBoundingClientRect();if(!r.width||!r.height)return;const d=window.devicePixelRatio||1;ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.restore();ctx.setTransform(d,0,0,d,0,0);drawings.forEach(item=>drawOne(item));if(drawing&&start&&points.length)drawOne({type:tool,x:start.x,y:start.y,X:points.at(-1).x,Y:points.at(-1).y,points,color,width:lineWidth})}
 function renderPlayers(){
  const host=$("players");host.replaceChildren();
- players.forEach(p=>{const el=document.createElement("div");el.className="player "+p.team+(p.id===selected?" selected":"");el.style.left=p.x*100+"%";el.style.top=p.y*100+"%";el.textContent=p.number;const label=document.createElement("small");label.textContent=p.name;el.append(label);
- el.addEventListener("pointerdown",e=>{if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;const move=v=>{const q=xy(v);p.x=Math.max(.025,Math.min(.975,q.x));p.y=Math.max(.035,Math.min(.965,q.y));el.style.left=p.x*100+"%";el.style.top=p.y*100+"%"};const end=()=>{window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);renderPlayers();say("Posición actualizada");buttons()};window.addEventListener("pointermove",move);window.addEventListener("pointerup",end,{once:true})});
+ players.forEach(p=>{const el=document.createElement("div");el.className="player "+p.team+(p.id===selected?" selected":"");el.style.left=p.x*100+"%";el.style.top=p.y*100+"%";el.textContent=p.number;if(p.name){const label=document.createElement("small");label.textContent=p.name;el.append(label)}
+ el.addEventListener("pointerdown",e=>{if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;host.querySelectorAll(".player").forEach(node=>node.classList.toggle("selected",node===el));const move=v=>{const q=xy(v);p.x=Math.max(.025,Math.min(.975,q.x));p.y=Math.max(.035,Math.min(.965,q.y));el.style.left=p.x*100+"%";el.style.top=p.y*100+"%"};const end=()=>{window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);renderPlayers();say("Posición actualizada");buttons()};window.addEventListener("pointermove",move);window.addEventListener("pointerup",end,{once:true})});
  host.append(el)});
 }
 function resize(){const r=pitch.getBoundingClientRect(),d=window.devicePixelRatio||1;if(!r.width||!r.height)return;canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0);paint()}
@@ -360,14 +367,21 @@ function layoutTeam(team,formation){
  const group=players.filter(p=>p.team===team);
  group.forEach((p,i)=>{const q=coords[i];p.x=team==="rival"?1-q[0]:q[0];p.y=q[1]});
 }
-function updateOwnFormation(){
- const cat=$("categoriaADIUR").value,formation=$("formacionADIUR").value;
- if(!cat){players=players.filter(p=>p.team!=="own");renderPlayers();paint();say("Seleccioná una categoría para cargar ADIUR.");return}
+function renderRoster(){
+ const host=$("rosterList"),cat=$("categoriaADIUR").value;host.replaceChildren();
+ if(!cat){host.innerHTML='<div class="roster-empty">Los nombres son opcionales. Elegí una categoría para ver el plantel.</div>';return}
  const squad=jugadoras.filter(j=>categoriaMatch(j.categoria,cat)&&normalizar(j.estado||"Activo")!=="inactivo"&&normalizar(j.estado||"Activo")!=="lesionado").sort((a,b)=>positionRank(a.posicion)-positionRank(b.posicion)||String(a.nombre).localeCompare(String(b.nombre),"es"));
- snapshot();players=players.filter(p=>p.team!=="own");
- const coords=formations[formation];
- squad.slice(0,11).forEach((j,i)=>{const q=coords[i];players.push({id:"own-"+j.id,team:"own",name:j.nombre,number:String(j.dorsal||j.numero||i+1),x:q[0],y:q[1]})});
- renderPlayers();paint();say(squad.length?("ADIUR · "+cat+" · "+Math.min(squad.length,11)+" de "+squad.length+" jugadoras ubicadas"):"No hay jugadoras activas cargadas en "+cat+".");
+ if(!squad.length){host.innerHTML='<div class="roster-empty">No hay jugadoras activas en esta categoría.</div>';return}
+ squad.forEach(j=>{const b=document.createElement("button");b.type="button";b.className="roster-player";b.innerHTML='<span class="roster-number">'+(j.dorsal||"·")+'</span><span class="roster-name"></span>';b.querySelector(".roster-name").textContent=j.nombre||"Sin nombre";b.addEventListener("click",()=>assignPlayer(j));host.append(b)});
+}
+function assignPlayer(j){
+ let target=players.find(p=>p.id===selected&&p.team==="own");
+ if(!target)target=players.find(p=>p.team==="own"&&!p.name);
+ if(!target){say("Seleccioná una ficha de ADIUR para cambiarle el nombre, o quitá un nombre existente.");return}
+ snapshot();target.name=j.nombre;target.playerId=j.id;target.number=String(j.dorsal||target.number);selected=target.id;renderPlayers();renderRoster();paint();say(j.nombre+" asignada a la ficha "+target.number+".");
+}
+function updateOwnFormation(){
+ const formation=$("formacionADIUR").value;layoutTeam("own",formation);renderPlayers();paint();say("Formación ADIUR: "+formation+" · 11 posiciones listas.");
 }
 function updateRival(){
  const formation=$("formacionRival").value;snapshot();players=players.filter(p=>p.team!=="rival");rivalFormation=formation;
@@ -377,9 +391,10 @@ function updateRival(){
 let jugadoras=[];
 function onJugadoras(snapshotData){
  jugadoras=[];snapshotData.forEach(docSnap=>{const d=docSnap.data();jugadoras.push({...d,id:docSnap.id,nombre:d.nombre||d.nombreCompleto||d.nombre_completo||[d.nombres,d.apellido||d.apellidos].filter(Boolean).join(" "),categoria:d.categoria||d.division||d.categoría||d.category||"",posicion:d.posicion||d.puesto||"",estado:d.estado||d.status||"Activo",dorsal:d.dorsal||d.numeroCamiseta||d.numero||""})});
- if($("categoriaADIUR").value)updateOwnFormation();else say("Elegí la categoría para cargar la formación de ADIUR.");
+ renderRoster();say("Plantel sincronizado · la cancha conserva sus 11 posiciones.");
 }
-$("categoriaADIUR").addEventListener("change",updateOwnFormation);
+$("categoriaADIUR").addEventListener("change",renderRoster);
+$("clearPlayerName").addEventListener("click",()=>{const p=players.find(x=>x.id===selected&&x.team==="own");if(!p){say("Seleccioná primero una ficha de ADIUR.");return}snapshot();p.name="";delete p.playerId;renderPlayers();paint();say("Nombre quitado de la ficha "+p.number+".")});
 $("formacionADIUR").addEventListener("change",updateOwnFormation);
 $("addRival").addEventListener("click",()=>{$("rivalPanel").hidden=false;$("addRival").hidden=true;say("Elegí la formación rival y agregá sus 11 posiciones.");});
 $("confirmRival").addEventListener("click",updateRival);
@@ -394,7 +409,7 @@ canvas.addEventListener("pointercancel",()=>{drawing=false;points=[];paint()});
 $("undo").addEventListener("click",()=>{if(!history.length)return;future.push({players:clone(players),drawings:clone(drawings)});const s=history.pop();players=s.players;drawings=s.drawings;renderPlayers();paint();buttons();say("Último cambio deshecho.")});
 $("redo").addEventListener("click",()=>{if(!future.length)return;history.push({players:clone(players),drawings:clone(drawings)});const s=future.pop();players=s.players;drawings=s.drawings;renderPlayers();paint();buttons();say("Cambio recuperado.")});
 $("clearDrawings").addEventListener("click",()=>{if(!drawings.length)return;snapshot();drawings=[];paint();say("Trazos borrados.")});
-setField();buttons();new ResizeObserver(resize).observe(pitch);window.addEventListener("resize",resize);
+setField();renderPlayers();renderRoster();buttons();new ResizeObserver(resize).observe(pitch);window.addEventListener("resize",resize);
 onSnapshot(collection(db,"jugadoras"),onJugadoras,error=>{console.error(error);say("No se pudo cargar el plantel desde Firebase. Revisá la conexión o los permisos.")});
 })();
 </script>
