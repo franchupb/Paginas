@@ -2435,8 +2435,9 @@ function renderizarResumenOperativo(){
     const lista=registrosActuales();
     const ordenar=(a,b)=>String(b.fecha||"").localeCompare(String(a.fecha||""))||String(a.jugadora||"").localeCompare(String(b.jugadora||""),"es");
     const pendientes=lista.filter(r=>r.estado==="Pendiente de evaluación").sort(ordenar);
-    const sinDiario=lista.filter(r=>estadoAbierto(r)&&(!Array.isArray(r.seguimientos)||r.seguimientos.length===0)).sort(ordenar);
     const enReintegro=lista.filter(r=>r.estado==="Reintegro progresivo"||r.estado==="Entrenamiento adaptado").sort(ordenar);
+    const casosEnGruposPrioritarios=new Set([...pendientes,...enReintegro].map(r=>String(r.id)));
+    const sinDiario=lista.filter(r=>estadoAbierto(r)&&(!Array.isArray(r.seguimientos)||r.seguimientos.length===0)&&!casosEnGruposPrioritarios.has(String(r.id))).sort(ordenar);
 
     const renderCaso=(r,detalleExtra="")=>`<article class="operativo-caso">
         <button type="button" class="operativo-caso-principal" data-accion="abrir-caso" data-id="${escapeHTML(r.id)}" aria-label="Abrir expediente de ${escapeHTML(r.jugadora)}">
