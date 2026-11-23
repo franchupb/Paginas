@@ -1921,12 +1921,11 @@ if(!usuario){
   window.location.replace("ADIUR-Loing.html");
 }
 
-const usuarioNormalizado = usuario.toLowerCase().replace(/\s+/g," ").trim();
-const usuarioCompacto = usuarioNormalizado.replace(/\s+/g,"");
-const esFran = ["fran","francisco","francisco perez basla","franciscoperezbasla"].includes(usuarioNormalizado) || usuarioCompacto==="franciscoperezbasla";
-const esToto = usuarioNormalizado==="toto";
-const esBianca = ["bianca","biancadominguez"].includes(usuarioCompacto);
-const rol = esFran ? "Administrador" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora · Sub 14" : "Club ADIUR";
+const rolClaveADIUR = localStorage.getItem("rolADIUR") || "";
+const esFran = rolClaveADIUR === "admin";
+const esToto = rolClaveADIUR === "cuerpo_tecnico";
+const esBianca = rolClaveADIUR === "jugadora";
+const rol = esFran ? "Administrador" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora" : rolClaveADIUR === "coordinadora" ? "Coordinadora" : "Club ADIUR";
 
 document.getElementById("nombreUsuario").textContent = usuario || "Usuario";
 document.getElementById("rolUsuario").textContent = rol;
@@ -2009,11 +2008,7 @@ ajustarSidebarPorPantalla();
 window.addEventListener("resize", ajustarSidebarPorPantalla);
 
 /* Permisos de visualización: se mantienen los mismos criterios que en Inicio. */
-if(esBianca){
-  document.getElementById("grupoPlantel")?.remove();
-  document.getElementById("grupoRendimientos")?.remove();
-  document.querySelectorAll("[data-ocultar-bianca]").forEach(el=>el.style.display="none");
-}
+// Los accesos de cada perfil se aplican desde ADIUR-permisos.js.
 
 /* =========================
    ELEMENTOS
