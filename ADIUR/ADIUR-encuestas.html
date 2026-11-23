@@ -1313,9 +1313,10 @@ if (!usuarioGuardado) {
 }
 
 const usuarioNormalizado = usuarioGuardado.toLowerCase();
-const esFran = ["fran", "francisco", "francisco perez basla"].includes(usuarioNormalizado);
-const esToto = usuarioNormalizado === "toto";
-const esBianca = ["biancadominguez", "bianca"].includes(usuarioNormalizado);
+const rolADIUR = localStorage.getItem("rolADIUR") || "";
+const esFran = rolADIUR === "admin";
+const esToto = ["coordinadora", "cuerpo_tecnico"].includes(rolADIUR);
+const esBianca = rolADIUR === "jugadora";
 
 document.getElementById("nombreUsuario").textContent = usuarioGuardado;
 document.getElementById("avatarUsuario").textContent = usuarioGuardado.charAt(0).toUpperCase();
