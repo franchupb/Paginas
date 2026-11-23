@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#ffffff">
-<title>Wellness y RPE | ADIUR FEMENINO</title>
+<title>Encuestas | ADIUR FEMENINO</title>
 <script src="ADIUR-permisos.js?v=20261123e"></script>
 <style>
 :root{--naranja:#f47721;--naranja-oscuro:#dc5e0b;--naranja-claro:#fff0e6;--negro:#171717;--gris:#f4f5f7;--gris-texto:#747474;--borde:#e8e8e8;--verde:#18743b;--rojo:#a00000}
@@ -35,13 +35,71 @@
 @media(max-width:1050px){.escala-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.metricas{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.barra-superior{min-height:72px;padding:10px 13px;gap:9px}.boton-menu{width:38px;height:38px;font-size:24px}.logo-superior{width:44px;height:44px}.titulo-superior h1{font-size:16px}.titulo-superior p{font-size:11px}.nombre-perfil{max-width:80px;font-size:12px}.rol-perfil{display:none}.avatar{width:36px;height:36px}.contenedor{min-height:calc(100vh - 72px)}.sidebar{position:fixed;top:72px;bottom:0;left:0;z-index:300;width:258px;max-width:86vw;margin:0;transform:translateX(0);transition:transform .25s;box-shadow:5px 0 25px #00000012}.sidebar.oculto{margin:0;transform:translateX(-110%)}.capa-sidebar.visible{display:block;position:fixed;inset:72px 0 0;background:#0005;z-index:290}.contenido{padding:16px}.cabecera-pagina h2{font-size:22px}.encuestas-grid{grid-template-columns:1fr}.escala-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.escala-rpe{grid-template-columns:repeat(6,minmax(0,1fr))}.form-grid{grid-template-columns:1fr}.campo-completo{grid-column:auto}.panel{padding:15px}.selector-categoria{align-items:flex-start;flex-direction:column}.selector-categoria select{width:100%}}
 @media(max-width:380px){.titulo-superior h1{font-size:14px}.nombre-perfil{max-width:60px}.metricas{gap:8px}.metrica{padding:11px}.metrica strong{font-size:21px}}
+
+/* ADIUR ENCUESTAS · interfaz renovada */
+:root{--fondo:#f6f7f9;--texto-suave:#7b8491;--linea:#e9edf2;--azul-suave:#eef4ff;--verde-suave:#eaf8ef}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--fondo);color:#202631}
+button,input,select,textarea{font-family:inherit}
+.cabecera-pagina h2{font-size:clamp(25px,3vw,34px);font-weight:850;letter-spacing:-1.1px}
+.cabecera-pagina p{font-size:14px;color:#7b8491}
+.panel{border:1px solid var(--linea);border-radius:18px;box-shadow:0 5px 22px #202b3d08;padding:22px}
+.etiqueta{font-size:10px;letter-spacing:1.25px}
+.btn{border-radius:11px;padding:11px 16px;transition:transform .15s,background .15s}
+.btn:active{transform:scale(.98)}
+.btn-principal{background:#f47721;box-shadow:0 4px 10px #f477212b}
+.selector-categoria{border-radius:15px;box-shadow:0 3px 14px #202b3d06}
+.jugadora-bienvenida{display:flex;align-items:center;gap:18px;padding:23px;background:linear-gradient(120deg,#fff 0%,#fff7f1 100%);border:1px solid #f4e6dc;border-radius:20px;margin-bottom:18px}
+.bienvenida-icono{width:54px;height:54px;display:grid;place-items:center;border-radius:17px;background:#ffeadc;color:#e76d19;font-size:25px;flex-shrink:0}
+.jugadora-bienvenida h3{font-size:22px;margin:2px 0 5px;letter-spacing:-.5px}.jugadora-bienvenida p{margin:0;color:#77808c;font-size:13px;line-height:1.5}
+.encuestas-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.encuesta-tarjeta{border:1px solid var(--linea);border-radius:18px;padding:20px;box-shadow:0 5px 20px #202b3d08;transition:transform .18s,box-shadow .18s}
+.encuesta-tarjeta:hover{transform:translateY(-2px);box-shadow:0 10px 24px #202b3d10}
+.tarjeta-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:17px}
+.encuesta-tarjeta .icono{width:46px;height:46px;border-radius:15px;background:#fff0e6;font-size:22px;margin:0}
+.encuesta-tarjeta h3{font-size:19px;letter-spacing:-.4px}.encuesta-tarjeta p{font-size:13px;color:#77808c}
+.estado-encuesta{margin:0;background:#fff5e9;color:#b85c16}.estado-encuesta.respondida{background:#eaf8ef;color:#23834b}
+.tarjeta-meta{display:flex;gap:13px;color:#89919c;font-size:11px;margin:14px 0}
+.encuesta-tarjeta .btn{width:100%;padding:13px}
+.form-grid{gap:15px}.campo label{font-size:10px;letter-spacing:.7px;color:#737e8b}.campo input,.campo select,.campo textarea{border-color:#e5e9ef;border-radius:11px;padding:12px 13px;font-size:14px;background:#fff}.campo input:focus,.campo select:focus,.campo textarea:focus{border-color:#f47721;box-shadow:0 0 0 3px #f4772118}
+.escala-rpe{grid-template-columns:repeat(11,minmax(0,1fr));gap:7px}.rpe-opcion{border-radius:10px;padding:12px 3px;font-size:14px;font-weight:800;background:#f8f9fb}.rpe-opcion[data-rpe="0"],.rpe-opcion[data-rpe="1"],.rpe-opcion[data-rpe="2"]{border-color:#b9e5c7}.rpe-opcion[data-rpe="3"],.rpe-opcion[data-rpe="4"]{border-color:#c9e5d0}.rpe-opcion[data-rpe="5"],.rpe-opcion[data-rpe="6"]{border-color:#f3df9b}.rpe-opcion[data-rpe="7"],.rpe-opcion[data-rpe="8"]{border-color:#f5c48d}.rpe-opcion[data-rpe="9"],.rpe-opcion[data-rpe="10"]{border-color:#efb4b0}.rpe-opcion.seleccionado{background:#f47721;border-color:#f47721;color:white;box-shadow:0 4px 10px #f4772133}
+.rpe-lectura{margin-top:13px;padding:12px 14px;border-radius:12px;background:#f6f8fb;color:#596474;font-size:12px}
+.ct-resumen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:17px}
+.resumen-card{background:#fff;border:1px solid var(--linea);border-radius:16px;padding:17px;min-width:0}
+.resumen-card span{display:block;color:#7c8794;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.55px}
+.resumen-card strong{display:block;font-size:27px;letter-spacing:-.7px;margin-top:6px;color:#202631}
+.resumen-card small{display:block;color:#929aa5;font-size:11px;margin-top:4px}
+.ct-navegacion{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
+.ct-tab{display:grid;grid-template-columns:36px 1fr;grid-template-rows:auto auto;align-items:center;text-align:left;column-gap:10px;padding:14px;border:1px solid var(--linea);border-radius:15px;background:#fff;color:#303846}
+.ct-tab>span{grid-row:1/3;width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:#f2f4f7;color:#687385;font-size:19px}
+.ct-tab b{font-size:13px}.ct-tab small{font-size:10px;color:#89929e;margin-top:3px}
+.ct-tab.activa{border-color:#f3c5a6;background:#fffaf6;box-shadow:0 4px 14px #f4772110}.ct-tab.activa>span{background:#ffeadc;color:#e76d19}
+.ct-titulo-seccion{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin:22px 0 13px}.ct-titulo-seccion h3{font-size:19px;letter-spacing:-.45px;margin:0 0 5px}.ct-titulo-seccion p{font-size:12px;color:#7f8996;margin:0;line-height:1.5}
+.publicacion-form{padding:20px}.carpetas-periodos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.periodo-card{background:#fff;border:1px solid var(--linea);border-radius:16px;padding:17px;min-width:0;box-shadow:0 4px 16px #202b3d06}
+.periodo-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}
+.periodo-icono{width:38px;height:38px;border-radius:12px;background:#fff0e6;display:grid;place-items:center;font-size:18px}
+.pill-abierta{background:#eaf8ef;color:#23834b}.pill-cerrada{background:#f0f2f5;color:#737e8b}.pill-alerta{background:#fff0ed;color:#ba4d3f}
+.periodo-fecha{font-size:11px;color:#929aa5;font-weight:700}.periodo-card h4{font-size:17px;margin:4px 0}.periodo-categoria{font-size:11px;color:#7d8793}
+.periodo-participacion{display:flex;justify-content:space-between;align-items:center;margin:17px 0 8px;font-size:11px;color:#7b8491}.periodo-participacion b{font-size:14px;color:#303846}
+.barra-progreso{height:8px;background:#f0f2f5;min-width:0}.barra-progreso span{background:linear-gradient(90deg,#f7a05c,#f47721)}
+.periodo-acciones{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.periodo-acciones .btn{flex:1;white-space:nowrap}
+.btn-cerrar{background:#fff1ef;color:#b94a40;border:1px solid #f5d5d1}.btn-abrir{background:#eaf8ef;color:#23834b;border:1px solid #d4efdc}
+.selector-periodo{display:flex;align-items:flex-end;gap:13px}.selector-periodo .campo{min-width:170px}
+.resultados-resumen{margin:0 0 15px}.estadisticas-respuesta{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:16px}
+.mini-stat{padding:15px;background:#fff;border:1px solid var(--linea);border-radius:14px}.mini-stat span{display:block;font-size:10px;color:#7d8793;font-weight:800;text-transform:uppercase}.mini-stat strong{display:block;font-size:22px;margin:6px 0 3px}.mini-stat small{font-size:10px;color:#929aa5}
+.faltantes-lista{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.faltante-chip{padding:7px 10px;border-radius:30px;background:#fff2ed;color:#a95a2e;font-size:11px;font-weight:700}
+.rpe-chip{display:inline-block;padding:5px 9px;border-radius:8px;background:#f2f4f7;font-weight:850}.rpe-0,.rpe-1,.rpe-2{background:#e9f8ee;color:#21824a}.rpe-3,.rpe-4{background:#edf7ee;color:#4d855b}.rpe-5,.rpe-6{background:#fff6dc;color:#9c761b}.rpe-7,.rpe-8{background:#fff0df;color:#b46a1e}.rpe-9,.rpe-10{background:#ffebe9;color:#b3443b}
+@media(max-width:950px){.ct-resumen{grid-template-columns:repeat(3,minmax(0,1fr))}.carpetas-periodos{grid-template-columns:1fr}}
+@media(max-width:760px){.contenido{padding:16px}.jugadora-bienvenida{align-items:flex-start;padding:17px;gap:12px}.bienvenida-icono{width:43px;height:43px;border-radius:13px}.jugadora-bienvenida h3{font-size:19px}.encuestas-grid{grid-template-columns:1fr}.ct-resumen{grid-template-columns:1fr 1fr}.ct-resumen .resumen-card:last-child{grid-column:1/-1}.ct-navegacion{grid-template-columns:1fr;gap:8px}.ct-tab{padding:11px}.selector-periodo{display:block}.selector-periodo .campo{margin-bottom:12px}.escala-rpe{grid-template-columns:repeat(6,minmax(0,1fr))}.periodo-acciones .btn{flex:1 1 100%}}
+@media(max-width:420px){.ct-resumen{grid-template-columns:1fr 1fr}.resumen-card{padding:13px}.resumen-card strong{font-size:23px}.panel{padding:15px}.form-acciones .btn{width:100%}}
+
 </style>
 </head>
 <body>
 <header class="barra-superior">
 <button class="boton-menu" id="botonMenu" type="button" aria-label="Abrir menú" aria-expanded="true">☰</button>
 <img class="logo-superior" src="ADIUR-Logo ADIUR.jpg" alt="Logo ADIUR" onerror="this.style.display='none'">
-<div class="titulo-superior"><h1>ADIUR FEMENINO</h1><p>Seguimiento de Wellness y RPE</p></div>
+<div class="titulo-superior"><h1>ADIUR FEMENINO</h1><p>Encuestas del plantel</p></div>
 <div class="perfil"><div class="avatar" id="avatarUsuario">U</div><div><div class="nombre-perfil" id="nombreUsuario">Usuario</div><div class="rol-perfil" id="rolUsuario">Perfil</div></div></div>
 </header>
 <div class="capa-sidebar" id="capaSidebar"></div>
@@ -55,45 +113,45 @@
 <div class="separador-sesion"><a class="enlace-cerrar-sesion" href="#" onclick="cerrarSesion(event)">↪ Cerrar sesión</a></div>
 </aside>
 <main class="contenido">
-<section class="cabecera-pagina"><div><span class="etiqueta">RENDIMIENTOS · CONTROL DIARIO</span><h2 id="tituloPagina">Wellness y RPE</h2><p id="descripcionPagina">Registro diario del bienestar y percepción del esfuerzo para acompañar la recuperación y ajustar las cargas de entrenamiento.</p></div></section>
-<section class="selector-categoria" id="bloqueCategoria"><div style="flex:1"><label for="filtroCategoria">CATEGORÍA DEL PLANTEL</label><select id="filtroCategoria"></select></div><div class="pie-nota" id="textoCategoria">La información se limita a las categorías habilitadas para tu cuenta.</div></section>
+<section class="cabecera-pagina"><div><span class="etiqueta">RENDIMIENTO · SEGUIMIENTO DIARIO</span><h2>Encuestas del plantel</h2><p id="descripcionPagina">Publicaciones, respuestas y seguimiento del bienestar y la carga de entrenamiento.</p></div></section>
+<section class="selector-categoria" id="bloqueCategoria"><div style="flex:1"><label for="filtroCategoria">CATEGORÍA</label><select id="filtroCategoria"></select></div><div class="pie-nota">Cada categoría conserva sus propias publicaciones y resultados.</div></section>
 <div id="estadoGeneral" class="mensaje">Conectando con ADIUR...</div>
 <section id="vistaJugadora" class="oculto">
-<div class="pestanas"><button class="pestana activa" data-vista="wellness" type="button">Wellness diario</button><button class="pestana" data-vista="rpe" type="button">RPE post entrenamiento</button><button class="pestana" data-vista="historial" type="button">Mi historial</button></div>
-<div id="formWellness" class="panel">
-<div class="panel-cabecera"><div><h3>Registro de Wellness</h3><p>Completalo al comenzar el día, antes de entrenar</p></div><span class="pill">1 registro por día</span></div>
-<form id="formularioWellness">
-<div class="form-grid"><div class="campo"><label for="fechaWellness">FECHA</label><input type="date" id="fechaWellness" required></div><div class="campo"><label for="molestiaWellness">¿TENÉS ALGUNA MOLESTIA O DOLOR?</label><select id="molestiaWellness"><option value="no">No</option><option value="si">Sí</option></select></div></div>
-<div style="margin:17px 0 9px;font-size:12px;font-weight:900">¿CÓMO TE SENTÍS HOY?</div>
-<div class="escala-grid">
-<div class="escala-item"><label for="wSueno">Calidad del sueño</label><select id="wSueno" required><option value="">Elegir</option><option value="1">1 · Muy mala</option><option value="2">2 · Mala</option><option value="3">3 · Regular</option><option value="4">4 · Buena</option><option value="5">5 · Excelente</option></select></div>
-<div class="escala-item"><label for="wFatiga">Recuperación / energía</label><select id="wFatiga" required><option value="">Elegir</option><option value="1">1 · Agotada</option><option value="2">2 · Muy cansada</option><option value="3">3 · Normal</option><option value="4">4 · Bien</option><option value="5">5 · Excelente</option></select></div>
-<div class="escala-item"><label for="wMuscular">Estado muscular</label><select id="wMuscular" required><option value="">Elegir</option><option value="1">1 · Muy cargada</option><option value="2">2 · Cargada</option><option value="3">3 · Normal</option><option value="4">4 · Bien</option><option value="5">5 · Sin molestias</option></select></div>
-<div class="escala-item"><label for="wEstres">Nivel de estrés</label><select id="wEstres" required><option value="">Elegir</option><option value="1">1 · Muy alto</option><option value="2">2 · Alto</option><option value="3">3 · Normal</option><option value="4">4 · Bajo</option><option value="5">5 · Muy bajo</option></select></div>
-<div class="escala-item"><label for="wAnimo">Estado de ánimo</label><select id="wAnimo" required><option value="">Elegir</option><option value="1">1 · Muy bajo</option><option value="2">2 · Bajo</option><option value="3">3 · Normal</option><option value="4">4 · Bueno</option><option value="5">5 · Excelente</option></select></div>
-</div>
-<div class="form-grid" style="margin-top:14px"><div class="campo oculto" id="grupoZonaMolestia"><label for="wZona">¿DÓNDE SENTÍS LA MOLESTIA?</label><input id="wZona" maxlength="100" placeholder="Ej.: rodilla derecha, isquiotibial..."></div><div class="campo oculto" id="grupoIntensidad"><label for="wIntensidad">INTENSIDAD DEL DOLOR (0 A 10)</label><select id="wIntensidad"><option value="">Elegir</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div><div class="campo campo-completo"><label for="wComentario">OBSERVACIONES (OPCIONAL)</label><textarea id="wComentario" maxlength="500" placeholder="Contanos cómo te sentís o si hay algo que el cuerpo técnico deba saber..."></textarea></div></div>
-<div class="pie-nota">Escala de bienestar: 1 representa el peor estado y 5 el mejor estado. Las respuestas son individuales y visibles para el cuerpo técnico de tu categoría.</div>
-<div class="form-acciones"><button class="btn btn-principal" type="submit">Guardar Wellness</button></div>
-</form></div>
-<div id="formRPE" class="panel oculto">
-<div class="panel-cabecera"><div><h3>Registro de RPE</h3><p>Completalo al finalizar cada entrenamiento o partido</p></div><span class="pill">Carga = RPE × minutos</span></div>
-<form id="formularioRPE">
-<div class="form-grid"><div class="campo"><label for="fechaRPE">FECHA DE LA SESIÓN</label><input type="date" id="fechaRPE" required></div><div class="campo"><label for="tipoSesion">TIPO DE SESIÓN</label><select id="tipoSesion" required><option value="Cancha">Entrenamiento en cancha</option><option value="Gimnasio">Gimnasio</option><option value="Partido">Partido</option><option value="Otro">Otro</option></select></div><div class="campo"><label for="minutosRPE">DURACIÓN TOTAL (MINUTOS)</label><input type="number" id="minutosRPE" min="1" max="360" step="1" placeholder="Ej.: 90" required></div><div class="campo"><label>ESFUERZO PERCIBIDO (0 A 10)</label><div class="ayuda">Elegí cuánto te exigió la sesión en general.</div><div class="escala-rpe" id="opcionesRPE"></div><input type="hidden" id="valorRPE" required></div><div class="campo campo-completo"><label for="comentarioRPE">OBSERVACIONES (OPCIONAL)</label><textarea id="comentarioRPE" maxlength="500" placeholder="Cómo te sentiste durante la sesión..."></textarea></div></div>
-<div class="mensaje" id="resumenCarga">Seleccioná el RPE y la duración para calcular la carga de la sesión.</div>
-<div class="pie-nota">Referencia: 0 = descanso; 1–2 = muy suave; 3–4 = suave; 5–6 = moderado; 7–8 = intenso; 9 = muy intenso; 10 = máximo esfuerzo.</div>
-<div class="form-acciones"><button class="btn btn-principal" type="submit">Guardar RPE</button></div>
-</form></div>
-<div id="historialJugadora" class="panel oculto"><div class="panel-cabecera"><div><h3>Mi historial</h3><p>Consultá tus registros anteriores</p></div></div><div id="listaHistorialJugadora"></div></div>
+ <div class="jugadora-bienvenida"><div class="bienvenida-icono">✦</div><div><span class="etiqueta">TU ESPACIO DE RESPUESTAS</span><h3>¿Cómo estuvo tu día?</h3><p>Elegí la encuesta disponible y completala. Es rápido y nos ayuda a acompañar mejor tu entrenamiento.</p></div></div>
+ <div id="encuestasDisponibles" class="encuestas-grid"></div>
+ <div id="sinEncuestas" class="vacio oculto">Por ahora no hay encuestas abiertas para tu categoría. Cuando el cuerpo técnico publique una, aparecerá acá.</div>
+ <div id="formularioJugador" class="panel oculto"></div>
 </section>
 <section id="vistaTecnico" class="oculto">
-<div class="metricas" id="metricasTecnico"></div>
-<div class="panel">
-<div class="panel-cabecera"><div><h3>Seguimiento individual del plantel</h3><p>Consultá qué respondió cada jugadora y cómo evolucionan sus registros.</p></div><button class="btn btn-secundario" id="exportarCSV" type="button">Exportar CSV</button></div>
-<div class="filtros"><div class="campo"><label for="periodoFiltro">PERÍODO</label><select id="periodoFiltro"><option value="7">Últimos 7 días</option><option value="14">Últimos 14 días</option><option value="30" selected>Últimos 30 días</option><option value="all">Todo el historial</option></select></div><div class="campo"><label for="buscarJugadora">BUSCAR JUGADORA</label><input id="buscarJugadora" type="search" placeholder="Nombre y apellido"></div><div class="campo"><label for="tipoFiltro">REGISTRO</label><select id="tipoFiltro"><option value="todos">Wellness + RPE</option><option value="wellness">Solo Wellness</option><option value="rpe">Solo RPE</option></select></div></div>
-<div class="tabla-scroll" style="margin-top:15px"><table><thead><tr><th>Jugadora</th><th>Wellness más reciente</th><th>RPE más reciente</th><th>Carga de sesión</th><th>Molestias</th><th>Detalle</th></tr></thead><tbody id="tablaSeguimiento"></tbody></table></div><div id="vacioSeguimiento" class="vacio oculto">Todavía no hay registros para los filtros seleccionados.</div>
-</div>
-<div class="panel"><div class="panel-cabecera"><div><h3>Estadísticas del período</h3><p>Promedios del plantel y alertas para orientar el seguimiento.</p></div></div><div id="estadisticasDetalle"></div></div>
+ <div class="ct-resumen" id="resumenCT"></div>
+ <div class="ct-navegacion">
+  <button class="ct-tab activa" data-ct-tab="publicaciones" type="button"><span>＋</span><b>Publicaciones</b><small>Crear y habilitar encuestas</small></button>
+  <button class="ct-tab" data-ct-tab="resultados" type="button"><span>▤</span><b>Resultados</b><small>Respuestas por período</small></button>
+  <button class="ct-tab" data-ct-tab="archivo" type="button"><span>▣</span><b>Archivo</b><small>Períodos anteriores</small></button>
+ </div>
+ <div id="ctPublicaciones" class="ct-vista">
+  <div class="ct-titulo-seccion"><div><span class="etiqueta">GESTIÓN DE ENCUESTAS</span><h3>Crear una publicación</h3><p>Elegí categoría, tipo y fecha. La encuesta aparecerá para las jugadoras al habilitarla.</p></div></div>
+  <form id="formPublicacion" class="panel publicacion-form">
+   <div class="form-grid">
+    <div class="campo"><label for="nuevaCategoria">CATEGORÍA</label><select id="nuevaCategoria" required></select></div>
+    <div class="campo"><label for="nuevoTipo">TIPO DE ENCUESTA</label><select id="nuevoTipo" required><option value="post_partido">Post Partido</option><option value="post_entrenamiento">Post Entrenamiento</option></select></div>
+    <div class="campo"><label for="nuevaFecha">FECHA DEL PERÍODO</label><input type="date" id="nuevaFecha" required></div>
+    <div class="campo"><label for="nuevoEstado">PUBLICACIÓN</label><select id="nuevoEstado"><option value="abierta">Publicar y habilitar respuestas</option><option value="cerrada">Guardar cerrada (no visible)</option></select></div>
+   </div>
+   <div class="form-acciones"><button class="btn btn-principal" type="submit" id="btnPublicar">Crear período</button></div>
+  </form>
+  <div class="ct-titulo-seccion"><div><h3>Publicaciones de la categoría</h3><p>Activá o cerrá las respuestas cuando lo necesites.</p></div></div>
+  <div id="listaPublicaciones" class="carpetas-periodos"></div>
+ </div>
+ <div id="ctResultados" class="ct-vista oculto">
+  <div class="ct-titulo-seccion"><div><span class="etiqueta">LECTURA DE DATOS</span><h3>Resultados por período</h3><p>Seleccioná una publicación para consultar cada respuesta y las estadísticas de ese momento.</p></div></div>
+  <div class="panel selector-periodo"><div class="campo" style="flex:1"><label for="selectorPeriodoResultados">PERÍODO PUBLICADO</label><select id="selectorPeriodoResultados"><option value="">Seleccioná un período</option></select></div><div class="campo"><label for="filtroTipoResultado">ENCUESTA</label><select id="filtroTipoResultado"><option value="todos">Todas</option><option value="post_partido">Post Partido</option><option value="post_entrenamiento">Post Entrenamiento</option></select></div></div>
+  <div id="resultadoPeriodo"><div class="vacio">Seleccioná un período para ver sus resultados.</div></div>
+ </div>
+ <div id="ctArchivo" class="ct-vista oculto">
+  <div class="ct-titulo-seccion"><div><span class="etiqueta">HISTORIAL</span><h3>Archivo de períodos</h3><p>Las publicaciones cerradas se conservan para consultar su información sin mezclar períodos.</p></div></div>
+  <div id="archivoPeriodos" class="carpetas-periodos"></div>
+ </div>
 </section>
 </main>
 </div>
@@ -101,149 +159,167 @@
 <script>
 (function(){
 "use strict";
-const $=id=>document.getElementById(id);
-const norm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+const $=id=>document.getElementById(id), norm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
 const fechaLocal=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const fmtFecha=s=>{if(!s)return "—";const p=s.split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:s};
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let perfil=null,db=null,auth=null,rol="",uid="",nombre="",jugadoraNombre="",categoriaUsuario="",categoriaActiva="",categorias=[],plantel=[],wellness=[],rpes=[],unsubs=[],vistaActiva="wellness",rpeSeleccionado=null;
-let modulosFirestore=null;
-function setEstado(msg,tipo){$("estadoGeneral").textContent=msg;$("estadoGeneral").className="mensaje"+(tipo?" "+tipo:"")}
-function categoriasPermitidas(){const base=Array.isArray(perfil.categorias)?perfil.categorias:[];return base.length?base:["Sub 10","Sub 12","Sub 14","Sub 16","Primera"]}
+const TIPOS={post_partido:{nombre:"Post Partido",icono:"⚽",descripcion:"Contanos cómo terminaste el partido y cómo te sentís."},post_entrenamiento:{nombre:"Post Entrenamiento",icono:"⚡",descripcion:"Registrá el esfuerzo que te demandó la sesión."}};
+let perfil=null,auth=null,db=null,fb=null,rol="",uid="",nombre="",jugadoraNombre="",categorias=[],categoriaActiva="",plantel=[],periodos=[],respuestas=[],unsubs=[],periodoSeleccionado="",ctTab="publicaciones",rpeSeleccionado=null;
+function estado(msg,tipo){$("estadoGeneral").textContent=msg;$("estadoGeneral").className="mensaje"+(tipo?" "+tipo:"")}
 function esJugadora(){return rol==="jugadora"}
-function mostrarPerfil(){ $("nombreUsuario").textContent=nombre||"Usuario";$("avatarUsuario").textContent=(nombre||"U").trim().charAt(0).toUpperCase();$("rolUsuario").textContent=({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rol]||rol}
-function prepararCategorias(){
- categorias=categoriasPermitidas();
- const select=$("filtroCategoria");select.innerHTML="";
- categorias.forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;select.appendChild(o)});
- categoriaActiva=esJugadora()?(categorias[0]||""):(categorias[0]||"");
- select.value=categoriaActiva;select.disabled=esJugadora()||categorias.length===1;
- $("bloqueCategoria").classList.toggle("oculto",categorias.length===1);
- select.addEventListener("change",()=>{if(categorias.includes(select.value)){categoriaActiva=select.value;renderTecnico()}});
+function puedePublicar(){return ["admin","coordinadora","cuerpo_tecnico"].includes(rol)}
+function fechaCorta(p){return fmtFecha(p.fecha)}
+function tipoNombre(t){return TIPOS[t]?.nombre||t}
+function categoriaPermitida(){return Array.isArray(perfil.categorias)&&perfil.categorias.length?perfil.categorias:["Sub 10","Sub 12","Sub 14","Sub 16","Primera"]}
+function mostrarPerfil(){$("nombreUsuario").textContent=nombre;$("avatarUsuario").textContent=(nombre.trim()[0]||"U").toUpperCase();$("rolUsuario").textContent=({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rol]||rol}
+function poblarCategorias(){
+ categorias=categoriaPermitida();const selects=[$("filtroCategoria"),$("nuevaCategoria")];
+ selects.forEach(s=>{s.innerHTML="";categorias.forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;s.appendChild(o)})});
+ categoriaActiva=categorias[0]||"";$("filtroCategoria").value=categoriaActiva;$("nuevaCategoria").value=categoriaActiva;
+ $("filtroCategoria").disabled=esJugadora()||categorias.length===1;$("bloqueCategoria").classList.toggle("oculto",esJugadora()||categorias.length===1);
+ $("filtroCategoria").addEventListener("change",()=>{if(categorias.includes($("filtroCategoria").value)){categoriaActiva=$("filtroCategoria").value;renderTodo()}});
+ $("nuevaCategoria").addEventListener("change",()=>{if(categorias.includes($("nuevaCategoria").value)){$("filtroCategoria").value=$("nuevaCategoria").value;categoriaActiva=$("nuevaCategoria").value;renderTodo()}});
 }
-function toggleGrupo(id){const g=$(id);if(g)g.classList.toggle("cerrado")}
-window.toggleGrupo=toggleGrupo;
 function iniciarMenu(){
- const side=$("sidebar"),overlay=$("capaSidebar"),btn=$("botonMenu");
- const mobile=()=>innerWidth<=760;
- function sync(){const open=!side.classList.contains("oculto");btn.setAttribute("aria-expanded",String(open));btn.setAttribute("aria-label",open?"Cerrar menú":"Abrir menú");overlay.classList.toggle("visible",mobile()&&open)}
- btn.addEventListener("click",()=>{side.classList.toggle("oculto");sync()});
- overlay.addEventListener("click",()=>{side.classList.add("oculto");sync()});
- window.addEventListener("resize",()=>{if(mobile())side.classList.add("oculto");else side.classList.remove("oculto");sync()});
- if(mobile())side.classList.add("oculto");sync();
- document.querySelectorAll(".titulo-grupo[role=button]").forEach(el=>el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggleGrupo(el.closest(".grupo-menu").id)}}));
+ const side=$("sidebar"),overlay=$("capaSidebar"),btn=$("botonMenu"),mobile=()=>innerWidth<=760;
+ function sync(){const open=!side.classList.contains("oculto");btn.setAttribute("aria-expanded",String(open));overlay.classList.toggle("visible",mobile()&&open)}
+ btn.addEventListener("click",()=>{side.classList.toggle("oculto");sync()});overlay.addEventListener("click",()=>{side.classList.add("oculto");sync()});
+ window.addEventListener("resize",()=>{if(mobile())side.classList.add("oculto");else side.classList.remove("oculto");sync()});if(mobile())side.classList.add("oculto");sync();
 }
-function cargarJugadoras(onSnapshot,collection,dbRef){
- const ref=collection(dbRef,"jugadoras");
- const unsub=onSnapshot(ref,snap=>{
-  plantel=snap.docs.map(d=>{const x=d.data();return {id:d.id,nombre:x.nombre||x.nombreCompleto||x.nombre_completo||[x.nombres,x.apellido||x.apellidos].filter(Boolean).join(" "),categoria:x.categoria||x.division||x.categoría||x.category||"",estado:x.estado||x.status||"Activo"}});
-  if(esJugadora()){
-   const yo=plantel.find(p=>norm(p.nombre)===norm(jugadoraNombre));
-   if(yo){jugadoraNombre=yo.nombre;categoriaUsuario=yo.categoria||categoriaUsuario}
-  }
-  renderActual();
- },err=>{console.error(err);setEstado("No se pudo cargar el plantel desde Firestore. Revisá la conexión y los permisos.","error")});
- unsubs.push(unsub);
-}
-function escucharRegistros(onSnapshot,collection,query,where,dbRef){
- const refW=collection(dbRef,"wellness_adiur"),refR=collection(dbRef,"rpe_adiur");
- const qW=esJugadora()?query(refW,where("uid","==",uid)):refW;
- const qR=esJugadora()?query(refR,where("uid","==",uid)):refR;
- unsubs.push(onSnapshot(qW,s=>{wellness=s.docs.map(d=>Object.assign({id:d.id},d.data()));renderActual()},e=>{console.error(e);setEstado("No se pudieron leer los registros de Wellness. Revisá las reglas de Firestore.","error")}));
- unsubs.push(onSnapshot(qR,s=>{rpes=s.docs.map(d=>Object.assign({id:d.id},d.data()));renderActual()},e=>{console.error(e);setEstado("No se pudieron leer los registros de RPE. Revisá las reglas de Firestore.","error")}));
-}
+function iniciarPestanasCT(){document.querySelectorAll("[data-ct-tab]").forEach(b=>b.addEventListener("click",()=>{ctTab=b.dataset.ctTab;document.querySelectorAll("[data-ct-tab]").forEach(x=>x.classList.toggle("activa",x===b));["publicaciones","resultados","archivo"].forEach(v=>$("ct"+v[0].toUpperCase()+v.slice(1)).classList.toggle("oculto",v!==ctTab));if(ctTab==="resultados")poblarSelectorResultados();if(ctTab==="archivo")renderArchivo()}))}
 function activo(p){return !/inactivo|baja|desvinculada/i.test(p.estado||"Activo")}
-function jugadorasCategoria(){return plantel.filter(p=>norm(p.categoria)===norm(categoriaActiva)&&activo(p)).sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"))}
-function registrosPeriodo(arr){const n=$("periodoFiltro")?.value||"30";if(n==="all")return arr;const limite=new Date();limite.setDate(limite.getDate()-Number(n)+1);const iso=limite.toISOString().slice(0,10);return arr.filter(x=>x.fecha>=iso)}
-function promedio(arr,fn){const vals=arr.map(fn).filter(v=>Number.isFinite(v));return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null}
-function num(v){const n=Number(v);return Number.isFinite(n)?n:null}
-function ultimo(arr){return arr.slice().sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||"")||(b.actualizadoEn||"").localeCompare(a.actualizadoEn||""))[0]||null}
-function bienestar(r){if(!r)return null;return promedio([r],x=>promedio([x],y=>["sueno","energia","muscular","estres","animo"].map(k=>num(y[k])).filter(v=>v!==null).reduce((a,b)=>a+b,0)/5))}
-function carga(r){return r?(num(r.rpe)||0)*(num(r.minutos)||0):null}
-function mostrarVistaJugadora(v){vistaActiva=v;["formWellness","formRPE","historialJugadora"].forEach((id,i)=>$(id).classList.toggle("oculto",["wellness","rpe","historial"][i]!==v));document.querySelectorAll(".pestana").forEach(b=>b.classList.toggle("activa",b.dataset.vista===v));}
-function crearOpcionesRPE(){const c=$("opcionesRPE");c.innerHTML="";for(let i=0;i<=10;i++){const b=document.createElement("button");b.type="button";b.className="rpe-opcion";b.textContent=String(i);b.addEventListener("click",()=>{rpeSeleccionado=i;$("valorRPE").value=String(i);c.querySelectorAll("button").forEach(x=>x.classList.toggle("seleccionado",x===b));actualizarCargaPreview()});c.appendChild(b)}}
-function actualizarCargaPreview(){const r=rpeSeleccionado,m=num($("minutosRPE").value);$("resumenCarga").textContent=r===null||!m?"Seleccioná el RPE y la duración para calcular la carga de la sesión.":"Carga de la sesión: "+(r*m)+" unidades (RPE "+r+" × "+m+" minutos)."}
-function abrirDetalle(p){const ws=wellness.filter(x=>(x.uid===p.uid||norm(x.jugadora)===norm(p.nombre))&&norm(x.categoria)===norm(categoriaActiva)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));const rs=rpes.filter(x=>(x.uid===p.uid||norm(x.jugadora)===norm(p.nombre))&&norm(x.categoria)===norm(categoriaActiva)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));$("tituloDetalle").textContent=p.nombre;$("contenidoDetalle").innerHTML="<h4>Wellness</h4>"+(ws.length?ws.slice(0,12).map(x=>'<div class="detalle-fila"><span>'+fmtFecha(x.fecha)+' · Sueño '+esc(x.sueno)+', energía '+esc(x.energia)+', muscular '+esc(x.muscular)+', estrés '+esc(x.estres)+', ánimo '+esc(x.animo)+(x.molestia==="si"?' · <b>Molestia: '+esc(x.zona||"Sí")+'</b>':'')+'</span><strong>'+esc(bienestar(x)?.toFixed(1)||"—")+'/5</strong></div>').join(""):'<div class="vacio">Sin registros de Wellness</div>')+"<h4 style='margin-top:20px'>RPE</h4>"+(rs.length?rs.slice(0,12).map(x=>'<div class="detalle-fila"><span>'+fmtFecha(x.fecha)+' · '+esc(x.tipoSesion)+' · '+esc(x.minutos)+' min · RPE '+esc(x.rpe)+'</span><strong>'+carga(x)+' UA</strong></div>').join(""):'<div class="vacio">Sin registros de RPE</div>');$("modalDetalle").classList.add("activo")}
-function renderTecnico(){
- if(esJugadora())return;
- const lista=jugadorasCategoria(),w=wellness.filter(x=>norm(x.categoria)===norm(categoriaActiva)),r=rpes.filter(x=>norm(x.categoria)===norm(categoriaActiva)),wf=registrosPeriodo(w),rf=registrosPeriodo(r);
- const fecha=fechaLocal(),respondieron=new Set(wf.filter(x=>x.fecha===fecha).map(x=>x.uid)).size;
- const promW=promedio(wf,x=>bienestar(x)),promR=promedio(rf,x=>num(x.rpe)),totalCarga=rf.reduce((s,x)=>s+(carga(x)||0),0);
- $("metricasTecnico").innerHTML='<div class="metrica"><span>Jugadoras activas</span><strong>'+lista.length+'</strong><small>En '+esc(categoriaActiva)+'</small></div><div class="metrica"><span>Wellness de hoy</span><strong>'+respondieron+'/'+lista.length+'</strong><small>'+ (lista.length?Math.round(respondieron/lista.length*100):0)+'% de participación</small></div><div class="metrica"><span>Wellness promedio</span><strong>'+(promW===null?"—":promW.toFixed(2)+"/5")+'</strong><small>Período seleccionado</small></div><div class="metrica"><span>RPE promedio</span><strong>'+(promR===null?"—":promR.toFixed(1)+"/10")+'</strong><small>Carga acumulada: '+Math.round(totalCarga)+' UA</small></div>';
- const busq=norm($("buscarJugadora").value),tipo=$("tipoFiltro").value;
- const filtradas=lista.filter(p=>!busq||norm(p.nombre).includes(busq));
- $("tablaSeguimiento").innerHTML=filtradas.map(p=>{
-  const pw=ultimo(wf.filter(x=>x.uid===p.id||norm(x.jugadora)===norm(p.nombre))),pr=ultimo(rf.filter(x=>x.uid===p.id||norm(x.jugadora)===norm(p.nombre)));
-  const molestia=pw&&pw.molestia==="si";
-  if(tipo==="wellness"&&!pw)return "";if(tipo==="rpe"&&!pr)return "";
-  return "<tr><td class='nombre-jugadora'>"+esc(p.nombre)+"<span class='dato-secundario'>"+esc(p.categoria)+"</span></td><td>"+(pw?'<b>'+bienestar(pw).toFixed(1)+'/5</b><span class="dato-secundario">'+fmtFecha(pw.fecha)+'</span>':'<span class="pill">Pendiente</span>')+"</td><td>"+(pr?'<b>RPE '+esc(pr.rpe)+'/10</b><span class="dato-secundario">'+fmtFecha(pr.fecha)+'</span>':'<span class="pill">Pendiente</span>')+"</td><td>"+(pr?Math.round(carga(pr))+' UA':'—')+"</td><td>"+(molestia?'<span class="pill alerta">Declaró molestia</span>':'<span class="pill ok">Sin alerta</span>')+"</td><td><button class='btn btn-secundario' type='button' data-detalle='"+esc(p.id)+"'>Ver historial</button></td></tr>";
- }).join("");
- $("tablaSeguimiento").querySelectorAll("[data-detalle]").forEach(b=>b.addEventListener("click",()=>{const p=lista.find(x=>x.id===b.dataset.detalle);if(p)abrirDetalle({uid:p.id,nombre:p.nombre})}));
- const vacio=$("vacioSeguimiento");vacio.classList.toggle("oculto",!!$("tablaSeguimiento").innerHTML.trim());
- const wProms=["sueno","energia","muscular","estres","animo"].map(k=>({k,v:promedio(wf,x=>num(x[k]))}));
- const molestias=wf.filter(x=>x.molestia==="si");
- $("estadisticasDetalle").innerHTML='<div class="stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">'+wProms.map(x=>'<div class="metrica"><span>Promedio '+({sueno:"Sueño",energia:"Energía",muscular:"Estado muscular",estres:"Estrés",animo:"Ánimo"}[x.k])+'</span><strong>'+(x.v===null?"—":x.v.toFixed(2)+'/5')+'</strong></div>').join("")+'<div class="metrica"><span>Molestias declaradas</span><strong>'+molestias.length+'</strong><small>En el período seleccionado</small></div><div class="metrica"><span>Sesiones RPE</span><strong>'+rf.length+'</strong><small>Registros en el período</small></div></div><div class="pie-nota">Los promedios se calculan sobre respuestas recibidas, no sobre jugadoras que todavía no completaron el formulario. Una alerta de molestia requiere seguimiento individual del CT.</div>';
+function jugadorasDe(cat){return plantel.filter(p=>norm(p.categoria)===norm(cat)&&activo(p)).sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"))}
+function periodoCat(){return periodos.filter(p=>norm(p.categoria)===norm(categoriaActiva)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""))}
+function respuestasDe(id){return respuestas.filter(r=>r.periodoId===id)}
+function yaRespondio(id){return respuestas.some(r=>r.periodoId===id&&r.uid===uid)}
+function cargarPlantel(){
+ const unsub=fb.onSnapshot(fb.collection(db,"jugadoras"),snap=>{plantel=snap.docs.map(d=>{const x=d.data();return{id:d.id,nombre:x.nombre||x.nombreCompleto||x.nombre_completo||[x.nombres,x.apellido||x.apellidos].filter(Boolean).join(" "),categoria:x.categoria||x.division||x.categoría||x.category||"",estado:x.estado||x.status||"Activo"}});renderTodo()},e=>{console.error(e);estado("No se pudo cargar el plantel.","error")});unsubs.push(unsub)
 }
-function renderHistorial(){
- const ownW=wellness.filter(x=>x.uid===uid).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));
- const ownR=rpes.filter(x=>x.uid===uid).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));
- let html="<h4>Wellness</h4>";
- html+=ownW.length?ownW.slice(0,30).map(x=>'<div class="detalle-fila"><span>'+fmtFecha(x.fecha)+' · Sueño '+x.sueno+' · Energía '+x.energia+' · Muscular '+x.muscular+' · Estrés '+x.estres+' · Ánimo '+x.animo+(x.molestia==="si"?' · <b>Molestia: '+esc(x.zona||"Sí")+'</b>':'')+'</span><strong>'+bienestar(x).toFixed(1)+'/5</strong></div>').join(""):'<div class="vacio">Todavía no tenés registros de Wellness.</div>';
- html+="<h4 style='margin-top:20px'>RPE</h4>";
- html+=ownR.length?ownR.slice(0,30).map(x=>'<div class="detalle-fila"><span>'+fmtFecha(x.fecha)+' · '+esc(x.tipoSesion)+' · '+x.minutos+' min · RPE '+x.rpe+'</span><strong>'+carga(x)+' UA</strong></div>').join(""):'<div class="vacio">Todavía no tenés registros de RPE.</div>';
- $("listaHistorialJugadora").innerHTML=html;
+function escucharDatos(){
+ const periodosRef=fb.collection(db,"encuestas_periodos");
+ const up=fb.onSnapshot(periodosRef,s=>{periodos=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error(e);estado("No se pudieron cargar las publicaciones. Revisá las reglas de Firestore.","error")});unsubs.push(up);
+ const respuestasRef=fb.collection(db,"encuestas_respuestas");
+ const q=esJugadora()?fb.query(respuestasRef,fb.where("uid","==",uid)):respuestasRef;
+ const ur=fb.onSnapshot(q,s=>{respuestas=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error(e);estado("No se pudieron cargar las respuestas. Revisá las reglas de Firestore.","error")});unsubs.push(ur)
 }
-function renderActual(){if(!perfil)return;if(esJugadora()){renderHistorial();}else{renderTecnico()}}
-function validarPerfil(){if(!perfil)throw new Error("No se pudo identificar el perfil ADIUR.");rol=perfil.rol||"";if(!["admin","coordinadora","cuerpo_tecnico","jugadora"].includes(rol))throw new Error("Tu perfil no tiene acceso a Encuestas.");uid=auth.currentUser?.uid||"";nombre=perfil.nombre||perfil.usuario||"Usuario";jugadoraNombre=perfil.jugadora||perfil.nombre||"";categoriaUsuario=(perfil.categorias||[])[0]||"";mostrarPerfil();prepararCategorias();if(esJugadora()){$("vistaJugadora").classList.remove("oculto");$("vistaTecnico").classList.add("oculto");$("bloqueCategoria").classList.toggle("oculto",true);$("descripcionPagina").textContent="Completá tus registros diarios de bienestar y esfuerzo. Tus respuestas serán visibles para el cuerpo técnico de tu categoría."}else{$("vistaTecnico").classList.remove("oculto");$("vistaJugadora").classList.add("oculto");$("descripcionPagina").textContent="Panel de seguimiento del cuerpo técnico: respuestas individuales, participación, promedios y carga de entrenamiento.";$("periodoFiltro").addEventListener("change",renderTecnico);$("tipoFiltro").addEventListener("change",renderTecnico);$("buscarJugadora").addEventListener("input",renderTecnico)}}
-async function guardarRegistro(tipo,datos){
- const {doc,setDoc,serverTimestamp}=modulosFirestore;
- const fecha=datos.fecha,clave=tipo==="wellness"?"wellness_adiur":"rpe_adiur";
- const docId=uid+"_"+fecha+(tipo==="rpe"?"_"+norm(datos.tipoSesion):"");
- const payload=Object.assign({},datos,{uid:uid,jugadora:jugadoraNombre,categoria:categoriaUsuario||categoriaActiva,creadoPor:uid,actualizadoEn:new Date().toISOString(),timestamp:serverTimestamp()});
- await setDoc(doc(db,clave,docId),payload,{merge:true});
+function renderTodo(){if(!perfil)return;if(esJugadora())renderJugadora();else renderCT()}
+function renderJugadora(){
+ const abiertas=periodos.filter(p=>p.estado==="abierta"&&norm(p.categoria)===norm(categoriaActiva)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));
+ $("encuestasDisponibles").innerHTML=abiertas.map(p=>{const done=yaRespondio(p.id);return '<article class="encuesta-tarjeta"><div class="tarjeta-top"><span class="icono">'+TIPOS[p.tipo]?.icono+'</span><span class="estado-encuesta '+(done?"respondida":"abierta")+'">'+(done?"Completada":"Disponible")+'</span></div><h3>'+tipoNombre(p.tipo)+'</h3><p>'+TIPOS[p.tipo].descripcion+'</p><div class="tarjeta-meta"> <span>◷ '+fechaCorta(p)+'</span><span> '+esc(p.categoria)+'</span></div><button class="btn '+(done?"btn-secundario":"btn-principal")+'" type="button" data-abrir-periodo="'+esc(p.id)+'" '+(done?"disabled":"")+'>'+(done?"Ya respondiste":"Completar encuesta")+'</button></article>'}).join("");
+ $("sinEncuestas").classList.toggle("oculto",abiertas.length>0);
+ $("encuestasDisponibles").querySelectorAll("[data-abrir-periodo]").forEach(b=>b.addEventListener("click",()=>abrirFormularioJugador(b.dataset.abrirPeriodo)));
 }
-$("molestiaWellness").addEventListener("change",()=>{const on=$("molestiaWellness").value==="si";$("grupoZonaMolestia").classList.toggle("oculto",!on);$("grupoIntensidad").classList.toggle("oculto",!on);$("wZona").required=on;$("wIntensidad").required=on});
-$("formularioWellness").addEventListener("submit",async e=>{
- e.preventDefault();if(!esJugadora())return;
- const fecha=$("fechaWellness").value;if(!fecha){setEstado("Seleccioná una fecha para Wellness.","error");return}
- const datos={fecha,sueno:Number($("wSueno").value),energia:Number($("wFatiga").value),muscular:Number($("wMuscular").value),estres:Number($("wEstres").value),animo:Number($("wAnimo").value),molestia:$("molestiaWellness").value,zona:$("wZona").value.trim(),intensidad:$("wIntensidad").value?Number($("wIntensidad").value):null,comentario:$("wComentario").value.trim()};
- const b=e.submitter;b.disabled=true;b.textContent="Guardando...";
- try{await guardarRegistro("wellness",datos);setEstado("Wellness guardado correctamente en la nube.","ok")}catch(err){console.error(err);setEstado("No se pudo guardar Wellness. Revisá tu conexión o los permisos de Firestore.","error")}finally{b.disabled=false;b.textContent="Guardar Wellness"}
-});
-$("minutosRPE").addEventListener("input",actualizarCargaPreview);
-$("formularioRPE").addEventListener("submit",async e=>{
- e.preventDefault();if(!esJugadora())return;
- const fecha=$("fechaRPE").value,minutos=num($("minutosRPE").value);
- if(!fecha||!minutos||rpeSeleccionado===null){setEstado("Completá la fecha, duración y esfuerzo percibido.","error");return}
- const datos={fecha,tipoSesion:$("tipoSesion").value,minutos:minutos,rpe:rpeSeleccionado,carga:rpeSeleccionado*minutos,comentario:$("comentarioRPE").value.trim()};
- const b=e.submitter;b.disabled=true;b.textContent="Guardando...";
- try{await guardarRegistro("rpe",datos);setEstado("RPE guardado correctamente en la nube.","ok")}catch(err){console.error(err);setEstado("No se pudo guardar RPE. Revisá tu conexión o los permisos de Firestore.","error")}finally{b.disabled=false;b.textContent="Guardar RPE"}
-});
-document.querySelectorAll(".pestana").forEach(b=>b.addEventListener("click",()=>mostrarVistaJugadora(b.dataset.vista)));
-$("cerrarDetalle").addEventListener("click",()=>$("modalDetalle").classList.remove("activo"));
-$("modalDetalle").addEventListener("click",e=>{if(e.target===$("modalDetalle"))$("modalDetalle").classList.remove("activo")});
-$("exportarCSV").addEventListener("click",()=>{
- const lista=jugadorasCategoria(),rows=[["Jugadora","Categoria","Fecha Wellness","Indice Wellness","Sueno","Energia","Muscular","Estres","Animo","Molestia","Fecha RPE","Tipo sesion","Minutos","RPE","Carga"]];
- lista.forEach(p=>{const w=ultimo(wellness.filter(x=>norm(x.categoria)===norm(categoriaActiva)&&(x.uid===p.id||norm(x.jugadora)===norm(p.nombre)))),r=ultimo(rpes.filter(x=>norm(x.categoria)===norm(categoriaActiva)&&(x.uid===p.id||norm(x.jugadora)===norm(p.nombre))));rows.push([p.nombre,p.categoria,w?.fecha||"",w?bienestar(w).toFixed(2):"",w?.sueno??"",w?.energia??"",w?.muscular??"",w?.estres??"",w?.animo??"",w?.molestia??"",r?.fecha||"",r?.tipoSesion||"",r?.minutos??"",r?.rpe??"",r?carga(r):""])});const csv="\uFEFF"+rows.map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(";")).join("\n");const blob=new Blob([csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="ADIUR_"+categoriaActiva.replace(/\s/g,"_")+"_Wellness_RPE.csv";a.click();URL.revokeObjectURL(url)
-});
+function escalaSelect(id,label,items){return '<div class="campo"><label for="'+id+'">'+label+'</label><select id="'+id+'" required><option value="">Elegir respuesta</option>'+items.map((x,i)=>'<option value="'+(i+1)+'">'+(i+1)+' · '+x+'</option>').join("")+'</select></div>'}
+function abrirFormularioJugador(id){
+ const p=periodos.find(x=>x.id===id);if(!p||p.estado!=="abierta"||yaRespondio(id))return;
+ periodoSeleccionado=id;rpeSeleccionado=null;
+ let fields="";
+ if(p.tipo==="post_partido"){
+  fields='<div class="form-grid">'+escalaSelect("respSueno","¿Cómo dormiste antes del partido?",["Muy mal","Mal","Regular","Bien","Excelente"])+escalaSelect("respEnergia","¿Cómo estuvo tu energía?",["Muy baja","Baja","Normal","Buena","Excelente"])+escalaSelect("respMuscular","¿Cómo sentís tus músculos?",["Muy cargados","Cargados","Normales","Bien","Muy bien"])+escalaSelect("respEstres","¿Cómo estuvo tu nivel de estrés?",["Muy alto","Alto","Normal","Bajo","Muy bajo"])+escalaSelect("respAnimo","¿Cómo estuvo tu ánimo?",["Muy bajo","Bajo","Normal","Bueno","Excelente"])+'</div><div class="form-grid" style="margin-top:14px"><div class="campo"><label for="respMolestia">¿Terminaste con alguna molestia o dolor?</label><select id="respMolestia"><option value="no">No</option><option value="si">Sí</option></select></div><div class="campo oculto" id="zonaWrap"><label for="respZona">¿En qué zona?</label><input id="respZona" maxlength="100" placeholder="Ej.: rodilla derecha"></div><div class="campo oculto" id="dolorWrap"><label for="respDolor">Intensidad del dolor</label><select id="respDolor"><option value="">Elegir</option>'+Array.from({length:10},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'</option>').join("")+'</select></div><div class="campo campo-completo"><label for="respComentario">¿Querés contarnos algo más? (opcional)</label><textarea id="respComentario" maxlength="500" placeholder="Podés dejar una observación para el cuerpo técnico..."></textarea></div></div>';
+ }else{
+  fields='<div class="form-grid"><div class="campo campo-completo"><label>¿CUÁNTO ESFUERZO TE DEMANDÓ EL ENTRENAMIENTO?</label><p class="ayuda">Elegí un número del 0 al 10. 0 es descanso y 10 es el máximo esfuerzo.</p><div class="escala-rpe" id="rpeOpciones">'+Array.from({length:11},(_,i)=>'<button type="button" class="rpe-opcion" data-rpe="'+i+'">'+i+'</button>').join("")+'</div></div><div class="campo"><label for="respMinutos">¿CUÁNTO DURÓ TU SESIÓN? (MINUTOS)</label><input type="number" id="respMinutos" min="1" max="360" placeholder="Ej.: 90" required></div><div class="campo"><label for="respTipoSesion">TIPO DE ACTIVIDAD</label><select id="respTipoSesion"><option>Cancha</option><option>Gimnasio</option><option>Físico</option><option>Otro</option></select></div><div class="campo campo-completo"><label for="respComentario">OBSERVACIONES (OPCIONAL)</label><textarea id="respComentario" maxlength="500" placeholder="¿Cómo te sentiste durante la sesión?"></textarea></div></div><div id="rpeAyuda" class="rpe-lectura">Seleccioná el esfuerzo para ver la intensidad.</div>';
+ }
+ $("formularioJugador").innerHTML='<div class="panel-cabecera"><div><span class="etiqueta">'+esc(p.categoria)+' · '+fechaCorta(p)+'</span><h3>'+tipoNombre(p.tipo)+'</h3><p>Respondé con sinceridad. No hay respuestas buenas ni malas.</p></div><button class="btn btn-secundario" id="volverEncuestas" type="button">← Volver</button></div><form id="formRespuesta">'+fields+'<div class="form-acciones"><button class="btn btn-principal" type="submit">Enviar respuesta</button></div></form>';
+ $("formularioJugador").classList.remove("oculto");$("encuestasDisponibles").classList.add("oculto");$("sinEncuestas").classList.add("oculto");
+ $("volverEncuestas").addEventListener("click",()=>{$("formularioJugador").classList.add("oculto");$("encuestasDisponibles").classList.remove("oculto");renderJugadora()});
+ $("respMolestia")?.addEventListener("change",()=>{const on=$("respMolestia").value==="si";$("zonaWrap").classList.toggle("oculto",!on);$("dolorWrap").classList.toggle("oculto",!on);$("respZona").required=on;$("respDolor").required=on});
+ $("rpeOpciones")?.querySelectorAll("[data-rpe]").forEach(b=>b.addEventListener("click",()=>{rpeSeleccionado=Number(b.dataset.rpe);$("rpeOpciones").querySelectorAll("button").forEach(x=>x.classList.toggle("seleccionado",x===b));$("rpeAyuda").textContent="Esfuerzo seleccionado: "+rpeSeleccionado+"/10 · "+(rpeSeleccionado<=2?"Muy suave":rpeSeleccionado<=4?"Suave":rpeSeleccionado<=6?"Moderado":rpeSeleccionado<=8?"Intenso":"Máximo")}));
+ $("formRespuesta").addEventListener("submit",guardarRespuesta);
+}
+async function guardarRespuesta(e){
+ e.preventDefault();const p=periodos.find(x=>x.id===periodoSeleccionado);if(!p||p.estado!=="abierta"){estado("Esta encuesta ya fue cerrada por el cuerpo técnico.","error");return}
+ if(yaRespondio(p.id)){estado("Ya registraste tu respuesta para este período.","error");return}
+ let respuestasForm={};
+ if(p.tipo==="post_partido"){
+  const keys=["Sueno","Energia","Muscular","Estres","Animo"];for(const k of keys){const el=$("resp"+k);if(!el?.value){estado("Completá todas las preguntas para continuar.","error");return}respuestasForm[k.toLowerCase()]=Number(el.value)}
+  respuestasForm.molestia=$("respMolestia").value;respuestasForm.zona=$("respZona")?.value.trim()||"";respuestasForm.intensidad=$("respDolor")?.value?Number($("respDolor").value):null;respuestasForm.comentario=$("respComentario").value.trim();
+ }else{
+  const minutos=Number($("respMinutos").value);if(rpeSeleccionado===null||!minutos){estado("Seleccioná el esfuerzo y completá la duración.","error");return}
+  respuestasForm.rpe=rpeSeleccionado;respuestasForm.minutos=minutos;respuestasForm.carga=rpeSeleccionado*minutos;respuestasForm.tipoSesion=$("respTipoSesion").value;respuestasForm.comentario=$("respComentario").value.trim();
+ }
+ const b=e.submitter;b.disabled=true;b.textContent="Enviando...";
+ try{
+  const ref=fb.doc(db,"encuestas_respuestas",p.id+"_"+uid);
+  const existente=await fb.getDoc(ref);if(existente.exists())throw new Error("Ya existe una respuesta para este período.");
+  await fb.setDoc(ref,{periodoId:p.id,tipo:p.tipo,categoria:p.categoria,fecha:p.fecha,uid,jugadora:jugadoraNombre||nombre,respuestas:respuestasForm,creadoEn:fb.serverTimestamp()});
+  estado("¡Respuesta enviada! Gracias por completar "+tipoNombre(p.tipo)+".","ok");
+  $("formularioJugador").classList.add("oculto");$("encuestasDisponibles").classList.remove("oculto");periodoSeleccionado="";renderJugadora();
+ }catch(err){console.error(err);estado(err.message||"No se pudo enviar la respuesta. Intentá nuevamente.","error")}finally{if(b.isConnected){b.disabled=false;b.textContent="Enviar respuesta"}}
+}
+async function publicarPeriodo(e){
+ e.preventDefault();if(!puedePublicar())return;
+ const categoria=$("nuevaCategoria").value,tipo=$("nuevoTipo").value,fecha=$("nuevaFecha").value,estadoInicial=$("nuevoEstado").value;
+ if(!categorias.includes(categoria)||!TIPOS[tipo]||!fecha){estado("Revisá categoría, encuesta y fecha antes de publicar.","error");return}
+ const b=$("btnPublicar");b.disabled=true;b.textContent="Creando...";
+ try{await fb.addDoc(fb.collection(db,"encuestas_periodos"),{categoria,tipo,fecha,estado:estadoInicial,creadoPor:uid,creadoPorNombre:nombre,creadoEn:fb.serverTimestamp(),actualizadoEn:fb.serverTimestamp()});$("filtroCategoria").value=categoria;categoriaActiva=categoria;estado("Período creado correctamente.","ok");$("formPublicacion").reset();$("nuevaCategoria").value=categoria;$("nuevaFecha").value=fechaLocal();$("nuevoEstado").value="abierta";renderCT()}
+ catch(err){console.error(err);estado("No se pudo crear el período. Revisá la conexión y los permisos de Firestore.","error")}finally{b.disabled=false;b.textContent="Crear período"}
+}
+async function cambiarEstadoPeriodo(id,nuevo){
+ const p=periodos.find(x=>x.id===id);if(!p)return;
+ if(nuevo==="cerrada"&&!confirm("¿Cerrar esta encuesta? Las jugadoras ya no podrán responder. Los resultados quedarán guardados."))return;
+ if(nuevo==="abierta"&&!confirm("¿Volver a habilitar las respuestas de este período?"))return;
+ try{await fb.updateDoc(fb.doc(db,"encuestas_periodos",id),{estado:nuevo,actualizadoEn:fb.serverTimestamp()});estado(nuevo==="abierta"?"Encuesta habilitada nuevamente.":"Encuesta cerrada. Los resultados se conservaron.","ok")}
+ catch(err){console.error(err);estado("No se pudo cambiar el estado de la publicación.","error")}
+}
+function tarjetaPeriodo(p,archivo=false){
+ const rs=respuestasDe(p.id),esperadas=jugadorasDe(p.categoria).length,porcentaje=esperadas?Math.round(rs.length/esperadas*100):0,abierta=p.estado==="abierta";
+ return '<article class="periodo-card"><div class="periodo-card-top"><span class="periodo-icono">'+TIPOS[p.tipo]?.icono+'</span><span class="pill '+(abierta?"pill-abierta":"pill-cerrada")+'">'+(abierta?"● Abierta":"● Cerrada")+'</span></div><div class="periodo-fecha">'+fechaCorta(p)+'</div><h4>'+tipoNombre(p.tipo)+'</h4><div class="periodo-categoria">'+esc(p.categoria)+'</div><div class="periodo-participacion"><div><b>'+rs.length+'</b><span> / '+esperadas+' respuestas</span></div><b>'+porcentaje+'%</b></div><div class="barra-progreso"><span style="width:'+Math.min(100,porcentaje)+'%"></span></div><div class="periodo-acciones"><button type="button" class="btn btn-secundario" data-ver-periodo="'+p.id+'">Ver resultados</button>'+(archivo?"":'<button type="button" class="btn '+(abierta?"btn-cerrar":"btn-abrir")+'" data-estado-periodo="'+p.id+'" data-nuevo-estado="'+(abierta?"cerrada":"abierta")+'">'+(abierta?"Deshabilitar":"Habilitar")+'</button>')+'</div></article>'
+}
+function enlazarTarjetas(root){root.querySelectorAll("[data-estado-periodo]").forEach(b=>b.addEventListener("click",()=>cambiarEstadoPeriodo(b.dataset.estadoPeriodo,b.dataset.nuevoEstado)));root.querySelectorAll("[data-ver-periodo]").forEach(b=>b.addEventListener("click",()=>{ctTab="resultados";document.querySelector('[data-ct-tab="resultados"]').click();$("selectorPeriodoResultados").value=b.dataset.verPeriodo;renderResultadoSeleccionado()}))}
+function renderPublicaciones(){const ps=periodoCat();$("listaPublicaciones").innerHTML=ps.length?ps.map(p=>tarjetaPeriodo(p)).join(""):'<div class="vacio">Todavía no hay publicaciones para esta categoría. Creá la primera desde el formulario.</div>';enlazarTarjetas($("listaPublicaciones"))}
+function renderArchivo(){const ps=periodos.filter(p=>categorias.includes(p.categoria)&&p.estado==="cerrada").sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));$("archivoPeriodos").innerHTML=ps.length?ps.map(p=>tarjetaPeriodo(p,true)).join(""):'<div class="vacio">Todavía no hay períodos cerrados en el archivo.</div>';enlazarTarjetas($("archivoPeriodos"))}
+function poblarSelectorResultados(){
+ const s=$("selectorPeriodoResultados"),actual=s.value,ps=periodos.filter(p=>categorias.includes(p.categoria)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));
+ s.innerHTML='<option value="">Seleccioná un período</option>'+ps.map(p=>'<option value="'+esc(p.id)+'">'+fmtFecha(p.fecha)+' · '+esc(p.categoria)+' · '+tipoNombre(p.tipo)+' · '+(p.estado==="abierta"?"Abierta":"Cerrada")+'</option>').join("");
+ if(ps.some(p=>p.id===actual))s.value=actual;
+}
+function renderResultadoSeleccionado(){
+ const id=$("selectorPeriodoResultados").value,p=periodos.find(x=>x.id===id);if(!p){$("resultadoPeriodo").innerHTML='<div class="vacio">Seleccioná un período para ver sus resultados.</div>';return}
+ const rs=respuestasDe(id),plantelCat=jugadorasDe(p.categoria),respondieron=new Set(rs.map(x=>x.uid)),faltan=plantelCat.filter(x=>!respondieron.has(x.id));
+ const cards='<div class="ct-resumen resultados-resumen"><div class="resumen-card"><span>Respuestas recibidas</span><strong>'+rs.length+'/'+plantelCat.length+'</strong></div><div class="resumen-card"><span>Participación</span><strong>'+(plantelCat.length?Math.round(rs.length/plantelCat.length*100):0)+'%</strong></div><div class="resumen-card"><span>Estado</span><strong class="estado-grande">'+(p.estado==="abierta"?"Abierta":"Cerrada")+'</strong></div></div>';
+ let stats="",rows="";
+ if(p.tipo==="post_partido"){
+  const ks=[["sueno","Sueño"],["energia","Energía"],["muscular","Estado muscular"],["estres","Estrés"],["animo","Ánimo"]];
+  stats='<div class="estadisticas-respuesta">'+ks.map(([k,l])=>{const vals=rs.map(x=>Number(x.respuestas?.[k])).filter(Number.isFinite),avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;return '<div class="mini-stat"><span>'+l+'</span><strong>'+(avg===null?"—":avg.toFixed(1)+'/5')+'</strong><small>Promedio del período</small></div>'}).join("")+'</div>';
+  rows=rs.map(x=>{const r=x.respuestas||{};return '<tr><td><b>'+esc(x.jugadora||"Jugadora")+'</b></td>'+ks.map(([k])=>'<td>'+esc(r[k]??"—")+'/5</td>').join("")+'<td>'+(r.molestia==="si"?'<span class="pill pill-alerta">Sí · '+esc(r.zona||"Sin zona")+' · '+esc(r.intensidad||"—")+'/10</span>':'<span class="pill pill-abierta">No</span>')+'</td><td>'+esc(r.comentario||"—")+'</td></tr>'}).join("");
+ }else{
+  const vals=rs.map(x=>Number(x.respuestas?.rpe)).filter(Number.isFinite),avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null,total=rs.reduce((a,x)=>a+(Number(x.respuestas?.carga)||0),0);
+  stats='<div class="estadisticas-respuesta"><div class="mini-stat"><span>RPE promedio</span><strong>'+(avg===null?"—":avg.toFixed(1)+'/10')+'</strong></div><div class="mini-stat"><span>Carga acumulada</span><strong>'+total+' UA</strong></div><div class="mini-stat"><span>Duración promedio</span><strong>'+(rs.length?(rs.reduce((a,x)=>a+(Number(x.respuestas?.minutos)||0),0)/rs.length).toFixed(0)+" min":"—")+'</strong></div></div>';
+  rows=rs.map(x=>{const r=x.respuestas||{};return '<tr><td><b>'+esc(x.jugadora||"Jugadora")+'</b></td><td><span class="rpe-chip rpe-'+Math.min(10,Math.max(0,Number(r.rpe)||0))+'">'+esc(r.rpe)+'/10</span></td><td>'+esc(r.minutos)+' min</td><td>'+esc(r.tipoSesion||"—")+'</td><td><b>'+esc(r.carga??"—")+' UA</b></td><td>'+esc(r.comentario||"—")+'</td></tr>'}).join("");
+ }
+ const encabezado=p.tipo==="post_partido"?"<th>Jugadora</th><th>Sueño</th><th>Energía</th><th>Muscular</th><th>Estrés</th><th>Ánimo</th><th>Molestia</th><th>Observaciones</th>":"<th>Jugadora</th><th>RPE</th><th>Duración</th><th>Actividad</th><th>Carga</th><th>Observaciones</th>";
+ $("resultadoPeriodo").innerHTML=cards+stats+'<div class="panel"><div class="panel-cabecera"><div><h3>Respuestas individuales</h3><p>'+tipoNombre(p.tipo)+' · '+fmtFecha(p.fecha)+' · '+esc(p.categoria)+'</p></div><button class="btn btn-secundario" id="exportarPeriodo" type="button">Exportar período</button></div><div class="tabla-scroll"><table><thead><tr>'+encabezado+'</tr></thead><tbody>'+rows+'</tbody></table></div>'+(rs.length?"":'<div class="vacio">Todavía no hay respuestas para este período.</div>')+'</div><div class="panel"><h3>Participación</h3><p class="ayuda">Jugadoras que todavía no respondieron este período.</p><div class="faltantes-lista">'+(faltan.length?faltan.map(x=>'<span class="faltante-chip">'+esc(x.nombre)+'</span>').join(""):'<span class="pill pill-abierta">¡Respondieron todas!</span>')+'</div></div>';
+ $("exportarPeriodo").addEventListener("click",()=>exportarPeriodo(p,rs));
+}
+function exportarPeriodo(p,rs){
+ const rows=[["Jugadora","Categoria","Fecha","Encuesta","Respuestas"]];
+ rs.forEach(x=>rows.push([x.jugadora,p.categoria,p.fecha,tipoNombre(p.tipo),JSON.stringify(x.respuestas||{})]));
+ const csv="\uFEFF"+rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(";")).join("\n");
+ const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})),a=document.createElement("a");a.href=url;a.download="ADIUR_"+norm(p.categoria)+"_"+p.tipo+"_"+p.fecha+".csv";a.click();URL.revokeObjectURL(url)
+}
+function renderCT(){
+ const ps=periodos.filter(p=>categorias.includes(p.categoria)),abiertas=ps.filter(p=>p.estado==="abierta").length,totalRes=ps.reduce((a,p)=>a+respuestasDe(p.id).length,0);
+ $("resumenCT").innerHTML='<div class="resumen-card"><span>Períodos publicados</span><strong>'+ps.length+'</strong><small>En tus categorías habilitadas</small></div><div class="resumen-card"><span>Encuestas abiertas</span><strong>'+abiertas+'</strong><small>Recibiendo respuestas</small></div><div class="resumen-card"><span>Respuestas guardadas</span><strong>'+totalRes+'</strong><small>Conservadas por período</small></div>';
+ renderPublicaciones();if(ctTab==="archivo")renderArchivo();if(ctTab==="resultados"){poblarSelectorResultados();renderResultadoSeleccionado()}
+}
+function validarPerfil(){
+ if(!perfil)throw new Error("No se pudo identificar el perfil ADIUR.");rol=perfil.rol||"";
+ if(!["admin","coordinadora","cuerpo_tecnico","jugadora"].includes(rol))throw new Error("Tu perfil no tiene acceso a Encuestas.");
+ uid=auth.currentUser?.uid||"";nombre=perfil.nombre||perfil.usuario||"Usuario";jugadoraNombre=perfil.jugadora||perfil.nombre||"";
+ mostrarPerfil();poblarCategorias();
+ if(esJugadora()){$("vistaJugadora").classList.remove("oculto");$("vistaTecnico").classList.add("oculto");$("bloqueCategoria").classList.add("oculto");$("descripcionPagina").textContent="Completá las encuestas que el cuerpo técnico habilite para tu categoría. Cada respuesta se guarda de forma individual."}
+ else{$("vistaTecnico").classList.remove("oculto");$("vistaJugadora").classList.add("oculto");$("descripcionPagina").textContent="Administrá las publicaciones y consultá resultados por categoría y período.";$("nuevaFecha").value=fechaLocal();$("formPublicacion").addEventListener("submit",publicarPeriodo);$("selectorPeriodoResultados").addEventListener("change",renderResultadoSeleccionado);$("filtroTipoResultado").addEventListener("change",()=>{poblarSelectorResultados();renderResultadoSeleccionado()});iniciarPestanasCT()}
+}
 async function iniciar(){
  iniciarMenu();
- $("fechaWellness").value=fechaLocal();$("fechaRPE").value=fechaLocal();crearOpcionesRPE();
  try{
-  const authMod=await import("./ADIUR-auth.js?v=20261122c");
-  const fb=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-  auth=authMod.auth;db=authMod.db;modulosFirestore=fb;
-  const esperarPerfil=()=>new Promise((resolve,reject)=>{
-   if(window.ADIUR_PERMISOS){resolve(window.ADIUR_PERMISOS);return}
-   const timer=setTimeout(()=>reject(new Error("La validación de permisos está tardando. Recargá la página.")),12000);
-   window.addEventListener("adiur-permisos-listos",e=>{clearTimeout(timer);resolve(e.detail||window.ADIUR_PERMISOS)},{once:true});
-  });
-  perfil=await esperarPerfil();validarPerfil();
-  if(!esJugadora()) cargarJugadoras(fb.onSnapshot,fb.collection,db);
-  escucharRegistros(fb.onSnapshot,fb.collection,fb.query,fb.where,db);
-  setEstado("Conectado con ADIUR · Registros sincronizados en tiempo real.","ok");
+  const authMod=await import("./ADIUR-auth.js?v=20261122c");fb=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+  auth=authMod.auth;db=authMod.db;
+  const esperarPerfil=()=>new Promise((resolve,reject)=>{if(window.ADIUR_PERMISOS){resolve(window.ADIUR_PERMISOS);return}const timer=setTimeout(()=>reject(new Error("La validación de permisos está tardando. Recargá la página.")),12000);window.addEventListener("adiur-permisos-listos",e=>{clearTimeout(timer);resolve(e.detail||window.ADIUR_PERMISOS)},{once:true})});
+  perfil=await esperarPerfil();validarPerfil();if(!esJugadora())cargarPlantel();escucharDatos();
+  estado("Conectado con ADIUR · Publicaciones y respuestas sincronizadas.","ok");
   window.addEventListener("beforeunload",()=>unsubs.forEach(fn=>fn()));
- }catch(err){console.error(err);setEstado(err.message||"No se pudo iniciar el módulo de encuestas.","error")}
+ }catch(err){console.error(err);estado(err.message||"No se pudo iniciar el módulo de encuestas.","error")}
 }
 iniciar();
 })();
