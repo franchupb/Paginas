@@ -3,97 +3,90 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#111719">
+<meta name="theme-color" content="#ffffff">
 <title>Pizarra táctica | ADIUR Femenino</title>
 <style>
-:root{--orange:#f47721;--orange2:#ff9b5b;--ink:#111719;--panel:#1a2225;--panel2:#202a2e;--line:#303b40;--muted:#91a0a5;--white:#f4f7f7;--green:#26734a}
+:root{--naranja:#f47721;--naranja2:#dc5e0b;--negro:#171717;--gris:#f4f5f7;--texto:#747474;--borde:#e8e8e8;--verde:#dcebdc;--verde2:#cfe2d0}
 *{box-sizing:border-box}
-body{margin:0;background:#eef1f2;color:#20272a;font-family:Inter,Arial,Helvetica,sans-serif}
+body{margin:0;background:#f5f6f7;color:var(--negro);font-family:Arial,Helvetica,sans-serif}
 .contenedor{display:flex;min-height:calc(100vh - 84px)}
 #sidebar{flex:0 0 258px;min-width:0}
-.main{flex:1;min-width:0;width:auto;margin:0!important;padding:20px;background:#eef1f2}
-.pizarra-shell{width:100%;max-width:1800px;margin:auto}
-.intro{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin:0 0 16px}
-.kicker{display:flex;align-items:center;gap:8px;margin:0 0 8px;color:#b65315;font-size:10px;font-weight:900;letter-spacing:1.7px;text-transform:uppercase}
-.kicker:before{content:"";width:22px;height:2px;background:var(--orange)}
-.intro h2{margin:0;color:#171d20;font-size:clamp(23px,3vw,32px);font-weight:850;letter-spacing:-1.2px}
-.intro p{margin:7px 0 0;color:#738087;font-size:12px;line-height:1.5}
-.intro-tag{display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid #dce2e4;border-radius:8px;background:#fff;color:#66747a;font-size:10px;font-weight:800;white-space:nowrap}
-.live-dot{width:7px;height:7px;border-radius:50%;background:#32a36a;box-shadow:0 0 0 4px #32a36a18}
-.studio{overflow:hidden;border:1px solid #222d31;border-radius:14px;background:var(--ink);box-shadow:0 14px 38px #17212618}
-.studio-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 15px;border-bottom:1px solid #293438;background:#151d20}
-.studio-brand{display:flex;align-items:center;gap:10px;color:#f4f7f7}
-.brand-mark{display:grid;place-items:center;width:32px;height:32px;border:1px solid #60402d;border-radius:9px;background:linear-gradient(145deg,#ff9b5b,#e65d13);color:#fff;font-size:13px;font-weight:950;box-shadow:inset 0 1px #ffffff75}
-.brand-copy strong{display:block;font-size:11px;letter-spacing:.8px}
-.brand-copy small{display:block;margin-top:3px;color:#839197;font-size:9px;letter-spacing:1.1px}
-.head-actions,.control-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.btn,.icon-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:34px;padding:0 11px;border:1px solid #39464b;border-radius:7px;background:#202a2e;color:#dce4e6;font:700 10px inherit;font-size:10px;font-weight:800;cursor:pointer;transition:.16s}
-.btn:hover,.icon-btn:hover{border-color:#a75a2c;background:#293438}
-.btn.primary{border-color:var(--orange);background:var(--orange);color:#fff}
-.btn.primary:hover{background:#e56819}
-.btn.ghost{background:transparent}
+.main{flex:1;min-width:0;padding:20px 22px;background:#f5f6f7}
+.pizarra-shell{max-width:1800px;margin:auto}
+.intro{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin:0 0 15px}
+.kicker{display:flex;align-items:center;gap:8px;margin:0 0 7px;color:var(--naranja2);font-size:10px;font-weight:900;letter-spacing:1.5px}
+.kicker:before{content:"";width:20px;height:2px;background:var(--naranja)}
+.intro h2{margin:0;font-size:clamp(23px,2.8vw,31px);letter-spacing:-.8px}
+.intro p{margin:6px 0 0;color:#73777d;font-size:12px}
+.intro-tag{padding:9px 12px;border:1px solid var(--borde);border-radius:9px;background:#fff;color:#697078;font-size:10px;font-weight:800;white-space:nowrap}
+.studio{overflow:hidden;border:1px solid #e3e5e7;border-radius:15px;background:#fff;box-shadow:0 8px 28px #1717170c}
+.studio-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 15px;border-bottom:1px solid var(--borde);background:#fff}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--naranja);color:white;font-size:15px;font-weight:900;box-shadow:inset 0 1px #ffffff70}
+.brand strong{display:block;font-size:11px;letter-spacing:.8px}
+.brand small{display:block;margin-top:3px;color:#858990;font-size:9px;letter-spacing:.8px}
+.actions,.control-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.btn,.icon-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:34px;padding:0 11px;border:1px solid #e0e2e5;border-radius:8px;background:#fff;color:#333;font:700 10px Arial;cursor:pointer;transition:.15s}
+.btn:hover,.icon-btn:hover{border-color:#f3b58e;background:#fff9f5}
+.btn.primary{border-color:var(--naranja);background:var(--naranja);color:#fff}
+.btn.primary:hover{background:var(--naranja2)}
+.btn:disabled,.icon-btn:disabled{opacity:.35;cursor:not-allowed}
 .icon-btn{width:34px;padding:0;font-size:17px}
-.btn:disabled,.icon-btn:disabled{opacity:.32;cursor:not-allowed}
-.controlbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 14px;border-bottom:1px solid #293438;background:#1a2326}
+.controlbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--borde);background:#fbfbfc}
 .control-group{display:flex;align-items:center;gap:8px}
-.control-label{color:#819096;font-size:9px;font-weight:900;letter-spacing:1px}
-select{height:34px;min-width:110px;padding:0 28px 0 10px;border:1px solid #3a474c;border-radius:7px;outline:none;background:#202a2e;color:#f0f4f5;font-size:10px;font-weight:800}
-select:focus{border-color:var(--orange)}
-.control-separator{width:1px;height:24px;background:#344045}
+.control-label{color:#858990;font-size:9px;font-weight:900;letter-spacing:1px}
+select{height:34px;min-width:112px;padding:0 28px 0 10px;border:1px solid #dfe1e4;border-radius:8px;outline:none;background:#fff;color:#272727;font-size:10px;font-weight:800}
+select:focus{border-color:var(--naranja);box-shadow:0 0 0 3px #f4772118}
+.separator{width:1px;height:23px;background:#e4e5e7}
 .spacer{flex:1}
-.rival-strip{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid #293438;background:#202a2e}
+.rival-strip{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:9px 14px;border-bottom:1px solid var(--borde);background:#fff8f3}
 .rival-strip[hidden]{display:none}
-.rival-strip strong{color:#f2d4d5;font-size:10px}
-.rival-strip small{color:#8e9ba0;font-size:9px}
-.rival-strip select{min-width:105px}
-.workspace{display:grid;grid-template-columns:74px minmax(0,1fr);gap:0;min-height:0}
-.toolrail{display:flex;flex-direction:column;align-items:stretch;gap:5px;padding:12px 8px;border-right:1px solid #293438;background:#182124}
-.rail-label{margin:4px 0 6px;color:#738188;font-size:8px;font-weight:900;letter-spacing:1.2px;text-align:center}
-.tool{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:52px;padding:5px 2px;border:1px solid transparent;border-radius:7px;background:transparent;color:#9eacb1;cursor:pointer}
-.tool span{font-size:19px;line-height:1}
-.tool small{font-size:8px;font-weight:800}
-.tool:hover{background:#253034;color:#fff}
-.tool.active{border-color:#754326;background:#39291f;color:#ffad78;box-shadow:inset 2px 0 var(--orange)}
-.rail-divider{height:1px;margin:6px 2px;background:#303b40}
-.palette{display:grid;grid-template-columns:repeat(2,19px);justify-content:center;gap:9px;padding:4px 0}
-.swatch{width:19px;height:19px;border:2px solid #d8e0e2;border-radius:50%;box-shadow:0 0 0 1px #111719;cursor:pointer}
-.swatch.active{outline:2px solid var(--orange);outline-offset:2px}
-.width-control{display:flex;flex-direction:column;gap:6px;color:#819096;font-size:8px;font-weight:900;text-align:center}
-.width-control input{width:100%;accent-color:var(--orange)}
-.pitch-stage{display:flex;flex-direction:column;min-width:0;padding:13px;background:#111719}
-.pitch-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;color:#8d9ba0;font-size:9px}
-.pitch-meta strong{color:#e3e9ea;font-size:10px;letter-spacing:.5px}
+.rival-strip strong{color:#a33c3c;font-size:10px}
+.rival-strip small{color:#777;font-size:9px}
+.workspace{display:grid;grid-template-columns:65px minmax(0,1fr);min-height:0}
+.toolrail{display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:10px 7px;border-right:1px solid var(--borde);background:#fff}
+.rail-label{margin:3px 0 5px;color:#999;font-size:8px;font-weight:900;letter-spacing:1px;text-align:center}
+.tool{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:48px;padding:4px 2px;border:1px solid transparent;border-radius:8px;background:transparent;color:#73777d;cursor:pointer}
+.tool span{font-size:19px;line-height:1}.tool small{font-size:8px;font-weight:800}
+.tool:hover{background:#f7f7f7;color:#222}
+.tool.active{border-color:#ffd5bb;background:#fff1e7;color:#c6530b}
+.rail-divider{height:1px;margin:5px 2px;background:#eee}
+.palette{display:grid;grid-template-columns:repeat(2,17px);justify-content:center;gap:8px;padding:4px 0}
+.swatch{width:17px;height:17px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #c8cbd0;cursor:pointer}
+.swatch.active{outline:2px solid var(--naranja);outline-offset:2px}
+.width-control{display:flex;flex-direction:column;gap:5px;color:#858990;font-size:8px;font-weight:900;text-align:center}
+.width-control input{width:100%;accent-color:var(--naranja)}
+.pitch-stage{display:flex;flex-direction:column;min-width:0;padding:12px;background:#fff}
+.pitch-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;color:#777;font-size:9px}
+.pitch-meta strong{color:#282828;font-size:10px;letter-spacing:.6px}
 .pitch-meta span{display:flex;align-items:center;gap:6px}
-.pitch-wrap{display:flex;align-items:center;justify-content:center;min-width:0;min-height:360px;padding:7px;border:1px solid #303d42;border-radius:9px;background:#1a2428}
-.pitch{position:relative;width:100%;aspect-ratio:3/2;max-height:calc(100vh - 310px);min-height:300px;overflow:hidden;border:1px solid #78a58b55;background-color:var(--green);background-image:linear-gradient(90deg,#ffffff08 50%,transparent 50%);background-size:12.5% 100%;box-shadow:0 10px 30px #0006;touch-action:none}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#36a56c}
+.pitch-wrap{display:flex;align-items:center;justify-content:center;min-width:0;min-height:360px;padding:8px;border:1px solid #e4e8e4;border-radius:10px;background:#f3f5f3}
+.pitch{position:relative;width:100%;aspect-ratio:3/2;max-height:calc(100vh - 290px);min-height:300px;overflow:hidden;border:2px solid #3b4c40;border-radius:3px;background-color:var(--verde);background-image:linear-gradient(90deg,#ffffff22 50%,transparent 50%);background-size:12.5% 100%;box-shadow:0 5px 15px #1b2a1c18;touch-action:none}
 .field-svg,.drawing-canvas,#players{position:absolute;inset:0;width:100%;height:100%}
 .field-svg{pointer-events:none}.drawing-canvas{touch-action:none}#players{pointer-events:none}
-.player{position:absolute;z-index:3;display:grid;place-items:center;width:42px;height:42px;transform:translate(-50%,-50%);border:1px solid #ffe1cb;border-radius:50%;background:radial-gradient(circle at 32% 22%,#ffc59e 0,#ff914d 25%,#f47721 57%,#a63c08 100%);box-shadow:0 2px 0 #612a0d,0 6px 12px #07120d99,inset 0 1px 2px #fff9,inset 0 -4px 6px #7c2d0877;color:#fff;cursor:grab;touch-action:none;user-select:none;pointer-events:auto}
-.player:before{position:absolute;inset:4px;border:1px solid #ffffff65;border-radius:50%;content:"";pointer-events:none}
-.player-number{position:relative;z-index:1;font-size:13px;font-weight:950;text-shadow:0 1px 3px #55200a;font-variant-numeric:tabular-nums}
-.player.rival{border-color:#ffd6d8;background:radial-gradient(circle at 32% 22%,#ffb9bd 0,#e8757b 26%,#bd4248 58%,#76242a 100%);box-shadow:0 2px 0 #541d22,0 6px 12px #07120d99,inset 0 1px 2px #fff9,inset 0 -4px 6px #4c101577}
-.player.selected{outline:2px solid #ffe15a;outline-offset:4px;filter:drop-shadow(0 0 5px #ffe15a99);transform:translate(-50%,-50%) scale(1.08)}
-.player:active{cursor:grabbing}
-.pitch-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 2px 0;color:#819096;font-size:9px}
-.pitch-footer strong{color:#dbe4e6;font-weight:800}
-.status-led{display:inline-block;width:6px;height:6px;margin-right:6px;border-radius:50%;background:#48b77d;box-shadow:0 0 0 3px #48b77d20}
-.studio-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-top:1px solid #293438;background:#151d20;color:#718087;font-size:8px;font-weight:800;letter-spacing:.8px}
-.studio-foot .shortcuts{color:#7e8c91;font-weight:600;letter-spacing:0}
-body.immersive{overflow:hidden;background:#111719}
+.player{position:absolute;z-index:3;display:grid;place-items:center;width:43px;height:43px;transform:translate(-50%,-50%);border:1px solid #fff;border-radius:50%;background:radial-gradient(circle at 32% 23%,#fff0d9 0,#ffad70 23%,#f47721 57%,#b64b0b 100%);box-shadow:0 2px 0 #8f3b0b,0 5px 9px #20332255,inset 0 1px 3px #fff,inset 0 -4px 6px #8b330a55;color:#fff;cursor:grab;touch-action:none;user-select:none;pointer-events:auto}
+.player:before{position:absolute;inset:4px;border:1px solid #ffffff9c;border-radius:50%;content:"";pointer-events:none}
+.player-number{position:relative;z-index:1;font-size:13px;font-weight:900;text-shadow:0 1px 2px #702b0b}
+.player.rival{background:radial-gradient(circle at 32% 23%,#fff0f0 0,#ef9a9e 23%,#c94c55 57%,#85252d 100%);box-shadow:0 2px 0 #6c2026,0 5px 9px #20332255,inset 0 1px 3px #fff,inset 0 -4px 6px #661a2055}
+.player.selected{outline:2px solid #202020;outline-offset:4px;transform:translate(-50%,-50%) scale(1.08)}
+.pitch-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 2px 0;color:#777;font-size:9px}
+.pitch-footer strong{color:#222}
+.studio-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 14px;border-top:1px solid var(--borde);background:#fbfbfc;color:#888;font-size:8px;font-weight:800;letter-spacing:.7px}
+.studio-foot .shortcuts{font-weight:600;letter-spacing:0}
+body.immersive{overflow:hidden;background:#f5f6f7}
 body.immersive .barra-superior,body.immersive #sidebar,body.immersive .capa-sidebar,body.immersive .intro{display:none!important}
 body.immersive .contenedor{display:block;min-height:0}
-body.immersive .main{position:fixed;inset:0;z-index:9999;width:100vw;height:100dvh;overflow:auto;padding:8px!important;background:#111719}
+body.immersive .main{position:fixed;inset:0;z-index:9999;width:100vw;height:100dvh;overflow:auto;padding:8px!important;background:#f5f6f7}
 body.immersive .pizarra-shell{display:flex;flex-direction:column;width:100%;height:100%;max-width:none}
-body.immersive .studio{display:flex;flex:1;flex-direction:column;min-height:0;border-radius:8px}
-body.immersive .studio-head{flex:0 0 auto}
+body.immersive .studio{display:flex;flex:1;flex-direction:column;min-height:0}
 body.immersive .workspace{flex:1;min-height:0}
 body.immersive .pitch-stage{min-height:0}
 body.immersive .pitch-wrap{flex:1;min-height:0}
 body.immersive .pitch{width:100%;height:100%;min-height:0;max-height:none;aspect-ratio:auto}
-body.immersive .pitch-footer,body.immersive .studio-foot{flex:0 0 auto}
-@media(max-width:900px){.main{padding:13px}.intro{align-items:flex-start}.workspace{grid-template-columns:62px minmax(0,1fr)}.pitch-wrap{min-height:280px}.pitch{min-height:250px;max-height:none}.player{width:35px;height:35px}}
-@media(max-width:620px){.main{padding:9px}.intro{margin-bottom:10px}.intro-tag{display:none}.studio{border-radius:10px}.studio-head{align-items:flex-start;padding:10px}.head-actions{justify-content:flex-end}.head-actions .btn{min-height:31px;padding:0 8px;font-size:9px}.brand-copy small{font-size:7px}.controlbar{gap:8px;padding:9px}.control-group{flex:1;min-width:0}.control-group select{flex:1;min-width:0;width:100%}.control-label{font-size:8px}.control-separator{display:none}.control-actions{width:100%;justify-content:space-between}.workspace{grid-template-columns:1fr}.toolrail{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;padding:7px;border-right:0;border-bottom:1px solid #293438}.rail-label{grid-column:1/-1;margin:2px}.tool{min-height:43px}.tool span{font-size:17px}.rail-divider{display:none}.palette{grid-column:1/-1;display:flex;justify-content:center;gap:14px;padding:7px}.width-control{grid-column:1/-1;flex-direction:row;align-items:center;gap:12px;padding:0 8px}.width-control input{flex:1}.pitch-stage{padding:8px}.pitch-wrap{min-height:0;padding:3px}.pitch{min-height:0;aspect-ratio:3/2}.player{width:28px;height:28px}.player-number{font-size:10px}.pitch-footer{font-size:8px}.studio-foot{font-size:7px}.shortcuts{display:none!important}body.immersive .workspace{grid-template-rows:auto minmax(0,1fr)}body.immersive .pitch-stage{min-height:0}body.immersive .pitch-wrap{min-height:0}body.immersive .pitch{height:auto;aspect-ratio:3/2}}
-@media(max-width:380px){.brand-copy strong{font-size:9px}.head-actions .btn{padding:0 6px}.icon-btn{width:30px}.player{width:25px;height:25px}.player-number{font-size:9px}}
+@media(max-width:900px){.main{padding:13px}.workspace{grid-template-columns:58px minmax(0,1fr)}.pitch-wrap{min-height:280px}.pitch{min-height:250px;max-height:none}.player{width:35px;height:35px}}
+@media(max-width:620px){.main{padding:9px}.intro{margin-bottom:10px}.intro-tag{display:none}.studio{border-radius:10px}.studio-head{align-items:flex-start;padding:10px}.actions{justify-content:flex-end}.actions .btn{min-height:31px;padding:0 8px;font-size:9px}.brand small{font-size:7px}.controlbar{gap:8px;padding:9px}.control-group{flex:1;min-width:0}.control-group select{flex:1;min-width:0;width:100%}.control-label{font-size:8px}.separator{display:none}.control-actions{width:100%;justify-content:space-between}.workspace{grid-template-columns:1fr}.toolrail{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;padding:7px;border-right:0;border-bottom:1px solid var(--borde)}.rail-label{grid-column:1/-1;margin:2px}.tool{min-height:42px}.tool span{font-size:17px}.rail-divider{display:none}.palette{grid-column:1/-1;display:flex;justify-content:center;gap:14px;padding:7px}.width-control{grid-column:1/-1;flex-direction:row;align-items:center;gap:12px;padding:0 8px}.width-control input{flex:1}.pitch-stage{padding:8px}.pitch-wrap{min-height:0;padding:3px}.pitch{min-height:0;aspect-ratio:3/2}.player{width:28px;height:28px}.player-number{font-size:10px}.pitch-footer{font-size:8px}.studio-foot{font-size:7px}.shortcuts{display:none!important}body.immersive .pitch{height:auto;aspect-ratio:3/2}}
+@media(max-width:380px){.brand strong{font-size:9px}.actions .btn{padding:0 6px}.icon-btn{width:30px}.player{width:25px;height:25px}.player-number{font-size:9px}}
 @media print{.barra-superior,#sidebar,.capa-sidebar,.intro,.studio-head,.controlbar,.toolrail,.rival-strip,.studio-foot{display:none!important}.main{margin:0;padding:0!important;background:#fff}.studio{border:0;box-shadow:none}.pitch-stage{padding:0}.pitch-wrap{padding:0;border:0}.pitch{width:100%;max-height:none;print-color-adjust:exact;-webkit-print-color-adjust:exact}}
 </style>
 </head>
@@ -109,136 +102,121 @@ body.immersive .pitch-footer,body.immersive .studio-foot{flex:0 0 auto}
 <aside class="sidebar" id="sidebar" aria-label="Navegación principal"></aside>
 <main class="main">
 <div class="pizarra-shell">
-<section class="intro">
-<div><div class="kicker">ADIUR FEMENINO · ÁREA DE COMPETENCIA</div><h2>Pizarra táctica</h2><p>Diseñá movimientos, organizá estructuras y visualizá cada fase del juego.</p></div>
-<div class="intro-tag"><span class="live-dot"></span> ESPACIO DE TRABAJO TÁCTICO</div>
-</section>
-<section class="studio" aria-label="Estudio de pizarra táctica">
+<section class="intro"><div><div class="kicker">ADIUR FEMENINO · COMPETENCIA</div><h2>Pizarra táctica</h2><p>Diseñá movimientos, organizá estructuras y visualizá cada fase del juego.</p></div><div class="intro-tag">● ESPACIO DE TRABAJO TÁCTICO</div></section>
+<section class="studio" aria-label="Pizarra táctica">
 <header class="studio-head">
-<div class="studio-brand"><div class="brand-mark">A</div><div class="brand-copy"><strong>TACTICAL STUDIO</strong><small>ADIUR FEMENINO · FIRST TEAM</small></div></div>
-<div class="head-actions">
-<button class="btn ghost" id="saveBoard" type="button" title="Guardar esta pizarra en este dispositivo">▣ Guardar</button>
-<button class="btn ghost" id="loadBoard" type="button" title="Recuperar la última pizarra guardada">↻ Cargar</button>
-<button class="btn ghost" id="exportBoard" type="button" title="Exportar cancha como imagen">⇩ Imagen</button>
+<div class="brand"><div class="brand-mark">A</div><div><strong>ADIUR · TACTICAL BOARD</strong><small>ANÁLISIS Y PLANIFICACIÓN DE JUEGO</small></div></div>
+<div class="actions">
+<button class="btn" id="saveBoard" type="button" title="Guardar en este dispositivo">▣ Guardar</button>
+<button class="btn" id="loadBoard" type="button" title="Cargar última pizarra">↻ Cargar</button>
+<button class="btn" id="exportBoard" type="button" title="Exportar como imagen">⇩ Imagen</button>
 <button class="btn primary" id="toggleImmersive" type="button" aria-pressed="false">⛶ Inmersivo</button>
 </div>
 </header>
 <div class="controlbar">
 <div class="control-group"><span class="control-label">ADIUR</span><select id="formationOwn" aria-label="Formación ADIUR"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select></div>
-<div class="control-separator"></div>
+<div class="separator"></div>
 <div class="control-actions">
 <button class="icon-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button>
 <button class="icon-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button>
 <button class="btn" id="resetPositions" type="button">↺ Reubicar 11</button>
-<button class="btn" id="addRival" type="button">＋ Rival</button>
+<button class="btn" id="addRival" type="button">＋ Agregar rival</button>
 <button class="icon-btn" id="clearDrawings" type="button" title="Borrar trazos" aria-label="Borrar trazos">⌫</button>
+</div><div class="spacer"></div>
 </div>
-</div>
-<div class="rival-strip" id="rivalPanel" hidden>
-<strong>RIVAL</strong><small>Configurá su estructura y sumá sus 11 posiciones a la cancha.</small>
-<select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select>
-<button class="btn primary" id="confirmRival" type="button">Incorporar equipo</button>
-<button class="btn" id="removeRival" type="button">Quitar rival</button>
-</div>
+<div class="rival-strip" id="rivalPanel" hidden><strong>EQUIPO RIVAL</strong><small>Configurá su formación y agregá o quitá sus 11 fichas.</small><select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select><button class="btn primary" id="confirmRival" type="button">Incorporar / actualizar</button><button class="btn" id="removeRival" type="button">Quitar rival</button></div>
 <div class="workspace">
-<aside class="toolrail" aria-label="Herramientas de dibujo">
+<aside class="toolrail" aria-label="Herramientas">
 <div class="rail-label">HERRAMIENTAS</div>
 <button class="tool active" data-tool="select" type="button" title="Mover fichas"><span>↖</span><small>Mover</small></button>
 <button class="tool" data-tool="line" type="button" title="Línea"><span>／</span><small>Línea</small></button>
 <button class="tool" data-tool="arrow" type="button" title="Flecha"><span>➜</span><small>Flecha</small></button>
 <button class="tool" data-tool="dash" type="button" title="Línea discontinua"><span>┄</span><small>Trazo</small></button>
 <button class="tool" data-tool="zone" type="button" title="Zona"><span>◯</span><small>Zona</small></button>
-<button class="tool" data-tool="free" type="button" title="Lápiz libre"><span>✎</span><small>Lápiz</small></button>
+<button class="tool" data-tool="free" type="button" title="Lápiz"><span>✎</span><small>Lápiz</small></button>
 <div class="rail-divider"></div><div class="rail-label">COLOR</div>
 <div class="palette">
-<button class="swatch active" data-color="#ffffff" style="background:#fff" aria-label="Blanco" type="button"></button>
-<button class="swatch" data-color="#f47721" style="background:#f47721" aria-label="Naranja" type="button"></button>
-<button class="swatch" data-color="#ffe15a" style="background:#ffe15a" aria-label="Amarillo" type="button"></button>
-<button class="swatch" data-color="#e94b4b" style="background:#e94b4b" aria-label="Rojo" type="button"></button>
-<button class="swatch" data-color="#55c8ff" style="background:#55c8ff" aria-label="Celeste" type="button"></button>
-<button class="swatch" data-color="#171717" style="background:#171717" aria-label="Negro" type="button"></button>
+<button class="swatch active" data-color="#ffffff" style="background:#fff" aria-label="Blanco" type="button"></button><button class="swatch" data-color="#f47721" style="background:#f47721" aria-label="Naranja" type="button"></button><button class="swatch" data-color="#ffe15a" style="background:#ffe15a" aria-label="Amarillo" type="button"></button><button class="swatch" data-color="#e94b4b" style="background:#e94b4b" aria-label="Rojo" type="button"></button><button class="swatch" data-color="#55aee8" style="background:#55aee8" aria-label="Celeste" type="button"></button><button class="swatch" data-color="#171717" style="background:#171717" aria-label="Negro" type="button"></button>
 </div>
 <div class="rail-divider"></div><label class="width-control" for="lineWidth"><span>GROSOR</span><input id="lineWidth" type="range" min="2" max="10" value="4"></label>
 </aside>
 <section class="pitch-stage">
-<div class="pitch-meta"><strong>CAMPO DE JUEGO</strong><span><i class="status-led"></i><span id="status">11 posiciones iniciales listas</span></span></div>
+<div class="pitch-meta"><strong>CAMPO DE JUEGO</strong><span><i class="status-dot"></i><span id="status">11 posiciones iniciales listas</span></span></div>
 <div class="pitch-wrap"><div class="pitch" id="pitch">
-<svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg>
-<canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div>
+<svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg><canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div>
 </div></div>
-<div class="pitch-footer"><span><strong id="playerCount">11</strong> posiciones en cancha</span><span>Arrastrá las fichas para ajustar la estructura</span></div>
+<div class="pitch-footer"><span><strong id="playerCount">11</strong> fichas en cancha</span><span>Arrastrá las fichas para ajustar la estructura</span></div>
 </section>
 </div>
-<footer class="studio-foot"><span>ADIUR FEMENINO · TACTICAL BOARD</span><span class="shortcuts">Atajos: Ctrl + Z deshacer · Ctrl + Y rehacer · Esc salir de inmersivo</span><span id="saveState">SIN CAMBIOS GUARDADOS</span></footer>
+<footer class="studio-foot"><span>ADIUR FEMENINO · PIZARRA TÁCTICA</span><span class="shortcuts">Ctrl + Z deshacer · Ctrl + Y rehacer · Esc salir</span><span id="saveState">CAMBIOS SIN GUARDAR</span></footer>
 </section>
 </div>
 </main>
 </div>
 <script>
-(()=>{
+(function(){
 "use strict";
-const $=id=>document.getElementById(id);
-const savedUser=localStorage.getItem("usuarioADIUR");
+var $=function(id){return document.getElementById(id);};
+var savedUser=localStorage.getItem("usuarioADIUR");
 if(!savedUser){location.href="ADIUR-Loing.html";return;}
-const role=localStorage.getItem("rolADIUR")||"";
-if(!["admin","coordinadora","cuerpo_tecnico","jugadora"].includes(role)){location.href="ADIUR-Pagina Principal.html";return;}
-const pitch=$("pitch"),canvas=$("draw"),ctx=canvas.getContext("2d");
-const formations={
+var role=localStorage.getItem("rolADIUR")||"";
+if(["admin","coordinadora","cuerpo_tecnico","jugadora"].indexOf(role)===-1){location.href="ADIUR-Pagina Principal.html";return;}
+var userName=localStorage.getItem("nombreUsuarioADIUR")||savedUser;
+$("nombreUsuario").textContent=userName;
+$("avatarUsuario").textContent=(userName.trim().charAt(0)||"U").toUpperCase();
+$("rolUsuario").textContent=role==="admin"?"Administración":role==="coordinadora"?"Coordinación":role==="cuerpo_tecnico"?"Cuerpo técnico":"Jugadora";
+var pitch=$("pitch"),canvas=$("draw"),ctx=canvas.getContext("2d");
+var formations={
 "4-3-3":[[.10,.50],[.29,.17],[.29,.39],[.29,.61],[.29,.83],[.51,.28],[.51,.50],[.51,.72],[.76,.17],[.83,.50],[.76,.83]],
 "4-4-2":[[.10,.50],[.29,.17],[.29,.39],[.29,.61],[.29,.83],[.52,.17],[.52,.39],[.52,.61],[.52,.83],[.80,.36],[.80,.64]],
 "4-2-3-1":[[.10,.50],[.29,.17],[.29,.39],[.29,.61],[.29,.83],[.47,.38],[.47,.62],[.67,.17],[.67,.50],[.67,.83],[.84,.50]],
 "3-5-2":[[.10,.50],[.29,.25],[.29,.50],[.29,.75],[.51,.12],[.51,.31],[.51,.50],[.51,.69],[.51,.88],[.80,.36],[.80,.64]],
 "5-3-2":[[.10,.50],[.27,.12],[.27,.31],[.27,.50],[.27,.69],[.27,.88],[.54,.28],[.54,.50],[.54,.72],[.82,.36],[.82,.64]]
 };
-let players=formations["4-3-3"].map((p,i)=>({id:"own-"+(i+1),team:"own",number:String(i+1),x:p[0],y:p[1]}));
-let drawings=[],tool="select",color="#ffffff",lineWidth=4,selected=null,drawing=false,start=null,points=[],history=[],future=[];
-const clone=v=>JSON.parse(JSON.stringify(v));
-const status=t=>{$("status").textContent=t;$("saveState").textContent="CAMBIOS SIN GUARDAR";};
-function snapshot(){history.push({players:clone(players),drawings:clone(drawings)});if(history.length>60)history.shift();future=[];syncHistory();}
+var players=formations["4-3-3"].map(function(p,i){return{id:"own-"+(i+1),team:"own",number:String(i+1),x:p[0],y:p[1]};});
+var drawings=[],tool="select",color="#ffffff",lineWidth=4,selected=null,drawing=false,start=null,points=[],history=[],future=[];
+var clone=function(v){return JSON.parse(JSON.stringify(v));};
+function status(t){$("status").textContent=t;$("saveState").textContent="CAMBIOS SIN GUARDAR";}
 function syncHistory(){$("undo").disabled=!history.length;$("redo").disabled=!future.length;}
+function snapshot(){history.push({players:clone(players),drawings:clone(drawings)});if(history.length>80)history.shift();future=[];syncHistory();}
 function syncCount(){$("playerCount").textContent=players.length;}
-function setField(){$("fieldSvg").innerHTML='<rect width="900" height="600" fill="none" stroke="#ffffff" stroke-opacity=".9" stroke-width="4"/><g fill="none" stroke="#ffffff" stroke-opacity=".9" stroke-width="4"><line x1="450" y1="0" x2="450" y2="600"/><circle cx="450" cy="300" r="78"/><circle cx="450" cy="300" r="5" fill="#fff"/><rect x="0" y="155" width="135" height="290"/><rect x="0" y="225" width="55" height="150"/><rect x="765" y="155" width="135" height="290"/><rect x="845" y="225" width="55" height="150"/><path d="M135 245 A70 70 0 0 1 135 355 M765 245 A70 70 0 0 0 765 355"/></g>';}
-function coords(e){const r=pitch.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};}
-function drawOne(d,g=ctx,w=pitch.clientWidth,h=pitch.clientHeight){
-const x=d.x*w,y=d.y*h,X=d.X*w,Y=d.Y*h;g.save();g.strokeStyle=d.color;g.fillStyle=d.color;g.lineWidth=d.width;g.lineCap="round";g.lineJoin="round";g.setLineDash(d.type==="dash"?[10,8]:[]);g.beginPath();
-if(d.type==="free"){(d.points||[]).forEach((p,i)=>i?g.lineTo(p.x*w,p.y*h):g.moveTo(p.x*w,p.y*h));}
-else if(d.type==="zone"){g.ellipse((x+X)/2,(y+Y)/2,Math.max(2,Math.abs(X-x)/2),Math.max(2,Math.abs(Y-y)/2),0,0,Math.PI*2);}
-else{g.moveTo(x,y);g.lineTo(X,Y);if(d.type==="arrow"){const a=Math.atan2(Y-y,X-x),len=16+d.width;g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a-.5),Y-len*Math.sin(a-.5));g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a+.5),Y-len*Math.sin(a+.5));}}
-g.stroke();g.restore();
-}
-function paint(){const r=pitch.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(!r.width||!r.height)return;ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.setTransform(dpr,0,0,dpr,0,0);drawings.forEach(d=>drawOne(d));if(drawing&&start&&points.length)drawOne({type:tool,x:start.x,y:start.y,X:points[points.length-1].x,Y:points[points.length-1].y,points,color,width:lineWidth});}
-function renderPlayers(){const host=$("players");host.replaceChildren();players.forEach(p=>{const el=document.createElement("button");el.type="button";el.className="player "+p.team+(p.id===selected?" selected":"");el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";el.setAttribute("aria-label",(p.team==="own"?"ADIUR":"Rival")+" · jugadora "+p.number);el.title=(p.team==="own"?"ADIUR":"Rival")+" · "+p.number;const n=document.createElement("span");n.className="player-number";n.textContent=p.number;el.append(n);el.addEventListener("pointerdown",e=>{if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;renderPlayers();const move=v=>{const q=coords(v);p.x=Math.max(.025,Math.min(.975,q.x));p.y=Math.max(.035,Math.min(.965,q.y));el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";};const end=()=>{window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);renderPlayers();status("Posición actualizada");};window.addEventListener("pointermove",move);window.addEventListener("pointerup",end,{once:true});});host.append(el);});syncCount();}
-function resize(){const r=pitch.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(!r.width||!r.height)return;canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);canvas.style.width=r.width+"px";canvas.style.height=r.height+"px";paint();}
-function setFormation(team,formation){const group=players.filter(p=>p.team===team);formations[formation].forEach((q,i)=>{if(group[i]){group[i].x=team==="rival"?1-q[0]:q[0];group[i].y=q[1];}});}
+function setField(){$("fieldSvg").innerHTML='<rect x="2" y="2" width="896" height="596" fill="none" stroke="#344b39" stroke-width="4"/><g fill="none" stroke="#344b39" stroke-width="4"><line x1="450" y1="2" x2="450" y2="598"/><circle cx="450" cy="300" r="78"/><circle cx="450" cy="300" r="4" fill="#344b39"/><rect x="2" y="155" width="135" height="290"/><rect x="2" y="225" width="55" height="150"/><rect x="763" y="155" width="135" height="290"/><rect x="843" y="225" width="55" height="150"/><path d="M137 245 A70 70 0 0 1 137 355 M763 245 A70 70 0 0 0 763 355"/></g>';}
+function coords(e){var r=pitch.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};}
+function drawOne(d,g,w,h){var x=d.x*w,y=d.y*h,X=d.X*w,Y=d.Y*h;g.save();g.strokeStyle=d.color;g.fillStyle=d.color;g.lineWidth=d.width;g.lineCap="round";g.lineJoin="round";g.setLineDash(d.type==="dash"?[10,8]:[]);g.beginPath();if(d.type==="free"){(d.points||[]).forEach(function(p,i){if(i)g.lineTo(p.x*w,p.y*h);else g.moveTo(p.x*w,p.y*h);});}else if(d.type==="zone"){g.ellipse((x+X)/2,(y+Y)/2,Math.max(2,Math.abs(X-x)/2),Math.max(2,Math.abs(Y-y)/2),0,0,Math.PI*2);}else{g.moveTo(x,y);g.lineTo(X,Y);if(d.type==="arrow"){var a=Math.atan2(Y-y,X-x),len=16+d.width;g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a-.5),Y-len*Math.sin(a-.5));g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a+.5),Y-len*Math.sin(a+.5));}}g.stroke();g.restore();}
+function paint(){var r=pitch.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(!r.width||!r.height)return;ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.setTransform(dpr,0,0,dpr,0,0);drawings.forEach(function(d){drawOne(d,ctx,r.width,r.height);});if(drawing&&start&&points.length)drawOne({type:tool,x:start.x,y:start.y,X:points[points.length-1].x,Y:points[points.length-1].y,points:points,color:color,width:lineWidth},ctx,r.width,r.height);}
+function renderPlayers(){var host=$("players");host.replaceChildren();players.forEach(function(p){var el=document.createElement("button");el.type="button";el.className="player "+p.team+(p.id===selected?" selected":"");el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";el.setAttribute("aria-label",(p.team==="own"?"ADIUR":"Rival")+" · ficha "+p.number);el.title=(p.team==="own"?"ADIUR":"Rival")+" · "+p.number;var n=document.createElement("span");n.className="player-number";n.textContent=p.number;el.append(n);el.addEventListener("pointerdown",function(e){if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;renderPlayers();var move=function(v){var q=coords(v);p.x=Math.max(.025,Math.min(.975,q.x));p.y=Math.max(.035,Math.min(.965,q.y));el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";};var end=function(){window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);renderPlayers();status("Posición actualizada");};window.addEventListener("pointermove",move);window.addEventListener("pointerup",end,{once:true});});host.append(el);});syncCount();}
+function resize(){var r=pitch.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(!r.width||!r.height)return;canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);canvas.style.width=r.width+"px";canvas.style.height=r.height+"px";paint();}
+function setFormation(team,formation){var group=players.filter(function(p){return p.team===team;});formations[formation].forEach(function(q,i){if(group[i]){group[i].x=team==="rival"?1-q[0]:q[0];group[i].y=q[1];}});}
 function updateOwn(){snapshot();setFormation("own",$("formationOwn").value);renderPlayers();paint();status("Formación ADIUR "+$("formationOwn").value+" aplicada");}
-function addRival(){snapshot();players=players.filter(p=>p.team!=="rival");const formation=$("formationRival").value;formations[formation].forEach((q,i)=>players.push({id:"rival-"+(i+1),team:"rival",number:String(i+1),x:1-q[0],y:q[1]}));$("rivalPanel").hidden=false;$("addRival").hidden=true;renderPlayers();paint();status("Equipo rival incorporado · 11 posiciones");}
+function showRival(){ $("rivalPanel").hidden=false;$("addRival").hidden=true;}
+function addRival(){snapshot();players=players.filter(function(p){return p.team!=="rival";});var formation=$("formationRival").value;formations[formation].forEach(function(q,i){players.push({id:"rival-"+(i+1),team:"rival",number:String(i+1),x:1-q[0],y:q[1]});});showRival();renderPlayers();paint();status("Equipo rival incorporado · 11 fichas");}
 $("formationOwn").addEventListener("change",updateOwn);
-$("addRival").addEventListener("click",()=>{$("rivalPanel").hidden=false;$("addRival").hidden=true;});
+$("addRival").addEventListener("click",showRival);
 $("confirmRival").addEventListener("click",addRival);
-$("removeRival").addEventListener("click",()=>{snapshot();players=players.filter(p=>p.team!=="rival");$("rivalPanel").hidden=true;$("addRival").hidden=false;renderPlayers();paint();status("Equipo rival quitado");});
-$("resetPositions").addEventListener("click",()=>{snapshot();players=players.filter(p=>p.team==="own");setFormation("own",$("formationOwn").value);if(!$("rivalPanel").hidden){const f=$("formationRival").value;formations[f].forEach((q,i)=>players.push({id:"rival-"+(i+1),team:"rival",number:String(i+1),x:1-q[0],y:q[1]}));}selected=null;renderPlayers();paint();status("Posiciones reubicadas según las formaciones seleccionadas");});
-document.querySelectorAll("[data-tool]").forEach(b=>b.addEventListener("click",()=>{tool=b.dataset.tool;document.querySelectorAll("[data-tool]").forEach(x=>x.classList.toggle("active",x===b));status("Herramienta: "+b.querySelector("small").textContent);}));
-document.querySelectorAll("[data-color]").forEach(b=>b.addEventListener("click",()=>{color=b.dataset.color;document.querySelectorAll("[data-color]").forEach(x=>x.classList.toggle("active",x===b));}));
-$("lineWidth").addEventListener("input",e=>lineWidth=Number(e.target.value));
-canvas.addEventListener("pointerdown",e=>{if(tool==="select")return;e.preventDefault();drawing=true;start=coords(e);points=[start];canvas.setPointerCapture(e.pointerId);});
-canvas.addEventListener("pointermove",e=>{if(!drawing)return;const q=coords(e);if(tool==="free")points.push(q);else points=[start,q];paint();});
-canvas.addEventListener("pointerup",e=>{if(!drawing)return;drawing=false;const end=coords(e);if(Math.hypot(end.x-start.x,end.y-start.y)<.004&&tool!=="free"){paint();return;}snapshot();drawings.push(tool==="free"?{type:"free",points:clone(points),x:start.x,y:start.y,X:end.x,Y:end.y,color,width:lineWidth}:{type:tool,x:start.x,y:start.y,X:end.x,Y:end.y,color,width:lineWidth});points=[];paint();status("Movimiento o trazo agregado");});
-canvas.addEventListener("pointercancel",()=>{drawing=false;points=[];paint();});
-$("undo").addEventListener("click",()=>{if(!history.length)return;future.push({players:clone(players),drawings:clone(drawings)});const s=history.pop();players=s.players;drawings=s.drawings;renderPlayers();paint();syncHistory();status("Último cambio deshecho");});
-$("redo").addEventListener("click",()=>{if(!future.length)return;history.push({players:clone(players),drawings:clone(drawings)});const s=future.pop();players=s.players;drawings=s.drawings;renderPlayers();paint();syncHistory();status("Cambio recuperado");});
-$("clearDrawings").addEventListener("click",()=>{if(!drawings.length)return;snapshot();drawings=[];paint();status("Trazos eliminados");});
-function state(){return{players,drawings,formationOwn:$("formationOwn").value,formationRival:$("formationRival").value,rivalVisible:!$("rivalPanel").hidden};}
-$("saveBoard").addEventListener("click",()=>{try{localStorage.setItem("adiurPizarraTacticaV2",JSON.stringify(state()));$("saveState").textContent="GUARDADO EN ESTE DISPOSITIVO";status("Pizarra guardada en este dispositivo");}catch(e){status("No se pudo guardar la pizarra");}});
-$("loadBoard").addEventListener("click",()=>{try{const raw=localStorage.getItem("adiurPizarraTacticaV2");if(!raw){status("Todavía no hay una pizarra guardada");return;}const s=JSON.parse(raw);if(!Array.isArray(s.players)||!Array.isArray(s.drawings))throw Error("invalid");snapshot();players=s.players;drawings=s.drawings;$("formationOwn").value=s.formationOwn||"4-3-3";$("formationRival").value=s.formationRival||"4-3-3";$("rivalPanel").hidden=!s.rivalVisible;$("addRival").hidden=!!s.rivalVisible;renderPlayers();paint();status("Pizarra guardada recuperada");}catch(e){status("No se pudo recuperar la pizarra guardada");}});
-$("exportBoard").addEventListener("click",()=>{const w=1200,h=800,out=document.createElement("canvas");out.width=w;out.height=h;const g=out.getContext("2d");g.fillStyle="#26734a";g.fillRect(0,0,w,h);g.strokeStyle="#fff";g.lineWidth=5;g.strokeRect(10,10,w-20,h-20);g.beginPath();g.moveTo(w/2,10);g.lineTo(w/2,h-10);g.stroke();g.beginPath();g.arc(w/2,h/2,105,0,Math.PI*2);g.stroke();g.strokeRect(10,210,180,380);g.strokeRect(10,295,75,210);g.strokeRect(w-190,210,180,380);g.strokeRect(w-85,295,75,210);drawings.forEach(d=>drawOne(d,g,w,h));players.forEach(p=>{const x=p.x*w,y=p.y*h;g.save();g.fillStyle=p.team==="own"?"#f47721":"#bd4248";g.strokeStyle="#fff";g.lineWidth=4;g.beginPath();g.arc(x,y,27,0,Math.PI*2);g.fill();g.stroke();g.fillStyle="#fff";g.font="bold 24px Arial";g.textAlign="center";g.textBaseline="middle";g.fillText(p.number,x,y);g.restore();});const a=document.createElement("a");a.download="ADIUR-pizarra-tactica.png";a.href=out.toDataURL("image/png");a.click();status("Imagen de la pizarra exportada");});
-const immersive=$("toggleImmersive");
-function syncImmersive(){const on=document.body.classList.contains("immersive");immersive.textContent=on?"⤢ Salir":"⛶ Inmersivo";immersive.setAttribute("aria-pressed",String(on));}
-immersive.addEventListener("click",async()=>{const on=document.body.classList.contains("immersive");if(on){document.body.classList.remove("immersive");if(document.fullscreenElement&&document.exitFullscreen)try{await document.exitFullscreen();}catch(e){}}else{document.body.classList.add("immersive");if(document.documentElement.requestFullscreen)try{await document.documentElement.requestFullscreen();}catch(e){}}syncImmersive();setTimeout(resize,100);});
-document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement&&document.body.classList.contains("immersive"))document.body.classList.remove("immersive");syncImmersive();setTimeout(resize,100);});
-document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();$("undo").click();}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();$("redo").click();}else if(e.key==="Escape"&&document.body.classList.contains("immersive")){document.body.classList.remove("immersive");syncImmersive();setTimeout(resize,100);}});
-setField();renderPlayers();syncHistory();new ResizeObserver(resize).observe(pitch);window.addEventListener("resize",resize);syncImmersive();requestAnimationFrame(resize);
+$("removeRival").addEventListener("click",function(){snapshot();players=players.filter(function(p){return p.team!=="rival";});$("rivalPanel").hidden=true;$("addRival").hidden=false;renderPlayers();paint();status("Equipo rival quitado");});
+$("resetPositions").addEventListener("click",function(){snapshot();players=players.filter(function(p){return p.team==="own";});setFormation("own",$("formationOwn").value);if(!$("rivalPanel").hidden){formations[$("formationRival").value].forEach(function(q,i){players.push({id:"rival-"+(i+1),team:"rival",number:String(i+1),x:1-q[0],y:q[1]});});}selected=null;renderPlayers();paint();status("Posiciones reubicadas según las formaciones seleccionadas");});
+document.querySelectorAll("[data-tool]").forEach(function(b){b.addEventListener("click",function(){tool=b.dataset.tool;document.querySelectorAll("[data-tool]").forEach(function(x){x.classList.toggle("active",x===b);});status("Herramienta: "+b.querySelector("small").textContent);});});
+document.querySelectorAll("[data-color]").forEach(function(b){b.addEventListener("click",function(){color=b.dataset.color;document.querySelectorAll("[data-color]").forEach(function(x){x.classList.toggle("active",x===b);});});});
+$("lineWidth").addEventListener("input",function(e){lineWidth=Number(e.target.value);});
+canvas.addEventListener("pointerdown",function(e){if(tool==="select")return;e.preventDefault();drawing=true;start=coords(e);points=[start];canvas.setPointerCapture(e.pointerId);});
+canvas.addEventListener("pointermove",function(e){if(!drawing)return;var q=coords(e);if(tool==="free")points.push(q);else points=[start,q];paint();});
+canvas.addEventListener("pointerup",function(e){if(!drawing)return;drawing=false;var end=coords(e);if(Math.hypot(end.x-start.x,end.y-start.y)<.004&&tool!=="free"){paint();return;}snapshot();drawings.push(tool==="free"?{type:"free",points:clone(points),x:start.x,y:start.y,X:end.x,Y:end.y,color:color,width:lineWidth}:{type:tool,x:start.x,y:start.y,X:end.x,Y:end.y,color:color,width:lineWidth});points=[];paint();status("Trazo agregado");});
+canvas.addEventListener("pointercancel",function(){drawing=false;points=[];paint();});
+$("undo").addEventListener("click",function(){if(!history.length)return;future.push({players:clone(players),drawings:clone(drawings)});var s=history.pop();players=s.players;drawings=s.drawings;renderPlayers();paint();syncHistory();status("Último cambio deshecho");});
+$("redo").addEventListener("click",function(){if(!future.length)return;history.push({players:clone(players),drawings:clone(drawings)});var s=future.pop();players=s.players;drawings=s.drawings;renderPlayers();paint();syncHistory();status("Cambio recuperado");});
+$("clearDrawings").addEventListener("click",function(){if(!drawings.length)return;snapshot();drawings=[];paint();status("Trazos eliminados");});
+function state(){return{players:players,drawings:drawings,formationOwn:$("formationOwn").value,formationRival:$("formationRival").value,rivalVisible:!$("rivalPanel").hidden};}
+$("saveBoard").addEventListener("click",function(){try{localStorage.setItem("adiurPizarraTacticaV3",JSON.stringify(state()));$("saveState").textContent="GUARDADO EN ESTE DISPOSITIVO";$("status").textContent="Pizarra guardada";}catch(e){status("No se pudo guardar la pizarra");}});
+$("loadBoard").addEventListener("click",function(){try{var raw=localStorage.getItem("adiurPizarraTacticaV3");if(!raw){status("Todavía no hay una pizarra guardada");return;}var s=JSON.parse(raw);if(!Array.isArray(s.players)||!Array.isArray(s.drawings))throw Error("invalid");snapshot();players=s.players;drawings=s.drawings;$("formationOwn").value=s.formationOwn||"4-3-3";$("formationRival").value=s.formationRival||"4-3-3";$("rivalPanel").hidden=!s.rivalVisible;$("addRival").hidden=!!s.rivalVisible;renderPlayers();paint();status("Pizarra recuperada");}catch(e){status("No se pudo recuperar la pizarra");}});
+$("exportBoard").addEventListener("click",function(){var w=1200,h=800,out=document.createElement("canvas");out.width=w;out.height=h;var g=out.getContext("2d");g.fillStyle="#dcebdc";g.fillRect(0,0,w,h);g.strokeStyle="#344b39";g.lineWidth=5;g.strokeRect(10,10,w-20,h-20);g.beginPath();g.moveTo(w/2,10);g.lineTo(w/2,h-10);g.stroke();g.beginPath();g.arc(w/2,h/2,105,0,Math.PI*2);g.stroke();g.strokeRect(10,210,180,380);g.strokeRect(10,295,75,210);g.strokeRect(w-190,210,180,380);g.strokeRect(w-85,295,75,210);drawings.forEach(function(d){drawOne(d,g,w,h);});players.forEach(function(p){var x=p.x*w,y=p.y*h;g.save();g.fillStyle=p.team==="own"?"#f47721":"#c94c55";g.strokeStyle="#fff";g.lineWidth=4;g.beginPath();g.arc(x,y,27,0,Math.PI*2);g.fill();g.stroke();g.fillStyle="#fff";g.font="bold 24px Arial";g.textAlign="center";g.textBaseline="middle";g.fillText(p.number,x,y);g.restore();});var a=document.createElement("a");a.download="ADIUR-pizarra-tactica.png";a.href=out.toDataURL("image/png");a.click();status("Imagen exportada");});
+var immersive=$("toggleImmersive");
+function syncImmersive(){var on=document.body.classList.contains("immersive");immersive.textContent=on?"⤢ Salir":"⛶ Inmersivo";immersive.setAttribute("aria-pressed",String(on));}
+immersive.addEventListener("click",async function(){var on=document.body.classList.contains("immersive");if(on){document.body.classList.remove("immersive");if(document.fullscreenElement&&document.exitFullscreen)try{await document.exitFullscreen();}catch(e){}}else{document.body.classList.add("immersive");if(document.documentElement.requestFullscreen)try{await document.documentElement.requestFullscreen();}catch(e){}}syncImmersive();setTimeout(resize,120);});
+document.addEventListener("fullscreenchange",function(){if(!document.fullscreenElement&&document.body.classList.contains("immersive"))document.body.classList.remove("immersive");syncImmersive();setTimeout(resize,120);});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();$("undo").click();}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();$("redo").click();}else if(e.key==="Escape"&&document.body.classList.contains("immersive")){document.body.classList.remove("immersive");syncImmersive();setTimeout(resize,120);}});
+setField();renderPlayers();syncHistory();if(window.ResizeObserver)new ResizeObserver(resize).observe(pitch);window.addEventListener("resize",resize);syncImmersive();requestAnimationFrame(resize);
 })();
 </script>
-<script src="ADIUR-layout.js?v=20261123-pizarra5"></script>
+<script src="ADIUR-layout.js?v=20261123-pizarra6"></script>
 </body>
 </html>
