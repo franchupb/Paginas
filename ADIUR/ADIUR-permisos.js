@@ -335,14 +335,13 @@
         try {
           const perfil = await modulo.obtenerPerfilADIUR(user);
           if (!perfil) { await modulo.cerrarSesionADIUR(); location.replace(LOGIN_URL); return; }
-          const clave = normalizar(
-            perfil.usuario ||
-            String(user.email || "").split("@")[0] ||
-            perfil.nombreUsuario ||
-            perfil.nombre ||
-            ""
-          );
-          let base = USUARIOS[clave];
+          const clavesIdentidad = [
+            perfil.usuario,
+            String(user.email || "").split("@")[0],
+            perfil.nombreUsuario,
+            perfil.nombre
+          ].map(normalizar).filter(Boolean);
+          let base = clavesIdentidad.map(clave => USUARIOS[clave]).find(Boolean) || null;
 
           // Compatibilidad con perfiles de Firestore ya creados con variantes
           // de nombre/rol. No se expulsa una cuenta activa solo porque su
