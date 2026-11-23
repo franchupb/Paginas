@@ -892,33 +892,50 @@ body.immersive .board-studio .pitch-stage{position:relative!important;display:fl
 body.immersive .board-studio .pitch-wrap{position:relative!important;display:flex!important;flex:1 1 auto!important;min-height:0!important;padding:1px!important}
 body.immersive .board-studio .pitch{display:block!important;flex:1 1 auto!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important}
 
-/* En móvil se conservan las tres zonas en la misma línea; iconos compactos. */
+/* Responsive final: toda la barra visible en una sola línea, también en móviles. */
 @media(max-width:760px){
- .board-studio>.controlbar{flex-basis:48px!important;height:48px!important;min-height:48px!important;gap:5px!important;padding:4px 6px!important;justify-content:flex-start!important}
- .board-studio>.controlbar>.own-formation{margin-right:0!important}
- .board-studio>.controlbar>.top-tools{flex:0 0 auto!important;min-width:max-content!important;justify-content:center!important;gap:1px!important;padding:0 3px!important}
- .board-studio>.controlbar>.rival-formation{margin-left:auto!important}
+ .board-studio>.controlbar{
+  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+  justify-content:space-between!important;align-items:center!important;
+  gap:3px!important;height:48px!important;min-height:48px!important;flex-basis:48px!important;
+  padding:4px 5px!important;overflow:hidden!important;
+ }
+ .board-studio>.controlbar>.own-formation,
+ .board-studio>.controlbar>.rival-formation{flex:0 0 auto!important;gap:3px!important}
+ .board-studio>.controlbar>.own-formation{margin:0!important}
+ .board-studio>.controlbar>.rival-formation{margin:0 0 0 auto!important}
  .board-studio .control-label{display:none!important}
- .board-studio .controlbar select{width:66px!important;min-width:66px!important;height:29px!important;padding:0 16px 0 5px!important;font-size:9px!important}
- .board-studio .top-tools .tool{flex:0 0 29px!important;width:29px!important;height:34px!important;min-height:34px!important;padding:2px 0!important}
- .board-studio .top-tools .tool span{font-size:16px!important}
+ .board-studio .controlbar select{
+  width:56px!important;min-width:56px!important;max-width:56px!important;
+  height:29px!important;padding:0 13px 0 4px!important;font-size:9px!important;
+ }
+ .board-studio>.controlbar>.top-tools{
+  display:flex!important;flex:1 1 auto!important;min-width:0!important;max-width:none!important;
+  justify-content:space-evenly!important;gap:0!important;padding:0 2px!important;
+  overflow:hidden!important;
+ }
+ .board-studio .top-tools .tool{
+  display:flex!important;flex:1 1 0!important;width:auto!important;min-width:0!important;
+  max-width:27px!important;height:34px!important;min-height:34px!important;padding:2px 0!important;
+ }
+ .board-studio .top-tools .tool span{font-size:15px!important}
  .board-studio .top-tools .tool small{display:none!important}
- .board-studio .top-separator{height:21px!important;margin:0 1px!important}
- .board-studio .top-tools .palette{gap:6px!important;padding:0 1px!important}
- .board-studio .top-tools .swatch{flex-basis:12px!important;width:12px!important;height:12px!important}
- .board-studio .quick-history{gap:2px!important}
- .board-studio .quick-history-btn{flex-basis:24px!important;width:24px!important;height:25px!important;font-size:17px!important}
- .board-studio .add-rival-btn{flex-basis:27px!important;width:27px!important;height:29px!important;font-size:18px!important}
- body.immersive .board-studio>.controlbar{flex-basis:48px!important;height:48px!important;min-height:48px!important}
+ .board-studio .top-separator{display:block!important;flex:0 0 1px!important;width:1px!important;height:19px!important;margin:0 2px!important}
+ .board-studio .top-tools .palette{display:flex!important;flex:0 0 auto!important;gap:5px!important;padding:0 2px!important}
+ .board-studio .top-tools .swatch{flex:0 0 11px!important;width:11px!important;height:11px!important}
+ .board-studio .quick-history{display:flex!important;flex:0 0 auto!important;gap:2px!important}
+ .board-studio .quick-history-btn{flex:0 0 21px!important;width:21px!important;height:24px!important;font-size:15px!important}
+ .board-studio .add-rival-btn{flex:0 0 24px!important;width:24px!important;height:28px!important;font-size:17px!important}
+ body.immersive .board-studio>.controlbar{height:48px!important;min-height:48px!important;flex-basis:48px!important}
 }
 @media(max-width:390px){
- .board-studio>.controlbar{gap:3px!important;padding-right:4px!important;padding-left:4px!important}
- .board-studio .controlbar select{width:59px!important;min-width:59px!important}
- .board-studio .top-tools .tool{flex-basis:26px!important;width:26px!important}
- .board-studio .top-tools .palette{gap:5px!important}
- .board-studio .top-tools .swatch{flex-basis:11px!important;width:11px!important;height:11px!important}
- .board-studio .quick-history-btn{flex-basis:22px!important;width:22px!important}
- .board-studio .add-rival-btn{flex-basis:25px!important;width:25px!important}
+ .board-studio>.controlbar{gap:2px!important;padding-right:3px!important;padding-left:3px!important}
+ .board-studio .controlbar select{width:51px!important;min-width:51px!important;max-width:51px!important}
+ .board-studio .top-tools .tool{max-width:23px!important}
+ .board-studio .top-tools .palette{gap:4px!important}
+ .board-studio .top-tools .swatch{flex-basis:10px!important;width:10px!important;height:10px!important}
+ .board-studio .quick-history-btn{flex-basis:19px!important;width:19px!important}
+ .board-studio .add-rival-btn{flex-basis:22px!important;width:22px!important}
 }
 
 </style>
