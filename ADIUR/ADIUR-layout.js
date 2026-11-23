@@ -451,7 +451,7 @@
   separador.className = "separador-sesion";
   async function importarCerrarSesionADIUR() {
     try {
-      const modulo = await import("./ADIUR-auth.js");
+      const modulo = await import("./ADIUR-auth.js?v=20261122b");
       await modulo.cerrarSesionADIUR();
       window.location.href = "ADIUR-Loing.html";
     } catch (error) {
