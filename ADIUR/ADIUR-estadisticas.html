@@ -2792,7 +2792,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 /* CONSOLIDADO INDIVIDUAL · INFORMES + TESTEOS + LESIONES */
 const CACHE_FUENTES_INTEGRAL={partidos:{at:0,data:[]},lesiones:{at:0,data:[]},planillas:new Map()};
-const TTL_FUENTES_INTEGRAL=15000;
+const TTL_FUENTES_INTEGRAL=15000;\nlet versionRenderIntegral=0;
 function claveCategoriaIntegral(valor){return normalizarTexto(valor).replace(/[^a-z0-9]/g,"");}
 function escaparIntegral(valor){return String(valor??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function numeroIntegral(valor){if(valor===null||valor===undefined||String(valor).trim()==="")return null;const n=Number(String(valor).replace(",", "."));return Number.isFinite(n)?n:null;}
