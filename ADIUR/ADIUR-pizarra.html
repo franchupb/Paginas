@@ -1382,100 +1382,6 @@ body{background:var(--fondo)}
 
 </style>
 <script src="ADIUR-permisos.js?v=20261123d">
-/* =========================================================
-   SECUENCIAS TÁCTICAS · GUARDADO LOCAL POR DIVISIÓN
-========================================================= */
-let escenaSeleccionadaId = "";
-function claveEscenasTacticas(){
-  return "pizarraTacticaADIUR_escenas_" + document.getElementById("division").value;
-}
-function leerEscenasTacticas(){
-  try{
-    const raw=localStorage.getItem(claveEscenasTacticas());
-    const data=raw?JSON.parse(raw):[];
-    return Array.isArray(data)?data.filter(x=>x&&typeof x==="object"&&x.data):[];
-  }catch(error){console.warn("No se pudieron leer las escenas tácticas:",error);return [];}
-}
-function guardarEscenasTacticas(lista){
-  try{localStorage.setItem(claveEscenasTacticas(),JSON.stringify(lista));return true;}
-  catch(error){console.error("No se pudieron guardar las escenas tácticas:",error);estadoEscenas("No hay espacio disponible para guardar más escenas.",true);return false;}
-}
-function estadoEscenas(mensaje,error=false){
-  const el=document.getElementById("estadoEscenas");
-  if(el){el.textContent=mensaje;el.style.color=error?"#b42318":"#748093";}
-}
-function renderizarEscenasTacticas(){
-  const select=document.getElementById("selectorEscena");
-  if(!select)return;
-  const lista=leerEscenasTacticas();
-  select.replaceChildren();
-  if(!lista.length){
-    select.add(new Option("Todavía no hay escenas guardadas",""));
-    escenaSeleccionadaId="";
-  }else{
-    lista.forEach((item,i)=>select.add(new Option((i+1)+". "+(item.titulo||"Escena sin título"),String(item.id))));
-    if(!lista.some(x=>String(x.id)===String(escenaSeleccionadaId)))escenaSeleccionadaId=String(lista[0].id);
-    select.value=escenaSeleccionadaId;
-  }
-  const existe=lista.some(x=>String(x.id)===String(escenaSeleccionadaId));
-  document.getElementById("actualizarEscena").disabled=!existe;
-  document.getElementById("cargarEscena").disabled=!existe;
-  document.getElementById("eliminarEscena").disabled=!existe;
-}
-function guardarNuevaEscenaTactica(){
-  const datos=obtenerDatosPizarra();
-  const lista=leerEscenasTacticas();
-  const titulo=(document.getElementById("nombreEscena").value||"").trim()||"Escena "+(lista.length+1);
-  const id=(window.crypto?.randomUUID?crypto.randomUUID():"escena-"+Date.now()+"-"+Math.random().toString(36).slice(2,8));
-  lista.push({id,titulo,fecha:new Date().toISOString(),data:datos});
-  if(!guardarEscenasTacticas(lista))return;
-  escenaSeleccionadaId=id;
-  document.getElementById("nombreEscena").value=titulo;
-  renderizarEscenasTacticas();
-  estadoEscenas("Escena guardada en este dispositivo.");
-}
-function actualizarEscenaTactica(){
-  const lista=leerEscenasTacticas(),idx=lista.findIndex(x=>String(x.id)===String(escenaSeleccionadaId));
-  if(idx<0)return;
-  lista[idx]={...lista[idx],titulo:(document.getElementById("nombreEscena").value||lista[idx].titulo).trim(),fecha:new Date().toISOString(),data:obtenerDatosPizarra()};
-  if(!guardarEscenasTacticas(lista))return;
-  renderizarEscenasTacticas();estadoEscenas("Escena actualizada correctamente.");
-}
-function cargarEscenaTactica(){
-  const lista=leerEscenasTacticas(),item=lista.find(x=>String(x.id)===String(escenaSeleccionadaId));
-  if(!item)return;
-  try{
-    aplicarDatosPizarra(item.data);
-    document.getElementById("nombreEscena").value=item.titulo||"";
-    estadoEscenas("Escena cargada: "+(item.titulo||"Sin título")+".");
-  }catch(error){console.error(error);estadoEscenas("No se pudo abrir esta escena: "+error.message,true);}
-}
-function eliminarEscenaTactica(){
-  const lista=leerEscenasTacticas(),item=lista.find(x=>String(x.id)===String(escenaSeleccionadaId));
-  if(!item||!confirm("¿Eliminar la escena «"+(item.titulo||"Sin título")+"»?"))return;
-  const nueva=lista.filter(x=>String(x.id)!==String(escenaSeleccionadaId));
-  if(!guardarEscenasTacticas(nueva))return;
-  escenaSeleccionadaId=nueva.length?String(nueva[0].id):"";
-  document.getElementById("nombreEscena").value="";
-  renderizarEscenasTacticas();estadoEscenas("Escena eliminada.");
-}
-document.getElementById("selectorEscena")?.addEventListener("change",e=>{
-  escenaSeleccionadaId=e.target.value;
-  const item=leerEscenasTacticas().find(x=>String(x.id)===String(escenaSeleccionadaId));
-  document.getElementById("nombreEscena").value=item?.titulo||"";
-  renderizarEscenasTacticas();
-});
-document.getElementById("guardarNuevaEscena")?.addEventListener("click",guardarNuevaEscenaTactica);
-document.getElementById("actualizarEscena")?.addEventListener("click",actualizarEscenaTactica);
-document.getElementById("cargarEscena")?.addEventListener("click",cargarEscenaTactica);
-document.getElementById("eliminarEscena")?.addEventListener("click",eliminarEscenaTactica);
-document.getElementById("division")?.addEventListener("change",()=>{
-  escenaSeleccionadaId="";
-  document.getElementById("nombreEscena").value="";
-  renderizarEscenasTacticas();
-});
-renderizarEscenasTacticas();
-
 </script>
 </head>
 
@@ -3480,6 +3386,101 @@ document
 
     }
   );
+
+/* =========================================================
+   SECUENCIAS TÁCTICAS · GUARDADO LOCAL POR DIVISIÓN
+========================================================= */
+let escenaSeleccionadaId = "";
+function claveEscenasTacticas(){
+  return "pizarraTacticaADIUR_escenas_" + document.getElementById("division").value;
+}
+function leerEscenasTacticas(){
+  try{
+    const raw=localStorage.getItem(claveEscenasTacticas());
+    const data=raw?JSON.parse(raw):[];
+    return Array.isArray(data)?data.filter(x=>x&&typeof x==="object"&&x.data):[];
+  }catch(error){console.warn("No se pudieron leer las escenas tácticas:",error);return [];}
+}
+function guardarEscenasTacticas(lista){
+  try{localStorage.setItem(claveEscenasTacticas(),JSON.stringify(lista));return true;}
+  catch(error){console.error("No se pudieron guardar las escenas tácticas:",error);estadoEscenas("No hay espacio disponible para guardar más escenas.",true);return false;}
+}
+function estadoEscenas(mensaje,error=false){
+  const el=document.getElementById("estadoEscenas");
+  if(el){el.textContent=mensaje;el.style.color=error?"#b42318":"#748093";}
+}
+function renderizarEscenasTacticas(){
+  const select=document.getElementById("selectorEscena");
+  if(!select)return;
+  const lista=leerEscenasTacticas();
+  select.replaceChildren();
+  if(!lista.length){
+    select.add(new Option("Todavía no hay escenas guardadas",""));
+    escenaSeleccionadaId="";
+  }else{
+    lista.forEach((item,i)=>select.add(new Option((i+1)+". "+(item.titulo||"Escena sin título"),String(item.id))));
+    if(!lista.some(x=>String(x.id)===String(escenaSeleccionadaId)))escenaSeleccionadaId=String(lista[0].id);
+    select.value=escenaSeleccionadaId;
+  }
+  const existe=lista.some(x=>String(x.id)===String(escenaSeleccionadaId));
+  document.getElementById("actualizarEscena").disabled=!existe;
+  document.getElementById("cargarEscena").disabled=!existe;
+  document.getElementById("eliminarEscena").disabled=!existe;
+}
+function guardarNuevaEscenaTactica(){
+  const datos=obtenerDatosPizarra();
+  const lista=leerEscenasTacticas();
+  const titulo=(document.getElementById("nombreEscena").value||"").trim()||"Escena "+(lista.length+1);
+  const id=(window.crypto?.randomUUID?crypto.randomUUID():"escena-"+Date.now()+"-"+Math.random().toString(36).slice(2,8));
+  lista.push({id,titulo,fecha:new Date().toISOString(),data:datos});
+  if(!guardarEscenasTacticas(lista))return;
+  escenaSeleccionadaId=id;
+  document.getElementById("nombreEscena").value=titulo;
+  renderizarEscenasTacticas();
+  estadoEscenas("Escena guardada en este dispositivo.");
+}
+function actualizarEscenaTactica(){
+  const lista=leerEscenasTacticas(),idx=lista.findIndex(x=>String(x.id)===String(escenaSeleccionadaId));
+  if(idx<0)return;
+  lista[idx]={...lista[idx],titulo:(document.getElementById("nombreEscena").value||lista[idx].titulo).trim(),fecha:new Date().toISOString(),data:obtenerDatosPizarra()};
+  if(!guardarEscenasTacticas(lista))return;
+  renderizarEscenasTacticas();estadoEscenas("Escena actualizada correctamente.");
+}
+function cargarEscenaTactica(){
+  const lista=leerEscenasTacticas(),item=lista.find(x=>String(x.id)===String(escenaSeleccionadaId));
+  if(!item)return;
+  try{
+    aplicarDatosPizarra(item.data);
+    document.getElementById("nombreEscena").value=item.titulo||"";
+    estadoEscenas("Escena cargada: "+(item.titulo||"Sin título")+".");
+  }catch(error){console.error(error);estadoEscenas("No se pudo abrir esta escena: "+error.message,true);}
+}
+function eliminarEscenaTactica(){
+  const lista=leerEscenasTacticas(),item=lista.find(x=>String(x.id)===String(escenaSeleccionadaId));
+  if(!item||!confirm("¿Eliminar la escena «"+(item.titulo||"Sin título")+"»?"))return;
+  const nueva=lista.filter(x=>String(x.id)!==String(escenaSeleccionadaId));
+  if(!guardarEscenasTacticas(nueva))return;
+  escenaSeleccionadaId=nueva.length?String(nueva[0].id):"";
+  document.getElementById("nombreEscena").value="";
+  renderizarEscenasTacticas();estadoEscenas("Escena eliminada.");
+}
+document.getElementById("selectorEscena")?.addEventListener("change",e=>{
+  escenaSeleccionadaId=e.target.value;
+  const item=leerEscenasTacticas().find(x=>String(x.id)===String(escenaSeleccionadaId));
+  document.getElementById("nombreEscena").value=item?.titulo||"";
+  renderizarEscenasTacticas();
+});
+document.getElementById("guardarNuevaEscena")?.addEventListener("click",guardarNuevaEscenaTactica);
+document.getElementById("actualizarEscena")?.addEventListener("click",actualizarEscenaTactica);
+document.getElementById("cargarEscena")?.addEventListener("click",cargarEscenaTactica);
+document.getElementById("eliminarEscena")?.addEventListener("click",eliminarEscenaTactica);
+document.getElementById("division")?.addEventListener("change",()=>{
+  escenaSeleccionadaId="";
+  document.getElementById("nombreEscena").value="";
+  renderizarEscenasTacticas();
+});
+renderizarEscenasTacticas();
+
 
 </script>
 
