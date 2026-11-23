@@ -32,7 +32,7 @@ export async function iniciarSesionADIUR(usuario, contrasena) {
   const perfil = await getDoc(referencia);
   if (!perfil.exists() || perfil.data().activo === false) {
     await signOut(auth);
-    try { localStorage.removeItem("usuarioADIUR"); } catch (_) {}
+    try { localStorage.removeItem("usuarioADIUR"); localStorage.removeItem("rolADIUR"); localStorage.removeItem("categoriasADIUR"); } catch (_) {}
     throw new Error("La cuenta todavía no tiene un perfil habilitado. Contactá al administrador del club.");
   }
   const datosPerfil = perfil.data();
@@ -40,6 +40,8 @@ export async function iniciarSesionADIUR(usuario, contrasena) {
   // La identidad real y la autorización siguen dependiendo de Firebase Auth y Firestore.
   try {
     localStorage.setItem("usuarioADIUR", String(datosPerfil.usuario || usuario).trim());
+    if (datosPerfil.rol) localStorage.setItem("rolADIUR", String(datosPerfil.rol).trim());
+    if (Array.isArray(datosPerfil.categorias)) localStorage.setItem("categoriasADIUR", JSON.stringify(datosPerfil.categorias));
   } catch (error) {
     console.warn("No se pudo guardar el nombre de usuario para compatibilidad:", error);
   }
