@@ -716,7 +716,7 @@
     submenu.className = "submenu";
     grupo.paginas.forEach(([href, texto, restringido]) => {
       const link = document.createElement("a");
-      link.href = href;
+      link.href = href === "ADIUR-pizarra.html" ? "ADIUR-pizarra.html?v=20261123u" : href;
       link.innerHTML = '<span class="nav-punto" aria-hidden="true"></span>' + texto;
       if (restringido) link.setAttribute("data-ocultar-bianca", "");
       if (normalizarArchivo(href.toLowerCase()) === actual) {
