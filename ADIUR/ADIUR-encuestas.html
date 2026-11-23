@@ -3,2007 +3,251 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Encuestas y Estadísticas - ADIUR FEM</title>
-
+<meta name="theme-color" content="#ffffff">
+<title>Wellness y RPE | ADIUR FEMENINO</title>
+<script src="ADIUR-permisos.js?v=20261123e"></script>
 <style>
-:root {
-  --naranja: #f47721;
-  --naranja-oscuro: #dc5e0b;
-  --naranja-claro: #fff0e6;
-  --negro: #171717;
-  --gris: #f4f5f7;
-  --gris-texto: #747474;
-  --borde: #e8e8e8;
-  --blanco: #fff;
-  --rojo: #ef4444;
-  --rojo-oscuro: #dc2626;
-  --verde: #18743b;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: var(--gris);
-  color: var(--negro);
-}
-
-button, input, select, textarea {
-  font: inherit;
-}
-
-button, a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-button {
-  cursor: pointer;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-/* =====================================================
-   BARRA SUPERIOR
-===================================================== */
-
-.barra-superior {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  min-height: 84px;
-  padding: 12px 25px;
-  background: #fff;
-  border-bottom: 1px solid var(--borde);
-}
-
-.boton-menu {
-  width: 42px;
-  height: 42px;
-  flex-shrink: 0;
-  border: 0;
-  background: white;
-  border-radius: 9px;
-  font-size: 27px;
-  color: var(--negro);
-}
-
-.boton-menu:hover {
-  background: var(--gris);
-}
-
-.logo-superior {
-  width: 55px;
-  height: 55px;
-  flex-shrink: 0;
-  object-fit: contain;
-  border-radius: 50%;
-  padding: 2px;
-  background: white;
-}
-
-.titulo-superior {
-  flex: 1;
-  min-width: 0;
-}
-
-.titulo-superior h1 {
-  margin: 0 0 5px;
-  font-size: 23px;
-  font-weight: 900;
-  letter-spacing: .5px;
-}
-
-.titulo-superior p {
-  margin: 0;
-  color: var(--gris-texto);
-  font-size: 13px;
-}
-
-.perfil {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.avatar {
-  width: 42px;
-  height: 42px;
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  background: var(--negro);
-  color: white;
-  border-radius: 50%;
-  font-weight: bold;
-}
-
-.nombre-perfil {
-  max-width: 150px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 13px;
-  font-weight: bold;
-}
-
-.rol-perfil {
-  color: var(--gris-texto);
-  font-size: 11px;
-  margin-top: 4px;
-}
-
-/* =====================================================
-   ESTRUCTURA GENERAL
-===================================================== */
-
-.contenedor {
-  display: flex;
-  min-height: calc(100vh - 84px);
-  align-items: stretch;
-}
-
-/* =====================================================
-   BARRA LATERAL
-===================================================== */
-
-.sidebar {
-  width: 258px;
-  flex: 0 0 258px;
-  padding: 20px 13px;
-  background: #fff;
-  border-right: 1px solid var(--borde);
-  transition: margin-left .25s ease;
-  overflow-y: auto;
-}
-
-.sidebar.oculto {
-  margin-left: -258px;
-}
-
-.menu-inicio {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 13px 14px;
-  margin-bottom: 16px;
-  border-radius: 11px;
-  background: #fff;
-  color: var(--negro);
-  font-size: 13px;
-  font-weight: 850;
-  transition: background .2s;
-}
-
-.menu-inicio:hover {
-  background: var(--gris);
-}
-
-.grupo-menu {
-  margin-bottom: 8px;
-}
-
-.titulo-grupo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 13px;
-  min-height: 46px;
-  cursor: pointer;
-  border-radius: 8px;
-  color: #171717;
-  font-size: 11px;
-  font-weight: 850;
-  letter-spacing: .8px;
-  user-select: none;
-}
-
-.titulo-grupo:hover {
-  background: #f8f8f8;
-}
-
-.flecha {
-  display: inline-block;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1;
-  transition: transform .2s;
-}
-
-.grupo-menu.cerrado .flecha {
-  transform: rotate(0deg);
-}
-
-.grupo-menu:not(.cerrado) .flecha {
-  transform: rotate(90deg);
-}
-
-.submenu {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 0 0 5px 0;
-}
-
-.grupo-menu.cerrado .submenu {
-  display: none;
-}
-
-.submenu a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 9px;
-  font-size: 13px;
-  color: #656872;
-  transition: background .15s, color .15s;
-}
-
-.submenu a:hover {
-  background: #f6f6f6;
-  color: #181818;
-}
-
-.submenu a.activo {
-  background: var(--naranja-claro);
-  color: var(--naranja-oscuro);
-  font-weight: 800;
-}
-
-.nav-punto {
-  width: 6px;
-  height: 6px;
-  flex-shrink: 0;
-  background: #d7d9de;
-  border-radius: 50%;
-}
-
-.submenu a.activo .nav-punto {
-  background: var(--naranja);
-}
-
-.separador-sesion {
-  border-top: 1px solid #e8e8e8;
-  margin: 19px 0 0;
-  padding-top: 12px;
-}
-
-.enlace-cerrar-sesion {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px;
-  border-radius: 9px;
-  color: #c0392b;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.enlace-cerrar-sesion:hover {
-  background: #fff2f1;
-  color: #a93226;
-}
-
-.capa-sidebar {
-  display: none;
-}
-
-/* =====================================================
-   CONTENIDO PRINCIPAL - ENCUESTAS
-===================================================== */
-
-.contenido {
-  flex: 1;
-  min-width: 0;
-  padding: 28px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.encabezado-seccion {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.encabezado-seccion h2 {
-  margin: 0 0 6px;
-  font-size: 27px;
-}
-
-.encabezado-seccion p {
-  margin: 0;
-  color: var(--gris-texto);
-  font-size: 13px;
-}
-
-.panel {
-  background: white;
-  border: 1px solid var(--borde);
-  border-radius: 14px;
-  padding: 24px;
-  margin-bottom: 25px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-}
-
-.filtros-superiores {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.campo-filtro {
-  min-width: 220px;
-}
-
-.campo-filtro label {
-  display: block;
-  font-size: 11px;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: var(--gris-texto);
-  margin-bottom: 6px;
-}
-
-.campo-filtro select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--borde);
-  border-radius: 8px;
-  background: white;
-  font-size: 13px;
-  outline: none;
-}
-
-.campo-filtro select:focus {
-  border-color: var(--naranja);
-}
-
-/* CALENDARIO DE DÍAS AGREGADOS */
-.semana-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.dia-columna {
-  background: #fafafa;
-  border: 1px solid var(--borde);
-  border-radius: 12px;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-height: 350px;
-}
-
-.dia-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  border-bottom: 2px solid var(--borde);
-  padding-bottom: 10px;
-}
-
-.dia-header-info h4 {
-  margin: 0 0 4px;
-  font-size: 15px;
-  text-transform: uppercase;
-}
-
-.dia-header-info span {
-  font-size: 12px;
-  color: var(--gris-texto);
-}
-
-.btn-eliminar-dia {
-  background: none;
-  border: none;
-  color: var(--rojo);
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.btn-eliminar-dia:hover {
-  color: var(--rojo-oscuro);
-}
-
-.evento-badge {
-  background: var(--naranja-claro);
-  color: var(--naranja-oscuro);
-  font-size: 11px;
-  font-weight: bold;
-  padding: 5px 8px;
-  border-radius: 6px;
-  text-align: center;
-}
-
-/* Tarjeta de encuesta dentro del día */
-.encuesta-card {
-  background: white;
-  border: 1px solid var(--borde);
-  border-left: 3px solid var(--naranja);
-  border-radius: 8px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  position: relative;
-}
-
-.encuesta-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.tipo-encuesta-badge {
-  font-size: 10px;
-  font-weight: bold;
-  background: #f1f5f9;
-  color: #334155;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.btn-eliminar-encuesta {
-  background: none;
-  border: none;
-  color: var(--rojo);
-  font-size: 14px;
-  cursor: pointer;
-  padding: 0 4px;
-}
-
-.btn-eliminar-encuesta:hover {
-  color: var(--rojo-oscuro);
-}
-
-.encuesta-card p {
-  margin: 0;
-  font-size: 12px;
-  color: #333;
-}
-
-.btn-accion-encuesta {
-  background: var(--negro);
-  color: white;
-  border: none;
-  padding: 6px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: bold;
-  text-align: center;
-  cursor: pointer;
-}
-
-.btn-accion-encuesta:hover {
-  background: #333;
-}
-
-.btn-respondida-badge {
-  background: #e0f5e7;
-  color: #18743b;
-  font-size: 11px;
-  font-weight: bold;
-  padding: 6px;
-  border-radius: 6px;
-  text-align: center;
-}
-
-.btn-agregar-en-dia {
-  background: white;
-  border: 1px dashed var(--naranja);
-  color: var(--naranja-oscuro);
-  padding: 6px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: bold;
-  cursor: pointer;
-  text-align: center;
-  margin-top: auto;
-}
-
-.btn-agregar-en-dia:hover {
-  background: var(--naranja-claro);
-}
-
-.sin-dias {
-  text-align: center;
-  padding: 40px;
-  grid-column: 1 / -1;
-  color: var(--gris-texto);
-  background: white;
-  border-radius: 12px;
-  border: 1px dashed var(--borde);
-}
-
-/* Grids de checkboxes para múltiple choice */
-.opciones-checkbox-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-top: 5px;
-}
-
-.opcion-check-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  background: #fafafa;
-  padding: 8px 10px;
-  border: 1px solid var(--borde);
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.opcion-check-label input {
-  width: auto;
-}
-
-/* =====================================================
-   PANEL DE ESTADÍSTICAS PARA CUERPO TÉCNICO
-===================================================== */
-.panel-estadisticas-tecnico {
-  background: #fff;
-  border: 1px solid var(--borde);
-  border-radius: 12px;
-  padding: 20px;
-  margin-top: 25px;
-}
-
-.panel-estadisticas-tecnico h3 {
-  margin-top: 0;
-  font-size: 18px;
-  color: var(--negro);
-  border-bottom: 2px solid var(--borde);
-  padding-bottom: 10px;
-  margin-bottom: 15px;
-}
-
-.stats-card-encuesta {
-  background: #f8fafc;
-  border: 1px solid var(--borde);
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 15px;
-}
-
-.stats-card-encuesta h4 {
-  margin: 0 0 8px;
-  font-size: 15px;
-  color: var(--naranja-oscuro);
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px;
-  font-size: 13px;
-  margin-bottom: 10px;
-}
-
-.stat-item {
-  background: white;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--borde);
-}
-
-.stat-item strong {
-  display: block;
-  color: var(--gris-texto);
-  font-size: 11px;
-  text-transform: uppercase;
-  margin-bottom: 3px;
-}
-
-.molestias-lista {
-  margin-top: 8px;
-  font-size: 12px;
-  background: #fff5f5;
-  border: 1px solid #feb2b2;
-  padding: 8px;
-  border-radius: 6px;
-  color: #9b2c2c;
-}
-
-/* =====================================================
-   MODALES
-===================================================== */
-
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.modal.activo {
-  display: flex;
-}
-
-.modal-contenido {
-  background: white;
-  border-radius: 12px;
-  padding: 25px;
-  width: 100%;
-  max-width: 520px;
-  box-shadow: 0 5px 25px rgba(0,0,0,0.15);
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.modal-header h3 {
-  font-size: 18px;
-  margin: 0;
-}
-
-.btn-cerrar-modal {
-  background: none;
-  border: none;
-  font-size: 22px;
-  cursor: pointer;
-  color: #777;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 12px;
-  font-weight: bold;
-  margin-bottom: 6px;
-  color: #444;
-}
-
-.form-group input, .form-group select, .form-group textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--borde);
-  border-radius: 8px;
-  font-size: 13px;
-  outline: none;
-}
-
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-  border-color: var(--naranja);
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.btn-secundario {
-  background: white;
-  border: 1px solid var(--borde);
-  color: #444;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 13px;
-}
-
-.btn-secundario:hover {
-  background: var(--gris);
-}
-
-.btn-principal {
-  background: var(--naranja);
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 13px;
-}
-
-.btn-principal:hover {
-  background: var(--naranja-oscuro);
-}
-
-@media (max-width: 760px) {
-  .sidebar {
-    position: fixed;
-    top: 72px;
-    bottom: 0;
-    left: 0;
-    z-index: 150;
-    width: 258px;
-    max-width: 86vw;
-    box-shadow: 5px 0 25px rgba(0,0,0,0.1);
-    transform: translateX(-110%);
-    transition: transform .25s ease;
-  }
-  .sidebar:not(.oculto) {
-    transform: translateX(0);
-  }
-  .capa-sidebar.visible {
-    display: block;
-    position: fixed;
-    inset: 72px 0 0;
-    background: rgba(0,0,0,0.3);
-    z-index: 140;
-  }
-  .contenido {
-    padding: 15px;
-  }
-}
+:root{--naranja:#f47721;--naranja-oscuro:#dc5e0b;--naranja-claro:#fff0e6;--negro:#171717;--gris:#f4f5f7;--gris-texto:#747474;--borde:#e8e8e8;--verde:#18743b;--rojo:#a00000}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--gris);color:var(--negro)}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+.barra-superior{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:15px;min-height:84px;padding:12px 25px;background:#fff;border-bottom:1px solid var(--borde)}
+.boton-menu{width:42px;height:42px;flex-shrink:0;border:0;background:#fff;border-radius:9px;font-size:27px}.logo-superior{width:55px;height:55px;object-fit:contain;border-radius:50%;padding:2px}.titulo-superior{flex:1;min-width:0}.titulo-superior h1{margin:0 0 5px;font-size:23px;font-weight:900;letter-spacing:.5px}.titulo-superior p{margin:0;color:var(--gris-texto);font-size:13px}
+.perfil{display:flex;align-items:center;gap:10px;min-width:0}.avatar{width:42px;height:42px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--negro);color:#fff;border-radius:50%;font-weight:bold}.nombre-perfil{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:bold}.rol-perfil{color:var(--gris-texto);font-size:11px;margin-top:4px}
+.contenedor{display:flex;min-height:calc(100vh - 84px)}.sidebar{width:258px;flex:0 0 258px;padding:20px 13px;background:#fff;border-right:1px solid var(--borde);transition:margin-left .25s;overflow-y:auto}.sidebar.oculto{margin-left:-258px}
+.menu-inicio{display:flex;gap:12px;align-items:center;padding:13px 14px;margin-bottom:16px;border-radius:11px;font-size:13px;font-weight:850}.grupo-menu{margin-bottom:8px}.titulo-grupo{display:flex;align-items:center;justify-content:space-between;padding:12px 13px;min-height:46px;border-radius:8px;font-size:11px;font-weight:850;letter-spacing:.8px;cursor:pointer}.flecha{font-size:16px;transition:transform .2s}.grupo-menu:not(.cerrado) .flecha{transform:rotate(90deg)}.submenu{display:flex;flex-direction:column;gap:3px;padding-bottom:5px}.grupo-menu.cerrado .submenu{display:none}.submenu a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:9px;font-size:13px;color:#656872}.submenu a.activo{background:var(--naranja-claro);color:var(--naranja-oscuro);font-weight:800}.nav-punto{width:6px;height:6px;background:#d7d9de;border-radius:50%}.submenu a.activo .nav-punto{background:var(--naranja)}.separador-sesion{border-top:1px solid var(--borde);margin-top:19px;padding-top:12px}.enlace-cerrar-sesion{display:flex;padding:12px;gap:10px;color:#c0392b;font-size:13px;font-weight:700}.capa-sidebar{display:none}
+.contenido{flex:1;min-width:0;width:100%;max-width:1500px;margin:0 auto;padding:28px}
+.cabecera-pagina{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;margin-bottom:22px}.etiqueta{display:block;color:var(--naranja-oscuro);font-size:10px;font-weight:900;letter-spacing:1px;margin-bottom:7px}.cabecera-pagina h2{font-size:27px;margin:0 0 7px}.cabecera-pagina p{margin:0;color:var(--gris-texto);font-size:13px;line-height:1.5;max-width:760px}
+.selector-categoria{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--borde);border-radius:12px;padding:12px 15px;margin-bottom:18px}.selector-categoria label,.campo label{font-size:10px;font-weight:900;letter-spacing:.5px;color:var(--gris-texto);display:block;margin-bottom:6px}.selector-categoria select{min-width:175px;border:1px solid var(--borde);border-radius:8px;padding:10px;background:#fff}
+.panel{background:#fff;border:1px solid var(--borde);border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 2px 8px #00000005}.panel-cabecera{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}.panel-cabecera h3{font-size:16px;margin:0 0 4px}.panel-cabecera p{font-size:12px;color:var(--gris-texto);margin:0}
+.pestanas{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.pestana{border:1px solid var(--borde);background:#fff;border-radius:9px;padding:10px 15px;font-size:12px;font-weight:800;color:#555}.pestana.activa{background:var(--naranja-claro);border-color:#f8c39f;color:var(--naranja-oscuro)}
+.encuestas-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.encuesta-tarjeta{border:1px solid var(--borde);border-radius:13px;padding:18px;background:#fff;min-width:0}.encuesta-tarjeta .icono{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--naranja-claro);font-size:20px;margin-bottom:13px}.encuesta-tarjeta h3{margin:0 0 6px;font-size:17px}.encuesta-tarjeta p{margin:0 0 15px;color:var(--gris-texto);font-size:12px;line-height:1.5}.estado-encuesta{font-size:10px;font-weight:800;color:var(--verde);background:#eaf7ee;padding:5px 8px;border-radius:20px;display:inline-block;margin-bottom:12px}
+.btn{border:0;border-radius:9px;padding:10px 14px;font-size:12px;font-weight:800}.btn-principal{background:var(--naranja);color:#fff}.btn-principal:hover{background:var(--naranja-oscuro)}.btn-secundario{background:#fff;border:1px solid var(--borde);color:#333}.btn-peligro{background:#fff1f0;color:var(--rojo);border:1px solid #f2ceca}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.campo{min-width:0}.campo input,.campo select,.campo textarea{width:100%;padding:11px 12px;border:1px solid var(--borde);border-radius:9px;background:#fff;outline:none;font-size:13px}.campo textarea{min-height:78px;resize:vertical}.campo input:focus,.campo select:focus,.campo textarea:focus{border-color:var(--naranja)}.campo-completo{grid-column:1/-1}.ayuda{font-size:11px;color:var(--gris-texto);line-height:1.5;margin-top:5px}
+.escala-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}.escala-item{border:1px solid var(--borde);border-radius:10px;padding:11px;background:#fafafa;min-width:0}.escala-item label{display:block;font-size:12px;font-weight:800;margin-bottom:8px}.escala-item select{width:100%;padding:9px;border:1px solid var(--borde);border-radius:7px;background:#fff}
+.escala-rpe{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:6px;margin-top:8px}.rpe-opcion{border:1px solid var(--borde);background:#fff;border-radius:8px;padding:10px 2px;font-size:13px;font-weight:900;color:#555}.rpe-opcion.seleccionado{background:var(--naranja);border-color:var(--naranja);color:#fff}.rpe-opcion:focus-visible{outline:2px solid var(--negro);outline-offset:2px}
+.form-acciones{display:flex;justify-content:flex-end;gap:9px;margin-top:18px;flex-wrap:wrap}.mensaje{padding:12px 14px;border-radius:9px;background:#f7f8fa;border:1px solid var(--borde);font-size:12px;color:#555;margin-bottom:14px}.mensaje.error{background:#fff2f1;border-color:#f2ceca;color:var(--rojo)}.mensaje.ok{background:#edf8f0;border-color:#cdebd5;color:var(--verde)}
+.metricas{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}.metrica{background:#fff;border:1px solid var(--borde);border-radius:12px;padding:15px;min-width:0}.metrica span{display:block;color:var(--gris-texto);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px}.metrica strong{display:block;font-size:25px;margin-top:7px;line-height:1.1}.metrica small{display:block;color:var(--gris-texto);font-size:10px;margin-top:5px}
+.filtros{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.filtros .campo{min-width:140px}.tabla-scroll{width:100%;overflow:auto}table{border-collapse:collapse;width:100%;min-width:720px;font-size:12px}th{text-align:left;color:#777;font-size:10px;text-transform:uppercase;letter-spacing:.4px;padding:11px 9px;border-bottom:1px solid var(--borde);white-space:nowrap}td{padding:12px 9px;border-bottom:1px solid #f0f0f0;vertical-align:middle}tbody tr:hover{background:#fafafa}.nombre-jugadora{font-weight:800}.dato-secundario{display:block;color:var(--gris-texto);font-size:10px;margin-top:3px}.pill{display:inline-block;border-radius:20px;padding:5px 8px;font-size:10px;font-weight:800;background:#f2f3f5;color:#555}.pill.alerta{background:#fff0e6;color:#a94c0b}.pill.ok{background:#eaf7ee;color:var(--verde)}
+.barra-progreso{height:7px;border-radius:20px;background:#eee;overflow:hidden;min-width:75px}.barra-progreso span{display:block;height:100%;background:var(--naranja);border-radius:20px}.vacio{text-align:center;padding:28px 15px;color:var(--gris-texto);font-size:12px;border:1px dashed var(--borde);border-radius:10px}
+.detalle-lista{display:grid;gap:8px}.detalle-fila{display:flex;justify-content:space-between;gap:14px;padding:10px 12px;background:#f8f9fa;border-radius:8px;font-size:12px}.detalle-fila strong{font-size:12px}
+.modal{display:none;position:fixed;inset:0;z-index:500;background:#0008;align-items:center;justify-content:center;padding:18px}.modal.activo{display:flex}.modal-contenido{background:#fff;border-radius:14px;width:100%;max-width:720px;max-height:90vh;overflow:auto;padding:22px}.modal-cabecera{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}.modal-cabecera h3{margin:0;font-size:17px}.cerrar-modal{border:0;background:transparent;font-size:24px;color:#777}
+.pie-nota{font-size:10px;color:var(--gris-texto);line-height:1.5;margin-top:12px}
+.oculto{display:none!important}
+@media(max-width:1050px){.escala-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.metricas{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.barra-superior{min-height:72px;padding:10px 13px;gap:9px}.boton-menu{width:38px;height:38px;font-size:24px}.logo-superior{width:44px;height:44px}.titulo-superior h1{font-size:16px}.titulo-superior p{font-size:11px}.nombre-perfil{max-width:80px;font-size:12px}.rol-perfil{display:none}.avatar{width:36px;height:36px}.contenedor{min-height:calc(100vh - 72px)}.sidebar{position:fixed;top:72px;bottom:0;left:0;z-index:300;width:258px;max-width:86vw;margin:0;transform:translateX(0);transition:transform .25s;box-shadow:5px 0 25px #00000012}.sidebar.oculto{margin:0;transform:translateX(-110%)}.capa-sidebar.visible{display:block;position:fixed;inset:72px 0 0;background:#0005;z-index:290}.contenido{padding:16px}.cabecera-pagina h2{font-size:22px}.encuestas-grid{grid-template-columns:1fr}.escala-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.escala-rpe{grid-template-columns:repeat(6,minmax(0,1fr))}.form-grid{grid-template-columns:1fr}.campo-completo{grid-column:auto}.panel{padding:15px}.selector-categoria{align-items:flex-start;flex-direction:column}.selector-categoria select{width:100%}}
+@media(max-width:380px){.titulo-superior h1{font-size:14px}.nombre-perfil{max-width:60px}.metricas{gap:8px}.metrica{padding:11px}.metrica strong{font-size:21px}}
 </style>
-<script src="ADIUR-permisos.js?v=20261123d"></script>
 </head>
-
 <body>
-
-<!-- BARRA SUPERIOR -->
 <header class="barra-superior">
-  <button class="boton-menu" id="botonMenu" aria-label="Abrir menú" onclick="alternarSidebar()">☰</button>
-  <img class="logo-superior" src="ADIUR-Logo ADIUR.jpg" alt="Logo ADIUR" onerror="this.style.display='none'">
-  <div class="titulo-superior">
-    <h1>ADIUR FEMENINO</h1>
-    <p>Gestión de Encuestas Semanales</p>
-  </div>
-  <div class="perfil">
-    <div class="avatar" id="avatarUsuario">U</div>
-    <div>
-      <div class="nombre-perfil" id="nombreUsuario">Usuario</div>
-      <div class="rol-perfil" id="rolUsuario">Club ADIUR</div>
-    </div>
-  </div>
+<button class="boton-menu" id="botonMenu" type="button" aria-label="Abrir menú" aria-expanded="true">☰</button>
+<img class="logo-superior" src="ADIUR-Logo ADIUR.jpg" alt="Logo ADIUR" onerror="this.style.display='none'">
+<div class="titulo-superior"><h1>ADIUR FEMENINO</h1><p>Seguimiento de Wellness y RPE</p></div>
+<div class="perfil"><div class="avatar" id="avatarUsuario">U</div><div><div class="nombre-perfil" id="nombreUsuario">Usuario</div><div class="rol-perfil" id="rolUsuario">Perfil</div></div></div>
 </header>
-
-<div class="capa-sidebar" id="capaSidebar" onclick="alternarSidebar()"></div>
-
+<div class="capa-sidebar" id="capaSidebar"></div>
 <div class="contenedor">
-  <!-- BARRA LATERAL -->
-  <aside class="sidebar" id="sidebar">
-    <a class="menu-inicio" href="ADIUR-Pagina Principal.html">
-      <span class="icono-inicio">⌂</span> INICIO
-    </a>
-    <div class="grupo-menu cerrado" id="grupoPlantel">
-      <div class="titulo-grupo" onclick="toggleGrupo('grupoPlantel')">
-        <span>PLANTEL</span><span class="flecha">›</span>
-      </div>
-      <div class="submenu">
-        <a href="ADIUR-jugadoras.html"><span class="nav-punto"></span>Jugadoras</a>
-        <a href="ADIUR-asistencia.html"><span class="nav-punto"></span>Asistencia</a>
-      </div>
-    </div>
-    <div class="grupo-menu cerrado" id="grupoEntrenamiento">
-      <div class="titulo-grupo" onclick="toggleGrupo('grupoEntrenamiento')">
-        <span>ENTRENAMIENTO</span><span class="flecha">›</span>
-      </div>
-      <div class="submenu">
-        <a href="ADIUR-calendario.html"><span class="nav-punto"></span>Calendario</a>
-        <a href="ADIUR-planificacion.html"><span class="nav-punto"></span>Planificación</a>
-        <a href="ADIUR-gimnasio.html"><span class="nav-punto"></span>Gimnasio</a>
-      </div>
-    </div>
-    <div class="grupo-menu cerrado" id="grupoCompetencia">
-      <div class="titulo-grupo" onclick="toggleGrupo('grupoCompetencia')">
-        <span>COMPETENCIA</span><span class="flecha">›</span>
-      </div>
-      <div class="submenu">
-        <a href="ADIUR-Partidos.html"><span class="nav-punto"></span>Partidos</a>
-        <a href="ADIUR-estadisticas.html"><span class="nav-punto"></span>Estadísticas</a>
-        <a href="ADIUR-pizarra.html"><span class="nav-punto"></span>Pizarra táctica</a>
-      </div>
-    </div>
-    <div class="grupo-menu" id="grupoRendimientos">
-      <div class="titulo-grupo" onclick="toggleGrupo('grupoRendimientos')">
-        <span>RENDIMIENTOS</span><span class="flecha">›</span>
-      </div>
-      <div class="submenu">
-        <a href="ADIUR-testeos.html"><span class="nav-punto"></span>Planilla de testeos</a>
-        <a href="ADIUR-tiempos.html"><span class="nav-punto"></span>Tiempos</a>
-        <a href="multimedia.html"><span class="nav-punto"></span>Multimedia</a>
-        <a href="ADIUR-encuestas.html" class="activo"><span class="nav-punto"></span>Encuestas</a>
-        <a href="lesiones.html"><span class="nav-punto"></span>Lesiones</a>
-      </div>
-    </div>
-    <div class="separador-sesion">
-      <a class="enlace-cerrar-sesion" href="#" onclick="cerrarSesion(event)">
-        <span class="icono-salir">↪</span> Cerrar sesión
-      </a>
-    </div>
-  </aside>
-
-  <!-- CONTENIDO PRINCIPAL -->
-  <main class="contenido">
-    <div class="encabezado-seccion">
-      <div>
-        <h2>Encuestas de la Semana Actual</h2>
-        <p>Visualizá y respondé las encuestas asignadas según el cronograma de tu división.</p>
-      </div>
-    </div>
-
-    <!-- CONTROLES SUPERIORES Y FILTRO DE DIVISIÓN -->
-    <div class="panel">
-      <div class="filtros-superiores">
-        <div class="campo-filtro">
-          <label for="filtroDivisionEncuesta">División</label>
-          <select id="filtroDivisionEncuesta" onchange="renderizarCalendarioSemana()">
-            <option value="Sub 14" selected>Sub 14</option>
-            <option value="Sub 16">Sub 16</option>
-            <option value="Primera">Primera</option>
-          </select>
-        </div>
-        
-        <div id="contenedorBtnAgregarDia">
-          <!-- Botón de agregar día visible para DT / Admin -->
-        </div>
-      </div>
-
-      <!-- CALENDARIO DE DÍAS AGREGADOS MANUALMENTE -->
-      <div class="semana-grid" id="semanaGrid">
-        <!-- Se genera dinámicamente -->
-      </div>
-    </div>
-
-    <!-- PANEL DE RESULTADOS PARA EL CUERPO TÉCNICO -->
-    <div id="panelResultadosTecnicoContainer">
-      <!-- Se carga dinámicamente si es DT / Admin -->
-    </div>
-  </main>
+<aside class="sidebar" id="sidebar">
+<a class="menu-inicio" href="ADIUR-Pagina Principal.html">⌂ INICIO</a>
+<div class="grupo-menu cerrado" id="grupoPlantel"><div class="titulo-grupo" role="button" tabindex="0" onclick="toggleGrupo('grupoPlantel')">PLANTEL <span class="flecha">›</span></div><div class="submenu"><a href="ADIUR-jugadoras.html"><span class="nav-punto"></span>Jugadoras</a><a href="ADIUR-asistencia.html"><span class="nav-punto"></span>Asistencia</a></div></div>
+<div class="grupo-menu cerrado" id="grupoEntrenamiento"><div class="titulo-grupo" role="button" tabindex="0" onclick="toggleGrupo('grupoEntrenamiento')">ENTRENAMIENTO <span class="flecha">›</span></div><div class="submenu"><a href="ADIUR-calendario.html"><span class="nav-punto"></span>Calendario</a><a href="ADIUR-planificacion.html"><span class="nav-punto"></span>Planificación</a><a href="ADIUR-gimnasio.html"><span class="nav-punto"></span>Gimnasio</a></div></div>
+<div class="grupo-menu cerrado" id="grupoCompetencia"><div class="titulo-grupo" role="button" tabindex="0" onclick="toggleGrupo('grupoCompetencia')">COMPETENCIA <span class="flecha">›</span></div><div class="submenu"><a href="ADIUR-Partidos.html"><span class="nav-punto"></span>Partidos</a><a href="ADIUR-estadisticas.html"><span class="nav-punto"></span>Estadísticas</a><a href="ADIUR-pizarra.html"><span class="nav-punto"></span>Pizarra táctica</a></div></div>
+<div class="grupo-menu" id="grupoRendimientos"><div class="titulo-grupo" role="button" tabindex="0" onclick="toggleGrupo('grupoRendimientos')">RENDIMIENTOS <span class="flecha">›</span></div><div class="submenu"><a href="ADIUR-testeos.html"><span class="nav-punto"></span>Planilla de testeos</a><a href="ADIUR-tiempos.html"><span class="nav-punto"></span>Tiempos</a><a href="multimedia.html"><span class="nav-punto"></span>Multimedia</a><a href="ADIUR-encuestas.html" class="activo"><span class="nav-punto"></span>Encuestas</a><a href="lesiones.html"><span class="nav-punto"></span>Lesiones</a></div></div>
+<div class="separador-sesion"><a class="enlace-cerrar-sesion" href="#" onclick="cerrarSesion(event)">↪ Cerrar sesión</a></div>
+</aside>
+<main class="contenido">
+<section class="cabecera-pagina"><div><span class="etiqueta">RENDIMIENTOS · CONTROL DIARIO</span><h2 id="tituloPagina">Wellness y RPE</h2><p id="descripcionPagina">Registro diario del bienestar y percepción del esfuerzo para acompañar la recuperación y ajustar las cargas de entrenamiento.</p></div></section>
+<section class="selector-categoria" id="bloqueCategoria"><div style="flex:1"><label for="filtroCategoria">CATEGORÍA DEL PLANTEL</label><select id="filtroCategoria"></select></div><div class="pie-nota" id="textoCategoria">La información se limita a las categorías habilitadas para tu cuenta.</div></section>
+<div id="estadoGeneral" class="mensaje">Conectando con ADIUR...</div>
+<section id="vistaJugadora" class="oculto">
+<div class="pestanas"><button class="pestana activa" data-vista="wellness" type="button">Wellness diario</button><button class="pestana" data-vista="rpe" type="button">RPE post entrenamiento</button><button class="pestana" data-vista="historial" type="button">Mi historial</button></div>
+<div id="formWellness" class="panel">
+<div class="panel-cabecera"><div><h3>Registro de Wellness</h3><p>Completalo al comenzar el día, antes de entrenar</p></div><span class="pill">1 registro por día</span></div>
+<form id="formularioWellness">
+<div class="form-grid"><div class="campo"><label for="fechaWellness">FECHA</label><input type="date" id="fechaWellness" required></div><div class="campo"><label for="molestiaWellness">¿TENÉS ALGUNA MOLESTIA O DOLOR?</label><select id="molestiaWellness"><option value="no">No</option><option value="si">Sí</option></select></div></div>
+<div style="margin:17px 0 9px;font-size:12px;font-weight:900">¿CÓMO TE SENTÍS HOY?</div>
+<div class="escala-grid">
+<div class="escala-item"><label for="wSueno">Calidad del sueño</label><select id="wSueno" required><option value="">Elegir</option><option value="1">1 · Muy mala</option><option value="2">2 · Mala</option><option value="3">3 · Regular</option><option value="4">4 · Buena</option><option value="5">5 · Excelente</option></select></div>
+<div class="escala-item"><label for="wFatiga">Recuperación / energía</label><select id="wFatiga" required><option value="">Elegir</option><option value="1">1 · Agotada</option><option value="2">2 · Muy cansada</option><option value="3">3 · Normal</option><option value="4">4 · Bien</option><option value="5">5 · Excelente</option></select></div>
+<div class="escala-item"><label for="wMuscular">Estado muscular</label><select id="wMuscular" required><option value="">Elegir</option><option value="1">1 · Muy cargada</option><option value="2">2 · Cargada</option><option value="3">3 · Normal</option><option value="4">4 · Bien</option><option value="5">5 · Sin molestias</option></select></div>
+<div class="escala-item"><label for="wEstres">Nivel de estrés</label><select id="wEstres" required><option value="">Elegir</option><option value="1">1 · Muy alto</option><option value="2">2 · Alto</option><option value="3">3 · Normal</option><option value="4">4 · Bajo</option><option value="5">5 · Muy bajo</option></select></div>
+<div class="escala-item"><label for="wAnimo">Estado de ánimo</label><select id="wAnimo" required><option value="">Elegir</option><option value="1">1 · Muy bajo</option><option value="2">2 · Bajo</option><option value="3">3 · Normal</option><option value="4">4 · Bueno</option><option value="5">5 · Excelente</option></select></div>
 </div>
-
-<!-- MODAL PARA AGREGAR UN DÍA MANUALMENTE -->
-<div class="modal" id="modalAgregarDia">
-  <div class="modal-contenido">
-    <div class="modal-header">
-      <h3>Agregar Día a la Semana</h3>
-      <button class="btn-cerrar-modal" onclick="cerrarModal('modalAgregarDia')">&times;</button>
-    </div>
-    <form id="formAgregarDia" onsubmit="guardarNuevoDiaSemana(event)">
-      <div class="form-group">
-        <label for="selectNombreDia">Día de la semana</label>
-        <select id="selectNombreDia" required>
-          <option value="Lunes">Lunes</option>
-          <option value="Martes">Martes</option>
-          <option value="Miércoles">Miércoles</option>
-          <option value="Jueves">Jueves</option>
-          <option value="Viernes">Viernes</option>
-          <option value="Sábado">Sábado</option>
-          <option value="Domingo">Domingo</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="inputFechaDia">Fecha</label>
-        <input type="date" id="inputFechaDia" required>
-      </div>
-
-      <div class="form-group">
-        <label for="selectTipoDia">Tipo de Actividad del Día</label>
-        <select id="selectTipoDia" required>
-          <option value="entrenamiento">Entrenamiento (Crea Pre y Post entreno)</option>
-          <option value="partido">Partido (Crea Pre y Post partido)</option>
-          <option value="libre">Sin encuestas iniciales (Día libre)</option>
-        </select>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn-secundario" onclick="cerrarModal('modalAgregarDia')">Cancelar</button>
-        <button type="submit" class="btn-principal">Agregar Día</button>
-      </div>
-    </form>
-  </div>
+<div class="form-grid" style="margin-top:14px"><div class="campo oculto" id="grupoZonaMolestia"><label for="wZona">¿DÓNDE SENTÍS LA MOLESTIA?</label><input id="wZona" maxlength="100" placeholder="Ej.: rodilla derecha, isquiotibial..."></div><div class="campo oculto" id="grupoIntensidad"><label for="wIntensidad">INTENSIDAD DEL DOLOR (0 A 10)</label><select id="wIntensidad"><option value="">Elegir</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div><div class="campo campo-completo"><label for="wComentario">OBSERVACIONES (OPCIONAL)</label><textarea id="wComentario" maxlength="500" placeholder="Contanos cómo te sentís o si hay algo que el cuerpo técnico deba saber..."></textarea></div></div>
+<div class="pie-nota">Escala de bienestar: 1 representa el peor estado y 5 el mejor estado. Las respuestas son individuales y visibles para el cuerpo técnico de tu categoría.</div>
+<div class="form-acciones"><button class="btn btn-principal" type="submit">Guardar Wellness</button></div>
+</form></div>
+<div id="formRPE" class="panel oculto">
+<div class="panel-cabecera"><div><h3>Registro de RPE</h3><p>Completalo al finalizar cada entrenamiento o partido</p></div><span class="pill">Carga = RPE × minutos</span></div>
+<form id="formularioRPE">
+<div class="form-grid"><div class="campo"><label for="fechaRPE">FECHA DE LA SESIÓN</label><input type="date" id="fechaRPE" required></div><div class="campo"><label for="tipoSesion">TIPO DE SESIÓN</label><select id="tipoSesion" required><option value="Cancha">Entrenamiento en cancha</option><option value="Gimnasio">Gimnasio</option><option value="Partido">Partido</option><option value="Otro">Otro</option></select></div><div class="campo"><label for="minutosRPE">DURACIÓN TOTAL (MINUTOS)</label><input type="number" id="minutosRPE" min="1" max="360" step="1" placeholder="Ej.: 90" required></div><div class="campo"><label>ESFUERZO PERCIBIDO (0 A 10)</label><div class="ayuda">Elegí cuánto te exigió la sesión en general.</div><div class="escala-rpe" id="opcionesRPE"></div><input type="hidden" id="valorRPE" required></div><div class="campo campo-completo"><label for="comentarioRPE">OBSERVACIONES (OPCIONAL)</label><textarea id="comentarioRPE" maxlength="500" placeholder="Cómo te sentiste durante la sesión..."></textarea></div></div>
+<div class="mensaje" id="resumenCarga">Seleccioná el RPE y la duración para calcular la carga de la sesión.</div>
+<div class="pie-nota">Referencia: 0 = descanso; 1–2 = muy suave; 3–4 = suave; 5–6 = moderado; 7–8 = intenso; 9 = muy intenso; 10 = máximo esfuerzo.</div>
+<div class="form-acciones"><button class="btn btn-principal" type="submit">Guardar RPE</button></div>
+</form></div>
+<div id="historialJugadora" class="panel oculto"><div class="panel-cabecera"><div><h3>Mi historial</h3><p>Consultá tus registros anteriores</p></div></div><div id="listaHistorialJugadora"></div></div>
+</section>
+<section id="vistaTecnico" class="oculto">
+<div class="metricas" id="metricasTecnico"></div>
+<div class="panel">
+<div class="panel-cabecera"><div><h3>Seguimiento individual del plantel</h3><p>Consultá qué respondió cada jugadora y cómo evolucionan sus registros.</p></div><button class="btn btn-secundario" id="exportarCSV" type="button">Exportar CSV</button></div>
+<div class="filtros"><div class="campo"><label for="periodoFiltro">PERÍODO</label><select id="periodoFiltro"><option value="7">Últimos 7 días</option><option value="14">Últimos 14 días</option><option value="30" selected>Últimos 30 días</option><option value="all">Todo el historial</option></select></div><div class="campo"><label for="buscarJugadora">BUSCAR JUGADORA</label><input id="buscarJugadora" type="search" placeholder="Nombre y apellido"></div><div class="campo"><label for="tipoFiltro">REGISTRO</label><select id="tipoFiltro"><option value="todos">Wellness + RPE</option><option value="wellness">Solo Wellness</option><option value="rpe">Solo RPE</option></select></div></div>
+<div class="tabla-scroll" style="margin-top:15px"><table><thead><tr><th>Jugadora</th><th>Wellness más reciente</th><th>RPE más reciente</th><th>Carga de sesión</th><th>Molestias</th><th>Detalle</th></tr></thead><tbody id="tablaSeguimiento"></tbody></table></div><div id="vacioSeguimiento" class="vacio oculto">Todavía no hay registros para los filtros seleccionados.</div>
 </div>
-
-<!-- MODAL PARA AGREGAR ENCUESTA MANUALMENTE A UN DÍA -->
-<div class="modal" id="modalAgregarEncuesta">
-  <div class="modal-contenido">
-    <div class="modal-header">
-      <h3>Agregar Encuesta</h3>
-      <button class="btn-cerrar-modal" onclick="cerrarModal('modalAgregarEncuesta')">&times;</button>
-    </div>
-    <form id="formAgregarEncuesta" onsubmit="guardarNuevaEncuestaDia(event)">
-      <input type="hidden" id="inputDiaId">
-      
-      <div class="form-group">
-        <label for="tipoEncuestaCrear">Tipo de Encuesta</label>
-        <select id="tipoEncuestaCrear" required>
-          <option value="Pre entrenamiento">Pre entrenamiento</option>
-          <option value="Post entrenamiento">Post entrenamiento</option>
-          <option value="Pre partido">Pre partido</option>
-          <option value="Post partido">Post partido</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="preguntaCrear">Título / Indicación de la Encuesta</label>
-        <input type="text" id="preguntaCrear" required placeholder="Ej: Control diario de bienestar">
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn-secundario" onclick="cerrarModal('modalAgregarEncuesta')">Cancelar</button>
-        <button type="submit" class="btn-principal">Guardar Encuesta</button>
-      </div>
-    </form>
-  </div>
+<div class="panel"><div class="panel-cabecera"><div><h3>Estadísticas del período</h3><p>Promedios del plantel y alertas para orientar el seguimiento.</p></div></div><div id="estadisticasDetalle"></div></div>
+</section>
+</main>
 </div>
-
-<!-- MODAL PARA RESPONDER ENCUESTA -->
-<div class="modal" id="modalResponderEncuesta">
-  <div class="modal-contenido">
-    <div class="modal-header">
-      <h3 id="tituloModalResponder">Responder Encuesta</h3>
-      <button class="btn-cerrar-modal" onclick="cerrarModal('modalResponderEncuesta')">&times;</button>
-    </div>
-    <form id="formResponderEncuesta" onsubmit="enviarRespuestaEncuesta(event)">
-      <input type="hidden" id="idEncuestaResponder">
-      <input type="hidden" id="tipoEncuestaActiva">
-      
-      <div class="form-group">
-        <label id="labelPreguntaModal" style="font-weight: bold; color: var(--negro); font-size: 14px; margin-bottom: 15px;"></label>
-      </div>
-
-      <!-- FORMULARIO 1: POST ENTRENAMIENTO -->
-      <div id="seccionPostEntrenamiento" style="display: none;">
-        <div class="form-group">
-          <label for="postComoEstuvo">¿Cómo estuvo el entrenamiento? (1 = Mal, 5 = Excelente)</label>
-          <select id="postComoEstuvo">
-            <option value="5">5 - Excelente</option>
-            <option value="4">4 - Muy bueno</option>
-            <option value="3" selected>3 - Normal</option>
-            <option value="2">2 - Regular</option>
-            <option value="1">1 - Mal</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="postExigente">¿Qué tan exigente fue? (1 = Poco exigente, 5 = Muy exigente)</label>
-          <select id="postExigente">
-            <option value="5">5 - Muy exigente</option>
-            <option value="4">4 - Exigente</option>
-            <option value="3" selected>3 - Moderado</option>
-            <option value="2">2 - Poco exigente</option>
-            <option value="1">1 - Muy poco exigente</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="postComoSentiste">¿Cómo te sentiste? (1 = Muy mal, 5 = Excelente)</label>
-          <select id="postComoSentiste">
-            <option value="5">5 - Excelente</option>
-            <option value="4">4 - Bien</option>
-            <option value="3" selected>3 - Normal</option>
-            <option value="2">2 - Mal</option>
-            <option value="1">1 - Muy mal</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>¿Qué hiciste? (Múltiple choice):</label>
-          <div class="opciones-checkbox-grid">
-            <label class="opcion-check-label"><input type="checkbox" name="postHiciste" value="Gym"> Gym</label>
-            <label class="opcion-check-label"><input type="checkbox" name="postHiciste" value="Cancha"> Cancha</label>
-            <label class="opcion-check-label"><input type="checkbox" name="postHiciste" value="Partido"> Partido</label>
-            <label class="opcion-check-label"><input type="checkbox" name="postHiciste" value="Plio"> Plio</label>
-            <label class="opcion-check-label"><input type="checkbox" name="postHiciste" value="Pasadas"> Pasadas</label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="postTieneMolestia">¿Tenés molestias o dolores?</label>
-          <select id="postTieneMolestia" onchange="toggleMolestiaPostCampos()">
-            <option value="no" selected>No</option>
-            <option value="si">Sí</option>
-          </select>
-        </div>
-
-        <div id="contenedorMolestiaPostSi" style="display: none; background: #fafafa; padding: 12px; border-radius: 8px; border: 1px solid var(--borde); margin-bottom: 15px;">
-          <div class="form-group">
-            <label for="postDondeMolestia">¿Dónde?</label>
-            <select id="postDondeMolestia">
-              <option value="Cuádriceps">Cuádriceps</option>
-              <option value="Isquiotibiales">Isquiotibiales</option>
-              <option value="Gemelos / Pantorrilla">Gemelos / Pantorrilla</option>
-              <option value="Rodilla">Rodilla</option>
-              <option value="Tobillo / Pie">Tobillo / Pie</option>
-              <option value="Cadera / Ingle">Cadera / Ingle</option>
-              <option value="Espalda / Lumbar">Espalda / Lumbar</option>
-              <option value="Hombro / Cuello">Hombro / Cuello</option>
-              <option value="Otro">Otro</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="postTeLimita">¿Te limita?</label>
-            <select id="postTeLimita">
-              <option value="Puedo entrenar normalmente">Puedo entrenar normalmente</option>
-              <option value="Me limita">Me limita</option>
-              <option value="No puedo entrenar">No puedo entrenar</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 0;">
-            <label for="postDetallesMolestia">Detalles</label>
-            <textarea id="postDetallesMolestia" rows="2" placeholder="Describí brevemente la molestia..."></textarea>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="postFalto">¿Qué le faltó à tu entrenamiento?</label>
-          <textarea id="postFalto" rows="2" placeholder="Observaciones o aspectos a mejorar..."></textarea>
-        </div>
-      </div>
-
-      <!-- FORMULARIO 2: PRE ENTRENAMIENTO / PRE PARTIDO -->
-      <div id="seccionPreEntrenoPartido" style="display: none;">
-        <div class="form-group">
-          <label for="respSueno">Sueño (1 = peor, 5 = mejor)</label>
-          <select id="respSueno">
-            <option value="5">5 - Excelente</option>
-            <option value="4">4 - Muy bueno</option>
-            <option value="3" selected>3 - Normal</option>
-            <option value="2">2 - Malo</option>
-            <option value="1">1 - Muy malo</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="respCansancio">Cansancio (1 = peor/muy cansada, 5 = mejor/fresca)</label>
-          <select id="respCansancio">
-            <option value="5">5 - Muy descansada</option>
-            <option value="4">4 - Descansada</option>
-            <option value="3" selected>3 - Normal</option>
-            <option value="2">2 - Cansada</option>
-            <option value="1">1 - Muy cansada / Agotada</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="respMusculatura">Musculatura (1 = peor/cargada, 5 = mejor/liviana)</label>
-          <select id="respMusculatura">
-            <option value="5">5 - Excelente / Liviana</option>
-            <option value="4">4 - Bien</option>
-            <option value="3" selected>3 - Normal</option>
-            <option value="2">2 - Cargada / Molesta</option>
-            <option value="1">1 - Muy dolorida / Contundente</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="respEstres">Estrés (1 = peor/muy estresada, 5 = mejor/tranquila)</label>
-          <select id="respEstres">
-            <option value="5">5 - Muy tranquila</option>
-            <option value="4">4 - Tranquila</option>
-            <option value="3" selected>3 - Normal</option>
-            <option value="2">2 - Estresada / Ansiosa</option>
-            <option value="1">1 - Muy estresada / Saturada</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="respTieneMolestia">¿Tenés alguna molestia física?</label>
-          <select id="respTieneMolestia" onchange="toggleMolestiaCampos()">
-            <option value="no" selected>No</option>
-            <option value="si">Sí</option>
-          </select>
-        </div>
-
-        <div id="contenedorMolestiaSi" style="display: none; background: #fafafa; padding: 12px; border-radius: 8px; border: 1px solid var(--borde); margin-bottom: 15px;">
-          <div class="form-group">
-            <label for="respDondeMolestia">¿Dónde?</label>
-            <select id="respDondeMolestia">
-              <option value="Cuádriceps">Cuádriceps</option>
-              <option value="Isquiotibiales">Isquiotibiales</option>
-              <option value="Gemelos / Pantorrilla">Gemelos / Pantorrilla</option>
-              <option value="Rodilla">Rodilla</option>
-              <option value="Tobillo / Pie">Tobillo / Pie</option>
-              <option value="Cadera / Ingle">Cadera / Ingle</option>
-              <option value="Espalda / Lumbar">Espalda / Lumbar</option>
-              <option value="Hombro / Cuello">Hombro / Cuello</option>
-              <option value="Otro">Otro</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="respTeLimita">¿Te limita?</label>
-            <select id="respTeLimita">
-              <option value="Puedo entrenar normalmente">Puedo entrenar normalmente</option>
-              <option value="Me limita">Me limita</option>
-              <option value="No puedo entrenar">No puedo entrenar</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 0;">
-            <label for="respDetalles">Detalles</label>
-            <textarea id="respDetalles" rows="2" placeholder="Describí brevemente la molestia..."></textarea>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="respQueComiste">¿Qué comiste?</label>
-          <select id="respQueComiste" onchange="toggleComidaCampos()">
-            <option value="nada" selected>Nada</option>
-            <option value="detallar">Detallar</option>
-          </select>
-        </div>
-
-        <div id="contenedorComidaDetalle" style="display: none; margin-bottom: 15px;">
-          <label for="respDetalleComida" style="font-size: 12px; font-weight: bold; margin-bottom: 6px; display: block; color: #444;">Detalle de lo que comiste</label>
-          <textarea id="respDetalleComida" rows="2" placeholder="Ej: Arroz con pollo, fruta, agua..."></textarea>
-        </div>
-
-        <div class="form-group" id="grupoHoyOpciones">
-          <label>Hoy vas a hacer (Múltiple choice):</label>
-          <div class="opciones-checkbox-grid">
-            <label class="opcion-check-label"><input type="checkbox" name="hoyOpciones" value="Cancha"> Cancha</label>
-            <label class="opcion-check-label"><input type="checkbox" name="hoyOpciones" value="Gym"> Gym</label>
-            <label class="opcion-check-label"><input type="checkbox" name="hoyOpciones" value="Partido"> Partido</label>
-            <label class="opcion-check-label"><input type="checkbox" name="hoyOpciones" value="No entreno"> No entreno</label>
-            <label class="opcion-check-label"><input type="checkbox" name="hoyOpciones" value="No voy"> No voy</label>
-          </div>
-        </div>
-      </div>
-
-      <!-- FORMULARIO 3: POST PARTIDO -->
-      <div id="seccionPostPartido" style="display: none;">
-        <div class="form-group">
-          <label for="ppSueno">Sueño (1 = peor, 5 = mejor)</label>
-          <select id="ppSueno">
-            <option value="5">5 - Excelente</option>
-            <option value="4">4 - Muy bueno</option>
-            <option value="3" selected>3 - Normal</option>
-            <option value="2">2 - Malo</option>
-            <option value="1">1 - Muy malo</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="ppCansancio">Cansancio (1 = peor/muy cansada, 5 = mejor/fresca)</label>
-          <select id="ppCansancio">
-            <option value="5">5 - Muy descansada</option>
-            <option value="4">4 - Descansada</option>
-            <option value="3" selected>3 - Normal</option>
-            <option value="2">2 - Cansada</option>
-            <option value="1">1 - Muy cansada / Agotada</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="ppMusculatura">Musculatura (1 = peor/cargada, 5 = mejor/liviana)</label>
-          <select id="ppMusculatura">
-            <option value="5">5 - Excelente / Liviana</option>
-            <option value="4">4 - Bien</option>
-            <option value="3" selected>3 - Normal</option>
-            <option value="2">2 - Cargada / Molesta</option>
-            <option value="1">1 - Muy dolorida / Contundente</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="ppEstres">Estrés (1 = peor/muy estresada, 5 = mejor/tranquila)</label>
-          <select id="ppEstres">
-            <option value="5">5 - Muy tranquila</option>
-            <option value="4">4 - Tranquila</option>
-            <option value="3" selected>3 - Normal</option>
-            <option value="2">2 - Estresada / Ansiosa</option>
-            <option value="1">1 - Muy estresada / Saturada</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="ppTieneMolestia">¿Tenés alguna molestia física?</label>
-          <select id="ppTieneMolestia" onchange="toggleMolestiaPpCampos()">
-            <option value="no" selected>No</option>
-            <option value="si">Sí</option>
-          </select>
-        </div>
-
-        <div id="contenedorMolestiaPpSi" style="display: none; background: #fafafa; padding: 12px; border-radius: 8px; border: 1px solid var(--borde); margin-bottom: 15px;">
-          <div class="form-group">
-            <label for="ppDondeMolestia">¿Dónde?</label>
-            <select id="ppDondeMolestia">
-              <option value="Cuádriceps">Cuádriceps</option>
-              <option value="Isquiotibiales">Isquiotibiales</option>
-              <option value="Gemelos / Pantorrilla">Gemelos / Pantorrilla</option>
-              <option value="Rodilla">Rodilla</option>
-              <option value="Tobillo / Pie">Tobillo / Pie</option>
-              <option value="Cadera / Ingle">Cadera / Ingle</option>
-              <option value="Espalda / Lumbar">Espalda / Lumbar</option>
-              <option value="Hombro / Cuello">Hombro / Cuello</option>
-              <option value="Otro">Otro</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="ppTeLimita">¿Te limita?</label>
-            <select id="ppTeLimita">
-              <option value="Puedo entrenar normalmente">Puedo entrenar normalmente</option>
-              <option value="Me limita">Me limita</option>
-              <option value="No puedo entrenar">No puedo entrenar</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 0;">
-            <label for="ppDetalles">Detalles</label>
-            <textarea id="ppDetalles" rows="2" placeholder="Describí brevemente la molestia..."></textarea>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="ppQueComiste">¿Qué comiste?</label>
-          <select id="ppQueComiste" onchange="toggleComidaPpCampos()">
-            <option value="nada" selected>Nada</option>
-            <option value="detallar">Detallar</option>
-          </select>
-        </div>
-
-        <div id="contenedorComidaPpDetalle" style="display: none; margin-bottom: 15px;">
-          <label style="font-size: 12px; font-weight: bold; margin-bottom: 6px; display: block; color: #444;">Detalle de lo que comiste</label>
-          <textarea id="ppDetalleComida" rows="2" placeholder="Ej: Arroz con pollo, fruta, agua..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="ppAnimoPost">¿Cuál es tu estado de ánimo post partido? (1 = Muy mal, 5 = Excelente)</label>
-          <select id="ppAnimoPost">
-            <option value="5">5 - Excelente</option>
-            <option value="4">4 - Muy bueno</option>
-            <option value="3" selected>3 - Normal</option>
-            <option value="2">2 - Malo</option>
-            <option value="1">1 - Muy malo</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="ppAnimoEntrenar">¿Con qué ánimo volvés a entrenar? (1 = Muy bajo, 5 = Muy alto)</label>
-          <select id="ppAnimoEntrenar">
-            <option value="5">5 - Muy alto</option>
-            <option value="4">4 - Alto</option>
-            <option value="3" selected>3 - Normal</option>
-            <option value="2">2 - Bajo</option>
-            <option value="1">1 - Muy bajo</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn-secundario" onclick="cerrarModal('modalResponderEncuesta')">Cancelar</button>
-        <button type="submit" class="btn-principal">Enviar Respuesta</button>
-      </div>
-    </form>
-  </div>
-</div>
-
+<div class="modal" id="modalDetalle"><div class="modal-contenido"><div class="modal-cabecera"><h3 id="tituloDetalle">Detalle de jugadora</h3><button class="cerrar-modal" id="cerrarDetalle" type="button" aria-label="Cerrar">×</button></div><div id="contenidoDetalle"></div></div></div>
 <script>
-/* =====================================================
-   USUARIO Y PERMISOS
-===================================================== */
-const usuarioGuardado = (localStorage.getItem("usuarioADIUR") || "").trim();
-if (!usuarioGuardado) {
-  window.location.href = "ADIUR-Loing.html";
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const norm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+const fechaLocal=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const fmtFecha=s=>{if(!s)return "—";const p=s.split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:s};
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let perfil=null,db=null,auth=null,rol="",uid="",nombre="",jugadoraNombre="",categoriaUsuario="",categoriaActiva="",categorias=[],plantel=[],wellness=[],rpes=[],unsubs=[],vistaActiva="wellness",rpeSeleccionado=null;
+let modulosFirestore=null;
+function setEstado(msg,tipo){$("estadoGeneral").textContent=msg;$("estadoGeneral").className="mensaje"+(tipo?" "+tipo:"")}
+function categoriasPermitidas(){const base=Array.isArray(perfil.categorias)?perfil.categorias:[];return base.length?base:["Sub 10","Sub 12","Sub 14","Sub 16","Primera"]}
+function esJugadora(){return rol==="jugadora"}
+function mostrarPerfil(){ $("nombreUsuario").textContent=nombre||"Usuario";$("avatarUsuario").textContent=(nombre||"U").trim().charAt(0).toUpperCase();$("rolUsuario").textContent=({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rol]||rol}
+function prepararCategorias(){
+ categorias=categoriasPermitidas();
+ const select=$("filtroCategoria");select.innerHTML="";
+ categorias.forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;select.appendChild(o)});
+ categoriaActiva=esJugadora()?(categorias[0]||""):(categorias[0]||"");
+ select.value=categoriaActiva;select.disabled=esJugadora()||categorias.length===1;
+ $("bloqueCategoria").classList.toggle("oculto",categorias.length===1);
+ select.addEventListener("change",()=>{if(categorias.includes(select.value)){categoriaActiva=select.value;renderTecnico()}});
 }
-
-const usuarioNormalizado = usuarioGuardado.toLowerCase();
-const rolADIUR = localStorage.getItem("rolADIUR") || "";
-const esFran = rolADIUR === "admin";
-const esToto = ["coordinadora", "cuerpo_tecnico"].includes(rolADIUR);
-const esBianca = rolADIUR === "jugadora";
-
-document.getElementById("nombreUsuario").textContent = usuarioGuardado;
-document.getElementById("avatarUsuario").textContent = usuarioGuardado.charAt(0).toUpperCase();
-document.getElementById("rolUsuario").textContent = esFran ? "Administrador" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora" : "Club ADIUR";
-
-// Mostrar botón para agregar día a DT o Admin
-if (esFran || esToto) {
-  document.getElementById("contenedorBtnAgregarDia").innerHTML = `
-    <button class="btn-principal" onclick="abrirModalAgregarDia()">+ Agregar Día a la Semana</button>
-  `;
+function toggleGrupo(id){const g=$(id);if(g)g.classList.toggle("cerrado")}
+window.toggleGrupo=toggleGrupo;
+function iniciarMenu(){
+ const side=$("sidebar"),overlay=$("capaSidebar"),btn=$("botonMenu");
+ const mobile=()=>innerWidth<=760;
+ function sync(){const open=!side.classList.contains("oculto");btn.setAttribute("aria-expanded",String(open));btn.setAttribute("aria-label",open?"Cerrar menú":"Abrir menú");overlay.classList.toggle("visible",mobile()&&open)}
+ btn.addEventListener("click",()=>{side.classList.toggle("oculto");sync()});
+ overlay.addEventListener("click",()=>{side.classList.add("oculto");sync()});
+ window.addEventListener("resize",()=>{if(mobile())side.classList.add("oculto");else side.classList.remove("oculto");sync()});
+ if(mobile())side.classList.add("oculto");sync();
+ document.querySelectorAll(".titulo-grupo[role=button]").forEach(el=>el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggleGrupo(el.closest(".grupo-menu").id)}}));
 }
-
-function cerrarSesion(event) {
-  event.preventDefault();
-  localStorage.removeItem("usuarioADIUR");
-  window.location.href = "ADIUR-Loing.html";
-}
-
-function alternarSidebar() {
-  document.getElementById("sidebar").classList.toggle("oculto");
-  document.getElementById("capaSidebar").classList.toggle("visible");
-}
-
-function toggleGrupo(id) {
-  document.getElementById(id).classList.toggle("cerrado");
-}
-
-/* =====================================================
-   ESTRUCTURA DE DATOS (LOCALSTORAGE)
-===================================================== */
-function obtenerJugadorasDivision(division) {
-  let datos = localStorage.getItem("jugadorasADIUR") || localStorage.getItem("plantelADIUR");
-  let lista = [];
-  if (datos) {
-    try { lista = JSON.parse(datos); } catch(e) {}
+function cargarJugadoras(onSnapshot,collection,dbRef){
+ const ref=collection(dbRef,"jugadoras");
+ const unsub=onSnapshot(ref,snap=>{
+  plantel=snap.docs.map(d=>{const x=d.data();return {id:d.id,nombre:x.nombre||x.nombreCompleto||x.nombre_completo||[x.nombres,x.apellido||x.apellidos].filter(Boolean).join(" "),categoria:x.categoria||x.division||x.categoría||x.category||"",estado:x.estado||x.status||"Activo"}});
+  if(esJugadora()){
+   const yo=plantel.find(p=>norm(p.nombre)===norm(jugadoraNombre));
+   if(yo){jugadoraNombre=yo.nombre;categoriaUsuario=yo.categoria||categoriaUsuario}
   }
-  return lista.filter(j => (j.categoria || "").trim().toLowerCase() === division.toLowerCase());
+  renderActual();
+ },err=>{console.error(err);setEstado("No se pudo cargar el plantel desde Firestore. Revisá la conexión y los permisos.","error")});
+ unsubs.push(unsub);
 }
-
-function obtenerEstructuraEncuestas() {
-  let datos = localStorage.getItem("diasEncuestasADIUR");
-  if (datos) {
-    try { return JSON.parse(datos); } catch(e) {}
-  }
-  return {}; 
+function escucharRegistros(onSnapshot,collection,query,where,dbRef){
+ const refW=collection(dbRef,"wellness_adiur"),refR=collection(dbRef,"rpe_adiur");
+ const qW=esJugadora()?query(refW,where("uid","==",uid)):refW;
+ const qR=esJugadora()?query(refR,where("uid","==",uid)):refR;
+ unsubs.push(onSnapshot(qW,s=>{wellness=s.docs.map(d=>Object.assign({id:d.id},d.data()));renderActual()},e=>{console.error(e);setEstado("No se pudieron leer los registros de Wellness. Revisá las reglas de Firestore.","error")}));
+ unsubs.push(onSnapshot(qR,s=>{rpes=s.docs.map(d=>Object.assign({id:d.id},d.data()));renderActual()},e=>{console.error(e);setEstado("No se pudieron leer los registros de RPE. Revisá las reglas de Firestore.","error")}));
 }
-
-function guardarEstructuraEncuestas(datos) {
-  localStorage.setItem("diasEncuestasADIUR", JSON.stringify(datos));
-  if (typeof window.guardarEstructuraEncuestasNube === "function") {
-    window.guardarEstructuraEncuestasNube(datos).catch(error =>
-      console.error("No se pudo sincronizar la estructura de encuestas:", error)
-    );
-  }
+function activo(p){return !/inactivo|baja|desvinculada/i.test(p.estado||"Activo")}
+function jugadorasCategoria(){return plantel.filter(p=>norm(p.categoria)===norm(categoriaActiva)&&activo(p)).sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"))}
+function registrosPeriodo(arr){const n=$("periodoFiltro")?.value||"30";if(n==="all")return arr;const limite=new Date();limite.setDate(limite.getDate()-Number(n)+1);const iso=limite.toISOString().slice(0,10);return arr.filter(x=>x.fecha>=iso)}
+function promedio(arr,fn){const vals=arr.map(fn).filter(v=>Number.isFinite(v));return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null}
+function num(v){const n=Number(v);return Number.isFinite(n)?n:null}
+function ultimo(arr){return arr.slice().sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||"")||(b.actualizadoEn||"").localeCompare(a.actualizadoEn||""))[0]||null}
+function bienestar(r){if(!r)return null;return promedio([r],x=>promedio([x],y=>["sueno","energia","muscular","estres","animo"].map(k=>num(y[k])).filter(v=>v!==null).reduce((a,b)=>a+b,0)/5))}
+function carga(r){return r?(num(r.rpe)||0)*(num(r.minutos)||0):null}
+function mostrarVistaJugadora(v){vistaActiva=v;["formWellness","formRPE","historialJugadora"].forEach((id,i)=>$(id).classList.toggle("oculto",["wellness","rpe","historial"][i]!==v));document.querySelectorAll(".pestana").forEach(b=>b.classList.toggle("activa",b.dataset.vista===v));}
+function crearOpcionesRPE(){const c=$("opcionesRPE");c.innerHTML="";for(let i=0;i<=10;i++){const b=document.createElement("button");b.type="button";b.className="rpe-opcion";b.textContent=String(i);b.addEventListener("click",()=>{rpeSeleccionado=i;$("valorRPE").value=String(i);c.querySelectorAll("button").forEach(x=>x.classList.toggle("seleccionado",x===b));actualizarCargaPreview()});c.appendChild(b)}}
+function actualizarCargaPreview(){const r=rpeSeleccionado,m=num($("minutosRPE").value);$("resumenCarga").textContent=r===null||!m?"Seleccioná el RPE y la duración para calcular la carga de la sesión.":"Carga de la sesión: "+(r*m)+" unidades (RPE "+r+" × "+m+" minutos)."}
+function abrirDetalle(p){const ws=wellness.filter(x=>x.uid===p.uid&&norm(x.categoria)===norm(categoriaActiva)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));const rs=rpes.filter(x=>x.uid===p.uid&&norm(x.categoria)===norm(categoriaActiva)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));$("tituloDetalle").textContent=p.nombre;$("contenidoDetalle").innerHTML="<h4>Wellness</h4>"+(ws.length?ws.slice(0,12).map(x=>'<div class="detalle-fila"><span>'+fmtFecha(x.fecha)+' · Sueño '+esc(x.sueno)+', energía '+esc(x.energia)+', muscular '+esc(x.muscular)+', estrés '+esc(x.estres)+', ánimo '+esc(x.animo)+(x.molestia==="si"?' · <b>Molestia: '+esc(x.zona||"Sí")+'</b>':'')+'</span><strong>'+esc(bienestar(x)?.toFixed(1)||"—")+'/5</strong></div>').join(""):'<div class="vacio">Sin registros de Wellness</div>')+"<h4 style='margin-top:20px'>RPE</h4>"+(rs.length?rs.slice(0,12).map(x=>'<div class="detalle-fila"><span>'+fmtFecha(x.fecha)+' · '+esc(x.tipoSesion)+' · '+esc(x.minutos)+' min · RPE '+esc(x.rpe)+'</span><strong>'+carga(x)+' UA</strong></div>').join(""):'<div class="vacio">Sin registros de RPE</div>');$("modalDetalle").classList.add("activo")}
+function renderTecnico(){
+ if(esJugadora())return;
+ const lista=jugadorasCategoria(),w=wellness.filter(x=>norm(x.categoria)===norm(categoriaActiva)),r=rpes.filter(x=>norm(x.categoria)===norm(categoriaActiva)),wf=registrosPeriodo(w),rf=registrosPeriodo(r);
+ const fecha=fechaLocal(),respondieron=new Set(wf.filter(x=>x.fecha===fecha).map(x=>x.uid)).size;
+ const promW=promedio(wf,x=>bienestar(x)),promR=promedio(rf,x=>num(x.rpe)),totalCarga=rf.reduce((s,x)=>s+(carga(x)||0),0);
+ $("metricasTecnico").innerHTML='<div class="metrica"><span>Jugadoras activas</span><strong>'+lista.length+'</strong><small>En '+esc(categoriaActiva)+'</small></div><div class="metrica"><span>Wellness de hoy</span><strong>'+respondieron+'/'+lista.length+'</strong><small>'+ (lista.length?Math.round(respondieron/lista.length*100):0)+'% de participación</small></div><div class="metrica"><span>Wellness promedio</span><strong>'+(promW===null?"—":promW.toFixed(2)+"/5")+'</strong><small>Período seleccionado</small></div><div class="metrica"><span>RPE promedio</span><strong>'+(promR===null?"—":promR.toFixed(1)+"/10")+'</strong><small>Carga acumulada: '+Math.round(totalCarga)+' UA</small></div>';
+ const busq=norm($("buscarJugadora").value),tipo=$("tipoFiltro").value;
+ const filtradas=lista.filter(p=>!busq||norm(p.nombre).includes(busq));
+ $("tablaSeguimiento").innerHTML=filtradas.map(p=>{
+  const pw=ultimo(wf.filter(x=>x.uid===p.id||norm(x.jugadora)===norm(p.nombre))),pr=ultimo(rf.filter(x=>x.uid===p.id||norm(x.jugadora)===norm(p.nombre)));
+  const molestia=pw&&pw.molestia==="si";
+  if(tipo==="wellness"&&!pw)return "";if(tipo==="rpe"&&!pr)return "";
+  return "<tr><td class='nombre-jugadora'>"+esc(p.nombre)+"<span class='dato-secundario'>"+esc(p.categoria)+"</span></td><td>"+(pw?'<b>'+bienestar(pw).toFixed(1)+'/5</b><span class="dato-secundario">'+fmtFecha(pw.fecha)+'</span>':'<span class="pill">Pendiente</span>')+"</td><td>"+(pr?'<b>RPE '+esc(pr.rpe)+'/10</b><span class="dato-secundario">'+fmtFecha(pr.fecha)+'</span>':'<span class="pill">Pendiente</span>')+"</td><td>"+(pr?Math.round(carga(pr))+' UA':'—')+"</td><td>"+(molestia?'<span class="pill alerta">Declaró molestia</span>':'<span class="pill ok">Sin alerta</span>')+"</td><td><button class='btn btn-secundario' type='button' data-detalle='"+esc(p.id)+"'>Ver historial</button></td></tr>";
+ }).join("");
+ $("tablaSeguimiento").querySelectorAll("[data-detalle]").forEach(b=>b.addEventListener("click",()=>{const p=lista.find(x=>x.id===b.dataset.detalle);if(p)abrirDetalle({uid:p.id,nombre:p.nombre})}));
+ const vacio=$("vacioSeguimiento");vacio.classList.toggle("oculto",!!$("tablaSeguimiento").innerHTML.trim());
+ const wProms=["sueno","energia","muscular","estres","animo"].map(k=>({k,v:promedio(wf,x=>num(x[k]))}));
+ const molestias=wf.filter(x=>x.molestia==="si");
+ $("estadisticasDetalle").innerHTML='<div class="stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">'+wProms.map(x=>'<div class="metrica"><span>Promedio '+({sueno:"Sueño",energia:"Energía",muscular:"Estado muscular",estres:"Estrés",animo:"Ánimo"}[x.k])+'</span><strong>'+(x.v===null?"—":x.v.toFixed(2)+'/5')+'</strong></div>').join("")+'<div class="metrica"><span>Molestias declaradas</span><strong>'+molestias.length+'</strong><small>En el período seleccionado</small></div><div class="metrica"><span>Sesiones RPE</span><strong>'+rf.length+'</strong><small>Registros en el período</small></div></div><div class="pie-nota">Los promedios se calculan sobre respuestas recibidas, no sobre jugadoras que todavía no completaron el formulario. Una alerta de molestia requiere seguimiento individual del CT.</div>';
 }
-
-function obtenerRespuestas() {
-  let datos = localStorage.getItem("respuestasEncuestasSemanales");
-  if (datos) {
-    try { return JSON.parse(datos); } catch(e) {}
-  }
-  return {};
+function renderHistorial(){
+ const ownW=wellness.filter(x=>x.uid===uid).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));
+ const ownR=rpes.filter(x=>x.uid===uid).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));
+ let html="<h4>Wellness</h4>";
+ html+=ownW.length?ownW.slice(0,30).map(x=>'<div class="detalle-fila"><span>'+fmtFecha(x.fecha)+' · Sueño '+x.sueno+' · Energía '+x.energia+' · Muscular '+x.muscular+' · Estrés '+x.estres+' · Ánimo '+x.animo+(x.molestia==="si"?' · <b>Molestia: '+esc(x.zona||"Sí")+'</b>':'')+'</span><strong>'+bienestar(x).toFixed(1)+'/5</strong></div>').join(""):'<div class="vacio">Todavía no tenés registros de Wellness.</div>';
+ html+="<h4 style='margin-top:20px'>RPE</h4>";
+ html+=ownR.length?ownR.slice(0,30).map(x=>'<div class="detalle-fila"><span>'+fmtFecha(x.fecha)+' · '+esc(x.tipoSesion)+' · '+x.minutos+' min · RPE '+x.rpe+'</span><strong>'+carga(x)+' UA</strong></div>').join(""):'<div class="vacio">Todavía no tenés registros de RPE.</div>';
+ $("listaHistorialJugadora").innerHTML=html;
 }
-
-function guardarRespuestas(respuestas) {
-  localStorage.setItem("respuestasEncuestasSemanales", JSON.stringify(respuestas));
-  if (typeof window.guardarRespuestasEncuestasNube === "function") {
-    window.guardarRespuestasEncuestasNube(respuestas).catch(error =>
-      console.error("No se pudieron sincronizar las respuestas de encuestas:", error)
-    );
-  }
+function renderActual(){if(!perfil)return;if(esJugadora()){renderHistorial();}else{renderTecnico()}}
+function validarPerfil(){if(!perfil)throw new Error("No se pudo identificar el perfil ADIUR.");rol=perfil.rol||"";if(!["admin","coordinadora","cuerpo_tecnico","jugadora"].includes(rol))throw new Error("Tu perfil no tiene acceso a Encuestas.");uid=auth.currentUser?.uid||"";nombre=perfil.nombre||perfil.usuario||"Usuario";jugadoraNombre=perfil.jugadora||perfil.nombre||"";categoriaUsuario=(perfil.categorias||[])[0]||"";mostrarPerfil();prepararCategorias();if(esJugadora()){$("vistaJugadora").classList.remove("oculto");$("vistaTecnico").classList.add("oculto");$("bloqueCategoria").classList.toggle("oculto",true);$("descripcionPagina").textContent="Completá tus registros diarios de bienestar y esfuerzo. Tus respuestas serán visibles para el cuerpo técnico de tu categoría."}else{$("vistaTecnico").classList.remove("oculto");$("vistaJugadora").classList.add("oculto");$("descripcionPagina").textContent="Panel de seguimiento del cuerpo técnico: respuestas individuales, participación, promedios y carga de entrenamiento.";$("periodoFiltro").addEventListener("change",renderTecnico);$("tipoFiltro").addEventListener("change",renderTecnico);$("buscarJugadora").addEventListener("input",renderTecnico)}}
+async function guardarRegistro(tipo,datos){
+ const {doc,setDoc,serverTimestamp}=modulosFirestore;
+ const fecha=datos.fecha,clave=tipo==="wellness"?"wellness_adiur":"rpe_adiur";
+ const docId=uid+"_"+fecha+(tipo==="rpe"?"_"+norm(datos.tipoSesion):"");
+ const payload=Object.assign({},datos,{uid:uid,jugadora:jugadoraNombre,categoria:categoriaUsuario||categoriaActiva,creadoPor:uid,actualizadoEn:new Date().toISOString(),timestamp:serverTimestamp()});
+ await setDoc(doc(db,clave,docId),payload,{merge:true});
 }
-
-/* =====================================================
-   RENDERIZAR CALENDARIO DE DÍAS Y ENCUESTAS
-===================================================== */
-function renderizarCalendarioSemana() {
-  const division = document.getElementById("filtroDivisionEncuesta").value;
-  const grid = document.getElementById("semanaGrid");
-  grid.innerHTML = "";
-
-  const estructura = obtenerEstructuraEncuestas();
-  const diasDivision = estructura[division] || [];
-  const respuestas = obtenerRespuestas();
-
-  if (diasDivision.length === 0) {
-    grid.innerHTML = `
-      <div class="sin-dias">
-        <strong>No hay días ni encuestas cargados para esta división.</strong>
-        <p style="margin-top:5px; font-size:12px;">Los entrenadores pueden agregar días manualmente con el botón "+ Agregar Día a la Semana".</p>
-      </div>
-    `;
-    document.getElementById("panelResultadosTecnicoContainer").innerHTML = "";
-    return;
-  }
-
-  diasDivision.forEach(dia => {
-    let columna = document.createElement("div");
-    columna.className = "dia-columna";
-
-    let btnEliminarDiaHtml = (esFran || esToto) ? `<button class="btn-eliminar-dia" title="Eliminar día completo" onclick="eliminarDiaSemana('${division}', '${dia.id}')">&times;</button>` : '';
-
-    let header = document.createElement("div");
-    header.className = "dia-header";
-    header.innerHTML = `
-      <div class="dia-header-info">
-        <h4>${dia.nombreDia}</h4>
-        <span>${dia.fechaStr}</span>
-      </div>
-      ${btnEliminarDiaHtml}
-    `;
-    columna.appendChild(header);
-
-    let badge = document.createElement("div");
-    badge.className = "evento-badge";
-    if (dia.tipo === "partido") {
-      badge.style.background = "#fee2e2";
-      badge.style.color = "#991b1b";
-      badge.textContent = `⚽ Partido`;
-    } else if (dia.tipo === "entrenamiento") {
-      badge.textContent = `🏋️ Entrenamiento`;
-    } else {
-      badge.style.background = "#f1f5f9";
-      badge.style.color = "#475569";
-      badge.textContent = `🗓️ Actividad general`;
-    }
-    columna.appendChild(badge);
-
-    (dia.encuestas || []).forEach(enc => {
-      let card = document.createElement("div");
-      card.className = "encuesta-card";
-
-      let yaRespondida = respuestas[enc.id] && respuestas[enc.id][usuarioGuardado];
-      let btnBorrarEncHtml = (esFran || esToto) ? `<button class="btn-eliminar-encuesta" title="Eliminar encuesta" onclick="eliminarEncuesta('${division}', '${dia.id}', '${enc.id}')">&times;</button>` : '';
-
-      card.innerHTML = `
-        <div class="encuesta-card-header">
-          <span class="tipo-encuesta-badge">${enc.tipo}</span>
-          ${btnBorrarEncHtml}
-        </div>
-        <p>${enc.pregunta}</p>
-        ${yaRespondida 
-          ? `<div class="btn-respondida-badge">✓ Respondida</div>` 
-          : `<button class="btn-accion-encuesta" onclick="abrirModalResponder('${enc.id}', '${enc.tipo.replace(/'/g, "\\'")}')">Responder</button>`
-        }
-      `;
-      columna.appendChild(card);
-    });
-
-    if (esFran || esToto) {
-      let btnAgregar = document.createElement("button");
-      btnAgregar.className = "btn-agregar-en-dia";
-      btnAgregar.textContent = "+ Agregar encuesta";
-      btnAgregar.onclick = () => abrirModalAgregarEncuesta(dia.id);
-      columna.appendChild(btnAgregar);
-    }
-
-    grid.appendChild(columna);
-  });
-
-  // Si es técnico o administrador, renderizar el panel de estadísticas consolidadas
-  if (esFran || esToto) {
-    renderizarPanelTecnico(division, diasDivision, respuestas);
-  } else {
-    document.getElementById("panelResultadosTecnicoContainer").innerHTML = "";
-  }
-}
-
-/* =====================================================
-   PANEL DE ESTADÍSTICAS PARA EL CUERPO TÉCNICO
-===================================================== */
-function renderizarPanelTecnico(division, diasDivision, respuestas) {
-  const container = document.getElementById("panelResultadosTecnicoContainer");
-  const jugadorasDivision = obtenerJugadorasDivision(division);
-  const totalJugadoras = jugadorasDivision.length > 0 ? jugadorasDivision.length : 1;
-
-  let html = `
-    <div class="panel-estadisticas-tecnico">
-      <h3>📊 Resumen de Respuestas - Cuerpo Técnico (${division})</h3>
-  `;
-
-  let hayEncuestas = false;
-
-  diasDivision.forEach(dia => {
-    (dia.encuestas || []).forEach(enc => {
-      hayEncuestas = true;
-      const respEncuesta = respuestas[enc.id] || {};
-      const nombresRespondieron = Object.keys(respEncuesta);
-      const cantidadRespuestas = nombresRespondieron.length;
-
-      let sumSueno = 0, sumCansancio = 0, sumMusculatura = 0, sumEstres = 0;
-      let countBienestar = 0;
-
-      let countCancha = 0, countGym = 0, countPartido = 0;
-      let jugadorasConMolestia = [];
-
-      nombresRespondieron.forEach(nombre => {
-        let r = respEncuesta[nombre];
-        
-        let s = Number(r.sueno || r.ppSueno || 0);
-        let c = Number(r.cansancio || r.ppCansancio || 0);
-        let m = Number(r.musculatura || r.ppMusculatura || 0);
-        let e = Number(r.estres || r.ppEstres || 0);
-
-        if (s > 0) {
-          sumSueno += s;
-          sumCansancio += c;
-          sumMusculatura += m;
-          sumEstres += e;
-          countBienestar++;
-        }
-
-        if (Array.isArray(r.hoy)) {
-          if (r.hoy.includes("Cancha")) countCancha++;
-          if (r.hoy.includes("Gym")) countGym++;
-          if (r.hoy.includes("Partido")) countPartido++;
-        }
-
-        let mol = r.molestia || r.ppMolestia;
-        if (mol && mol.tiene === "si") {
-          jugadorasConMolestia.push({
-            nombre: nombre,
-            donde: mol.donde,
-            limita: mol.limita,
-            detalles: mol.detalles
-          });
-        }
-      });
-
-      let promSueno = countBienestar > 0 ? (sumSueno / countBienestar).toFixed(1) : "N/A";
-      let promCansancio = countBienestar > 0 ? (sumCansancio / countBienestar).toFixed(1) : "N/A";
-      let promMusculatura = countBienestar > 0 ? (sumMusculatura / countBienestar).toFixed(1) : "N/A";
-      let promEstres = countBienestar > 0 ? (sumEstres / countBienestar).toFixed(1) : "N/A";
-
-      html += `
-        <div class="stats-card-encuesta">
-          <h4>📅 ${dia.nombreDia} (${dia.fechaStr}) — ${enc.tipo}</h4>
-          <div class="stats-grid">
-            <div class="stat-item">
-              <strong>Respuestas</strong>
-              ${cantidadRespuestas} / ${totalJugadoras} jugadoras
-            </div>
-            <div class="stat-item">
-              <strong>Promedios (1-5)</strong>
-              💤 Sueño: ${promSueno} | 🔋 Cansancio: ${promCansancio}<br>💪 Musculatura: ${promMusculatura} | 🧠 Estrés: ${promEstres}
-            </div>
-            <div class="stat-item">
-              <strong>Actividades Hoy</strong>
-              ⚽ Cancha: ${countCancha} | 🏋️ Gym: ${countGym} | 🏆 Partido: ${countPartido}
-            </div>
-            <div class="stat-item">
-              <strong>Molestias físicas</strong>
-              ${jugadorasConMolestia.length} jugadoras con molestias
-            </div>
-          </div>
-      `;
-
-      if (jugadorasConMolestia.length > 0) {
-        html += `<div class="molestias-lista"><strong>⚠️ Detalle de molestias:</strong><ul>`;
-        jugadorasConMolestia.forEach(jm => {
-          html += `<li><strong>${jm.nombre}</strong>: ${jm.donde} (${jm.limita})${jm.detalles ? ' - ' + jm.detalles : ''}</li>`;
-        });
-        html += `</ul></div>`;
-      }
-
-      html += `</div>`;
-    });
-  });
-
-  if (!hayEncuestas) {
-    html += `<p style="color:var(--gris-texto); font-size:13px; text-align:center;">No hay encuestas para mostrar estadísticas en esta división.</p>`;
-  }
-
-  html += `</div>`;
-  container.innerHTML = html;
-}
-
-/* =====================================================
-   GESTIÓN MANUAL DE DÍAS (DT / ADMIN)
-===================================================== */
-function abrirModalAgregarDia() {
-  document.getElementById("formAgregarDia").reset();
-  const hoyStr = new Date().toISOString().split("T")[0];
-  document.getElementById("inputFechaDia").value = hoyStr;
-  document.getElementById("modalAgregarDia").classList.add("activo");
-}
-
-function guardarNuevoDiaSemana(event) {
-  event.preventDefault();
-  const division = document.getElementById("filtroDivisionEncuesta").value;
-  const nombreDia = document.getElementById("selectNombreDia").value;
-  const fechaIso = document.getElementById("inputFechaDia").value;
-  const tipoDia = document.getElementById("selectTipoDia").value;
-
-  const partesFecha = fechaIso.split("-");
-  const fechaStr = `${partesFecha[2]}/${partesFecha[1]}`;
-
-  let encuestasIniciales = [];
-  const diaId = "dia_" + Date.now();
-
-  if (tipoDia === "entrenamiento") {
-    encuestasIniciales.push(
-      { id: "enc_" + Date.now() + "_preE", tipo: "Pre entrenamiento", pregunta: "Registro diario Pre entrenamiento" },
-      { id: "enc_" + Date.now() + "_postE", tipo: "Post entrenamiento", pregunta: "Registro diario Post entrenamiento" }
-    );
-  } else if (tipoDia === "partido") {
-    encuestasIniciales.push(
-      { id: "enc_" + Date.now() + "_preP", tipo: "Pre partido", pregunta: "Registro diario Pre partido" },
-      { id: "enc_" + Date.now() + "_postP", tipo: "Post partido", pregunta: "Registro diario Post partido" }
-    );
-  }
-
-  let estructura = obtenerEstructuraEncuestas();
-  if (!estructura[division]) estructura[division] = [];
-
-  estructura[division].push({
-    id: diaId,
-    nombreDia: nombreDia,
-    fechaStr: fechaStr,
-    iso: fechaIso,
-    tipo: tipoDia,
-    encuestas: encuestasIniciales
-  });
-
-  guardarEstructuraEncuestas(estructura);
-  cerrarModal("modalAgregarDia");
-  renderizarCalendarioSemana();
-}
-
-function eliminarDiaSemana(division, diaId) {
-  if (!confirm("¿Estás seguro de eliminar este día y todas sus encuestas asociadas?")) return;
-
-  let estructura = obtenerEstructuraEncuestas();
-  if (estructura[division]) {
-    estructura[division] = estructura[division].filter(d => d.id !== diaId);
-    guardarEstructuraEncuestas(estructura);
-    renderizarCalendarioSemana();
-  }
-}
-
-/* =====================================================
-   GESTIÓN MANUAL DE ENCUESTAS (DT / ADMIN)
-===================================================== */
-function abrirModalAgregarEncuesta(diaId) {
-  document.getElementById("inputDiaId").value = diaId;
-  document.getElementById("formAgregarEncuesta").reset();
-  document.getElementById("modalAgregarEncuesta").classList.add("activo");
-}
-
-function guardarNuevaEncuestaDia(event) {
-  event.preventDefault();
-  const division = document.getElementById("filtroDivisionEncuesta").value;
-  const diaId = document.getElementById("inputDiaId").value;
-  const tipo = document.getElementById("tipoEncuestaCrear").value;
-  const pregunta = document.getElementById("preguntaCrear").value;
-
-  let estructura = obtenerEstructuraEncuestas();
-  if (estructura[division]) {
-    let dia = estructura[division].find(d => d.id === diaId);
-    if (dia) {
-      if (!dia.encuestas) dia.encuestas = [];
-      dia.encuestas.push({
-        id: "enc_" + Date.now() + "_" + Math.floor(Math.random()*1000),
-        tipo: tipo,
-        pregunta: pregunta
-      });
-      guardarEstructuraEncuestas(estructura);
-    }
-  }
-
-  cerrarModal("modalAgregarEncuesta");
-  renderizarCalendarioSemana();
-}
-
-function eliminarEncuesta(division, diaId, encuestaId) {
-  if (!confirm("¿Estás seguro de eliminar esta encuesta?")) return;
-
-  let estructura = obtenerEstructuraEncuestas();
-  if (estructura[division]) {
-    let dia = estructura[division].find(d => d.id === diaId);
-    if (dia && dia.encuestas) {
-      dia.encuestas = dia.encuestas.filter(e => e.id !== encuestaId);
-      guardarEstructuraEncuestas(estructura);
-      renderizarCalendarioSemana();
-    }
-  }
-}
-
-/* =====================================================
-   RESPONDER ENCUESTA (JUGADORAS)
-===================================================== */
-let encuestaActivaId = null;
-
-function abrirModalResponder(idEncuesta, tipoEncuesta) {
-  encuestaActivaId = idEncuesta;
-  document.getElementById("tipoEncuestaActiva").value = tipoEncuesta;
-  document.getElementById("labelPreguntaModal").textContent = `Encuesta: ${tipoEncuesta}`;
-  document.getElementById("formResponderEncuesta").reset();
-
-  const secPost = document.getElementById("seccionPostEntrenamiento");
-  const secPre = document.getElementById("seccionPreEntrenoPartido");
-  const secPostPartido = document.getElementById("seccionPostPartido");
-
-  secPost.style.display = "none";
-  secPre.style.display = "none";
-  secPostPartido.style.display = "none";
-
-  let tipoLower = tipoEncuesta.toLowerCase();
-
-  if (tipoLower.includes("post entrenamiento")) {
-    secPost.style.display = "block";
-    document.getElementById("contenedorMolestiaPostSi").style.display = "none";
-  } else if (tipoLower.includes("post partido")) {
-    secPostPartido.style.display = "block";
-    document.getElementById("contenedorMolestiaPpSi").style.display = "none";
-    document.getElementById("contenedorComidaPpDetalle").style.display = "none";
-  } else {
-    secPre.style.display = "block";
-    document.getElementById("contenedorMolestiaSi").style.display = "none";
-    document.getElementById("contenedorComidaDetalle").style.display = "none";
-
-    const grupoHoy = document.getElementById("grupoHoyOpciones");
-    if (tipoLower.includes("partido")) {
-      grupoHoy.style.display = "none";
-    } else {
-      grupoHoy.style.display = "block";
-    }
-  }
-
-  document.getElementById("modalResponderEncuesta").classList.add("activo");
-}
-
-function toggleMolestiaCampos() {
-  const tiene = document.getElementById("respTieneMolestia").value;
-  document.getElementById("contenedorMolestiaSi").style.display = (tiene === "si") ? "block" : "none";
-}
-
-function toggleMolestiaPostCampos() {
-  const tiene = document.getElementById("postTieneMolestia").value;
-  document.getElementById("contenedorMolestiaPostSi").style.display = (tiene === "si") ? "block" : "none";
-}
-
-function toggleMolestiaPpCampos() {
-  const tiene = document.getElementById("ppTieneMolestia").value;
-  document.getElementById("contenedorMolestiaPpSi").style.display = (tiene === "si") ? "block" : "none";
-}
-
-function toggleComidaCampos() {
-  const opcion = document.getElementById("respQueComiste").value;
-  document.getElementById("contenedorComidaDetalle").style.display = (opcion === "detallar") ? "block" : "none";
-}
-
-function toggleComidaPpCampos() {
-  const opcion = document.getElementById("ppQueComiste").value;
-  document.getElementById("contenedorComidaPpDetalle").style.display = (opcion === "detallar") ? "block" : "none";
-}
-
-function enviarRespuestaEncuesta(event) {
-  event.preventDefault();
-  const tipoEncuesta = document.getElementById("tipoEncuestaActiva").value.toLowerCase();
-  let datosRespuesta = { fecha: new Date().toISOString() };
-
-  if (tipoEncuesta.includes("post entrenamiento")) {
-    const comoEstuvo = document.getElementById("postComoEstuvo").value;
-    const exigente = document.getElementById("postExigente").value;
-    const comoSentiste = document.getElementById("postComoSentiste").value;
-
-    const cbHiciste = document.querySelectorAll('input[name="postHiciste"]:checked');
-    const hicisteList = Array.from(cbHiciste).map(cb => cb.value);
-
-    const tieneMolestia = document.getElementById("postTieneMolestia").value;
-    let molestiaData = { tiene: tieneMolestia };
-    if (tieneMolestia === "si") {
-      molestiaData.donde = document.getElementById("postDondeMolestia").value;
-      molestiaData.limita = document.getElementById("postTeLimita").value;
-      molestiaData.detalles = document.getElementById("postDetallesMolestia").value;
-    }
-
-    const falto = document.getElementById("postFalto").value;
-
-    datosRespuesta = {
-      ...datosRespuesta,
-      comoEstuvo,
-      exigente,
-      comoSentiste,
-      hiciste: hicisteList,
-      molestia: molestiaData,
-      falto
-    };
-  } else if (tipoEncuesta.includes("post partido")) {
-    const sueno = document.getElementById("ppSueno").value;
-    const cansancio = document.getElementById("ppCansancio").value;
-    const musculatura = document.getElementById("ppMusculatura").value;
-    const estres = document.getElementById("ppEstres").value;
-
-    const tieneMolestia = document.getElementById("ppTieneMolestia").value;
-    let molestiaData = { tiene: tieneMolestia };
-    if (tieneMolestia === "si") {
-      molestiaData.donde = document.getElementById("ppDondeMolestia").value;
-      molestiaData.limita = document.getElementById("ppTeLimita").value;
-      molestiaData.detalles = document.getElementById("ppDetalles").value;
-    }
-
-    const queComisteOpcion = document.getElementById("ppQueComiste").value;
-    let comisteData = { opcion: queComisteOpcion };
-    if (queComisteOpcion === "detallar") {
-      comisteData.detalle = document.getElementById("ppDetalleComida").value;
-    }
-
-    const animoPost = document.getElementById("ppAnimoPost").value;
-    const animoEntrenar = document.getElementById("ppAnimoEntrenar").value;
-
-    datosRespuesta = {
-      ...datosRespuesta,
-      sueno,
-      cansancio,
-      musculatura,
-      estres,
-      molestia: molestiaData,
-      comiste: comisteData,
-      animoPost,
-      animoEntrenar
-    };
-  } else {
-    const sueno = document.getElementById("respSueno").value;
-    const cansancio = document.getElementById("respCansancio").value;
-    const musculatura = document.getElementById("respMusculatura").value;
-    const estres = document.getElementById("respEstres").value;
-    
-    const tieneMolestia = document.getElementById("respTieneMolestia").value;
-    let molestiaData = { tiene: tieneMolestia };
-    if (tieneMolestia === "si") {
-      molestiaData.donde = document.getElementById("respDondeMolestia").value;
-      molestiaData.limita = document.getElementById("respTeLimita").value;
-      molestiaData.detalles = document.getElementById("respDetalles").value;
-    }
-
-    const queComisteOpcion = document.getElementById("respQueComiste").value;
-    let comisteData = { opcion: queComisteOpcion };
-    if (queComisteOpcion === "detallar") {
-      comisteData.detalle = document.getElementById("respDetalleComida").value;
-    }
-
-    let hoySeleccionadas = [];
-    if (!tipoEncuesta.includes("partido")) {
-      const checkboxesHoy = document.querySelectorAll('input[name="hoyOpciones"]:checked');
-      hoySeleccionadas = Array.from(checkboxesHoy).map(cb => cb.value);
-    }
-
-    datosRespuesta = {
-      ...datosRespuesta,
-      sueno,
-      cansancio,
-      musculatura,
-      estres,
-      molestia: molestiaData,
-      comiste: comisteData,
-      hoy: hoySeleccionadas
-    };
-  }
-
-  let respuestas = obtenerRespuestas();
-  if (!respuestas[encuestaActivaId]) {
-    respuestas[encuestaActivaId] = {};
-  }
-
-  respuestas[encuestaActivaId][usuarioGuardado] = datosRespuesta;
-
-  guardarRespuestas(respuestas);
-  cerrarModal("modalResponderEncuesta");
-  renderizarCalendarioSemana();
-  alert("¡Respuesta registrada con éxito!");
-}
-
-function cerrarModal(id) {
-  document.getElementById(id).classList.remove("activo");
-}
-
-// Inicializar al cargar
-window.addEventListener("DOMContentLoaded", () => {
-  if (esBianca) {
-    document.getElementById("filtroDivisionEncuesta").value = "Sub 14";
-  }
-  renderizarCalendarioSemana();
+$("molestiaWellness").addEventListener("change",()=>{const on=$("molestiaWellness").value==="si";$("grupoZonaMolestia").classList.toggle("oculto",!on);$("grupoIntensidad").classList.toggle("oculto",!on);$("wZona").required=on;$("wIntensidad").required=on});
+$("formularioWellness").addEventListener("submit",async e=>{
+ e.preventDefault();if(!esJugadora())return;
+ const fecha=$("fechaWellness").value;if(!fecha){setEstado("Seleccioná una fecha para Wellness.","error");return}
+ const datos={fecha,sueno:Number($("wSueno").value),energia:Number($("wFatiga").value),muscular:Number($("wMuscular").value),estres:Number($("wEstres").value),animo:Number($("wAnimo").value),molestia:$("molestiaWellness").value,zona:$("wZona").value.trim(),intensidad:$("wIntensidad").value?Number($("wIntensidad").value):null,comentario:$("wComentario").value.trim()};
+ const b=e.submitter;b.disabled=true;b.textContent="Guardando...";
+ try{await guardarRegistro("wellness",datos);setEstado("Wellness guardado correctamente en la nube.","ok")}catch(err){console.error(err);setEstado("No se pudo guardar Wellness. Revisá tu conexión o los permisos de Firestore.","error")}finally{b.disabled=false;b.textContent="Guardar Wellness"}
 });
-</script>
-
-
-
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCc0dPIEkaKxbHoRC2gZK412dXVGPOdTI",
-  authDomain: "adiur-b1913.firebaseapp.com",
-  projectId: "adiur-b1913",
-  storageBucket: "adiur-b1913.firebasestorage.app",
-  messagingSenderId: "884643321144",
-  appId: "1:884643321144:web:ba3c314de3a1c9e3545dcd",
-  measurementId: "G-58LL26YXPM"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const refEstructura = doc(db, "encuestasADIUR", "estructura");
-const refRespuestas = doc(db, "encuestasADIUR", "respuestas");
-
-function unirSinPerder(local, nube) {
-  if (Array.isArray(local) || Array.isArray(nube)) {
-    const a = Array.isArray(local) ? local : [];
-    const b = Array.isArray(nube) ? nube : [];
-    if (a.every(x => x && typeof x === "object" && x.id) &&
-        b.every(x => x && typeof x === "object" && x.id)) {
-      const mapa = new Map(b.map(x => [String(x.id), x]));
-      a.forEach(x => {
-        const id = String(x.id);
-        mapa.set(id, mapa.has(id) ? unirSinPerder(x, mapa.get(id)) : x);
-      });
-      return [...mapa.values()];
-    }
-    return Array.from({length: Math.max(a.length,b.length)}, (_,i) =>
-      a[i] === undefined ? b[i] : b[i] === undefined ? a[i] : unirSinPerder(a[i],b[i])
-    );
-  }
-  const obj = v => v && typeof v === "object" && !Array.isArray(v);
-  if (obj(local) || obj(nube)) {
-    const a = obj(local) ? local : {}, b = obj(nube) ? nube : {}, out = {};
-    new Set([...Object.keys(a),...Object.keys(b)]).forEach(k => {
-      out[k] = Object.prototype.hasOwnProperty.call(a,k) && Object.prototype.hasOwnProperty.call(b,k)
-        ? unirSinPerder(a[k],b[k])
-        : Object.prototype.hasOwnProperty.call(b,k) ? b[k] : a[k];
-    });
-    return out;
-  }
-  return nube === undefined || nube === null || nube === "" ? local : nube;
+$("minutosRPE").addEventListener("input",actualizarCargaPreview);
+$("formularioRPE").addEventListener("submit",async e=>{
+ e.preventDefault();if(!esJugadora())return;
+ const fecha=$("fechaRPE").value,minutos=num($("minutosRPE").value);
+ if(!fecha||!minutos||rpeSeleccionado===null){setEstado("Completá la fecha, duración y esfuerzo percibido.","error");return}
+ const datos={fecha,tipoSesion:$("tipoSesion").value,minutos:minutos,rpe:rpeSeleccionado,carga:rpeSeleccionado*minutos,comentario:$("comentarioRPE").value.trim()};
+ const b=e.submitter;b.disabled=true;b.textContent="Guardando...";
+ try{await guardarRegistro("rpe",datos);setEstado("RPE guardado correctamente en la nube.","ok")}catch(err){console.error(err);setEstado("No se pudo guardar RPE. Revisá tu conexión o los permisos de Firestore.","error")}finally{b.disabled=false;b.textContent="Guardar RPE"}
+});
+document.querySelectorAll(".pestana").forEach(b=>b.addEventListener("click",()=>mostrarVistaJugadora(b.dataset.vista)));
+$("cerrarDetalle").addEventListener("click",()=>$("modalDetalle").classList.remove("activo"));
+$("modalDetalle").addEventListener("click",e=>{if(e.target===$("modalDetalle"))$("modalDetalle").classList.remove("activo")});
+$("exportarCSV").addEventListener("click",()=>{
+ const lista=jugadorasCategoria(),rows=[["Jugadora","Categoria","Fecha Wellness","Indice Wellness","Sueno","Energia","Muscular","Estres","Animo","Molestia","Fecha RPE","Tipo sesion","Minutos","RPE","Carga"]];
+ lista.forEach(p=>{const w=ultimo(wellness.filter(x=>norm(x.categoria)===norm(categoriaActiva)&&(x.uid===p.id||norm(x.jugadora)===norm(p.nombre)))),r=ultimo(rpes.filter(x=>norm(x.categoria)===norm(categoriaActiva)&&(x.uid===p.id||norm(x.jugadora)===norm(p.nombre))));rows.push([p.nombre,p.categoria,w?.fecha||"",w?bienestar(w).toFixed(2):"",w?.sueno??"",w?.energia??"",w?.muscular??"",w?.estres??"",w?.animo??"",w?.molestia??"",r?.fecha||"",r?.tipoSesion||"",r?.minutos??"",r?.rpe??"",r?carga(r):""])});const csv="\uFEFF"+rows.map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(";")).join("\n");const blob=new Blob([csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="ADIUR_"+categoriaActiva.replace(/\s/g,"_")+"_Wellness_RPE.csv";a.click();URL.revokeObjectURL(url)
+});
+async function iniciar(){
+ iniciarMenu();
+ $("fechaWellness").value=fechaLocal();$("fechaRPE").value=fechaLocal();crearOpcionesRPE();
+ try{
+  const authMod=await import("./ADIUR-auth.js?v=20261122c");
+  const fb=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+  auth=authMod.auth;db=authMod.db;modulosFirestore=fb;
+  const esperarPerfil=()=>new Promise((resolve,reject)=>{
+   if(window.ADIUR_PERMISOS){resolve(window.ADIUR_PERMISOS);return}
+   const timer=setTimeout(()=>reject(new Error("La validación de permisos está tardando. Recargá la página.")),12000);
+   window.addEventListener("adiur-permisos-listos",e=>{clearTimeout(timer);resolve(e.detail||window.ADIUR_PERMISOS)},{once:true});
+  });
+  perfil=await esperarPerfil();validarPerfil();
+  cargarJugadoras(fb.onSnapshot,fb.collection,db);
+  escucharRegistros(fb.onSnapshot,fb.collection,fb.query,fb.where,db);
+  setEstado("Conectado con ADIUR · Registros sincronizados en tiempo real.","ok");
+  window.addEventListener("beforeunload",()=>unsubs.forEach(fn=>fn()));
+ }catch(err){console.error(err);setEstado(err.message||"No se pudo iniciar el módulo de encuestas.","error")}
 }
-
-function leerLocal(clave, fallback) {
-  try { return JSON.parse(localStorage.getItem(clave) || "null") ?? fallback; }
-  catch { return fallback; }
-}
-
-window.guardarEstructuraEncuestasNube = async datos =>
-  setDoc(refEstructura, { datos, actualizadoEn: new Date().toISOString() });
-window.guardarRespuestasEncuestasNube = async datos =>
-  setDoc(refRespuestas, { datos, actualizadoEn: new Date().toISOString() });
-
-(async () => {
-  try {
-    const [snapE, snapR] = await Promise.all([getDoc(refEstructura), getDoc(refRespuestas)]);
-    const localE = leerLocal("diasEncuestasADIUR", {});
-    const localR = leerLocal("respuestasEncuestasSemanales", {});
-    const nubeE = snapE.exists() ? snapE.data().datos || {} : {};
-    const nubeR = snapR.exists() ? snapR.data().datos || {} : {};
-    const combinadaE = unirSinPerder(localE, nubeE);
-    const combinadaR = unirSinPerder(localR, nubeR);
-
-    localStorage.setItem("diasEncuestasADIUR", JSON.stringify(combinadaE));
-    localStorage.setItem("respuestasEncuestasSemanales", JSON.stringify(combinadaR));
-    if (typeof window.renderizarCalendarioSemana === "function") window.renderizarCalendarioSemana();
-
-    // Solo se escribe la unión después de haber leído nube y navegador.
-    if (JSON.stringify(combinadaE) !== JSON.stringify(nubeE)) await window.guardarEstructuraEncuestasNube(combinadaE);
-    if (JSON.stringify(combinadaR) !== JSON.stringify(nubeR)) await window.guardarRespuestasEncuestasNube(combinadaR);
-
-    onSnapshot(refEstructura, snap => {
-      if (!snap.exists()) return;
-      const actual = leerLocal("diasEncuestasADIUR", {});
-      const combinado = unirSinPerder(actual, snap.data().datos || {});
-      localStorage.setItem("diasEncuestasADIUR", JSON.stringify(combinado));
-      if (typeof window.renderizarCalendarioSemana === "function") window.renderizarCalendarioSemana();
-    });
-    onSnapshot(refRespuestas, snap => {
-      if (!snap.exists()) return;
-      const actual = leerLocal("respuestasEncuestasSemanales", {});
-      const combinado = unirSinPerder(actual, snap.data().datos || {});
-      localStorage.setItem("respuestasEncuestasSemanales", JSON.stringify(combinado));
-      if (typeof window.renderizarCalendarioSemana === "function") window.renderizarCalendarioSemana();
-    });
-    console.info("ADIUR: encuestas y respuestas sincronizadas con Firestore.");
-  } catch (error) {
-    console.error("No se pudieron recuperar las encuestas desde Firestore. Se conserva la copia local.", error);
-  }
+iniciar();
 })();
 </script>
-
 <script type="module" src="ADIUR-layout.js?v=20261123h"></script>
 </body>
 </html>
