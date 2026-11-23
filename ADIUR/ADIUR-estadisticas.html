@@ -299,13 +299,18 @@ function aplicarPerfil(p){
  if(datos.jugadoras.length){renderSelectorCategorias();renderGeneral();}
 }
 window.addEventListener("adiur-permisos-listos",e=>aplicarPerfil(e.detail||window.ADIUR_PERMISOS));
+function esperarPermisosADIUR(){
+ if(window.ADIUR_PERMISOS)return Promise.resolve(window.ADIUR_PERMISOS);
+ return new Promise(resolve=>window.addEventListener("adiur-permisos-listos",e=>resolve(e.detail||window.ADIUR_PERMISOS||null),{once:true}));
+}
 async function leerColeccion(nombre){
  const nombreReal = nombre === "informes" ? "informes_partidos" : nombre;
  const snap=await getDocs(collection(db,nombreReal));
  return snap.docs.map(d=>({id:d.id,...d.data()}));
 }
 async function iniciar(){
- if(window.ADIUR_PERMISOS)aplicarPerfil(window.ADIUR_PERMISOS);
+ const perfilConfirmado=await esperarPermisosADIUR();
+ if(perfilConfirmado)aplicarPerfil(perfilConfirmado);
  $("estadoCarga").textContent="Leyendo Informes, Asistencia, Testeos, Tiempos y Lesiones…";
  const resultados=await Promise.allSettled([leerColeccion("jugadoras"),...FUENTES.map(leerColeccion)]);
  const fallos=[];
