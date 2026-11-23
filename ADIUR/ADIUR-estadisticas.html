@@ -2244,23 +2244,33 @@ async function obtenerInfoAsistenciaJugadora(jugadora, mesFiltro = "total") {
 /* --- 3. EXTRAER DATOS DE ADIUR-informes.html --- */
 async function obtenerInfoInformesJugadora(jugadora) {
   const informes = await obtenerTodosInformesExternos();
-  const deJugadora = informes.filter(inf => inf && coincideJugadora(inf, jugadora));
+  const categoria = claveCategoriaIntegral(jugadora.categoria);
+  const deJugadora = informes.filter(inf => {
+    if (!inf) return false;
+    const cat = categoriaRegistroIntegral(inf);
+    if (cat && cat !== categoria) return false;
+    const participaciones = Array.isArray(inf.jugadoras) ? inf.jugadoras : [];
+    return participaciones.some(reg => mismaJugadoraIntegral(reg, jugadora)) || coincideJugadora(inf, jugadora);
+  }).sort((a,b) => String(b.fecha || "").localeCompare(String(a.fecha || "")));
 
   if (deJugadora.length === 0) {
-    return `<div class="ficha-vacio">No hay informes individuales registrados para esta jugadora.</div>`;
+    return '<div class="ficha-vacio">Sin participaciones individuales registradas en Informes para esta jugadora.</div>';
   }
 
-  return `<div class="ficha-lista-items">` + deJugadora.slice(0, 5).map(inf => {
-    const titulo = inf.titulo || inf.tipo || inf.aspecto || inf.rival || "Informe técnico";
-    const fecha = inf.fecha || "";
-    const detalle = inf.detalle || inf.observaciones || inf.descripcion || inf.comentario || "";
-    return `
-      <div class="ficha-item-box">
-        <strong>${titulo}</strong> ${fecha ? `<span style="color:#777;font-size:11px;">(${fecha})</span>` : ""}
-        <div style="margin-top:3px;color:#444;">${detalle}</div>
-      </div>
-    `;
-  }).join("") + `</div>`;
+  return '<div class="ficha-lista-items">' + deJugadora.slice(0, 6).map(inf => {
+    const reg = (Array.isArray(inf.jugadoras) ? inf.jugadoras : []).find(x => mismaJugadoraIntegral(x, jugadora)) || {};
+    const rival = inf.rival || inf.equipoRival || "Rival";
+    const minutos = numeroIntegral(reg.minutos);
+    const goles = numeroIntegral(reg.goles);
+    const tarjetas = (numeroIntegral(reg.amarillas) || 0) + (numeroIntegral(reg.rojas) || 0);
+    const meta = [inf.fecha || "", inf.torneo || inf.competencia || ""].filter(Boolean).join(" · ");
+    return '<div class="ficha-item-box"><strong>vs. ' + escaparIntegral(rival) + '</strong>' +
+      (meta ? '<div style="color:#777;font-size:11px;margin-top:3px;">' + escaparIntegral(meta) + '</div>' : '') +
+      '<div style="margin-top:5px;color:#444;font-size:11px;">' +
+      (minutos !== null ? minutos + " min" : "Minutos sin cargar") + " · " +
+      (goles !== null ? goles + " goles" : "Goles sin cargar") + " · " +
+      tarjetas + " tarjetas" + '</div></div>';
+  }).join("") + '</div>';
 }
 
 /* --- 4. EXTRAER DATOS DE ADIUR-tiempos.html --- */
