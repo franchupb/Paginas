@@ -3156,7 +3156,8 @@ function aplicarDatosPizarra(datos){
 
   const jugadores = Array.isArray(datos.jugadores) ? datos.jugadores : [];
   const dibujos = Array.isArray(datos.dibujos) ? datos.dibujos : [];
-  if(jugadores.length > 60 || dibujos.length > 250){
+  const conos = Array.isArray(datos.conos) ? datos.conos : [];
+  if(jugadores.length > 60 || dibujos.length > 250 || conos.length > 80){
     throw new Error("La pizarra contiene demasiados elementos y no se cargó.");
   }
   const pesoDibujos = dibujos.reduce((total,dibujo)=>
@@ -3342,7 +3343,7 @@ function limpiarPizarra(
 
     if(
       !confirm(
-        "¿Querés borrar todos los jugadores, la pelota y los dibujos?"
+        "¿Querés borrar todos los jugadores, la pelota, los conos y los dibujos?"
       )
     )
       return;
@@ -3551,6 +3552,7 @@ function renderizarEscenasTacticas(){
   document.getElementById("actualizarEscena").disabled=!existe;
   document.getElementById("cargarEscena").disabled=!existe;
   document.getElementById("eliminarEscena").disabled=!existe;
+  document.getElementById("duplicarEscena").disabled=!existe;
 }
 function guardarNuevaEscenaTactica(){
   const datos=obtenerDatosPizarra();
@@ -3579,7 +3581,8 @@ function duplicarEscenaTactica(){
 function actualizarEscenaTactica(){
   const lista=leerEscenasTacticas(),idx=lista.findIndex(x=>String(x.id)===String(escenaSeleccionadaId));
   if(idx<0)return;
-  const nuevoTitulo=(document.getElementById("nombreEscena").value||"").trim()||lista[idx].titulo||"Escena";\n  lista[idx]={...lista[idx],titulo:nuevoTitulo,fecha:new Date().toISOString(),data:obtenerDatosPizarra()};
+  const nuevoTitulo=(document.getElementById("nombreEscena").value||"").trim()||lista[idx].titulo||"Escena";
+  lista[idx]={...lista[idx],titulo:nuevoTitulo,fecha:new Date().toISOString(),data:obtenerDatosPizarra()};
   if(!guardarEscenasTacticas(lista))return;
   renderizarEscenasTacticas();estadoEscenas("Escena actualizada correctamente.");
 }
