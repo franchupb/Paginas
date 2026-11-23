@@ -458,7 +458,8 @@
       console.error("No se pudo cerrar la sesión:", error);
       alert("No se pudo cerrar la sesión. Intentá nuevamente.");
     }
-  }\n  const salir = document.createElement("a");
+  }
+  const salir = document.createElement("a");
   salir.href = "#";
   salir.id = "cerrarSesion";
   salir.className = "enlace-cerrar-sesion";
