@@ -2349,27 +2349,12 @@ function leerUsuario() {
 const usuarioGuardado = leerUsuario();
 const usuarioNormalizado = normalizarUsuario(usuarioGuardado);
 
-function esFran() {
-    return [
-        "fran",
-        "francisco",
-        "franciscoperezbasla"
-    ].includes(usuarioNormalizado);
-}
-
-function esToto() {
-    return usuarioNormalizado === "toto";
-}
-
-function esBianca() {
-    return [
-        "bianca",
-        "biancadominguez"
-    ].includes(usuarioNormalizado);
-}
-
-const puedeEditar = esFran() || esToto();
-const puedeEliminar = esFran();
+const rolADIUR = localStorage.getItem("rolADIUR") || "";
+function esFran() { return rolADIUR === "admin"; }
+function esToto() { return rolADIUR === "cuerpo_tecnico"; }
+function esBianca() { return rolADIUR === "jugadora"; }
+const puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolADIUR);
+const puedeEliminar = ["admin", "coordinadora"].includes(rolADIUR);
 
 /* Información del usuario */
 
@@ -2384,7 +2369,7 @@ document.getElementById("avatarUsuario").textContent =
 document.getElementById("rolUsuario").textContent =
     esFran() ? "Administrador" :
     esToto() ? "Cuerpo técnico" :
-    esBianca() ? "Jugadora · Sub 14" :
+    esBianca() ? "Jugadora" :
     "Club ADIUR";
 
 document.getElementById("nombrePerfil").textContent =
@@ -2416,14 +2401,7 @@ if (puedeEliminar) {
 
 /* Permisos visuales de Bianca */
 
-if (esBianca()) {
-    document.getElementById("grupoPlantel")?.remove();
-    document.getElementById("grupoRendimientos")?.remove();
-
-    document.querySelectorAll("[data-ocultar-bianca]").forEach(enlace => {
-        enlace.style.display = "none";
-    });
-}
+// El menú y las restricciones de jugadoras se centralizan en ADIUR-permisos.js.
 
 /* =====================================================
    BARRA LATERAL
