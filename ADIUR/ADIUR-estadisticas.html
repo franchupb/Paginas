@@ -2208,7 +2208,7 @@ async function obtenerInfoTiemposJugadora(jugadora) {
 async function obtenerInfoLesionesJugadora(jugadora) {
   const lesiones=await obtenerLesionesIntegral();
   const categoriaLesion=claveCategoriaIntegral(jugadora.categoria);
-  const deJugadora=lesiones.filter(l=>l&&categoriaRegistroIntegral(l)===categoriaLesion&&coincideJugadora(l,jugadora))
+  const deJugadora=lesiones.filter(l=>l&&categoriaRegistroIntegral(l)===categoriaLesion&&mismaJugadoraIntegral(l,jugadora))
     .sort((a,b)=>String(b.fecha||b.fechaInicio||"").localeCompare(String(a.fecha||a.fechaInicio||"")));
   if(!deJugadora.length){
     return {lista:[],html:'<div class="dato-fila"><span class="etiqueta">Estado físico</span><strong style="color:#18743b;">✓ Sin lesiones registradas</strong></div>'};
