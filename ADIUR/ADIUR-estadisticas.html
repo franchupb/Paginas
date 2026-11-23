@@ -1737,7 +1737,7 @@ window.cambiarDivision = function() {
   }
 
   actualizarSelectorJugadorasDivision(division);
-  cerrarFichaJugadora();
+  cerrarFichaJugadora(true);
   renderizarVistaActiva();
 };
 
@@ -1872,11 +1872,11 @@ window.seleccionarJugadoraFicha = async function(jugadoraId) {
   renderizarVistaActiva();
 };
 
-window.cerrarFichaJugadora = function() {
+window.cerrarFichaJugadora = function(sinRender = false) {
   document.getElementById("panelFichaJugadora").classList.remove("activa");
   const selectJug = document.getElementById("filtroJugadoraIndividual");
   if (selectJug) selectJug.value = "";
-  renderizarVistaActiva();
+  if (!sinRender) renderizarVistaActiva();
 };
 
 /* --- EXTRAER PARTIDOS DE ADIUR-Partidos.html --- */
