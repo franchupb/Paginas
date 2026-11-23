@@ -385,9 +385,32 @@
   `;
   document.head.appendChild(estilo);
 
-  const barra = document.querySelector("header.barra-superior");
+  const barra = document.querySelector(".barra-superior");
   const sidebar = document.getElementById("sidebar");
-  if (!barra || !sidebar) return;
+  if (!barra || !sidebar) {
+    console.error("ADIUR: no se encontró la barra superior o el contenedor lateral.");
+    return;
+  }
+
+  // Elimina los controladores antiguos de cada página. Todas las páginas
+  // quedan bajo un único controlador central para evitar dobles toggles.
+  const botonOriginal = document.getElementById("botonMenu");
+  let botonMenu = botonOriginal;
+  if (botonOriginal) {
+    botonMenu = botonOriginal.cloneNode(true);
+    botonMenu.removeAttribute("onclick");
+    botonOriginal.replaceWith(botonMenu);
+  }
+
+  // El overlay también se reemplaza para quitar eventos duplicados antiguos.
+  const overlayOriginal = document.getElementById("capaSidebar") || document.getElementById("fondoSidebar");
+  let overlay = overlayOriginal;
+  if (overlayOriginal) {
+    overlay = overlayOriginal.cloneNode(false);
+    overlay.id = "capaSidebar";
+    overlay.className = "capa-sidebar";
+    overlayOriginal.replaceWith(overlay);
+  }
 
   // Unifica el logotipo, sin tocar los elementos de perfil ni sus eventos.
   const logo = barra.querySelector(".logo-superior, .logo-club, .identidad-club img");
@@ -479,17 +502,15 @@
   separador.appendChild(salir);
   sidebar.appendChild(separador);
 
-  const overlay = document.getElementById("capaSidebar") || document.getElementById("fondoSidebar");
   if (overlay) {
     overlay.classList.add("capa-sidebar");
-    overlay.addEventListener("click", cerrarMenu);
   } else {
-    const nuevoOverlay = document.createElement("div");
-    nuevoOverlay.id = "capaSidebar";
-    nuevoOverlay.className = "capa-sidebar";
-    nuevoOverlay.addEventListener("click", cerrarMenu);
-    barra.insertAdjacentElement("afterend", nuevoOverlay);
+    overlay = document.createElement("div");
+    overlay.id = "capaSidebar";
+    overlay.className = "capa-sidebar";
+    barra.insertAdjacentElement("afterend", overlay);
   }
+  overlay.addEventListener("click", cerrarMenu);
 
   function actualizarEstado() {
     const abierto = !sidebar.classList.contains("oculto");
@@ -504,22 +525,20 @@
     actualizarEstado();
   }
 
-  const botonMenu = document.getElementById("botonMenu");
-
-  // El menú se controla desde este archivo en todas las páginas.
-  // Se intercepta en captura para evitar que los controladores antiguos de
-  // cada módulo ejecuten un segundo toggle y vuelvan a cerrar el menú.
+  // Control único: el botón fue clonado arriba para quitar cualquier
+  // onclick o listener anterior de la página.
   if (botonMenu) {
     botonMenu.setAttribute("aria-controls", "sidebar");
+    botonMenu.setAttribute("aria-expanded", String(!sidebar.classList.contains("oculto")));
+    botonMenu.setAttribute("aria-label", sidebar.classList.contains("oculto") ? "Abrir menú" : "Cerrar menú");
     botonMenu.addEventListener("click", event => {
       event.preventDefault();
-      event.stopImmediatePropagation();
       sidebar.classList.toggle("oculto");
       const abierto = !sidebar.classList.contains("oculto");
       botonMenu.setAttribute("aria-expanded", String(abierto));
       botonMenu.setAttribute("aria-label", abierto ? "Cerrar menú" : "Abrir menú");
       actualizarEstado();
-    }, true);
+    });
   }
 
   function ajustarPantalla() {
