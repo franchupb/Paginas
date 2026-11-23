@@ -2346,17 +2346,39 @@ function leerUsuario() {
     }
 }
 
-const usuarioGuardado = leerUsuario();
-const usuarioNormalizado = normalizarUsuario(usuarioGuardado);
+let usuarioGuardado = leerUsuario();
+let usuarioNormalizado = normalizarUsuario(usuarioGuardado);
 
-const rolADIUR = localStorage.getItem("rolADIUR") || "";
+let rolADIUR = localStorage.getItem("rolADIUR") || "";
 function esFran() { return rolADIUR === "admin"; }
 function esToto() { return rolADIUR === "cuerpo_tecnico"; }
 function esBianca() { return rolADIUR === "jugadora"; }
-const puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolADIUR);
-const puedeEliminar = ["admin", "coordinadora"].includes(rolADIUR);
+let puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolADIUR);
+let puedeEliminar = ["admin", "coordinadora"].includes(rolADIUR);
 
 // Categorías visibles en Partidos: se toma primero la matriz central de permisos.
+window.addEventListener("adiur-permisos-listos", (evento) => {
+    const perfil = evento.detail || window.ADIUR_PERMISOS;
+    if (!perfil) return;
+    usuarioGuardado = String(perfil.usuario || perfil.nombre || leerUsuario()).trim();
+    usuarioNormalizado = normalizarUsuario(usuarioGuardado);
+    rolADIUR = String(perfil.rol || "").toLowerCase();
+    puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolADIUR);
+    puedeEliminar = ["admin", "coordinadora"].includes(rolADIUR);
+
+    const nombre = perfil.nombre || usuarioGuardado || "Usuario";
+    const rolTexto = ({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rolADIUR] || "Club ADIUR";
+    ["nombreUsuario","nombrePerfil"].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=nombre; });
+    ["avatarUsuario","avatarPerfil"].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=nombre.charAt(0).toUpperCase(); });
+    ["rolUsuario","rolPerfil"].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=rolTexto; });
+
+    const nuevo=document.getElementById("btnNuevo");
+    if(nuevo) nuevo.style.display=puedeEditar ? "" : "none";
+    const borrar=document.getElementById("btnEliminarModo");
+    if(borrar) borrar.style.display=puedeEliminar ? "inline-flex" : "none";
+    window.renderizarFixture?.();
+});
+
 function obtenerCategoriasVisiblesPartidos() {
     const perfil = window.ADIUR_PERMISOS;
     let categorias = Array.isArray(perfil?.categorias) ? perfil.categorias : null;
@@ -2414,11 +2436,8 @@ document.getElementById("avatarPerfil").textContent =
 document.getElementById("rolPerfil").textContent =
     document.getElementById("rolUsuario").textContent;
 
-/* Redirigir si no hay sesión iniciada */
-
-if (!usuarioGuardado) {
-    window.location.href = "ADIUR-Loing.html";
-}
+/* La sesión se valida en ADIUR-permisos.js con Firebase Auth.
+   No redirigir por localStorage vacío: Firebase puede tardar en restaurarla. */
 
 /* Permisos */
 
