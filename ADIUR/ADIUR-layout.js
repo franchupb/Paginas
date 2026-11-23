@@ -6,6 +6,9 @@
 (function () {
   "use strict";
 
+  if (window.ADIUR_LAYOUT_INICIALIZADO) return;
+  window.ADIUR_LAYOUT_INICIALIZADO = true;
+
   const ARCHIVO_ACTUAL = (location.pathname.split("/").pop() || "").toLowerCase();
   const PRINCIPAL = "ADIUR-Pagina Principal.html";
 
@@ -407,8 +410,7 @@
   let overlay = overlayOriginal;
   if (overlayOriginal) {
     overlay = overlayOriginal.cloneNode(false);
-    overlay.id = "capaSidebar";
-    overlay.className = "capa-sidebar";
+    overlay.classList.add("capa-sidebar");
     overlayOriginal.replaceWith(overlay);
   }
 
@@ -448,10 +450,12 @@
     titulo.dataset.grupo = grupo.id;
     titulo.setAttribute("aria-expanded", String(coincide));
     titulo.innerHTML = '<span>' + grupo.nombre + '</span><span class="flecha" aria-hidden="true">›</span>';
-    titulo.addEventListener("click", () => {
+    titulo.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
       bloque.classList.toggle("cerrado");
       titulo.setAttribute("aria-expanded", String(!bloque.classList.contains("cerrado")));
-    });
+    }, true);
     bloque.appendChild(titulo);
 
     const submenu = document.createElement("div");
@@ -492,13 +496,12 @@
   salir.className = "enlace-cerrar-sesion";
   salir.innerHTML = '<span class="icono-salir" aria-hidden="true">↪</span>Cerrar sesión';
   salir.addEventListener("click", event => {
-    if (event.defaultPrevented) return;
     event.preventDefault();
     event.stopImmediatePropagation();
     if (window.confirm("¿Querés cerrar la sesión de ADIUR?")) {
       importarCerrarSesionADIUR();
     }
-  });
+  }, true);
   separador.appendChild(salir);
   sidebar.appendChild(separador);
 
@@ -510,12 +513,15 @@
     overlay.className = "capa-sidebar";
     barra.insertAdjacentElement("afterend", overlay);
   }
-  overlay.addEventListener("click", cerrarMenu);
+  overlay.addEventListener("click", event => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    cerrarMenu();
+  }, true);
 
   function actualizarEstado() {
     const abierto = !sidebar.classList.contains("oculto");
-    const boton = document.getElementById("botonMenu");
-    if (boton) boton.setAttribute("aria-expanded", String(abierto));
+    if (botonMenu) botonMenu.setAttribute("aria-expanded", String(abierto));
     const capa = document.getElementById("capaSidebar") || document.getElementById("fondoSidebar");
     if (capa) capa.classList.toggle("visible", window.innerWidth <= 760 && abierto);
   }
@@ -533,12 +539,13 @@
     botonMenu.setAttribute("aria-label", sidebar.classList.contains("oculto") ? "Abrir menú" : "Cerrar menú");
     botonMenu.addEventListener("click", event => {
       event.preventDefault();
+      event.stopImmediatePropagation();
       sidebar.classList.toggle("oculto");
       const abierto = !sidebar.classList.contains("oculto");
       botonMenu.setAttribute("aria-expanded", String(abierto));
       botonMenu.setAttribute("aria-label", abierto ? "Cerrar menú" : "Abrir menú");
       actualizarEstado();
-    });
+    }, true);
   }
 
   function ajustarPantalla() {
