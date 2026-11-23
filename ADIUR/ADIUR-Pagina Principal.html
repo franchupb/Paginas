@@ -2545,8 +2545,24 @@ window.cambiarDivisionCalendario = function() {
    ACTUALIZACIÓN AUTOMÁTICA
 ===================================================== */
 
+let ultimaSincronizacionNube = 0;
+let sincronizacionNubeEnCurso = null;
+async function sincronizarDatosNubeConControl() {
+  if (sincronizacionNubeEnCurso) return sincronizacionNubeEnCurso;
+  if (Date.now() - ultimaSincronizacionNube < 30000) return false;
+  ultimaSincronizacionNube = Date.now();
+  sincronizacionNubeEnCurso = Promise.all([
+    sincronizarPartidosDesdeNube(),
+    sincronizarJugadorasDesdeNube()
+  ]).then(() => true).finally(() => {
+    sincronizacionNubeEnCurso = null;
+  });
+  return sincronizacionNubeEnCurso;
+}
+
 window.addEventListener("focus", async () => {
-  await Promise.all([sincronizarPartidosDesdeNube(), sincronizarJugadorasDesdeNube()]);
+  const actualizada = await sincronizarDatosNubeConControl();
+  if (!actualizada) return;
   renderizarFixture();
   renderizarCumpleanos();
   renderizarCalendario();
@@ -2629,10 +2645,7 @@ function obtenerClubPorNombre(nombre) {
   renderizarCumpleanos();
   renderizarCalendario();
 
-  await Promise.all([
-    sincronizarPartidosDesdeNube(),
-    sincronizarJugadorasDesdeNube()
-  ]);
+  await sincronizarDatosNubeConControl();
 
   renderizarFixture();
   renderizarCumpleanos();
