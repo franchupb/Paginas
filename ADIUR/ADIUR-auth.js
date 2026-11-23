@@ -30,7 +30,7 @@ export async function iniciarSesionADIUR(usuario, contrasena) {
   const credencial = await signInWithEmailAndPassword(auth, correoTecnicoADIUR(usuario), contrasena);
   const referencia = doc(db, "usuarios", credencial.user.uid);
   const perfil = await getDoc(referencia);
-  if (!perfil.exists() || perfil.data().activo === false) {
+  if (!perfil.exists() || perfil.data().activo !== true) {
     await signOut(auth);
     try { localStorage.removeItem("usuarioADIUR"); localStorage.removeItem("rolADIUR"); localStorage.removeItem("categoriasADIUR"); } catch (_) {}
     throw new Error("La cuenta todavía no tiene un perfil habilitado. Contactá al administrador del club.");
