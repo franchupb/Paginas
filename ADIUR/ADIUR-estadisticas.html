@@ -930,6 +930,186 @@ body{background:#f3f5f8}.contenido{max-width:1740px;margin:30px auto;padding:0 2
 </style>
 <script src="ADIUR-permisos.js?v=20261123d">
 </script>
+
+<style id="estadisticas-redisenio-profesional">
+/* ADIUR · SISTEMA VISUAL ESTADÍSTICAS */
+:root{
+  --stats-ink:#17212f;
+  --stats-muted:#738092;
+  --stats-line:#e5eaf0;
+  --stats-soft:#f7f9fc;
+  --stats-orange:#ef7625;
+  --stats-orange-dark:#d85e12;
+}
+html{scroll-behavior:smooth}
+body{background:#f4f6f9;color:var(--stats-ink)}
+.barra-superior{box-shadow:0 2px 12px rgba(20,32,48,.035)}
+.contenido{
+  width:100%;max-width:1680px;margin:0 auto;
+  padding:30px clamp(16px,2.6vw,38px) 56px;
+}
+.encabezado-seccion{
+  position:relative;display:block;margin:0 0 20px;padding:2px 0 20px;
+  border-bottom:1px solid var(--stats-line)
+}
+.encabezado-seccion>div:before{
+  content:"COMPETENCIA  /  ANÁLISIS DEPORTIVO";
+  display:block;margin-bottom:9px;color:var(--stats-orange-dark);
+  font-size:9px;font-weight:900;letter-spacing:1.55px
+}
+.encabezado-seccion h2{
+  margin:0 0 7px;color:var(--stats-ink);
+  font-size:clamp(25px,3vw,34px);font-weight:900;letter-spacing:-1.05px
+}
+.encabezado-seccion p{
+  max-width:780px;margin:0;color:var(--stats-muted);
+  font-size:12px;line-height:1.75
+}
+.contenido>.panel{
+  margin:0 0 20px;padding:19px 20px;
+  border:1px solid var(--stats-line);border-radius:15px;
+  background:#fff;box-shadow:0 5px 18px rgba(23,33,47,.035)
+}
+.controles-filtros{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px 16px;margin:0
+}
+.campo-filtro{min-width:0}
+.campo-filtro label{
+  margin:0 0 7px;color:#697587;font-size:9px;
+  font-weight:900;letter-spacing:.75px
+}
+.campo-filtro select,.integral-table-head input{
+  min-height:43px;width:100%;padding:10px 12px;
+  border:1px solid #dce3eb;border-radius:9px;
+  background:#fff;color:#263243;font-size:12px;
+  transition:border-color .18s,box-shadow .18s,background .18s
+}
+.campo-filtro select:hover{border-color:#c4ceda}
+.campo-filtro select:focus,.integral-table-head input:focus,
+.form-group input:focus,.form-group select:focus{
+  outline:none;border-color:var(--stats-orange);
+  box-shadow:0 0 0 3px rgba(239,118,37,.12)
+}
+.campo-filtro select.filtro-destacado{
+  border-color:#f2c6a8;background:#fff8f3;color:#a94c13
+}
+.acciones-tabla{margin-top:16px;padding-top:14px;border-top:1px solid #edf0f4}
+.btn-accion,.btn-primario{
+  min-height:39px;padding:9px 15px;border-radius:9px;
+  background:var(--stats-orange);font-size:11px;font-weight:850;
+  box-shadow:0 3px 8px rgba(239,118,37,.13)
+}
+.btn-primario:hover{background:var(--stats-orange-dark);transform:translateY(-1px)}
+.integral-panel{
+  margin:0 0 20px;padding:22px;border:1px solid var(--stats-line);
+  border-radius:16px;background:#fff;
+  box-shadow:0 5px 20px rgba(23,33,47,.04)
+}
+.integral-heading{align-items:center;margin-bottom:18px}
+.integral-kicker{font-size:9px;letter-spacing:1.5px}
+.integral-heading h3{font-size:20px;letter-spacing:-.55px}
+.integral-heading p{max-width:690px;font-size:11px;line-height:1.7}
+.integral-live{font-size:9px}
+.integral-metrics{gap:10px;margin:0 0 22px}
+.integral-metrics article{
+  padding:15px 15px 13px;border:1px solid #e8edf2;
+  border-radius:12px;background:linear-gradient(180deg,#fff 0%,#fafbfd 100%)
+}
+.integral-metrics small{font-size:8px;letter-spacing:.8px}
+.integral-metrics strong{font-size:28px;font-variant-numeric:tabular-nums}
+.integral-table-head{align-items:flex-end;margin-bottom:13px}
+.integral-table-head h4{font-size:14px;letter-spacing:-.2px}
+.integral-table-head p{font-size:10px}
+.integral-table-head input{width:min(280px,100%);min-height:40px}
+.integral-table-wrap{border-color:#e4eaf0;border-radius:12px}
+.integral-table{min-width:980px}
+.integral-table th{position:sticky;top:0;z-index:2;padding:13px 11px;background:#f6f8fb}
+.integral-table td{padding:13px 11px}
+.integral-table tbody tr:hover td{background:#fff9f4}
+.integral-open{min-height:31px;padding:7px 11px;border-radius:8px}
+.integral-foot{font-size:10px}
+.ficha-jugadora-panel{
+  margin:0 0 20px;padding:21px;border:1px solid var(--stats-line);
+  border-radius:15px;background:#fff;box-shadow:0 5px 18px rgba(23,33,47,.035)
+}
+.ficha-header{padding-bottom:15px;margin-bottom:17px;border-bottom:1px solid var(--stats-line)}
+.ficha-avatar{border-radius:13px;background:#fff0e6;color:#b95215}
+.ficha-identidad h3{font-size:19px;letter-spacing:-.35px}
+.btn-cerrar-ficha{border-radius:9px}
+.ficha-card{
+  padding:16px;border:1px solid #e8edf2;border-radius:12px;background:#fafbfd
+}
+.ficha-card-titulo{font-size:11px;letter-spacing:.55px}
+.dato-fila{padding:7px 0;font-size:11px}
+.resumen-partidos-externos{gap:14px;margin:0 0 20px}
+.card-fuente-externa{
+  padding:17px;border:1px solid var(--stats-line);border-radius:14px;
+  box-shadow:0 4px 15px rgba(23,33,47,.03)
+}
+.card-fuente-header{padding-bottom:12px;margin-bottom:12px}
+.card-fuente-header h4{font-size:12px}
+.card-fuente-header a{font-size:10px}
+.item-partido-info{padding:10px 12px;border-radius:9px}
+#panelTablaEstadisticas{
+  border:1px solid var(--stats-line)!important;border-radius:14px!important;
+  box-shadow:0 5px 18px rgba(23,33,47,.035);background:#fff
+}
+.tabla-contenedor{border:0;border-radius:14px}
+#tablaEstadisticas{min-width:850px;font-size:11px}
+#tablaEstadisticas th{
+  position:sticky;top:0;z-index:3;padding:13px 11px;
+  background:#f6f8fb;color:#687587;border-bottom:1px solid var(--stats-line);
+  font-size:9px;letter-spacing:.45px
+}
+#tablaEstadisticas th.fija-izquierda{z-index:5;background:#f1f4f8}
+#tablaEstadisticas td{padding:12px 11px;font-size:11px}
+#tablaEstadisticas td.fija-izquierda{font-weight:800}
+#tablaEstadisticas tbody tr:nth-child(even) td{background:#fbfcfd}
+#tablaEstadisticas tbody tr:hover td{background:#fff7f0}
+#tablaEstadisticas tbody tr:hover td.fija-izquierda{background:#fff1e6}
+.modal-contenido{border:1px solid var(--stats-line);border-radius:16px}
+.modal-header h3{margin:0;color:var(--stats-ink);font-weight:900}
+.form-group input,.form-group select{min-height:42px;border-radius:9px}
+.btn-secundario{border-radius:9px}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+  outline:3px solid rgba(239,118,37,.35);outline-offset:2px
+}
+@media(max-width:1050px){
+  .controles-filtros{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .integral-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .contenido{padding:21px 14px 40px}
+  .contenido>.panel{padding:15px}
+  .controles-filtros{grid-template-columns:1fr 1fr;gap:12px}
+  .integral-panel{padding:16px}
+  .integral-heading{display:block}
+  .integral-live{margin-top:12px}
+  .integral-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .integral-metrics article{padding:12px}
+  .integral-metrics strong{font-size:24px}
+  .integral-table-head{align-items:stretch;flex-direction:column}
+  .integral-table-head input{width:100%}
+  .ficha-jugadora-panel{padding:15px}
+  .resumen-partidos-externos{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .contenido{padding:18px 11px 32px}
+  .encabezado-seccion h2{font-size:25px}
+  .controles-filtros{grid-template-columns:1fr}
+  .integral-metrics{grid-template-columns:1fr 1fr}
+  .integral-metrics small{font-size:7px}
+  .integral-metrics strong{font-size:22px}
+  .acciones-tabla{justify-content:stretch}
+  .acciones-tabla .btn-accion{width:100%}
+  .ficha-header{align-items:flex-start}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
+</style>
 </head>
 
 <body>
@@ -1112,8 +1292,8 @@ body{background:#f3f5f8}.contenido{max-width:1740px;margin:30px auto;padding:0 2
 
     <div class="encabezado-seccion">
       <div>
-        <h2>Panel de Estadísticas y Ficha Individual</h2>
-        <p>Filtrá por módulo (Partidos, Asistencia, Tiempos, Lesiones o Testeos) o elegí una jugadora para ver su ficha completa.</p>
+        <h2>Estadísticas y rendimiento deportivo</h2>
+        <p>Una visión integral del plantel para analizar participación, evolución y seguimiento individual. Seleccioná una categoría y explorá los datos de cada módulo.</p>
       </div>
     </div>
 
@@ -1121,7 +1301,7 @@ body{background:#f3f5f8}.contenido{max-width:1740px;margin:30px auto;padding:0 2
     <div class="panel">
       <div class="controles-filtros">
         <div class="campo-filtro">
-          <label for="filtroModulo">Módulo / Vista</label>
+          <label for="filtroModulo">Área de análisis</label>
           <select id="filtroModulo" class="filtro-destacado" onchange="cambiarModuloFiltro()">
             <option value="integral" selected>📊 Rendimiento integral</option>
             <option value="partidos">⚽ Partidos (registro manual)</option>
@@ -1133,7 +1313,7 @@ body{background:#f3f5f8}.contenido{max-width:1740px;margin:30px auto;padding:0 2
         </div>
 
         <div class="campo-filtro">
-          <label for="filtroDivision">División</label>
+          <label for="filtroDivision">Categoría</label>
           <select id="filtroDivision" onchange="cambiarDivision()">
             <option value="Sub 10">Sub 10</option>
             <option value="Sub 12">Sub 12</option>
@@ -1164,7 +1344,7 @@ body{background:#f3f5f8}.contenido{max-width:1740px;margin:30px auto;padding:0 2
         </div>
 
         <div class="campo-filtro">
-          <label for="filtroJugadoraIndividual">Jugadora (Ficha Integral)</label>
+          <label for="filtroJugadoraIndividual">Ficha individual</label>
           <select id="filtroJugadoraIndividual" onchange="seleccionarJugadoraFicha(this.value)">
             <option value="">-- Ver todas / Elegir jugadora --</option>
           </select>
@@ -1198,7 +1378,7 @@ body{background:#f3f5f8}.contenido{max-width:1740px;margin:30px auto;padding:0 2
 
     <section class="integral-panel" id="panelIntegral">
       <div class="integral-heading">
-        <div><span class="integral-kicker">ADIUR FEMENINO · PERFORMANCE</span><h3>Rendimiento individual del plantel</h3><p>Consolidado por categoría a partir de Informes, planillas de Testeos y el historial de Lesiones.</p></div>
+        <div><span class="integral-kicker">ADIUR FEMENINO · PERFORMANCE</span><h3>Rendimiento integral del plantel</h3><p>Indicadores consolidados por categoría a partir de Informes, Testeos y el historial de Lesiones.</p></div>
         <div class="integral-live"><span></span>Fuentes del club</div>
       </div>
       <div class="integral-metrics">
@@ -1209,7 +1389,7 @@ body{background:#f3f5f8}.contenido{max-width:1740px;margin:30px auto;padding:0 2
         <article><small>CASOS EN SEGUIMIENTO</small><strong id="integralCasosActivos">—</strong><span>Según estado registrado</span></article>
       </div>
       <div class="integral-table-head">
-        <div><h4>Ficha comparativa del plantel</h4><p>Seleccioná una jugadora para abrir su ficha integral.</p></div>
+        <div><h4>Plantel · comparación individual</h4><p>Consultá los indicadores disponibles y abrí la ficha de cada jugadora.</p></div>
         <input id="buscarIntegral" type="search" placeholder="Buscar jugadora..." aria-label="Buscar jugadora en estadísticas">
       </div>
       <div class="integral-table-wrap"><table class="integral-table"><thead><tr><th>JUGADORA</th><th>POSICIÓN</th><th>PJ</th><th>MIN</th><th>G</th><th>🟨</th><th>🟥</th><th>TESTEOS / MARCAS RECIENTES</th><th>SALUD / LESIONES</th><th></th></tr></thead><tbody id="cuerpoIntegral"><tr><td colspan="10" class="integral-empty">Preparando el consolidado de la categoría…</td></tr></tbody></table></div>
