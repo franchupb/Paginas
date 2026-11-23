@@ -198,7 +198,7 @@ function renderGeneral(){
  const lesiones=documentosDe("lesiones",jugadoras);
  $("mJugadoras").textContent=jugadoras.length;
  $("mInformes").textContent=informes.length;
- $("mGoles").textContent=informes.reduce((s,d)=>s+buscarNumeros(d,["goles","gol"]).reduce((a,n)=>a+n,0),0);
+ $("mGoles").textContent=jugadoras.reduce((s,j)=>s+golesJugadora(j),0);
  $("mAsistencia").textContent=asistencias.reduce((s,d)=>s+contarPresentes(d),0);
  $("mTesteos").textContent=testeos.length;
  $("mLesiones").textContent=lesiones.filter(l=>!/(alta|recuperada|cerrada|finalizada)/i.test(texto(l.estado||l.recuperacion||"activa"))).length;
