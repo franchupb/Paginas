@@ -536,7 +536,7 @@
         </div>`;
       const encabezadoOriginal = zonaPrincipal.querySelector(configPagina.selector);
       if (encabezadoOriginal) {
-        const bloquesConAcciones = Array.from(encabezadoOriginal.children).filter(nodo => nodo.querySelector && nodo.querySelector("button, a.boton-principal, a.btn"));
+        const bloquesConAcciones = Array.from(encabezadoOriginal.children).filter(nodo => nodo.matches("button, a.boton-principal, a.btn") || (nodo.querySelector && nodo.querySelector("button, a.boton-principal, a.btn")));
         if (bloquesConAcciones.length) {
           const acciones = document.createElement("div");
           acciones.className = "adiur-panel-acciones";
