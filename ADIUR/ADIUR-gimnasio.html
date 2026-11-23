@@ -2997,6 +2997,7 @@ function esBianca(obj) {
 }
 
 function detectarRol(obj) {
+  if (obj === usuario && localStorage.getItem("rolADIUR") === "jugadora") return "jugadora";
   if (esBianca(obj)) return "jugadora";
 
   const valor = normalizar(obj?.rol || obj?.perfil || obj?.tipo || obj?.role || "");
@@ -3087,8 +3088,18 @@ function obtenerTodasLasJugadoras() {
 function buscarJugadoraSesion() {
   const jugadoras = obtenerTodasLasJugadoras();
 
-  if (esBianca(usuario)) {
-    return jugadoras.find(registroEsBianca) || jugadoras[0] || null;
+  if (localStorage.getItem("rolADIUR") === "jugadora") {
+    const claveUsuario = normalizar(usuario?.usuario || usuario?.username || usuario?.nombre || "");
+    const equivalencias = {
+      guadaluped: "Guadalupe Demaria",
+      jazmind: "Jazmin De Nicola Forte"
+    };
+    const nombrePropio = equivalencias[claveUsuario];
+    if (nombrePropio) {
+      return jugadoras.find(j => normalizar(nombreJugadora(j)) === normalizar(nombrePropio) ||
+        normalizar(j.usuario || "") === claveUsuario) || null;
+    }
+    if (esBianca(usuario)) return jugadoras.find(registroEsBianca) || null;
   }
 
   const clavesSesion = [
