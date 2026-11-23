@@ -2796,7 +2796,6 @@ async function obtenerLesionesIntegral(){
  if(nubeActiva&&db){try{const snap=await getDocs(collection(db,"lesiones"));snap.forEach(d=>lista.push({id:d.id,...d.data()}));}catch(e){console.warn("No se pudieron leer lesiones:",e);}}
  const mapa=new Map();lista.forEach((x,i)=>{if(!x)return;const key=String(x.id||[x.fecha,x.categoria,x.jugadora,x.zona].join("|")||i);const anterior=mapa.get(key);const fecha=Date.parse(x.actualizadoEn||x.creadoEn||"")||0;const fechaAnterior=Date.parse(anterior?.actualizadoEn||anterior?.creadoEn||"")||0;if(!anterior||fecha>=fechaAnterior)mapa.set(key,x);});const resultado=[...mapa.values()];CACHE_FUENTES_INTEGRAL.lesiones={at:Date.now(),data:resultado};return resultado;
 }
-const MESES_TESTEO_INTEGRAL=["Diciembre","Noviembre","Octubre","Septiembre","Agosto","Julio","Junio","Mayo","Abril","Marzo","Febrero","Enero"];
 async function obtenerPlanillasIntegral(division){
  const cache=CACHE_FUENTES_INTEGRAL.planillas.get(division);
  if(cache&&Date.now()-cache.at<TTL_FUENTES_INTEGRAL)return cache.data;
