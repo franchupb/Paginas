@@ -88,42 +88,65 @@ body.pizarra-inmersiva .boardfoot input,body.pizarra-inmersiva .boardfoot textar
 @media(max-width:620px){.page-header{align-items:flex-start;flex-direction:column;padding:20px 18px}.page-header h2{font-size:22px}.header-actions{width:100%}.header-actions .btn{flex:1}.workspace{grid-template-columns:1fr}.tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.toolgroup:first-child{grid-column:1/-1}.toolgroup{min-width:0}.tool{font-size:9px;padding:7px}.pitchwrap{min-height:190px;padding:4px}.player{width:29px;height:29px;font-size:10px}.player small{font-size:8px}.boardfoot{grid-template-columns:1fr}.boardactions{width:100%}.boardactions .btn{flex:1}.toolbar .btn{flex:1}.toolbar-spacer{display:none}body.pizarra-inmersiva .workspace{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}body.pizarra-inmersiva .tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));max-height:125px;overflow:auto}body.pizarra-inmersiva .toolgroup:first-child{grid-column:auto}body.pizarra-inmersiva .pitchwrap{min-height:0}body.pizarra-inmersiva .boardfoot{grid-template-columns:1fr 1fr}}
 @media print{.barra-superior,#sidebar,.capa-sidebar,.page-header,.toolbar,.tools,.boardactions,.saved{display:none!important}.main{margin:0;padding:0}.board{border:0;box-shadow:none;padding:0}.pitch{width:100%;print-color-adjust:exact;-webkit-print-color-adjust:exact}.boardfoot{display:grid}}
 
-/* REDISEÑO ADIUR PRO · DARK TECH */
-:root{--naranja:#f47721;--naranja2:#ff8b3d;--negro:#10151d;--fondo:#0d1219;--borde:#2a3543;--texto:#edf3fa;--muted:#91a0b2;--azul:#399cff}
-body{background:radial-gradient(ellipse at 78% 8%,#14263a 0,transparent 34%),#0d1219;color:var(--texto);font-family:Inter,Arial,Helvetica,sans-serif}
-.main{padding:22px 24px 34px;background:transparent}
-.page-header{position:relative;overflow:hidden;min-height:130px;padding:25px 30px;border:1px solid #304257;background:linear-gradient(112deg,#111923,#172536 58%,#17202d);box-shadow:0 18px 45px #0005}
-.page-header:after{content:"";position:absolute;width:340px;height:340px;right:8%;top:-255px;border:1px solid #399cff40;border-radius:50%;box-shadow:0 0 0 35px #399cff0c,0 0 0 75px #399cff08;pointer-events:none}
-.eyebrow{color:#8ecaff}.eyebrow:before{background:var(--naranja);width:25px}
-.page-header h2{font-size:29px;letter-spacing:-.8px}.page-header p{color:#aebdce;font-size:12px}
-.toolbar{padding:11px 13px;background:#151e29;border:1px solid #2a394a;border-radius:13px;box-shadow:0 8px 26px #0003}
-.btn{min-height:37px;border-color:#354457;background:#202c3a;color:#e5edf6;font-size:10px}
-.btn:hover{border-color:var(--azul);background:#24384d}
-.btn.primary{border-color:#267fce;background:linear-gradient(135deg,#238be8,#1768b2);color:#fff;box-shadow:0 4px 12px #1679d533}
-.btn.primary:hover{background:linear-gradient(135deg,#45a5ff,#2178c7)}
-.btn.danger{color:#ffaaa3;border-color:#613b42;background:#2b2028}
-.board{padding:15px;background:linear-gradient(145deg,#151e28,#111821);border:1px solid #2b3948;border-radius:16px;box-shadow:0 14px 40px #0004}
-.boardtop{border-color:#2a3948;padding-bottom:13px}.board-title strong{color:#f2f6fb;font-size:14px}.board-title span,#status{color:#8fa2b6}
-.workspace{grid-template-columns:160px minmax(0,1fr);gap:13px;padding-top:13px}
-.tools{gap:13px;padding:12px;background:#1a2531;border:1px solid #2b3a4b;border-radius:12px}
-.toolgroup b{color:#8fa8c0;font-size:9px;letter-spacing:1.15px}.tool{padding:8px 9px;color:#c4d1df;border:1px solid transparent;border-radius:8px;font-size:10px}
-.tool:hover{background:#26384b;color:#fff}.tool.active{border-color:#338bd1;background:linear-gradient(100deg,#1d4d76,#23384c);color:#9bd2ff;box-shadow:inset 3px 0 var(--azul)}
-.color.active{box-shadow:0 0 0 2px #399cff}.width-row{color:#b3c2d1}.width-row input{accent-color:var(--azul)}
-.pitchwrap{min-height:430px;padding:12px;background:#101923;border:1px solid #2b3c4e;border-radius:12px}
-.pitch{width:min(100%,1350px);background-color:#236a48;background-image:linear-gradient(0deg,#ffffff05 1px,transparent 1px),linear-gradient(90deg,#ffffff05 1px,transparent 1px),repeating-linear-gradient(90deg,#ffffff05 0,#ffffff05 1px,transparent 1px,transparent 12.5%);background-size:100% 12.5%,12.5% 100%,100% 100%;box-shadow:0 10px 35px #0008}
-.field-svg{filter:drop-shadow(0 1px 1px #0003)}
-.player{width:43px;height:43px;border:2px solid #f4f8ff;font-size:13px;box-shadow:0 5px 12px #0008;transition:box-shadow .12s,filter .12s}
-.player.own{background:linear-gradient(145deg,#ff984f,#df5d14)}.player.rival{background:linear-gradient(145deg,#ff646b,#a91f37)}.player.ball{background:radial-gradient(circle at 35% 30%,#fff,#cbd5df);color:#1c2732}
-.player:hover{filter:brightness(1.12);box-shadow:0 0 0 3px #399cff70,0 7px 16px #0009}.player.selected{outline:3px solid #69bdff;outline-offset:3px}
-.player small{background:#101a27f2;border:1px solid #ffffff22;color:#f4f8fc}
-.boardfoot label{color:#9eb0c3}.boardfoot input,.boardfoot textarea{border:1px solid #344456;background:#1a2531;color:#edf4fb}
-.boardfoot input:focus,.boardfoot textarea:focus{border-color:#399cff;box-shadow:0 0 0 3px #399cff20}
-.saved{padding:15px;background:#151e28;border:1px solid #2a3948;border-radius:13px}.saved-head strong{color:#eaf1f8}.saved-head small{color:#8fa0b2}
-.saved-item button{border-color:#354457;background:#202c3a;color:#dce7f2}.saved-item button:hover{border-color:#399cff;background:#203b54}.empty{color:#8fa0b2}
-body.pizarra-inmersiva{background:#0b1017}body.pizarra-inmersiva .main{background:radial-gradient(ellipse at 50% 0,#172a3d,#0b1017 65%)}
-body.pizarra-inmersiva .board{background:#131d28;border-color:#2b3d50}body.pizarra-inmersiva .tools{background:#182431;border-color:#304357}body.pizarra-inmersiva .pitchwrap{background:#101923;border-color:#304357}
-@media(max-width:900px){.main{padding:16px 12px 25px}.workspace{grid-template-columns:145px minmax(0,1fr)}.pitchwrap{min-height:300px}}
-@media(max-width:620px){.page-header{padding:19px 17px}.page-header h2{font-size:23px}.workspace{grid-template-columns:1fr}.tools{background:#182431}.pitchwrap{min-height:220px;padding:5px}.player{width:30px;height:30px;font-size:10px}body.pizarra-inmersiva .tools{background:#182431}}
+
+
+/* IDENTIDAD ADIUR · SUPERFICIE CLARA */
+:root{--naranja:#f47721;--naranja2:#dc5e0b;--negro:#171717;--fondo:#f4f5f7;--borde:#e5e7eb;--texto:#25282d;--muted:#747b84}
+body{background:var(--fondo);color:var(--texto);font-family:Arial,Helvetica,sans-serif}
+.page-header{background:#fff;color:var(--texto);border:1px solid var(--borde);border-left:5px solid var(--naranja);box-shadow:0 5px 18px #1717170a}
+.eyebrow{color:var(--naranja-oscuro,#dc5e0b)}
+.page-header p{color:var(--muted)}
+.toolbar,.board,.saved{background:#fff;border-color:var(--borde);box-shadow:0 5px 20px #17171708}
+.btn{border-color:#e0e3e7;background:#fff;color:#30343a}
+.btn:hover{border-color:var(--naranja);background:#fff5ee}
+.btn.primary{border-color:var(--naranja);background:var(--naranja);color:#fff;box-shadow:none}
+.btn.primary:hover{background:var(--naranja2)}
+.workspace{grid-template-columns:150px minmax(0,1fr) 205px;gap:12px}
+.tools,.roster{display:flex;flex-direction:column;gap:10px;padding:11px;background:#f7f8f9;border:1px solid #e8ecef;border-radius:11px;min-width:0}
+.roster{max-height:100%;overflow:auto}
+.roster h3{margin:0;font-size:12px;color:#25282d}
+.roster-hint{margin:-5px 0 2px;font-size:10px;line-height:1.4;color:#747b84}
+.roster-group{display:flex;flex-direction:column;gap:5px}
+.roster-group-title{display:flex;justify-content:space-between;gap:6px;align-items:center;font-size:9px;font-weight:900;letter-spacing:.6px;color:#68727b}
+.roster-list{display:flex;flex-direction:column;gap:4px}
+.roster-player{display:flex;align-items:center;gap:7px;width:100%;padding:6px 7px;border:1px solid #e6e8eb;border-radius:7px;background:#fff;text-align:left;cursor:pointer}
+.roster-player:hover,.roster-player.active{border-color:var(--naranja);background:#fff4ec}
+.roster-number{display:grid;place-items:center;flex:0 0 25px;width:25px;height:25px;border-radius:50%;background:var(--naranja);color:#fff;font-size:10px;font-weight:900}
+.roster-player.rival .roster-number{background:#c83f43}
+.roster-player.ball .roster-number{background:#f0f1f2;color:#25282d}
+.roster-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:700;color:#30343a}
+.roster-empty{padding:7px;border:1px dashed #d9dde1;border-radius:7px;color:#9299a1;font-size:10px;text-align:center}
+.toolgroup b{color:#737b84}
+.tool{color:#3e454c}
+.tool:hover{background:#fff}
+.tool.active{border-color:#f2c5a5;background:#fff0e6;color:#a9470b;box-shadow:inset 3px 0 var(--naranja)}
+.color.active{box-shadow:0 0 0 2px var(--naranja)}
+.width-row input{accent-color:var(--naranja)}
+.pitchwrap{background:#e9eef0;border-color:#e0e5e7}
+.pitch{background-color:#328452;box-shadow:0 3px 15px #0002}
+.player.own{background:var(--naranja)}
+.player.rival{background:#c83f43}
+.player.selected{outline:3px solid #ffe15a;outline-offset:3px}
+.boardfoot label{color:#68727b}
+.boardfoot input,.boardfoot textarea{border-color:#dce1e5;background:#fff;color:#25282d}
+.boardfoot input:focus,.boardfoot textarea:focus{border-color:var(--naranja);box-shadow:0 0 0 3px #f477211a}
+.saved-head strong{color:#25282d}
+.saved-item button{border-color:var(--borde);background:#fff;color:#30343a}
+.saved-item button:hover{border-color:var(--naranja);background:#fff5ee}
+body.pizarra-inmersiva{overflow:auto;background:#f4f5f7}
+body.pizarra-inmersiva .main{background:#f4f5f7}
+body.pizarra-inmersiva .board{background:#fff;border-color:var(--borde)}
+body.pizarra-inmersiva .boardtop{border-color:#edf0f2}
+body.pizarra-inmersiva .board-title strong{color:#25282d}
+body.pizarra-inmersiva .board-title span,body.pizarra-inmersiva #status{color:#68727b}
+body.pizarra-inmersiva .tools,body.pizarra-inmersiva .roster{background:#f7f8f9;border-color:#e8ecef}
+body.pizarra-inmersiva .toolgroup b,body.pizarra-inmersiva .width-row{color:#737b84}
+body.pizarra-inmersiva .tool{color:#3e454c}
+body.pizarra-inmersiva .pitchwrap{background:#e9eef0;border-color:#e0e5e7}
+body.pizarra-inmersiva .boardfoot label{color:#68727b}
+body.pizarra-inmersiva .boardfoot input,body.pizarra-inmersiva .boardfoot textarea{background:#fff;border-color:#dce1e5;color:#25282d}
+@media(max-width:1100px){.workspace{grid-template-columns:140px minmax(0,1fr)}.roster{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));max-height:190px}.roster h3,.roster-hint{grid-column:1/-1}}
+@media(max-width:620px){.workspace{grid-template-columns:1fr}.tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.roster{grid-column:auto;grid-template-columns:1fr 1fr;max-height:220px}.roster h3,.roster-hint{grid-column:1/-1}.pitchwrap{min-height:220px;padding:5px}.player{width:30px;height:30px;font-size:10px}body.pizarra-inmersiva .roster{grid-template-columns:1fr 1fr}}
 
 </style>
 
@@ -163,6 +186,7 @@ body.pizarra-inmersiva .board{background:#131d28;border-color:#2b3d50}body.pizar
 <div class="toolgroup"><b>GROSOR DEL TRAZO</b><div class="width-row"><input id="lineWidth" type="range" min="2" max="10" value="4"><span id="widthValue">4</span></div></div>
 </aside>
 <div class="pitchwrap"><div class="pitch" id="pitch" data-field="full"><svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg><canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div></div></div>
+<aside class="roster" aria-label="Planteles de la pizarra"><h3>Equipos en cancha</h3><p class="roster-hint">Seleccioná una ficha para editarla o moverla desde la cancha.</p><section class="roster-group"><div class="roster-group-title"><span>ADIUR</span><span id="ownCount">0</span></div><div class="roster-list" id="ownRoster"></div></section><section class="roster-group"><div class="roster-group-title"><span>RIVAL</span><span id="rivalCount">0</span></div><div class="roster-list" id="rivalRoster"></div></section><section class="roster-group"><div class="roster-group-title"><span>OTROS</span><span id="otherCount">0</span></div><div class="roster-list" id="otherRoster"></div></section></aside>
 </div>
 <div class="boardfoot"><label>Nombre de la pizarra<input id="boardName" maxlength="80" value="Pizarra de partido"></label><label>Consigna / observaciones<textarea id="notes" rows="2" placeholder="Anotá la idea principal, movimientos o indicaciones…"></textarea></label></div>
 </section>
@@ -230,16 +254,29 @@ function paint(){
 }
 function renderPlayers(){
  const host=$("players");host.innerHTML="";
+ const groups={own:$("ownRoster"),rival:$("rivalRoster"),ball:$("otherRoster")};
+ Object.values(groups).forEach(g=>g.innerHTML="");
+ const counts={own:0,rival:0,ball:0};
+ data.players.forEach(p=>{
+  counts[p.team]=(counts[p.team]||0)+1;
+  const list=groups[p.team]||groups.ball;
+  const item=document.createElement("button");item.type="button";item.className="roster-player "+p.team+(p.id===selected?" active":"");
+  const num=document.createElement("span");num.className="roster-number";num.textContent=p.number;
+  const name=document.createElement("span");name.className="roster-name";name.textContent=p.name;
+  item.append(num,name);item.onclick=()=>{selected=p.id;renderPlayers();say("Ficha seleccionada · "+p.name)};list.append(item);
+ });
+ [["own","ownCount"],["rival","rivalCount"],["ball","otherCount"]].forEach(([k,id])=>$(id).textContent=counts[k]||0);
+ [["own","ownRoster","Sin jugadoras"],["rival","rivalRoster","Sin rivales"],["ball","otherRoster","Sin elementos"]].forEach(([k,id,msg])=>{if(!counts[k])$(id).innerHTML='<div class="roster-empty">'+msg+'</div>'});
+
  data.players.forEach(p=>{
   const el=document.createElement("div");el.className="player "+p.team+(p.id===selected?" selected":"");
   el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";el.textContent=p.number;
   const label=document.createElement("small");label.textContent=p.name;el.append(label);
   el.addEventListener("pointerdown",e=>{
-   if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;
+   if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;el.classList.add("selected");
    const move=v=>{const q=xy(v);p.x=Math.max(.025,Math.min(.975,q.x));p.y=Math.max(.025,Math.min(.975,q.y));el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%"};
    const end=()=>{window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);renderPlayers();say("Ficha reubicada");updateHistoryButtons()};
    window.addEventListener("pointermove",move);window.addEventListener("pointerup",end,{once:true});
-   renderPlayers();
   });
   el.addEventListener("dblclick",()=>editPlayer(p));
   host.append(el);
@@ -327,7 +364,7 @@ $("notes").addEventListener("input",e=>data.notes=e.target.value);
 $("lineWidth").oninput=e=>{lineWidth=Number(e.target.value);$("widthValue").textContent=lineWidth};
 document.querySelectorAll("[data-tool]").forEach(b=>b.onclick=()=>{tool=b.dataset.tool;document.querySelectorAll("[data-tool]").forEach(x=>x.classList.toggle("active",x===b));say("Herramienta: "+b.textContent.trim())});
 document.querySelectorAll("[data-color]").forEach(b=>b.onclick=()=>{color=b.dataset.color;document.querySelectorAll("[data-color]").forEach(x=>x.classList.toggle("active",x===b))});
-document.querySelectorAll("[data-field]").forEach(b=>b.onclick=()=>{snapshot();data.field=b.dataset.field;document.querySelectorAll("[data-field]").forEach(x=>x.classList.toggle("active",x===b));render();say("Vista de cancha actualizada")});
+document.querySelectorAll("button[data-field]").forEach(b=>b.onclick=()=>{snapshot();data.field=b.dataset.field;document.querySelectorAll("[data-field]").forEach(x=>x.classList.toggle("active",x===b));render();say("Vista de cancha actualizada")});
 canvas.addEventListener("pointerdown",e=>{if(tool==="select")return;e.preventDefault();drawing=true;start=xy(e);points=[start];canvas.setPointerCapture(e.pointerId)});
 canvas.addEventListener("pointermove",e=>{if(!drawing)return;const p=xy(e);if(tool==="free")points.push(p);else points=[start,p];paint()});
 canvas.addEventListener("pointerup",e=>{if(!drawing)return;drawing=false;const end=xy(e);if(Math.hypot(end.x-start.x,end.y-start.y)<.004&&tool!=="free"){paint();return}snapshot();if(tool==="free")data.drawings.push({type:"free",points:clone(points),color,width:lineWidth});else data.drawings.push({type:tool,x:start.x,y:start.y,X:end.x,Y:end.y,color,width:lineWidth});points=[];paint();say("Trazo agregado")});
