@@ -214,7 +214,7 @@
     }
 
     if (pagina === "adiur-partidos.html") {
-      ["btnNuevo", "btnEliminarModo", "btnEliminarModo"].forEach(id => {
+      ["btnNuevo", "btnEliminarModo"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.hidden = true;
       });
@@ -277,7 +277,6 @@
         if (biblioteca) { biblioteca.classList.remove("activa"); biblioteca.hidden = true; }
         if (estadisticas) { estadisticas.classList.add("activa"); estadisticas.hidden = false; }
         document.getElementById("btnTabStats")?.classList.add("activa");
-        window.cambiarPestana?.("stats");
         document.querySelectorAll("button, a, [role=tab]").forEach(el => {
           if (/cargar|nuevo|registrar|agregar|editar|eliminar|testeo|registro/i.test(textoControl(el)) &&
               !/pdf|imprimir|abrir|cerrar/i.test(textoControl(el))) el.hidden = true;
