@@ -746,6 +746,95 @@ body.immersive .pitch{height:100%!important;min-height:0!important;aspect-ratio:
  .quick-history{gap:3px!important}.quick-history-btn{width:23px!important;height:25px!important}
 }
 
+
+/* ===== AJUSTE FINAL: UNA SOLA BARRA, BLANCO Y TIPOGRAFIA ADIUR ===== */
+body,.studio,.board-studio,.board-topline,.controlbar,.top-tools,
+.formation-control,.rival-formation,.quick-history,.studio-foot,
+.immersive-launch,.top-tools .tool,.quick-history-btn,
+.add-rival-btn{font-family:Manrope,'DM Sans',Arial,sans-serif!important}
+.board-topline{background:#fff!important}
+.board-brand-icon{background:#f47721!important;box-shadow:none!important}
+.immersive-launch{background:#fff!important;border:1px solid #dedede!important;color:#292929!important;box-shadow:none!important}
+.immersive-launch:hover,.immersive-launch[aria-pressed=true]{background:#fff!important;border-color:#f47721!important;color:#c6530b!important}
+.controlbar{
+ display:flex!important;flex:0 0 auto!important;align-items:center!important;
+ justify-content:flex-start!important;flex-wrap:nowrap!important;gap:clamp(8px,1.5vw,22px)!important;
+ min-height:58px!important;padding:6px 14px!important;overflow-x:auto!important;overflow-y:hidden!important;
+ border:0!important;border-bottom:1px solid #e8e8e8!important;background:#fff!important;
+ box-shadow:none!important;scrollbar-width:none
+}
+.controlbar::-webkit-scrollbar{display:none}
+.control-group{display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:7px!important}
+.formation-control,.rival-formation{
+ padding:0!important;border:0!important;border-radius:0!important;background:#fff!important;box-shadow:none!important
+}
+.control-label{color:#777!important;font-size:9px!important;font-weight:800!important;letter-spacing:.5px!important}
+.controlbar select{
+ height:34px!important;min-width:88px!important;padding:0 26px 0 10px!important;
+ border:1px solid #dedede!important;border-radius:7px!important;background:#fff!important;
+ color:#252525!important;font:700 11px Manrope,'DM Sans',Arial,sans-serif!important;box-shadow:none!important
+}
+.controlbar select:focus{border-color:#f47721!important;box-shadow:0 0 0 2px #f4772118!important}
+.top-tools{
+ display:flex!important;flex:0 0 auto!important;align-items:center!important;justify-content:center!important;
+ gap:4px!important;min-width:0!important;padding:0!important;border:0!important;border-radius:0!important;
+ background:#fff!important;box-shadow:none!important
+}
+.top-tools .tool{
+ display:flex!important;flex:0 0 44px!important;flex-direction:column!important;align-items:center!important;
+ justify-content:center!important;gap:2px!important;min-height:42px!important;padding:3px 2px!important;
+ border:1px solid transparent!important;border-radius:7px!important;background:#fff!important;
+ color:#5f6368!important;box-shadow:none!important;transform:none!important
+}
+.top-tools .tool span{font-size:18px!important;line-height:1}
+.top-tools .tool small{font:700 8px Manrope,'DM Sans',Arial,sans-serif!important;letter-spacing:0!important}
+.top-tools .tool:hover{background:#fff!important;border-color:#e5e5e5!important;color:#252525!important}
+.top-tools .tool.active{background:#fff!important;border-color:#f47721!important;color:#c6530b!important;box-shadow:none!important}
+.top-separator{height:27px!important;margin:0 5px!important;background:#e6e6e6!important}
+.top-tools .palette{display:flex!important;align-items:center!important;gap:9px!important;padding:0 3px!important;background:#fff!important}
+.top-tools .swatch{width:16px!important;height:16px!important;flex:0 0 16px!important;border:2px solid #fff!important;box-shadow:0 0 0 1px #c9c9c9!important}
+.top-tools .swatch.active{outline:2px solid #f47721!important;outline-offset:2px!important}
+.quick-history{display:flex!important;align-items:center!important;gap:4px!important;margin-left:1px!important}
+.quick-history-btn{
+ display:grid!important;place-items:center!important;width:31px!important;height:31px!important;
+ border:1px solid #dedede!important;border-radius:7px!important;background:#fff!important;
+ color:#292929!important;font:20px Manrope,'DM Sans',Arial,sans-serif!important;box-shadow:none!important;cursor:pointer
+}
+.quick-history-btn:hover{border-color:#f47721!important;background:#fff!important;color:#c6530b!important}
+.quick-history-btn:disabled{opacity:.3!important}
+.rival-formation{margin-left:auto!important}
+.add-rival-btn{
+ display:grid!important;place-items:center!important;flex:0 0 34px!important;width:34px!important;height:34px!important;
+ padding:0!important;border:1px solid #dedede!important;border-radius:7px!important;background:#fff!important;
+ color:#c6530b!important;font-size:19px!important;font-weight:700!important;box-shadow:none!important;cursor:pointer
+}
+.add-rival-btn:hover,.add-rival-btn[aria-pressed=true]{border-color:#f47721!important;background:#fff!important}
+.workspace{display:block!important}
+@media(max-width:760px){
+ .controlbar{justify-content:flex-start!important;gap:10px!important;min-height:54px!important;padding:5px 9px!important}
+ .control-group{gap:5px!important}
+ .controlbar select{height:31px!important;min-width:78px!important;font-size:10px!important}
+ .top-tools{gap:1px!important}
+ .top-tools .tool{flex-basis:39px!important;min-height:39px!important}
+ .top-tools .tool span{font-size:16px!important}
+ .top-tools .tool small{font-size:7px!important}
+ .top-tools .palette{gap:8px!important}
+ .top-tools .swatch{width:14px!important;height:14px!important;flex-basis:14px!important}
+ .quick-history-btn{width:28px!important;height:28px!important}
+ .rival-formation{margin-left:auto!important}
+}
+@media(max-width:430px){
+ .controlbar{gap:8px!important;padding-right:7px!important;padding-left:7px!important}
+ .control-label{font-size:8px!important}
+ .controlbar select{min-width:70px!important;padding-left:7px!important}
+ .top-tools .tool{flex-basis:35px!important}
+ .top-tools .tool small{font-size:6px!important}
+ .top-tools .palette{gap:7px!important}
+ .top-separator{margin:0 2px!important}
+ .quick-history-btn{width:26px!important;height:27px!important}
+ .add-rival-btn{flex-basis:30px!important;width:30px!important;height:30px!important}
+}
+
 </style>
 </head>
 <body>
@@ -780,9 +869,9 @@ body.immersive .pitch{height:100%!important;min-height:0!important;aspect-ratio:
 <span class="top-separator"></span>
 <div class="palette" aria-label="Color de dibujo"><button class="swatch active" data-color="#f47721" style="background:#f47721" aria-label="Naranja" type="button"></button><button class="swatch" data-color="#e53935" style="background:#e53935" aria-label="Rojo" type="button"></button><button class="swatch" data-color="#171717" style="background:#171717" aria-label="Negro" type="button"></button></div>
 <span class="top-separator history-separator"></span>
-<div class="quick-history" aria-label="Historial de edición"><button class="quick-history-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button><button class="quick-history-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button><button class="quick-history-btn clear" id="clearDrawings" type="button" title="Borrar trazos" aria-label="Borrar trazos">⌫</button></div>
+<div class="quick-history" aria-label="Historial de edición"><button class="quick-history-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button><button class="quick-history-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button></div>
 </div>
-<div class="control-group rival-formation"><span class="control-label">RIVAL</span><select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select><button class="btn add-rival-btn" id="addRival" type="button">＋ Rival</button><button class="btn reset-btn" id="resetPositions" type="button" title="Reubicar posiciones" aria-label="Reubicar posiciones">↺</button></div>
+<div class="control-group rival-formation"><span class="control-label">RIVAL</span><select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select><button class="add-rival-btn" id="addRival" type="button" title="Agregar formación rival" aria-label="Agregar formación rival" aria-pressed="false">✓</button></div>
 </div>
 <button id="showControls" class="show-controls" type="button" aria-expanded="false">☷ Mostrar herramientas</button>
 <div class="workspace">
@@ -790,7 +879,7 @@ body.immersive .pitch{height:100%!important;min-height:0!important;aspect-ratio:
 <div class="pitch-wrap"><div class="pitch" id="pitch">
 <svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg><canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div>
 </div></div>
-<div class="rival-strip" id="rivalPanel" hidden><strong>RIVAL ACTIVO</strong><button class="btn primary" id="confirmRival" type="button">Aplicar formación</button><button class="btn" id="removeRival" type="button">Quitar rival</button></div>
+
 <span id="status" class="status-hidden" aria-live="polite">11 posiciones iniciales listas</span>
 </section>
 </div>
@@ -830,13 +919,9 @@ function renderPlayers(){var host=$("players");host.replaceChildren();players.fo
 function resize(){var r=pitch.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(!r.width||!r.height)return;canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);canvas.style.width=r.width+"px";canvas.style.height=r.height+"px";paint();}
 function setFormation(team,formation){var group=players.filter(function(p){return p.team===team;});formations[formation].forEach(function(q,i){if(group[i]){group[i].x=team==="rival"?1-q[0]:q[0];group[i].y=q[1];}});}
 function updateOwn(){snapshot();setFormation("own",$("formationOwn").value);renderPlayers();paint();status("Formación ADIUR "+$("formationOwn").value+" aplicada");}
-function showRival(){ $("rivalPanel").hidden=false;$("addRival").hidden=true;}
-function addRival(){snapshot();players=players.filter(function(p){return p.team!=="rival";});var formation=$("formationRival").value;formations[formation].forEach(function(q,i){players.push({id:"rival-"+(i+1),team:"rival",number:String(i+1),x:1-q[0],y:q[1]});});showRival();renderPlayers();paint();status("Equipo rival incorporado · 11 fichas");}
+function addRival(){var active=players.some(function(p){return p.team==="rival";});snapshot();if(active){players=players.filter(function(p){return p.team!=="rival";});$("addRival").setAttribute("aria-pressed","false");$("addRival").title="Agregar formación rival";$("addRival").setAttribute("aria-label","Agregar formación rival");renderPlayers();paint();status("Formación rival quitada");return;}var formation=$("formationRival").value;formations[formation].forEach(function(q,i){players.push({id:"rival-"+(i+1),team:"rival",number:String(i+1),x:1-q[0],y:q[1]});});$("addRival").setAttribute("aria-pressed","true");$("addRival").title="Quitar formación rival";$("addRival").setAttribute("aria-label","Quitar formación rival");renderPlayers();paint();status("Equipo rival incorporado · 11 fichas");}
 $("formationOwn").addEventListener("change",updateOwn);
-$("addRival").addEventListener("click",showRival);
-$("confirmRival").addEventListener("click",addRival);
-$("removeRival").addEventListener("click",function(){snapshot();players=players.filter(function(p){return p.team!=="rival";});$("rivalPanel").hidden=true;$("addRival").hidden=false;renderPlayers();paint();status("Equipo rival quitado");});
-$("resetPositions").addEventListener("click",function(){snapshot();players=players.filter(function(p){return p.team==="own";});setFormation("own",$("formationOwn").value);if(!$("rivalPanel").hidden){formations[$("formationRival").value].forEach(function(q,i){players.push({id:"rival-"+(i+1),team:"rival",number:String(i+1),x:1-q[0],y:q[1]});});}selected=null;renderPlayers();paint();status("Posiciones reubicadas según las formaciones seleccionadas");});
+$("addRival").addEventListener("click",addRival);
 document.querySelectorAll("[data-tool]").forEach(function(b){b.addEventListener("click",function(){tool=b.dataset.tool;document.querySelectorAll("[data-tool]").forEach(function(x){x.classList.toggle("active",x===b);});status("Herramienta: "+b.querySelector("small").textContent);});});
 document.querySelectorAll("[data-color]").forEach(function(b){b.addEventListener("click",function(){color=b.dataset.color;document.querySelectorAll("[data-color]").forEach(function(x){x.classList.toggle("active",x===b);});});});
 canvas.addEventListener("pointerdown",function(e){if(tool==="select")return;e.preventDefault();drawing=true;start=coords(e);points=[start];canvas.setPointerCapture(e.pointerId);});
@@ -845,7 +930,7 @@ canvas.addEventListener("pointerup",function(e){if(!drawing)return;drawing=false
 canvas.addEventListener("pointercancel",function(){drawing=false;points=[];paint();});
 $("undo").addEventListener("click",function(){if(!history.length)return;future.push({players:clone(players),drawings:clone(drawings)});var s=history.pop();players=s.players;drawings=s.drawings;renderPlayers();paint();syncHistory();status("Último cambio deshecho");});
 $("redo").addEventListener("click",function(){if(!future.length)return;history.push({players:clone(players),drawings:clone(drawings)});var s=future.pop();players=s.players;drawings=s.drawings;renderPlayers();paint();syncHistory();status("Cambio recuperado");});
-$("clearDrawings").addEventListener("click",function(){if(!drawings.length)return;snapshot();drawings=[];paint();status("Trazos eliminados");});
+
 var immersive=$("toggleImmersive"),showControls=$("showControls");
 function syncImmersive(){var on=document.body.classList.contains("immersive");immersive.querySelector("small").textContent=on?"Salir":"Modo inmersivo";immersive.querySelector("span").textContent=on?"⤢":"⛶";immersive.setAttribute("aria-pressed",String(on));if(showControls){showControls.setAttribute("aria-expanded","true");showControls.hidden=true;}}
 immersive.addEventListener("click",async function(){var on=document.body.classList.contains("immersive");if(on){document.body.classList.remove("immersive");if(document.fullscreenElement&&document.exitFullscreen)try{await document.exitFullscreen();}catch(e){}}else{document.body.classList.add("immersive");var target=document.querySelector(".board-studio");if(target&&target.requestFullscreen)try{await target.requestFullscreen();}catch(e){}}syncImmersive();setTimeout(resize,180);});
