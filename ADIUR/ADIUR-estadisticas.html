@@ -1938,13 +1938,13 @@ async function obtenerInfoPartidosExternosJugadora(jugadora) {
       return p.jugadoras.some(item =>
         typeof item === "string"
           ? normalizarNombreIntegral(item) === normalizarNombreIntegral(jugadora.nombreCompleto)
-          : coincideJugadora(item, jugadora)
+           : mismaJugadoraIntegral(item, jugadora)
       );
     }
     if (Array.isArray(p.convocadas)) {
       return p.convocadas.some(c => normalizarNombreIntegral(c) === normalizarNombreIntegral(jugadora.nombreCompleto) || normalizarTexto(c) === normalizarTexto(jugadora.id));
     }
-    return coincideJugadora(p, jugadora);
+    return mismaJugadoraIntegral(p, jugadora);
   });
 
   if (deJugadora.length === 0) {
@@ -2135,7 +2135,7 @@ async function obtenerInfoInformesJugadora(jugadora) {
     if (cat !== categoria) return false;
     const competencia=competenciaRealIntegral(jugadora.categoria,document.getElementById("filtroCompetencia").value);
     if(competencia&&claveCategoriaIntegral(inf.torneo||inf.competicion||inf.competencia||"")!==claveCategoriaIntegral(competencia))return false;
-    return !!registro || coincideJugadora(inf, jugadora);
+    return !!registro || mismaJugadoraIntegral(inf, jugadora);
   }).sort((a,b) => String(b.fecha || "").localeCompare(String(a.fecha || "")));
 
   if (deJugadora.length === 0) {
