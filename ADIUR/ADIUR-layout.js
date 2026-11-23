@@ -562,6 +562,12 @@
           <label for="adiurCategoriaGlobal">CATEGORÍA DEL PLANTEL</label>
           <select id="adiurCategoriaGlobal" aria-label="Seleccionar categoría"></select>
         </div>`;
+      const controlesOriginales = (configPagina.controlesCategoria || []).map(id => document.getElementById(id)).filter(Boolean);
+      const depositoControles = document.createElement("div");
+      depositoControles.hidden = true;
+      depositoControles.className = "adiur-controles-categoria-ocultos";
+      zonaPrincipal.appendChild(depositoControles);
+      controlesOriginales.forEach(select => depositoControles.appendChild(select));
       const encabezadoOriginal = zonaPrincipal.querySelector(configPagina.selector);
       if (encabezadoOriginal) {
         const bloquesConAcciones = Array.from(encabezadoOriginal.children).filter(nodo => nodo.matches("button, a.boton-principal, a.btn") || (nodo.querySelector && nodo.querySelector("button, a.boton-principal, a.btn")));
