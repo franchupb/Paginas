@@ -1860,8 +1860,24 @@
       let jugadoras = [];
       let idEnEdicion = null;
 
+      function normalizarCategoriaPlantel(valor) {
+        const texto = String(valor || "").normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "").toLowerCase()
+          .replace(/[^a-z0-9]/g, "");
+        const numero = texto.match(/(?:sub|s|u)(10|12|14|16)/);
+        if (numero) return "sub" + numero[1];
+        if (texto.includes("primera")) return "primera";
+        return texto;
+      }
+
       function puedeAccederCategoria(categoria) {
-        return categoriasPermitidas.includes(categoria);
+        const permitidasPerfil = window.ADIUR_PERMISOS?.categorias;
+        const lista = Array.isArray(permitidasPerfil) && permitidasPerfil.length
+          ? permitidasPerfil
+          : categoriasPermitidas;
+        return lista.some(permitida =>
+          normalizarCategoriaPlantel(permitida) === normalizarCategoriaPlantel(categoria)
+        );
       }
       function puedeEliminar() {
         return ["admin", "coordinadora"].includes(rolADIUR);
@@ -1874,12 +1890,15 @@
           const data = docSnap.data();
           jugadoras.push({
             id: docSnap.id,
-            nombre: data.nombre || "",
-            categoria: data.categoria || "",
-            nacimiento: data.nacimiento || "",
-            pierna: data.pierna || "",
-            posicion: data.posicion || "",
-            estado: data.estado || "Activo"
+            ...data,
+            nombre: data.nombre || data.nombreCompleto || data.nombre_completo ||
+              [data.nombres, data.apellido || data.apellidos].filter(Boolean).join(" "),
+            categoria: data.categoria || data.division || data.categoría ||
+              data.category || data.divisionNombre || "",
+            nacimiento: data.nacimiento || data.fechaNacimiento || "",
+            pierna: data.pierna || data.piernaHabil || "",
+            posicion: data.posicion || data.puesto || "",
+            estado: data.estado || data.status || data.estadoJugadora || "Activo"
           });
         });
         renderizarJugadoras();
@@ -1962,7 +1981,7 @@
         tarjetaPlantel.hidden = false;
         const plantelCategoria = jugadoras.filter(j =>
           puedeAccederCategoria(j.categoria) &&
-          j.categoria === categoriaSeleccionada
+          normalizarCategoriaPlantel(j.categoria) === normalizarCategoriaPlantel(categoriaSeleccionada)
         );
 
         Object.entries(idsContadoresPuesto).forEach(([puesto, id]) => {
@@ -2187,6 +2206,7 @@
         }
       }
 
+      window.renderizarJugadorasADIUR = renderizarJugadoras;
       document.getElementById("buscador").addEventListener("input", renderizarJugadoras);
       document.getElementById("categoriaPrincipal").addEventListener("change", () => {
         document.getElementById("buscador").value = "";
