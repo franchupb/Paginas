@@ -2375,13 +2375,13 @@ function obtenerCategoriasVisiblesPartidos() {
 
     const permitidas = new Set(categorias.map(valor =>
         String(valor || "").normalize("NFD")
-            .replace(/[\\u0300-\\u036f]/g, "")
+            .replace(/[\u0300-\u036f]/g, "")
             .toLowerCase().replace(/[^a-z0-9]/g, "")
     ));
 
     return DIVISIONES.filter(division => {
         const clave = division.normalize("NFD")
-            .replace(/[\\u0300-\\u036f]/g, "")
+            .replace(/[\u0300-\u036f]/g, "")
             .toLowerCase().replace(/[^a-z0-9]/g, "");
         return permitidas.has(clave);
     });
@@ -3011,7 +3011,7 @@ function actualizarContadoresCategorias() {
         if (!elemento) return;
         const tarjeta = elemento.closest(".stat");
         const permitido = visibles.has(division);
-        if (tarjeta) tarjeta.hidden = !permitido;
+        if (tarjeta) { tarjeta.hidden = !permitido; tarjeta.style.display = permitido ? "" : "none"; }
         if (permitido) {
             elemento.textContent = partidos.filter(
                 partido => partido.division === division
@@ -3509,7 +3509,7 @@ function renderizarFixture() {
     // Nunca permitir que el fixture muestre una división ajena al perfil,
     // incluso si quedó seleccionada en una sesión anterior.
     if (!permitidas.has(divisionFiltro)) {
-        divisionFiltro = categoriasVisibles.length === DIVISIONES.length ? "" : "";
+        divisionFiltro = "";
         filtroCategoria.value = divisionFiltro;
     }
 
