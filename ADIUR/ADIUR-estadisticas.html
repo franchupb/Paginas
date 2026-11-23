@@ -2238,7 +2238,7 @@ async function obtenerInfoLesionesJugadora(jugadora) {
     } catch (e) {}
   }
 
-  ["lesionesADIUR", "registroLesionesADIUR", "historialLesionesADIUR"].forEach(k => {
+  ["lesionesADIUR_registros_v1", "lesionesADIUR", "registroLesionesADIUR", "historialLesionesADIUR"].forEach(k => {
     const raw = localStorage.getItem(k);
     if (raw) {
       try {
@@ -2910,7 +2910,7 @@ async function renderizarPanelIntegral(){
    const j=x.j,ini=j.nombreCompleto.trim().split(/\s+/).slice(0,2).map(z=>z[0]||"").join("").toUpperCase(),test=x.test?x.test.mes:"—";
    const marcas=x.test?x.test.columnas.slice(0,3).map(c=>escaparIntegral(c.label||c.nombre||c.id)+": "+escaparIntegral(x.test.valores[c.id])).join(" · "):"Sin planilla cargada";
    const status=x.activos.length?'<span class="integral-badge active">'+x.activos.length+' caso(s) activo(s)</span>':x.casos.length?'<span class="integral-badge closed">Historial cerrado</span>':'<span class="integral-badge">Sin casos registrados</span>';
-   return '<tr><td><div class="integral-player"><span class="integral-avatar">'+escaparIntegral(ini)+'</span><div><strong>'+escaparIntegral(j.nombreCompleto)+'</strong><small>'+escaparIntegral(j.categoria||division)+'</small></div></div></td><td>'+escaparIntegral(j.posicion||"Sin asignar")+'</td><td class="integral-num">'+(x.pj||"—")+'</td><td class="integral-num">'+(x.min||"—")+'</td><td class="integral-num">'+(x.goles||"—")+'</td><td>'+(x.amarillas||"—")+'</td><td>'+(x.rojas||"—")+'</td><td>'+escaparIntegral(test)+'</td><td>'+status+'</td><td><button class="integral-open" type="button" data-integral-id="'+escaparIntegral(j.id)+'">Ver ficha</button></td></tr>';
+   return '<tr><td><div class="integral-player"><span class="integral-avatar">'+escaparIntegral(ini)+'</span><div><strong>'+escaparIntegral(j.nombreCompleto)+'</strong><small>'+escaparIntegral(j.categoria||division)+'</small></div></div></td><td>'+escaparIntegral(j.posicion||"Sin asignar")+'</td><td class="integral-num">'+(x.pj||"—")+'</td><td class="integral-num">'+(x.min||"—")+'</td><td class="integral-num">'+(x.goles||"—")+'</td><td>'+(x.amarillas||"—")+'</td><td>'+(x.rojas||"—")+'</td><td><strong>'+escaparIntegral(test)+'</strong><small class="integral-test-marks">'+marcas+'</small></td><td>'+status+'</td><td><button class="integral-open" type="button" data-integral-id="'+escaparIntegral(j.id)+'">Ver ficha</button></td></tr>';
   }).join("");
   tbody.querySelectorAll("[data-integral-id]").forEach(btn=>btn.addEventListener("click",()=>seleccionarJugadoraFicha(btn.dataset.integralId)));
  };
