@@ -2207,6 +2207,7 @@
       }
 
       window.renderizarJugadorasADIUR = renderizarJugadoras;
+      window.addEventListener("adiur-permisos-listos", () => renderizarJugadoras());
       document.getElementById("buscador").addEventListener("input", renderizarJugadoras);
       document.getElementById("categoriaPrincipal").addEventListener("change", () => {
         document.getElementById("buscador").value = "";
