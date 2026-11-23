@@ -240,6 +240,7 @@ async function guardarRespuesta(e){
  const b=e.submitter;b.disabled=true;b.textContent="Enviando...";
  try{
   const ref=fb.doc(db,"encuestas_respuestas",p.id+"_"+uid);
+  const estadoActual=await fb.getDoc(fb.doc(db,"encuestas_periodos",p.id));if(!estadoActual.exists()||estadoActual.data().estado!=="abierta")throw new Error("El cuerpo técnico cerró esta encuesta. Ya no se aceptan respuestas.");
   const existente=await fb.getDoc(ref);if(existente.exists())throw new Error("Ya existe una respuesta para este período.");
   await fb.setDoc(ref,{periodoId:p.id,tipo:p.tipo,categoria:p.categoria,fecha:p.fecha,uid,jugadora:jugadoraNombre||nombre,respuestas:respuestasForm,creadoEn:fb.serverTimestamp()});
   estado("¡Respuesta enviada! Gracias por completar "+tipoNombre(p.tipo)+".","ok");
@@ -249,6 +250,7 @@ async function guardarRespuesta(e){
 async function publicarPeriodo(e){
  e.preventDefault();if(!puedePublicar())return;
  const categoria=$("nuevaCategoria").value,tipo=$("nuevoTipo").value,fecha=$("nuevaFecha").value,estadoInicial=$("nuevoEstado").value;
+ if(periodos.some(p=>norm(p.categoria)===norm(categoria)&&p.tipo===tipo&&p.fecha===fecha)){estado("Ya existe una publicación de ese tipo para esa categoría y fecha.","error");return}
  if(!categorias.includes(categoria)||!TIPOS[tipo]||!fecha){estado("Revisá categoría, encuesta y fecha antes de publicar.","error");return}
  const b=$("btnPublicar");b.disabled=true;b.textContent="Creando...";
  try{await fb.addDoc(fb.collection(db,"encuestas_periodos"),{categoria,tipo,fecha,estado:estadoInicial,creadoPor:uid,creadoPorNombre:nombre,creadoEn:fb.serverTimestamp(),actualizadoEn:fb.serverTimestamp()});$("filtroCategoria").value=categoria;categoriaActiva=categoria;estado("Período creado correctamente.","ok");$("formPublicacion").reset();$("nuevaCategoria").value=categoria;$("nuevaFecha").value=fechaLocal();$("nuevoEstado").value="abierta";renderCT()}
@@ -269,7 +271,7 @@ function enlazarTarjetas(root){root.querySelectorAll("[data-estado-periodo]").fo
 function renderPublicaciones(){const ps=periodoCat();$("listaPublicaciones").innerHTML=ps.length?ps.map(p=>tarjetaPeriodo(p)).join(""):'<div class="vacio">Todavía no hay publicaciones para esta categoría. Creá la primera desde el formulario.</div>';enlazarTarjetas($("listaPublicaciones"))}
 function renderArchivo(){const ps=periodos.filter(p=>categorias.includes(p.categoria)&&p.estado==="cerrada").sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));$("archivoPeriodos").innerHTML=ps.length?ps.map(p=>tarjetaPeriodo(p,true)).join(""):'<div class="vacio">Todavía no hay períodos cerrados en el archivo.</div>';enlazarTarjetas($("archivoPeriodos"))}
 function poblarSelectorResultados(){
- const s=$("selectorPeriodoResultados"),actual=s.value,ps=periodos.filter(p=>categorias.includes(p.categoria)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));
+ const s=$("selectorPeriodoResultados"),actual=s.value,tipoFiltro=$("filtroTipoResultado").value,ps=periodos.filter(p=>categorias.includes(p.categoria)&&(tipoFiltro==="todos"||p.tipo===tipoFiltro)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));
  s.innerHTML='<option value="">Seleccioná un período</option>'+ps.map(p=>'<option value="'+esc(p.id)+'">'+fmtFecha(p.fecha)+' · '+esc(p.categoria)+' · '+tipoNombre(p.tipo)+' · '+(p.estado==="abierta"?"Abierta":"Cerrada")+'</option>').join("");
  if(ps.some(p=>p.id===actual))s.value=actual;
 }
