@@ -1922,20 +1922,19 @@ async function obtenerInfoPartidosExternosJugadora(jugadora) {
 
   const deJugadora = partidos.filter(p => {
     if (!p) return false;
-    // Si tiene lista de convocadas o jugadoras
+    const cat = (p.categoria || p.division || "").toLowerCase().replace(/\s+/g, "");
+    if (cat && cat !== divNorm) return false;
     if (Array.isArray(p.jugadoras)) {
       return p.jugadoras.some(item =>
         typeof item === "string"
-          ? normalizarTexto(item) === normalizarTexto(jugadora.nombreCompleto)
+          ? normalizarNombreIntegral(item) === normalizarNombreIntegral(jugadora.nombreCompleto)
           : coincideJugadora(item, jugadora)
       );
     }
     if (Array.isArray(p.convocadas)) {
-      return p.convocadas.some(c => normalizarTexto(c) === normalizarTexto(jugadora.nombreCompleto) || normalizarTexto(c) === normalizarTexto(jugadora.id));
+      return p.convocadas.some(c => normalizarNombreIntegral(c) === normalizarNombreIntegral(jugadora.nombreCompleto) || normalizarTexto(c) === normalizarTexto(jugadora.id));
     }
-    if (coincideJugadora(p, jugadora)) return true;
-    const cat = (p.categoria || p.division || "").toLowerCase().replace(/\s+/g, "");
-    return cat === divNorm;
+    return coincideJugadora(p, jugadora);
   });
 
   if (deJugadora.length === 0) {
