@@ -2269,14 +2269,16 @@ async function renderizarPanelPartidosEInformesExternos() {
 
   const partidosDiv = partidos.filter(p => {
     if (!p) return false;
-    const cat = (p.categoria || p.division || "").toLowerCase().replace(/\s+/g, "");
-    return !cat || cat === divNorm;
+    const cat=categoriaRegistroIntegral(p);
+    if(cat)return cat===claveCategoriaIntegral(divisionSeleccionada);
+    return (Array.isArray(p.jugadoras)?p.jugadoras:[]).some(reg=>categoriaRegistroIntegral(reg)===claveCategoriaIntegral(divisionSeleccionada));
   });
 
   const informesDiv = informes.filter(inf => {
     if (!inf) return false;
-    const cat = (inf.categoria || inf.division || "").toLowerCase().replace(/\s+/g, "");
-    return !cat || cat === divNorm;
+    const cat=categoriaRegistroIntegral(inf);
+    if(cat)return cat===claveCategoriaIntegral(divisionSeleccionada);
+    return (Array.isArray(inf.jugadoras)?inf.jugadoras:[]).some(reg=>categoriaRegistroIntegral(reg)===claveCategoriaIntegral(divisionSeleccionada));
   });
 
   const contPartidos = document.getElementById("listaPartidosExternos");
