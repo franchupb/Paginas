@@ -176,7 +176,7 @@
     if (configActiva?.rol !== "jugadora") return;
     const pagina = paginaActual();
     if (pagina === "adiur-asistencia.html") {
-      root.querySelectorAll("#cuerpoTabla button[data-fecha][data-jugadora]").forEach(el => {
+      [...(root.matches?.("button[data-fecha][data-jugadora]") ? [root] : []), ...root.querySelectorAll("button[data-fecha][data-jugadora]")].forEach(el => {
         el.disabled = true;
         el.setAttribute("aria-disabled", "true");
         el.title = "Solo consulta: cada jugadora puede ver sus propias asistencias";
@@ -222,7 +222,7 @@
       }
     }
     if (pagina === "adiur-asistencia.html") {
-      root.querySelectorAll("#cuerpoTabla button[data-fecha][data-jugadora]").forEach(el => {
+      [...(root.matches?.("button[data-fecha][data-jugadora]") ? [root] : []), ...root.querySelectorAll("button[data-fecha][data-jugadora]")].forEach(el => {
         el.disabled = true;
         el.setAttribute("aria-disabled", "true");
         el.title = "Solo consulta: cada jugadora puede ver sus propias asistencias";
@@ -249,7 +249,7 @@
       });
       const biblioteca = document.getElementById("panelBiblioteca");
       if (biblioteca) biblioteca.hidden = false;
-      root.querySelectorAll("#listaRutinasGuardadas [data-editar-rutina], #listaRutinasGuardadas [data-eliminar-rutina]").forEach(el => el.hidden = true);
+      [...(root.matches?.("[data-editar-rutina], [data-eliminar-rutina]") ? [root] : []), ...root.querySelectorAll("[data-editar-rutina], [data-eliminar-rutina]")].forEach(el => el.hidden = true);
       ["modalEditar", "modalEliminar"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.hidden = true;
