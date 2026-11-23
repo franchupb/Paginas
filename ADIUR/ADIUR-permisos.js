@@ -361,7 +361,7 @@
             if (rol && (rol === "admin" || rol === "coordinadora" || categorias.length)) {
               const nombre = String(perfil.nombre || perfil.nombreCompleto || perfil.usuario || user.email?.split("@")[0] || "Usuario").trim();
               base = {
-                usuario: String(perfil.usuario || user.email?.split("@")[0] || clave),
+                usuario: String(perfil.usuario || user.email?.split("@")[0] || clavesIdentidad[0] || "usuario"),
                 nombre,
                 rol,
                 categorias: rol === "admin" || rol === "coordinadora"
