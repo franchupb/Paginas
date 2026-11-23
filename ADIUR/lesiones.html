@@ -1732,6 +1732,87 @@ main{
   .operativo-intro{align-items:flex-start}
 }
 
+
+/* =========================================================
+   REDISEÑO 2026 · CENTRO DE SALUD Y DISPONIBILIDAD
+   Dirección elegida tras evaluar cinco enfoques visuales:
+   clínico, dashboard, timeline, ficha atleta y centro operativo.
+========================================================= */
+:root{
+  --fondo:#f3f5f8;
+  --texto:#202631;
+  --negro:#151b25;
+  --naranja:#ef7625;
+  --naranja-oscuro:#d85e12;
+  --borde:#e5e9ef;
+  --radio:16px;
+  --sombra:0 8px 26px rgba(20,31,48,.055);
+}
+body{background:var(--fondo)}
+main{max-width:1720px;margin:30px auto;padding:0 30px 56px}
+.page-heading{align-items:center;margin-bottom:25px;padding:4px 0 18px;border-bottom:1px solid #e3e7ed}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:11px;padding:7px 10px;border:1px solid #f3d5c2;border-radius:7px;background:#fff6ef;color:#b95012;font-size:9px;letter-spacing:1.5px}
+.eyebrow:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--naranja)}
+.page-heading h2{font-size:clamp(27px,3.2vw,36px);letter-spacing:-1.1px}
+.page-heading p{max-width:720px;font-size:13px;color:#687282}
+#btnNuevaLesion{min-height:44px;padding:11px 17px;border-radius:10px;box-shadow:0 5px 13px rgba(239,118,37,.16)}
+.selector-categoria-principal{grid-template-columns:50px minmax(0,1fr) minmax(230px,330px);margin-bottom:20px;padding:17px 20px;border:1px solid #f0d9c9;border-left:4px solid var(--naranja);border-radius:14px;box-shadow:0 4px 16px rgba(20,31,48,.035)}
+.selector-categoria-icono{width:46px;height:46px;border-radius:12px;font-size:23px}
+.selector-categoria-texto label{font-size:16px}
+#selectorCategoriaGlobal{min-height:46px;background:#fff;border-color:#e8d4c6}
+.notice{border-color:#dce5f0;background:#f8fbff;color:#52647c;border-radius:12px;padding:14px 16px}
+.notice strong{color:#29384c}
+.metricas{gap:14px;margin-bottom:22px}
+.metrica{position:relative;min-height:118px;padding:17px;border-radius:15px;box-shadow:0 3px 14px rgba(20,31,48,.035);transition:transform .18s,box-shadow .18s}
+.metrica:hover{transform:translateY(-2px);box-shadow:0 9px 24px rgba(20,31,48,.075)}
+.metrica-icono{width:42px;height:42px;flex-basis:42px;border-radius:12px}
+.metrica-etiqueta{font-size:10px;letter-spacing:.35px}
+.metrica-valor{font-size:29px;letter-spacing:-1px}
+.panel{padding:22px;border-radius:16px;box-shadow:0 4px 18px rgba(20,31,48,.035)}
+.panel-cabecera{align-items:center;margin-bottom:19px}
+.panel-cabecera h3{font-size:16px;letter-spacing:-.25px}
+.panel-cabecera p{font-size:11px;color:#788292}
+.filtros-registros{padding:15px;border-color:#e9edf2;border-radius:12px;background:#f8fafc}
+.filtro-item input,.filtro-item select,.campo input,.campo select,.campo textarea{border-color:#dce2e9;border-radius:9px}
+.filtro-item input:focus,.filtro-item select:focus,.campo input:focus,.campo select:focus,.campo textarea:focus{border-color:#ef7625;box-shadow:0 0 0 3px rgba(239,118,37,.1)}
+.tabla-contenedor{border-radius:12px;border-color:#e7ebf0}
+.tabla{min-width:980px}
+.tabla th{padding:13px 12px;background:#f6f8fb;color:#667184;font-size:9px;letter-spacing:.7px}
+.tabla td{padding:14px 12px;font-size:11px}
+.tabla tbody tr{transition:background .15s}
+.tabla tbody tr:hover td{background:#fff8f2}
+.badge{border-radius:20px;padding:5px 9px;letter-spacing:.15px}
+.estado-vacio{border-radius:12px;background:#fafbfd;border-color:#dce2e9}
+.operativo-grupo{border-radius:13px!important;box-shadow:0 3px 14px rgba(20,31,48,.035)}
+.operativo-caso{border-radius:11px!important}
+.modal-card{max-width:900px;border:0;border-radius:18px;box-shadow:0 24px 80px rgba(12,20,32,.28)}
+.modal-header{padding:20px 23px}
+.modal-body{padding:23px}
+.detalle-card{border-radius:12px;background:#f8fafc}
+.seguimiento-item{padding:16px 0}
+.seguimiento-top{align-items:center}
+.toast{border-radius:12px;box-shadow:0 12px 32px rgba(20,31,48,.15)}
+@media(max-width:900px){
+  main{padding:0 18px 40px}
+  .metricas{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .selector-categoria-principal{grid-template-columns:46px minmax(0,1fr)}
+  #selectorCategoriaGlobal{grid-column:1/-1}
+}
+@media(max-width:560px){
+  main{margin:20px auto;padding:0 12px 34px}
+  .page-heading{gap:14px}
+  .page-heading>div:first-child{flex-basis:100%}
+  #btnNuevaLesion{width:100%}
+  .metricas{gap:9px}
+  .metrica{min-height:102px;padding:12px;gap:9px}
+  .metrica-icono{width:34px;height:34px;flex-basis:34px}
+  .metrica-valor{font-size:24px}
+  .panel{padding:15px}
+  .filtros-registros{grid-template-columns:1fr}
+  .resumen-evolucion{grid-template-columns:1fr 1fr}
+  .detalle-grid{grid-template-columns:1fr 1fr}
+}
+
 </style>
 <script src="ADIUR-permisos.js?v=20261123d"></script>
 </head>
@@ -1847,8 +1928,8 @@ main{
 <main>
     <header class="page-heading">
 <div>
-<span class="eyebrow">RENDIMIENTOS · SALUD Y DISPONIBILIDAD</span>
-<h2>Seguimiento de lesiones</h2>
+<span class="eyebrow">SALUD DEPORTIVA · SEGUIMIENTO Y DISPONIBILIDAD</span>
+<h2>Salud y disponibilidad deportiva</h2>
 <p>Centralizá los incidentes, el estado de recuperación, los controles pendientes y la disponibilidad deportiva de cada jugadora.</p>
 </div>
 <button class="btn btn-primary" id="btnNuevaLesion" type="button" disabled>＋ Registrar lesión</button>
