@@ -2775,6 +2775,8 @@ let esStaff = !esJugadora;
 let jugadoraSesion = null;
 let jugadorasNubeCache = null;
 let db = cargarDB();
+const divisionesPreparadas = new Set();
+const rutinasIndividualesPreparadas = new Set();
   // Solo se permite guardar en Firebase después de confirmar
 // que la carga inicial desde la nube terminó correctamente.
 let nubeListaParaGuardar = false;
@@ -3464,15 +3466,18 @@ function guardarDB() {
 function asegurarRutinasGenerales(division) {
   const clave = claveGeneral(division);
 
-  if (!Array.isArray(db[clave])) {
-    db[clave] = [];
-  }
+  // Cada división se normaliza una sola vez por carga de página.
+  // Antes, esta función serializaba toda la base local en cada consulta.
+  if (divisionesPreparadas.has(clave) && Array.isArray(db[clave])) return;
+
+  if (!Array.isArray(db[clave])) db[clave] = [];
 
   while (db[clave].length < CANTIDAD_RUTINAS_INICIALES) {
     db[clave].push(crearRutina());
   }
 
   db[clave] = db[clave].map(normalizarRutina);
+  divisionesPreparadas.add(clave);
   guardarDB();
 }
 
@@ -3512,21 +3517,17 @@ function asegurarRutinasIndividuales(jugadora) {
   asegurarRutinasGenerales(division);
 
   const clave = claveIndividual(division, idJugadora(jugadora));
+  if (rutinasIndividualesPreparadas.has(clave) && Array.isArray(db[clave])) return;
 
-  if (!Array.isArray(db[clave])) {
-    db[clave] = [];
-  }
+  if (!Array.isArray(db[clave])) db[clave] = [];
 
   const generales = db[claveGeneral(division)];
-
   generales.forEach((general, indice) => {
-    if (!db[clave][indice]) {
-      db[clave][indice] = copiarObjeto(general);
-    } else {
-      db[clave][indice] = normalizarRutina(db[clave][indice]);
-    }
+    if (!db[clave][indice]) db[clave][indice] = copiarObjeto(general);
+    else db[clave][indice] = normalizarRutina(db[clave][indice]);
   });
 
+  rutinasIndividualesPreparadas.add(clave);
   guardarDB();
 }
 
@@ -4960,11 +4961,10 @@ async function sincronizarGimnasioConNube() {
       datosNube && typeof datosNube === "object" ? datosNube : {}
     );
 
-    DIVISIONES.forEach(division => asegurarRutinasGenerales(division));
-
-    obtenerTodasLasJugadoras().forEach(jugadora => {
-      asegurarRutinasIndividuales(jugadora);
-    });
+    // La combinación cambia las referencias: se invalida la preparación previa.
+    divisionesPreparadas.clear();
+    rutinasIndividualesPreparadas.clear();
+    asegurarRutinasGenerales(divisionSelect.value);
 
     localStorage.setItem(KEY, JSON.stringify(db));
 
@@ -5004,10 +5004,42 @@ async function esperarPermisosADIUR() {
   });
 }
 
+async function cargarPlantelGimnasioEnSegundoPlano() {
+  try {
+    await window.firebaseGimnasioReady;
+    const registrosNube = await window.cargarJugadorasGimnasioNube?.();
+    if (!Array.isArray(registrosNube) || !registrosNube.length) return;
+
+    jugadorasNubeCache = registrosNube;
+
+    if (esJugadora) {
+      jugadoraSesion = buscarJugadoraSesion();
+      if (jugadoraSesion) {
+        divisionSelect.value = divisionJugadora(jugadoraSesion);
+        divisionSelect.disabled = true;
+        asegurarRutinasGenerales(divisionSelect.value);
+        poblarJugadoras();
+        rutinaActual = obtenerRutinaActual() || crearRutina();
+        tituloInput.value = rutinaActual.nombre || "";
+        semanasSelect.value = String(rutinaActual.semanas || 4);
+        renderizarEditor();
+        renderizarBiblioteca();
+      }
+    } else {
+      const seleccionAnterior = jugadoraSelect.value;
+      poblarJugadoras();
+      if (seleccionAnterior && Array.from(jugadoraSelect.options).some(o => o.value === seleccionAnterior)) {
+        jugadoraSelect.value = seleccionAnterior;
+      }
+    }
+  } catch (error) {
+    console.warn("No se pudo recuperar el plantel desde Firestore para Gimnasio:", error);
+  }
+}
+
 async function inicializar() {
   // Esperar la identidad y los permisos centrales antes de preparar la vista.
   await esperarPermisosADIUR();
-  configurarMenu();
 
   usuario = leerUsuario();
   esJugadora = window.ADIUR_PERMISOS?.rol === "jugadora" ||
@@ -5018,18 +5050,8 @@ async function inicializar() {
   $("nombrePerfil").textContent = nombrePerfil;
   $("avatarPerfil").textContent = nombrePerfil.trim().charAt(0).toUpperCase() || "U";
 
-  // Leer el plantel real de Firestore: las rutinas individuales se vinculan
-  // con el mismo ID documental que usa el resto del sistema.
-  try {
-    await window.firebaseGimnasioReady;
-    const registrosNube = await window.cargarJugadorasGimnasioNube?.();
-    if (Array.isArray(registrosNube) && registrosNube.length) {
-      jugadorasNubeCache = registrosNube;
-    }
-  } catch (error) {
-    console.warn("No se pudo recuperar el plantel desde Firestore para Gimnasio:", error);
-  }
-
+  // Primero se utiliza el plantel local disponible. Firestore se consulta
+  // después, en segundo plano, sin frenar la apertura de la pantalla.
   jugadoraSesion = esJugadora ? buscarJugadoraSesion() : null;
 
   if (esJugadora) {
@@ -5046,12 +5068,9 @@ async function inicializar() {
   }
   poblarJugadoras();
 
-  // Preparar una base local para que la página sea utilizable sin esperar la nube.
-  DIVISIONES.forEach(division => asegurarRutinasGenerales(division));
-
-  obtenerTodasLasJugadoras().forEach(jugadora => {
-    asegurarRutinasIndividuales(jugadora);
-  });
+  // Preparar solamente la división visible. Las demás se inicializan cuando
+  // el usuario las selecciona y las rutinas individuales al abrir cada ficha.
+  asegurarRutinasGenerales(divisionSelect.value);
 
   // Registrar los eventos antes de iniciar la sincronización.
   divisionSelect.addEventListener("change", cambiarDivision);
@@ -5096,8 +5115,9 @@ async function inicializar() {
   cambiarModo();
   renderizarBiblioteca();
 
-  // Firebase se conecta en segundo plano; nunca bloquea botones ni perfil.
+  // Ambas consultas quedan en segundo plano: la vista local ya está operativa.
   sincronizarGimnasioConNube();
+  cargarPlantelGimnasioEnSegundoPlano();
 }
 document.addEventListener("DOMContentLoaded", inicializar);
 </script>
