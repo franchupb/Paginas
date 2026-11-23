@@ -1584,13 +1584,13 @@ async function sincronizarJugadorasDesdeBase() {
   cacheJugadorasNube = lista.map((j, index) => {
     const nombreBase=String(j.nombre||j.nombres||"").trim();
     const apellido=String(j.apellido||j.apellidos||"").trim();
-    const nombreExplicito=String(j.nombreCompleto||j.nombre_completo||j.nombreYApellido||j.nombre_y_apellido||"").trim();
+    const nombreExplicito=String(j.nombreCompleto||j.nombre_completo||j.nombreYApellido||j.nombre_y_apellido||j.nombre_apellido||j.apellidoNombre||j.apellido_nombre||j.jugadora||"").trim();
     const nombreCompleto=nombreExplicito||(nombreBase&&apellido&&!normalizarNombreIntegral(nombreBase).endsWith(normalizarNombreIntegral(apellido))?nombreBase+" "+apellido:nombreBase||apellido||"Jugadora "+(index+1));
     return {
       ...j,
       id: j.id || nombreCompleto,
       nombreCompleto,
-      categoria: String(j.categoria||j.categoría||j.division||j.división||j.category||j.divisionNombre||"").trim(),
+      categoria: String(j.categoria||j.categoría||j.division||j.división||j.category||j.categoriaNombre||j.divisionNombre||"").trim(),
       posicion: String(j.posicion||j.puesto||"Sin asignar").trim(),
       fechaNacimiento:j.fechaNacimiento||j.nacimiento||j.fecha_nacimiento||"",
       dni:j.dni||j.documento||""
