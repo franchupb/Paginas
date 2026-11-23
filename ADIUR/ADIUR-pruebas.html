@@ -925,24 +925,27 @@ thead .col-fija-nombre {
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
    CONFIGURACIÓN DE FIREBASE CLOUD FIRESTORE (adiur-b1913)
 ===================================================== */
 const firebaseConfig = {
-  projectId: "adiur-b1913",
-  appId: "1:1032379124859:web:adiur-fem-web",
+  apiKey: "AIzaSyCc0dPIEkaKxbHoRC2CgZK412dXVGPOdTI",
   authDomain: "adiur-b1913.firebaseapp.com",
-  storageBucket: "adiur-b1913.appspot.com"
+  projectId: "adiur-b1913",
+  storageBucket: "adiur-b1913.firebasestorage.app",
+  messagingSenderId: "884643321144",
+  appId: "1:884643321144:web:ba3c314de3a1c9e3545dcd",
+  measurementId: "G-58LL26YXPM"
 };
 
 let db = null;
 let nubeActiva = false;
 
 try {
-  const app = initializeApp(firebaseConfig);
+  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   db = getFirestore(app);
   nubeActiva = true;
 } catch (e) {
