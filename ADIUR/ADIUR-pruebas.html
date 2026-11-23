@@ -1432,7 +1432,9 @@ window.eliminarColumna = function(indice) {
 // Inicialización
 window.addEventListener("DOMContentLoaded", () => {
   if (esBianca) {
-    document.getElementById("selectDivision").value = "Sub 14";
+    let categorias = [];
+    try { categorias = JSON.parse(localStorage.getItem("categoriasADIUR") || "[]"); } catch (_) {}
+    if (categorias.length) document.getElementById("selectDivision").value = categorias[0];
   }
   cambiarFiltroPlanilla();
 });
