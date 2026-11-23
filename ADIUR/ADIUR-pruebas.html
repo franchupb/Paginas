@@ -969,7 +969,7 @@ const puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolADIU
 
 document.getElementById("nombreUsuario").textContent = usuarioGuardado;
 document.getElementById("avatarUsuario").textContent = usuarioGuardado.charAt(0).toUpperCase();
-document.getElementById("rolUsuario").textContent = esFran ? "Administrador" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora · Sub 14" : "Club ADIUR";
+document.getElementById("rolUsuario").textContent = esFran ? "Administrador" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora" : "Club ADIUR";
 
 if (!puedeEditar) {
   document.getElementById("accionesTecnico").style.display = "none";
