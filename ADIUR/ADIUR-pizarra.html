@@ -287,6 +287,72 @@ body.immersive .studio{border-radius:0}
  .top-tools .palette{gap:6px}
 }
 
+
+/* ===== CANCHA PROTAGONISTA CON CONTROLES INTEGRADOS ===== */
+.contenedor{height:calc(100dvh - 84px)!important;min-height:0!important}
+.main{height:calc(100dvh - 84px)!important;min-height:0!important;padding:0!important}
+.pizarra-shell,.studio{height:100%;min-height:0}
+.studio{position:relative}
+.studio-head{position:relative;z-index:12;flex:0 0 42px;min-height:42px}
+.workspace{position:relative;display:block!important;flex:1;min-height:0!important;overflow:hidden;background:#347b43}
+.pitch-stage{position:absolute;inset:0;display:block!important;min-height:0!important;padding:0!important;background:#347b43}
+.pitch-wrap{position:absolute;inset:0;display:block!important;min-height:0!important;padding:0!important;background:#347b43}
+.pitch{position:absolute;inset:0;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+.field-svg,.drawing-canvas,#players{width:100%;height:100%}
+.controlbar{position:absolute;z-index:8;top:12px;left:12px;right:12px;display:grid!important;grid-template-columns:minmax(190px,auto) minmax(360px,1fr) minmax(205px,auto)!important;align-items:start;gap:10px;min-height:0;padding:0;border:0;background:transparent;pointer-events:none}
+.controlbar>*{pointer-events:auto}
+.formation-control{justify-content:flex-start!important;min-width:0;padding:7px 9px!important;border:1px solid #ffffffb8!important;border-radius:10px!important;background:#ffffffed!important;box-shadow:0 4px 16px #14221924;backdrop-filter:blur(8px)}
+.formation-control select,.rival-formation select{min-width:88px;height:31px}
+.top-tools{justify-self:center;display:flex;flex-wrap:nowrap;gap:3px;padding:4px 7px;border:1px solid #ffffffb8;border-radius:12px;background:#ffffffed;box-shadow:0 4px 16px #14221924;backdrop-filter:blur(8px)}
+.top-tools .tool{flex:0 0 43px;min-height:39px}
+.top-tools .tool span{font-size:17px}.top-tools .tool small{font-size:7px}
+.top-tools .palette{gap:8px}.quick-history{gap:4px}.quick-history-btn{width:27px;height:27px}
+.rival-formation{display:flex;align-items:center;justify-content:flex-end;gap:7px;min-width:0;padding:7px 9px;border:1px solid #ffffffb8;border-radius:10px;background:#ffffffed;box-shadow:0 4px 16px #14221924;backdrop-filter:blur(8px)}
+.rival-formation .control-label{color:#555;font-size:8px;white-space:nowrap}.rival-formation select{min-width:88px}
+.add-rival-btn,.reset-btn{min-height:30px;padding:0 8px;font-size:9px;white-space:nowrap}.reset-btn{width:30px;padding:0;font-size:16px}
+.rival-strip{position:absolute;z-index:9;top:61px;right:12px;display:flex;align-items:center;gap:7px;padding:7px 9px;border:1px solid #ffffffc9;border-radius:9px;background:#ffffffed;box-shadow:0 4px 16px #14221924;backdrop-filter:blur(8px)}
+.rival-strip[hidden]{display:none}.rival-strip>strong{font-size:8px}.rival-strip .btn{min-height:27px;padding:0 8px;font-size:8px}
+.status-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.pitch-footer,.studio-foot,.historybar,.pitch-meta{display:none!important}
+@media(max-width:900px){
+ .controlbar{grid-template-columns:minmax(155px,auto) minmax(300px,1fr) minmax(170px,auto)!important;top:8px;left:8px;right:8px;gap:6px}
+ .formation-control,.rival-formation{gap:4px;padding:5px!important}
+ .formation-control .control-label,.rival-formation .control-label{font-size:7px}
+ .formation-control select,.rival-formation select{min-width:70px;height:28px;padding-left:6px;font-size:8px}
+ .top-tools{gap:0;padding:3px}.top-tools .tool{flex-basis:38px;min-height:36px}
+ .top-tools .tool span{font-size:15px}.top-tools .tool small{font-size:6px}
+ .top-tools .palette{gap:6px}.quick-history-btn{width:24px;height:24px}
+ .add-rival-btn,.reset-btn{min-height:27px;font-size:8px}
+}
+@media(max-width:680px){
+ .contenedor{height:calc(100dvh - 72px)!important}.main{height:calc(100dvh - 72px)!important}
+ .studio-head{flex-basis:39px;min-height:39px;padding:4px 8px}
+ .controlbar{grid-template-columns:1fr 1fr!important;grid-template-areas:"own rival" "tools tools"!important;align-items:center;gap:5px;top:7px;left:7px;right:7px}
+ .own-formation{grid-area:own}.rival-formation{grid-area:rival;justify-content:flex-end}
+ .top-tools{grid-area:tools;justify-self:center;max-width:100%;gap:1px;padding:2px 4px}
+ .top-tools .tool{flex-basis:39px;min-height:34px}.top-tools .tool span{font-size:15px}.top-tools .tool small{font-size:6px}
+ .top-tools .palette{gap:7px;padding:0 3px}.top-tools .swatch{width:13px;height:13px;flex-basis:13px}
+ .quick-history{gap:2px}.quick-history-btn{width:23px;height:23px;font-size:14px}
+ .formation-control,.rival-formation{padding:4px 5px!important;border-radius:8px!important}
+ .formation-control .control-label,.rival-formation .control-label{font-size:6px;letter-spacing:.4px}
+ .formation-control select,.rival-formation select{flex:1;min-width:0;width:100%;height:26px;padding:0 4px;font-size:8px}
+ .add-rival-btn{padding:0 5px;font-size:7px}.reset-btn{width:25px;min-width:25px;height:26px}
+ .rival-strip{top:103px;right:7px;gap:5px;padding:5px}.rival-strip>strong{display:none}
+ .rival-strip .btn{min-height:24px;padding:0 6px;font-size:7px}
+ .player{width:clamp(24px,6vw,33px);height:clamp(24px,6vw,33px)}
+}
+@media(max-width:390px){
+ .controlbar{left:5px;right:5px;gap:4px}
+ .formation-control,.rival-formation{gap:3px;padding:3px!important}
+ .formation-control .control-label,.rival-formation .control-label{font-size:6px}
+ .top-tools .tool{flex-basis:35px}.top-tools .tool span{font-size:14px}
+ .top-tools .palette{gap:5px}.quick-history-btn{width:21px;height:21px}
+ .add-rival-btn{font-size:6px;padding:0 4px}
+}
+body.immersive .studio-head{display:none}
+body.immersive .workspace{position:relative}
+body.immersive .controlbar{top:12px}
+
 </style>
 </head>
 <body>
@@ -307,11 +373,13 @@ body.immersive .studio{border-radius:0}
 <div class="brand"><div class="brand-mark">A</div><div><strong>ADIUR · PIZARRA</strong></div></div>
 <div class="actions"><button class="btn primary" id="toggleImmersive" type="button" aria-pressed="false">⛶ Inmersivo</button></div>
 </header>
+<div class="workspace">
+<section class="pitch-stage">
+<div class="pitch-wrap"><div class="pitch" id="pitch">
+<svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg><canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div>
+</div></div>
 <div class="controlbar">
-<div class="control-actions top-actions">
-<button class="btn" id="resetPositions" type="button">↺ Reubicar 11</button>
-<button class="btn" id="addRival" type="button">＋ Rival</button>
-</div>
+<div class="control-group formation-control own-formation"><span class="control-label">FORMACIÓN ADIUR</span><select id="formationOwn" aria-label="Formación ADIUR"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select></div>
 <div class="top-tools" aria-label="Herramientas de dibujo">
 <button class="tool active" data-tool="select" type="button" title="Mover fichas"><span>↖</span><small>Mover</small></button>
 <button class="tool" data-tool="line" type="button" title="Dibujar una línea"><span>／</span><small>Línea</small></button>
@@ -320,26 +388,13 @@ body.immersive .studio{border-radius:0}
 <button class="tool" data-tool="free" type="button" title="Dibujar a mano alzada"><span>✎</span><small>Lápiz</small></button>
 <button class="tool" data-tool="zone" type="button" title="Dibujar una zona"><span>◯</span><small>Zona</small></button>
 <span class="top-separator"></span>
-<div class="palette" aria-label="Color de dibujo">
-<button class="swatch active" data-color="#f47721" style="background:#f47721" aria-label="Naranja" type="button"></button><button class="swatch" data-color="#e53935" style="background:#e53935" aria-label="Rojo" type="button"></button><button class="swatch" data-color="#171717" style="background:#171717" aria-label="Negro" type="button"></button>
-</div>
+<div class="palette" aria-label="Color de dibujo"><button class="swatch active" data-color="#f47721" style="background:#f47721" aria-label="Naranja" type="button"></button><button class="swatch" data-color="#e53935" style="background:#e53935" aria-label="Rojo" type="button"></button><button class="swatch" data-color="#171717" style="background:#171717" aria-label="Negro" type="button"></button></div>
 <span class="top-separator history-separator"></span>
-<div class="quick-history" aria-label="Historial de edición">
-<button class="quick-history-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button>
-<button class="quick-history-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button>
-<button class="quick-history-btn clear" id="clearDrawings" type="button" title="Borrar trazos" aria-label="Borrar trazos">⌫</button>
+<div class="quick-history" aria-label="Historial de edición"><button class="quick-history-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button><button class="quick-history-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button><button class="quick-history-btn clear" id="clearDrawings" type="button" title="Borrar trazos" aria-label="Borrar trazos">⌫</button></div>
 </div>
-</div>
-<div class="control-group formation-control"><span class="control-label">FORMACIÓN ADIUR</span><select id="formationOwn" aria-label="Formación ADIUR"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select></div>
-</div>
-<div class="rival-strip" id="rivalPanel" hidden><strong>EQUIPO RIVAL</strong><small>Configurá su formación y agregá o quitá sus 11 fichas.</small><select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select><button class="btn primary" id="confirmRival" type="button">Incorporar / actualizar</button><button class="btn" id="removeRival" type="button">Quitar rival</button></div>
-<div class="workspace">
-<section class="pitch-stage">
-<div class="pitch-meta"><strong>CAMPO DE JUEGO</strong><span><i class="status-dot"></i><span id="status">11 posiciones iniciales listas</span></span></div>
-<div class="pitch-wrap"><div class="pitch" id="pitch">
-<svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg><canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div>
-</div></div>
- 
+<div class="control-group rival-formation"><span class="control-label">FORMACIÓN RIVAL</span><select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select><button class="btn add-rival-btn" id="addRival" type="button">＋ Rival</button><button class="btn reset-btn" id="resetPositions" type="button" title="Reubicar posiciones" aria-label="Reubicar posiciones">↺</button></div>
+<div class="rival-strip" id="rivalPanel" hidden><strong>RIVAL ACTIVO</strong><button class="btn primary" id="confirmRival" type="button">Aplicar formación</button><button class="btn" id="removeRival" type="button">Quitar rival</button></div>
+<span id="status" class="status-hidden" aria-live="polite">11 posiciones iniciales listas</span>
 </section>
 </div>
  
