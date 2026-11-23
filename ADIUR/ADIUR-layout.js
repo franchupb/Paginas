@@ -525,4 +525,8 @@
   }
   ajustarPantalla();
   window.addEventListener("resize", ajustarPantalla);
+
+  // Señala que la barra lateral común ya está construida.
+  window.ADIUR_LAYOUT_LISTO = true;
+  window.dispatchEvent(new Event("adiur-layout-listo"));
 })();
