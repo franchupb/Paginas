@@ -2181,7 +2181,7 @@ async function obtenerInfoTiemposJugadora(jugadora) {
     }
   });
 
-  const deJugadora = tiempos.filter(t => t && coincideJugadora(t, jugadora));
+  const deJugadora = tiempos.filter(t => {const cat=categoriaRegistroIntegral(t);return t&&(!cat||cat===claveCategoriaIntegral(jugadora.categoria))&&mismaJugadoraIntegral(t,jugadora);});
 
   if (deJugadora.length === 0) {
     return {
