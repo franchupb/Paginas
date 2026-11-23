@@ -2155,10 +2155,11 @@ async function obtenerInfoInformesJugadora(jugadora) {
   const categoria = claveCategoriaIntegral(jugadora.categoria);
   const deJugadora = informes.filter(inf => {
     if (!inf) return false;
-    const cat = categoriaRegistroIntegral(inf);
-    if (cat && cat !== categoria) return false;
     const participaciones = Array.isArray(inf.jugadoras) ? inf.jugadoras : [];
-    return participaciones.some(reg => mismaJugadoraIntegral(reg, jugadora)) || coincideJugadora(inf, jugadora);
+    const registro = participaciones.find(reg => mismaJugadoraIntegral(reg, jugadora));
+    const cat = categoriaRegistroIntegral(inf) || categoriaRegistroIntegral(registro);
+    if (cat !== categoria) return false;
+    return !!registro || coincideJugadora(inf, jugadora);
   }).sort((a,b) => String(b.fecha || "").localeCompare(String(a.fecha || "")));
 
   if (deJugadora.length === 0) {
