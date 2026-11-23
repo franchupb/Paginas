@@ -2975,6 +2975,7 @@ function obtenerDatosPizarra(){
     cancha: document.getElementById("tipoCancha").value,
     formacionPropia: document.getElementById("formacionPropia").value,
     formacionRival: document.getElementById("formacionRival").value,
+    capas:{adiur:document.getElementById("capaAdiur").checked,rival:document.getElementById("capaRival").checked,pelota:document.getElementById("capaPelota").checked,dibujos:document.getElementById("capaDibujos").checked},
     jugadores,
     conos,
     dibujos:Array.from(svgDibujos.children).filter(el=>el.tagName.toLowerCase()!=="defs"&&el.id!=="lineaTemporal").map(el=>el.outerHTML),
@@ -3184,6 +3185,12 @@ function aplicarDatosPizarra(datos){
   cambiarCancha();
   document.getElementById("formacionPropia").value = formacionPropia;
   document.getElementById("formacionRival").value = formacionRival;
+  const capas=datos.capas&&typeof datos.capas==="object"?datos.capas:{};
+  document.getElementById("capaAdiur").checked=capas.adiur!==false;
+  document.getElementById("capaRival").checked=capas.rival!==false;
+  document.getElementById("capaPelota").checked=capas.pelota!==false;
+  document.getElementById("capaDibujos").checked=capas.dibujos!==false;
+  actualizarCapasPizarra();
 
   jugadoresValidos.forEach(j=>{
     const jugador = crearJugador(
@@ -3510,7 +3517,7 @@ function actualizarCapasPizarra(){
   pitch.classList.toggle("ocultar-dibujos",!document.getElementById("capaDibujos").checked);
 }
 ["capaAdiur","capaRival","capaPelota","capaDibujos"].forEach(id=>{
-  document.getElementById(id)?.addEventListener("change",actualizarCapasPizarra);
+  document.getElementById(id)?.addEventListener("change",()=>{actualizarCapasPizarra();revisionPizarra++;});
 });
 
 /* =========================================================
