@@ -939,6 +939,24 @@ a {
 }
 </style>
 <script src="ADIUR-permisos.js?v=20261123d"></script>
+
+<style id="adiur-pizarra-preview">
+.panel-pizarra-acceso{overflow:hidden;padding:0!important}
+.pizarra-preview-visual{min-height:178px;padding:15px 18px;background:linear-gradient(135deg,#101923,#182b39 58%,#101820);color:#eaf3f8}
+.preview-top{display:flex;justify-content:space-between;gap:10px;font:700 9px/1.2 Arial,sans-serif;letter-spacing:1.3px;color:#a8bac6}
+.preview-live{color:#f47721}
+.preview-field{height:130px;max-width:480px;margin:12px auto 0;position:relative;overflow:hidden;border:1px solid #78909a;border-radius:5px;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 2px,transparent 2px 20px),linear-gradient(135deg,#24513f,#183d31)}
+.preview-field:before{content:"";position:absolute;inset:8px;border:1px solid rgba(255,255,255,.5)}
+.field-mid{position:absolute;top:8px;bottom:8px;left:50%;border-left:1px solid rgba(255,255,255,.5)}
+.field-circle{position:absolute;width:56px;height:56px;left:calc(50% - 28px);top:calc(50% - 28px);border:1px solid rgba(255,255,255,.5);border-radius:50%}
+.field-player{position:absolute;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#f47721;color:#171717;border:2px solid #fff;font:800 9px Arial}
+.field-player.p1{left:23%;top:35%}.field-player.p2{left:40%;top:60%}.field-player.p3{left:70%;top:26%}
+.field-player.rival{background:#e8edf2;color:#243342}.field-player.r1{left:57%;top:28%}.field-player.r2{left:78%;top:65%}
+.field-arrow{position:absolute;left:44%;top:49%;width:20%;border-top:2px dashed #8ec7ff;transform:rotate(-18deg)}
+.pizarra-preview-info{padding:17px 18px 18px;align-items:center}
+.pizarra-preview-info .boton-secundario{white-space:nowrap}
+@media(max-width:560px){.pizarra-preview-info{align-items:flex-start;flex-direction:column}.pizarra-preview-info .boton-secundario{width:100%;text-align:center}}
+</style>
 </head>
 
 <body>
@@ -1298,6 +1316,22 @@ a {
           Abrir calendario completo →
         </a>
 
+      </article>
+
+      <article class="panel panel-pizarra-acceso">
+        <div class="pizarra-preview-visual" aria-hidden="true">
+          <div class="preview-top"><span>ADIUR · TACTICAL BOARD</span><span class="preview-live">● WORKSPACE</span></div>
+          <div class="preview-field">
+            <span class="field-line field-mid"></span><span class="field-circle"></span>
+            <span class="field-player p1">6</span><span class="field-player p2">8</span><span class="field-player p3">9</span>
+            <span class="field-player rival r1">4</span><span class="field-player rival r2">5</span>
+            <span class="field-arrow"></span>
+          </div>
+        </div>
+        <div class="panel-cabecera pizarra-preview-info">
+          <div><h3>Pizarra táctica</h3><p>Diseñá jugadas, movimientos y estrategias para tu equipo.</p></div>
+          <a class="boton-secundario" href="ADIUR-pizarra.html">Ver pizarra táctica →</a>
+        </div>
       </article>
 
     </section>
