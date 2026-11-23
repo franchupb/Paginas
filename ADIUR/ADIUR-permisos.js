@@ -68,7 +68,8 @@
     "adiur-partidos.html",
     "adiur-testeos.html",
     "adiur-encuestas.html",
-    "adiur-estadisticas.html"
+    "adiur-estadisticas.html",
+    "adiur-pizarra.html"
   ]);
 
   const DIVISIONES = {
