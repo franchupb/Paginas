@@ -2455,7 +2455,7 @@ document.getElementById("avatarUsuario").textContent=usuarioGuardado.charAt(0).t
 document.getElementById("rolUsuario").textContent=
   esFran?"Administrador":
   esToto?"Cuerpo técnico":
-  esBianca?"Jugadora · Sub 14":
+  esBianca?"Jugadora":
   "Club ADIUR";
 
 if(!puedeEditar){
@@ -4694,7 +4694,9 @@ window.cambiarFiltroPlanilla=function(){
 window.addEventListener("DOMContentLoaded",()=>{
 
   if(esBianca){
-    document.getElementById("selectDivision").value="Sub 14";
+    let categorias=[];
+    try{categorias=JSON.parse(localStorage.getItem("categoriasADIUR")||"[]");}catch(_){}
+    if(categorias.length)document.getElementById("selectDivision").value=categorias[0];
   }
 
   if(window.matchMedia("(max-width:760px)").matches){
