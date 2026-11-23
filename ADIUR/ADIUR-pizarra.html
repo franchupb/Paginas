@@ -1067,6 +1067,45 @@ body.immersive .board-studio .pitch{display:block!important;flex:1 1 auto!import
  .board-studio .top-tools .palette{gap:3px!important}
 }
 
+
+/* AJUSTE FINAL: BOTON BLANCO Y BARRA PERSISTENTE EN MODO INMERSIVO */
+.board-studio>.controlbar>.immersive-launch,
+.board-studio>.controlbar>.immersive-launch:hover,
+.board-studio>.controlbar>.immersive-launch[aria-pressed="true"]{
+ background:#fff!important;background-image:none!important;
+ color:#171717!important;border:1px solid #dedede!important;
+ box-shadow:none!important;transform:none!important;
+}
+body.immersive .board-studio>.controlbar{
+ display:grid!important;
+ grid-template-columns:76px minmax(0,1fr) 86px 31px!important;
+ grid-template-areas:"own tools rival immersive"!important;
+ align-items:center!important;gap:4px!important;
+ flex:0 0 49px!important;width:100%!important;
+ height:49px!important;min-height:49px!important;
+ padding:4px 5px!important;overflow:hidden!important;
+ position:relative!important;inset:auto!important;
+ background:#fff!important;background-image:none!important;
+ border-bottom:1px solid #e6e6e6!important;
+}
+body.immersive .board-studio>.controlbar>.own-formation{grid-area:own!important;display:flex!important}
+body.immersive .board-studio>.controlbar>.top-tools{grid-area:tools!important;display:flex!important;min-width:0!important;width:100%!important}
+body.immersive .board-studio>.controlbar>.rival-formation{grid-area:rival!important;display:flex!important}
+body.immersive .board-studio>.controlbar>.immersive-launch{
+ grid-area:immersive!important;display:flex!important;
+ width:29px!important;min-width:29px!important;height:29px!important;
+ min-height:29px!important;padding:0!important;border-radius:7px!important;
+ background:#fff!important;background-image:none!important;
+ color:#171717!important;border:1px solid #dedede!important;
+ box-shadow:none!important;
+}
+@media(max-width:390px){
+ body.immersive .board-studio>.controlbar{
+  grid-template-columns:67px minmax(0,1fr) 80px 28px!important;
+  gap:3px!important;padding-right:3px!important;padding-left:3px!important;
+ }
+}
+
 </style>
 </head>
 <body>
