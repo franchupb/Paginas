@@ -418,6 +418,89 @@
   `;
   document.head.appendChild(estilo);
 
+  // Panel de categoría compartido: una sola selección para toda la navegación ADIUR.
+  if (ARCHIVO_ACTUAL !== PRINCIPAL.toLowerCase()) {
+    const panelEstilo = document.createElement("style");
+    panelEstilo.id = "adiur-panel-compartido-estilos";
+    panelEstilo.textContent = `
+      .adiur-panel-compartido{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:154px;padding:25px 30px;margin:0 0 22px;border-radius:20px;background:linear-gradient(112deg,#191919 0%,#282828 65%,#3b2a20 100%);color:#fff;box-shadow:0 12px 30px #17171712}
+      .adiur-panel-compartido:after{content:"";position:absolute;z-index:-1;width:300px;height:300px;right:170px;top:-190px;border:1px solid #ffffff20;border-radius:50%;box-shadow:0 0 0 35px #ffffff08,0 0 0 75px #ffffff06}
+      .adiur-panel-texto{min-width:0}.adiur-panel-eyebrow{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:#ffb17d;font-size:10px;font-weight:850;letter-spacing:1.6px}.adiur-panel-eyebrow:before{content:"";width:22px;height:2px;background:#f47721}.adiur-panel-titulo{margin:0 0 7px;color:#fff;font-family:Manrope,'DM Sans',Arial,sans-serif;font-size:27px;font-weight:850;letter-spacing:-.5px}.adiur-panel-descripcion{max-width:690px;margin:0;color:#d0d0d0;font-size:12px;line-height:1.6}
+      .adiur-panel-control{position:relative;z-index:1;flex:0 0 245px;min-width:220px;padding:13px 15px;border:1px solid #ffffff29;border-radius:13px;background:#ffffff0d}.adiur-panel-control label{display:block;margin:0 0 7px;color:#ffbd91;font-size:9px;font-weight:850;letter-spacing:1px}.adiur-panel-control select{width:100%;min-height:42px;padding:9px 32px 9px 11px;border:1px solid #ffffff32;border-radius:9px;outline:none;background:#fff;color:#202020;font-size:12px;font-weight:800}.adiur-panel-control select:focus{box-shadow:0 0 0 3px #f4772140}.adiur-categoria-integrada{display:none!important}
+      @media(max-width:760px){.adiur-panel-compartido{align-items:stretch;flex-direction:column;gap:16px;min-height:0;padding:21px 18px;margin-bottom:16px;border-radius:16px}.adiur-panel-titulo{font-size:23px}.adiur-panel-descripcion{font-size:11px}.adiur-panel-control{flex:0 0 auto;min-width:0;width:100%;padding:11px 12px}}
+    `;
+    document.head.appendChild(panelEstilo);
+    const zonaPrincipal = document.querySelector("main.contenido, main, .contenido, .contenido-principal");
+    if (zonaPrincipal) {
+      if (ARCHIVO_ACTUAL === "adiur-estadisticas.html") zonaPrincipal.querySelector(".encabezado-seccion")?.remove();
+      const panel = document.createElement("section");
+      panel.className = "adiur-panel-compartido";
+      panel.id = "adiurPanelCompartido";
+      panel.innerHTML = `
+        <div class="adiur-panel-texto">
+          <div class="adiur-panel-eyebrow">ADIUR FEMENINO · CENTRO DE ANÁLISIS</div>
+          <h2 class="adiur-panel-titulo">Estadísticas del club</h2>
+          <p class="adiur-panel-descripcion">El rendimiento, la evolución y el seguimiento del plantel en una sola mirada. Elegí una categoría para mantener el mismo contexto en todas las secciones.</p>
+        </div>
+        <div class="adiur-panel-control">
+          <label for="adiurCategoriaGlobal">CATEGORÍA DEL CLUB</label>
+          <select id="adiurCategoriaGlobal" aria-label="Seleccionar categoría del club"></select>
+        </div>`;
+      zonaPrincipal.insertBefore(panel, zonaPrincipal.firstChild);
+      const categorias = ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
+      const idsCategoria = new Set(["categoriaPrincipal","filtroCategoria","categoria","selectCategoria","division","filtroDivision","filtroDivisionPartidos","filtroDivisionEstadisticas","selectDivision","selectorCategoriaGlobal","selectorCategoria","filtroCategoriaEstadisticas"]);
+      const normalizarCategoriaGlobal = valor => String(valor || "").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+      const categoriaEnOpciones = select => Array.from(select.options || []).some(option => categorias.some(cat => normalizarCategoriaGlobal(option.value || option.textContent) === normalizarCategoriaGlobal(cat)));
+      const selectorGlobal = panel.querySelector("#adiurCategoriaGlobal");
+      function categoriasAutorizadas() {
+        const p = window.ADIUR_PERMISOS;
+        if (p && ["jugadora","cuerpo_tecnico"].includes(p.rol)) {
+          const permitidas = new Set((p.categorias || []).map(normalizarCategoriaGlobal));
+          return categorias.filter(c => permitidas.has(normalizarCategoriaGlobal(c)));
+        }
+        return categorias;
+      }
+      function controlesCategoria() {
+        return Array.from(document.querySelectorAll("select")).filter(select => select !== selectorGlobal && (idsCategoria.has(select.id) || categoriaEnOpciones(select)));
+      }
+      function ocultarControlOriginal(select) {
+        select.classList.add("adiur-categoria-integrada");
+        const etiqueta = select.id ? document.querySelector('label[for="' + CSS.escape(select.id) + '"]') : null;
+        if (etiqueta) etiqueta.classList.add("adiur-categoria-integrada");
+        const envoltorio = select.closest(".selector-campo,.filtro-item,.campo-formulario,.form-group,.campo");
+        if (envoltorio && envoltorio.querySelectorAll("select,input,textarea,button").length === 1) envoltorio.classList.add("adiur-categoria-integrada");
+      }
+      function sincronizarControlesCategoria() {
+        const categoria = selectorGlobal.value;
+        controlesCategoria().forEach(select => {
+          ocultarControlOriginal(select);
+          const opcion = Array.from(select.options || []).find(option => normalizarCategoriaGlobal(option.value || option.textContent) === normalizarCategoriaGlobal(categoria));
+          if (!opcion || select.value === opcion.value) return;
+          select.value = opcion.value;
+          select.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+      }
+      function configurarSelectorGlobal() {
+        const disponibles = categoriasAutorizadas();
+        const anterior = selectorGlobal.value || localStorage.getItem("adiurCategoriaGlobal") || "";
+        selectorGlobal.replaceChildren(...disponibles.map(c => new Option(c,c)));
+        const elegida = disponibles.find(c => normalizarCategoriaGlobal(c) === normalizarCategoriaGlobal(anterior));
+        selectorGlobal.value = elegida || disponibles[0] || "";
+        selectorGlobal.disabled = disponibles.length <= 1;
+        if (!selectorGlobal.value) { selectorGlobal.innerHTML = '<option value="">Sin categorías disponibles</option>'; selectorGlobal.disabled = true; }
+        sincronizarControlesCategoria();
+      }
+      selectorGlobal.addEventListener("change", () => {
+        try { localStorage.setItem("adiurCategoriaGlobal", selectorGlobal.value); } catch (_) {}
+        sincronizarControlesCategoria();
+      });
+      const observerCategorias = new MutationObserver(() => sincronizarControlesCategoria());
+      observerCategorias.observe(zonaPrincipal, { childList: true, subtree: true });
+      window.addEventListener("adiur-permisos-listos", configurarSelectorGlobal);
+      configurarSelectorGlobal();
+    }
+  }
+
   const barra = document.querySelector(".barra-superior");
   const sidebar = document.getElementById("sidebar");
   if (!barra || !sidebar) {
