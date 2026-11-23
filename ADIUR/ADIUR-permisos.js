@@ -377,6 +377,7 @@
             observerDOM = new MutationObserver(() => aplicarPermisos());
             observerDOM.observe(document.documentElement, { childList: true, subtree: true });
           }
+          if (window.ADIUR_LAYOUT_LISTO) mostrarPaginaAutorizada();
         } catch (error) {
           console.error("No se pudieron aplicar los permisos ADIUR:", error);
           location.replace(LOGIN_URL);
