@@ -592,7 +592,10 @@
 
       (configPagina.ocultarSelectores || []).forEach(selector => {
         document.querySelectorAll(selector).forEach(nodo => {
-          if (nodo !== panel && !nodo.contains(panel)) nodo.classList.add("adiur-categoria-integrada");
+          // Si la configuración histórica apunta al propio selector (como en
+          // Estadísticas), no ocultar el control que ahora vive en el panel.
+          if (nodo === selectorGlobal || nodo === panel || nodo.contains(selectorGlobal) || nodo.contains(panel)) return;
+          nodo.classList.add("adiur-categoria-integrada");
         });
       });
 
