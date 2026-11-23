@@ -1075,6 +1075,21 @@ body{background:#f2f4f6;color:var(--coach-ink)}
 }
 
 
+.briefing-panel{max-width:1600px;margin:0 auto 14px;padding:15px 17px;border:1px solid var(--coach-line);border-radius:13px;background:#fff;box-shadow:0 2px 8px rgba(23,33,43,.035)}
+.briefing-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+.briefing-heading h3{font-size:15px;font-weight:850;color:#1c2732;margin:3px 0}.briefing-heading p{font-size:11px;color:#74808b;line-height:1.4}
+.briefing-kicker{font-size:9px;letter-spacing:1px;font-weight:850;color:#bd5b1b}
+.briefing-display{display:flex;align-items:center;gap:7px;white-space:nowrap;font-size:11px;font-weight:750;color:#52606d}.briefing-display input{accent-color:#f47721;width:16px;height:16px}
+.briefing-fields{display:grid;grid-template-columns:minmax(150px,.7fr) minmax(250px,2fr) auto;gap:10px;align-items:end}
+.briefing-fields>label{display:flex;flex-direction:column;gap:5px;font-size:9px;font-weight:850;letter-spacing:.6px;color:#75818c}
+.briefing-fields select,.briefing-fields textarea{width:100%;min-height:39px;padding:9px 10px;border:1px solid #dce2e8;border-radius:8px;background:#fff;color:#273541;font:600 12px Arial,sans-serif;letter-spacing:0;resize:vertical}
+.briefing-fields textarea{max-height:100px;line-height:1.4}.briefing-apply{min-height:39px;padding:0 14px;border:0;border-radius:8px;background:#202a35;color:#fff;font-size:11px;font-weight:800;cursor:pointer}
+.briefing-hint{margin-top:8px;font-size:10px;color:#7b8791}
+.pitch-briefing{position:absolute;z-index:34;top:14px;right:14px;display:flex;flex-direction:column;gap:5px;width:min(290px,calc(100% - 82px));padding:11px 13px;border:1px solid #ffffff70;border-left:4px solid #f47721;border-radius:10px;background:rgba(18,29,38,.91);color:#fff;box-shadow:0 5px 18px #0005;pointer-events:none;backdrop-filter:blur(5px)}
+.pitch-briefing[hidden]{display:none}.pitch-briefing span{font-size:9px;font-weight:900;letter-spacing:1px;color:#ffb477}.pitch-briefing strong{font-size:12px;line-height:1.4;font-weight:750}
+@media(max-width:700px){.briefing-panel{padding:12px}.briefing-heading{flex-direction:column}.briefing-fields{grid-template-columns:1fr}.briefing-apply{width:100%}.pitch-briefing{top:8px;right:8px;width:min(220px,calc(100% - 62px));padding:8px 10px}.pitch-briefing strong{font-size:10px}}
+@media(orientation:landscape) and (max-width:950px){.main:fullscreen .briefing-panel,.main:fullscreen .sequence-panel{display:none}}
+
 /* Herramientas integradas en la cancha: rail de iconos junto al arco izquierdo. */
 .drawing-drawer{
   display:flex!important;
@@ -1789,6 +1804,15 @@ body{background:var(--fondo)}
     </div>
   </section>
 
+  <section class="briefing-panel" aria-label="Consigna de la charla técnica">
+    <div class="briefing-heading"><div><span class="briefing-kicker">MENSAJE DEL CUERPO TÉCNICO</span><h3>Consigna de juego</h3><p>Definí qué querés que el equipo recuerde en esta situación. Podés mostrarlo sobre la cancha durante la charla.</p></div><label class="briefing-display"><input type="checkbox" id="mostrarConsigna" checked> Mostrar en la cancha</label></div>
+    <div class="briefing-fields">
+      <label>FASE DEL JUEGO<select id="faseJuego"><option>Salida</option><option>Ataque organizado</option><option>Defensa organizada</option><option>Transición ofensiva</option><option>Transición defensiva</option><option>ABP ofensiva</option><option>ABP defensiva</option><option>Reanudación</option></select></label>
+      <label class="briefing-message">CONSIGNA PRINCIPAL<textarea id="textoConsigna" maxlength="220" rows="2" placeholder="Ej. Cuando la pelota va al lateral, extremo opuesto ataca el segundo palo."></textarea></label>
+      <button type="button" class="briefing-apply" id="aplicarConsigna">Actualizar consigna</button>
+    </div><div class="briefing-hint" id="estadoConsigna" role="status" aria-live="polite">La consigna se guarda junto con la pizarra y las escenas.</div>
+  </section>
+
   <section class="board-wrapper">
 
 
@@ -1813,6 +1837,7 @@ body{background:var(--fondo)}
           <img id="pitchImage" class="pitch-image" src="ADIUR-cancha completa.jpg" alt="Cancha">
           <svg class="pitch-drawings" id="pitchDrawings" viewBox="0 0 1000 666.6667" preserveAspectRatio="none" aria-label="Dibujos tácticos"></svg>
           <div class="pitch-overlay" id="pitchOverlay"></div>
+          <div class="pitch-briefing" id="pitchBriefing" aria-live="polite" hidden><span id="pitchBriefingPhase">SALIDA</span><strong id="pitchBriefingText"></strong></div>
       <aside class="drawing-drawer" id="drawingDrawer" aria-label="Herramientas de dibujo">
         <div class="drawing-toolbar drawing-tools" aria-label="Herramientas de dibujo">
           <button type="button" class="tool-btn active" data-tool="select" title="Seleccionar y mover" aria-label="Seleccionar y mover" onclick="seleccionarHerramienta(this.dataset.tool)">↖</button>
@@ -2976,6 +3001,7 @@ function obtenerDatosPizarra(){
     formacionPropia: document.getElementById("formacionPropia").value,
     formacionRival: document.getElementById("formacionRival").value,
     capas:{adiur:document.getElementById("capaAdiur").checked,rival:document.getElementById("capaRival").checked,pelota:document.getElementById("capaPelota").checked,dibujos:document.getElementById("capaDibujos").checked},
+    consigna:{fase:document.getElementById("faseJuego").value,texto:document.getElementById("textoConsigna").value,mostrar:document.getElementById("mostrarConsigna").checked},
     jugadores,
     conos,
     dibujos:Array.from(svgDibujos.children).filter(el=>el.tagName.toLowerCase()!=="defs"&&el.id!=="lineaTemporal").map(el=>el.outerHTML),
@@ -3185,6 +3211,11 @@ function aplicarDatosPizarra(datos){
   cambiarCancha();
   document.getElementById("formacionPropia").value = formacionPropia;
   document.getElementById("formacionRival").value = formacionRival;
+  const consigna=datos.consigna&&typeof datos.consigna==="object"?datos.consigna:{};
+  document.getElementById("faseJuego").value=["Salida","Ataque organizado","Defensa organizada","Transición ofensiva","Transición defensiva","ABP ofensiva","ABP defensiva","Reanudación"].includes(consigna.fase)?consigna.fase:"Salida";
+  document.getElementById("textoConsigna").value=String(consigna.texto||"").slice(0,220);
+  document.getElementById("mostrarConsigna").checked=consigna.mostrar!==false;
+  actualizarConsigna();
   const capas=datos.capas&&typeof datos.capas==="object"?datos.capas:{};
   document.getElementById("capaAdiur").checked=capas.adiur!==false;
   document.getElementById("capaRival").checked=capas.rival!==false;
@@ -3512,6 +3543,24 @@ function exportarPizarraPNG(){
     if(estado)estado.textContent="No se pudo exportar la pizarra: "+error.message;
   }
 }
+function actualizarConsigna(){
+  const fase=document.getElementById("faseJuego").value;
+  const texto=document.getElementById("textoConsigna").value.trim();
+  const visible=document.getElementById("mostrarConsigna").checked&&!!texto;
+  const tarjeta=document.getElementById("pitchBriefing");
+  tarjeta.hidden=!visible;
+  document.getElementById("pitchBriefingPhase").textContent=fase.toLocaleUpperCase("es");
+  document.getElementById("pitchBriefingText").textContent=texto;
+  document.getElementById("estadoConsigna").textContent=texto?"Consigna lista. Se incluirá al guardar la pizarra o una escena.":"Escribí una indicación breve para que el equipo tenga una referencia clara.";
+}
+["faseJuego","textoConsigna","mostrarConsigna"].forEach(id=>{
+  document.getElementById(id).addEventListener("input",actualizarConsigna);
+  document.getElementById(id).addEventListener("change",actualizarConsigna);
+});
+document.getElementById("aplicarConsigna").addEventListener("click",()=>{
+  actualizarConsigna();
+  document.getElementById("pitch").scrollIntoView({behavior:"smooth",block:"center"});
+});
 function actualizarCapasPizarra(){
   pitch.classList.toggle("ocultar-adiur",!document.getElementById("capaAdiur").checked);
   pitch.classList.toggle("ocultar-rival",!document.getElementById("capaRival").checked);
