@@ -124,33 +124,36 @@
       Array.from(select.options || []).some(o => categoriaDeTexto(o.value) || categoriaDeTexto(o.textContent));
   }
   function aplicarCategorias(root = document) {
-    if (!configActiva || configActiva.rol !== "jugadora") return;
-    const categoriaUnica = configActiva.categorias[0] || "Sub 16";
+    if (!configActiva || !["jugadora", "cuerpo_tecnico"].includes(configActiva.rol)) return;
+    const categoriasPermitidas = new Set(
+      (configActiva.categorias || []).map(normalizarDivision).filter(Boolean)
+    );
+    if (!categoriasPermitidas.size) return;
+
     const selectores = root.querySelectorAll ? root.querySelectorAll("select") : [];
     selectores.forEach(select => {
-      const opcionesCategoria = Array.from(select.options || []).filter(option =>
-        categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent)
-      );
-      if (!opcionesCategoria.length) return;
-
+      if (!esSelectorCategoria(select)) return;
       Array.from(select.options || []).forEach(option => {
         const categoria = categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent);
-        if (categoria && categoria !== categoriaUnica) option.remove();
-        else if (!categoria && /todas|seleccioná una categoría|seleccionar categoría/i.test(option.textContent || "")) option.remove();
+        const texto = String(option.textContent || "").trim();
+        if (categoria && !categoriasPermitidas.has(categoria)) option.remove();
+        else if (!categoria && /^(todas|todas las categorías|todas las divisiones|seleccioná una categoría|seleccionar categoría|elegir categoría)$/i.test(texto)) option.remove();
       });
 
-      const opcion = Array.from(select.options || []).find(option =>
-        (categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent)) === categoriaUnica
-      );
-      if (opcion) {
-        const cambio = select.value !== opcion.value;
-        select.value = opcion.value;
-        if (cambio) select.dispatchEvent(new Event("change", { bubbles: true }));
-        select.disabled = true;
+      const opcionesPermitidas = Array.from(select.options || []).filter(option => {
+        const categoria = categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent);
+        return categoria && categoriasPermitidas.has(categoria);
+      });
+      if (!opcionesPermitidas.length) return;
+      if (!opcionesPermitidas.some(option => option.value === select.value)) {
+        select.value = opcionesPermitidas[0].value;
+        select.dispatchEvent(new Event("change", { bubbles: true }));
       }
+      // Un perfil con una sola categoría no puede cambiarla; el CT
+      // con varias puede alternar únicamente entre las divisiones asignadas.
+      select.disabled = opcionesPermitidas.length === 1;
     });
   }
-
   function esSelectorJugadora(select) {
     return /jugadora|jugador|atleta|plantel/i.test([
       select.id, select.name, select.getAttribute("aria-label"), select.getAttribute("data-field")
