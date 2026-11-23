@@ -389,5 +389,23 @@
   }
 
   if (/^(index|loing)\.html$/i.test(paginaActual())) return;
+
+  // Evita que se vean por un instante categorías o controles de otros perfiles
+  // antes de que Firebase confirme el usuario y la navegación compartida termine.
+  document.documentElement.classList.add("adiur-permisos-pendientes");
+  const estiloEspera = document.createElement("style");
+  estiloEspera.id = "adiur-espera-permisos";
+  estiloEspera.textContent = "html.adiur-permisos-pendientes body{visibility:hidden!important}";
+  (document.head || document.documentElement).appendChild(estiloEspera);
+
+  function mostrarPaginaAutorizada() {
+    if (!configActiva) return;
+    aplicarPermisos();
+    document.documentElement.classList.remove("adiur-permisos-pendientes");
+    document.getElementById("adiur-espera-permisos")?.remove();
+  }
+
+  window.addEventListener("adiur-layout-listo", mostrarPaginaAutorizada, { once: true });
   iniciarControlFirebase();
+  if (window.ADIUR_LAYOUT_LISTO) mostrarPaginaAutorizada();
 })();
