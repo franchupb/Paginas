@@ -418,34 +418,133 @@
   `;
   document.head.appendChild(estilo);
 
-  // Panel de categoría compartido: una sola selección para toda la navegación ADIUR.
+  // Cabecera compartida por página: reemplaza el título original y unifica
+  // la selección de categoría. La página principal queda expresamente excluida.
   if (ARCHIVO_ACTUAL !== PRINCIPAL.toLowerCase()) {
+    const paginas = {
+      "adiur-jugadoras.html": {
+        selector: ".encabezado-pagina",
+        eyebrow: "PLANTEL · EQUIPO",
+        titulo: "Plantel de jugadoras",
+        descripcion: "Administrá la información personal y deportiva de ADIUR FEMENINO."
+      },
+      "adiur-asistencia.html": {
+        selector: ".cabecera-pagina",
+        eyebrow: "PLANTEL · ASISTENCIA",
+        titulo: "Asistencia mensual",
+        descripcion: "Registrá la asistencia por categoría y consultá el seguimiento individual de cada jugadora al final de la página."
+      },
+      "adiur-calendario.html": {
+        selector: ".encabezado-calendario",
+        eyebrow: "ENTRENAMIENTO · CALENDARIO",
+        titulo: "Calendario de actividades",
+        descripcion: "Organizá y consultá las actividades de cada categoría en un solo lugar."
+      },
+      "adiur-planificacion.html": {
+        selector: ".cabecera-pagina",
+        eyebrow: "ENTRENAMIENTO · PLANIFICACIÓN",
+        titulo: "Planificación de microciclos",
+        descripcion: "Organizá las sesiones semanales y consultá los contenidos técnicos y físicos de cada categoría."
+      },
+      "adiur-gimnasio.html": {
+        selector: ".cabecera-pagina",
+        eyebrow: "ENTRENAMIENTO · FUERZA",
+        titulo: "Gimnasio",
+        descripcion: "Creá, organizá y consultá las rutinas de fuerza del plantel."
+      },
+      "adiur-calculadora.html": {
+        selector: ".cabecera-pagina",
+        eyebrow: "ENTRENAMIENTO · CARGAS",
+        titulo: "Calculadora de cargas y volúmenes",
+        descripcion: "Calculadora atemporal para registrar distancias, pasadas y tiempos de trabajo."
+      },
+      "adiur-partidos.html": {
+        selector: ".page-heading",
+        eyebrow: "COMPETENCIA · FIXTURE",
+        titulo: "Fixture de competencia",
+        descripcion: "Organizá los partidos por división, competición y fecha del torneo."
+      },
+      "adiur-informes.html": {
+        selector: ".page-heading",
+        eyebrow: "COMPETENCIA · INFORMES",
+        titulo: "Informes de partidos",
+        descripcion: "Una planilla más simple para registrar cada encuentro, organizar la formación y mantener el seguimiento de minutos, goles y tarjetas de cada jugadora."
+      },
+      "adiur-estadisticas.html": {
+        selector: ".encabezado-seccion",
+        eyebrow: "COMPETENCIA · ANÁLISIS",
+        titulo: "Estadísticas del club",
+        descripcion: "Consultá el rendimiento general y la evolución de cada jugadora a partir de los registros de competencia, asistencia, testeos, tiempos y lesiones."
+      },
+      "adiur-pizarra.html": {
+        selector: ".page-header",
+        eyebrow: "COMPETENCIA · ESTRATEGIA",
+        titulo: "Pizarra táctica",
+        descripcion: "Diseñá y guardá movimientos tácticos para ADIUR Femenino."
+      },
+      "adiur-testeos.html": {
+        selector: ".encabezado",
+        eyebrow: "RENDIMIENTOS · TESTEOS",
+        titulo: "Testeos y evaluaciones físicas",
+        descripcion: "Registrá los resultados y consultá la evolución física de cada jugadora."
+      },
+      "adiur-tiempos.html": {
+        selector: ".page-heading",
+        eyebrow: "RENDIMIENTOS · TIEMPOS",
+        titulo: "Tiempos y rendimiento físico",
+        descripcion: "Consultá las pasadas, analizá los resultados y registrá la evolución física de cada jugadora en un solo lugar."
+      },
+      "adiur-encuestas.html": {
+        selector: ".cabecera-pagina",
+        eyebrow: "RENDIMIENTOS · SEGUIMIENTO DIARIO",
+        titulo: "Encuestas del plantel",
+        descripcion: "Publicá encuestas, consultá respuestas y hacé el seguimiento del bienestar y la carga de entrenamiento."
+      },
+      "lesiones.html": {
+        selector: ".page-heading",
+        eyebrow: "SALUD DEPORTIVA · SEGUIMIENTO",
+        titulo: "Salud y disponibilidad deportiva",
+        descripcion: "Centralizá los incidentes, el estado de recuperación, los controles pendientes y la disponibilidad deportiva de cada jugadora."
+      }
+    };
+    const configPagina = paginas[ARCHIVO_ACTUAL];
     const panelEstilo = document.createElement("style");
     panelEstilo.id = "adiur-panel-compartido-estilos";
     panelEstilo.textContent = `
-      .adiur-panel-compartido{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:154px;padding:25px 30px;margin:0 0 22px;border-radius:20px;background:linear-gradient(112deg,#191919 0%,#282828 65%,#3b2a20 100%);color:#fff;box-shadow:0 12px 30px #17171712}
+      .adiur-panel-compartido{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:22px;min-height:154px;padding:25px 30px;margin:0 0 22px;border-radius:20px;background:linear-gradient(112deg,#191919 0%,#282828 65%,#3b2a20 100%);color:#fff;box-shadow:0 12px 30px #17171712}
       .adiur-panel-compartido:after{content:"";position:absolute;z-index:-1;width:300px;height:300px;right:170px;top:-190px;border:1px solid #ffffff20;border-radius:50%;box-shadow:0 0 0 35px #ffffff08,0 0 0 75px #ffffff06}
-      .adiur-panel-texto{min-width:0}.adiur-panel-eyebrow{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:#ffb17d;font-size:10px;font-weight:850;letter-spacing:1.6px}.adiur-panel-eyebrow:before{content:"";width:22px;height:2px;background:#f47721}.adiur-panel-titulo{margin:0 0 7px;color:#fff;font-family:Manrope,'DM Sans',Arial,sans-serif;font-size:27px;font-weight:850;letter-spacing:-.5px}.adiur-panel-descripcion{max-width:690px;margin:0;color:#d0d0d0;font-size:12px;line-height:1.6}
-      .adiur-panel-control{position:relative;z-index:1;flex:0 0 245px;min-width:220px;padding:13px 15px;border:1px solid #ffffff29;border-radius:13px;background:#ffffff0d}.adiur-panel-control label{display:block;margin:0 0 7px;color:#ffbd91;font-size:9px;font-weight:850;letter-spacing:1px}.adiur-panel-control select{width:100%;min-height:42px;padding:9px 32px 9px 11px;border:1px solid #ffffff32;border-radius:9px;outline:none;background:#fff;color:#202020;font-size:12px;font-weight:800}.adiur-panel-control select:focus{box-shadow:0 0 0 3px #f4772140}.adiur-categoria-integrada{display:none!important}
-      @media(max-width:760px){.adiur-panel-compartido{align-items:stretch;flex-direction:column;gap:16px;min-height:0;padding:21px 18px;margin-bottom:16px;border-radius:16px}.adiur-panel-titulo{font-size:23px}.adiur-panel-descripcion{font-size:11px}.adiur-panel-control{flex:0 0 auto;min-width:0;width:100%;padding:11px 12px}}
+      .adiur-panel-texto{min-width:0;flex:1 1 auto}.adiur-panel-eyebrow{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:#ffb17d;font-size:10px;font-weight:850;letter-spacing:1.6px}.adiur-panel-eyebrow:before{content:"";width:22px;height:2px;background:#f47721}.adiur-panel-titulo{margin:0 0 7px;color:#fff;font-family:Manrope,'DM Sans',Arial,sans-serif;font-size:27px;font-weight:850;letter-spacing:-.5px}.adiur-panel-descripcion{max-width:760px;margin:0;color:#d0d0d0;font-size:12px;line-height:1.6}
+      .adiur-panel-control{position:relative;z-index:1;flex:0 0 235px;min-width:210px;padding:13px 15px;border:1px solid #ffffff29;border-radius:13px;background:#ffffff0d}.adiur-panel-control label{display:block;margin:0 0 7px;color:#ffbd91;font-size:9px;font-weight:850;letter-spacing:1px}.adiur-panel-control select{width:100%;min-height:42px;padding:9px 32px 9px 11px;border:1px solid #ffffff32;border-radius:9px;outline:none;background:#fff;color:#202020;font-size:12px;font-weight:800}.adiur-panel-control select:focus{box-shadow:0 0 0 3px #f4772140}.adiur-categoria-integrada{display:none!important}
+      .adiur-panel-acciones{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;justify-content:flex-end;gap:8px}
+      @media(max-width:760px){.adiur-panel-compartido{align-items:stretch;flex-direction:column;gap:14px;min-height:0;padding:21px 18px;margin-bottom:16px;border-radius:16px}.adiur-panel-titulo{font-size:23px}.adiur-panel-descripcion{font-size:11px}.adiur-panel-control{flex:0 0 auto;min-width:0;width:100%;padding:11px 12px}.adiur-panel-acciones{justify-content:flex-start;flex-wrap:wrap}}
     `;
     document.head.appendChild(panelEstilo);
-    const zonaPrincipal = document.querySelector("main.contenido, main, .contenido, .contenido-principal");
-    if (zonaPrincipal) {
-      if (ARCHIVO_ACTUAL === "adiur-estadisticas.html") zonaPrincipal.querySelector(".encabezado-seccion")?.remove();
+    const zonaPrincipal = document.querySelector("main.contenido, main.main, main, .contenido, .contenido-principal");
+    if (zonaPrincipal && configPagina) {
       const panel = document.createElement("section");
       panel.className = "adiur-panel-compartido";
       panel.id = "adiurPanelCompartido";
       panel.innerHTML = `
         <div class="adiur-panel-texto">
-          <div class="adiur-panel-eyebrow">ADIUR FEMENINO · CENTRO DE ANÁLISIS</div>
-          <h2 class="adiur-panel-titulo">Estadísticas del club</h2>
-          <p class="adiur-panel-descripcion">El rendimiento, la evolución y el seguimiento del plantel en una sola mirada. Elegí una categoría para mantener el mismo contexto en todas las secciones.</p>
+          <div class="adiur-panel-eyebrow">${configPagina.eyebrow}</div>
+          <h2 class="adiur-panel-titulo">${configPagina.titulo}</h2>
+          <p class="adiur-panel-descripcion">${configPagina.descripcion}</p>
         </div>
         <div class="adiur-panel-control">
-          <label for="adiurCategoriaGlobal">CATEGORÍA DEL CLUB</label>
-          <select id="adiurCategoriaGlobal" aria-label="Seleccionar categoría del club"></select>
+          <label for="adiurCategoriaGlobal">CATEGORÍA DEL PLANTEL</label>
+          <select id="adiurCategoriaGlobal" aria-label="Seleccionar categoría"></select>
         </div>`;
+      const encabezadoOriginal = zonaPrincipal.querySelector(configPagina.selector);
+      if (encabezadoOriginal) {
+        const bloquesConAcciones = Array.from(encabezadoOriginal.children).filter(nodo => nodo.querySelector && nodo.querySelector("button, a.boton-principal, a.btn"));
+        if (bloquesConAcciones.length) {
+          const acciones = document.createElement("div");
+          acciones.className = "adiur-panel-acciones";
+          bloquesConAcciones.forEach(nodo => acciones.appendChild(nodo));
+          panel.appendChild(acciones);
+        }
+        encabezadoOriginal.remove();
+      }
       zonaPrincipal.insertBefore(panel, zonaPrincipal.firstChild);
       const categorias = ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
       const idsCategoria = new Set(["categoriaPrincipal","filtroCategoria","categoria","selectCategoria","division","filtroDivision","filtroDivisionPartidos","filtroDivisionEstadisticas","selectDivision","selectorCategoriaGlobal","selectorCategoria","filtroCategoriaEstadisticas"]);
