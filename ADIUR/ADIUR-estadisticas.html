@@ -2115,7 +2115,7 @@ async function obtenerInfoAsistenciaJugadora(jugadora, mesFiltro = "total") {
 
 /* --- 3. EXTRAER DATOS DE ADIUR-informes.html --- */
 async function obtenerInfoInformesJugadora(jugadora) {
-  const informes = await obtenerTodosInformesExternos();
+  const informes = await obtenerPartidosIntegral();
   const categoria = claveCategoriaIntegral(jugadora.categoria);
   const deJugadora = informes.filter(inf => {
     if (!inf) return false;
