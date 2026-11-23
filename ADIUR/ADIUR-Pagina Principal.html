@@ -1329,7 +1329,7 @@ const firebaseConfig = {
 let db = null;
 let nubeActiva = false;
 try {
-  // Reutiliza la misma app Firebase inicializada por ADIUR-auth.js.
+  // Reutiliza la misma app Firebase inicializada por ADIUR-auth.js?v=20261122b.
   const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   db = getFirestore(app);
   nubeActiva = true;
@@ -1405,7 +1405,7 @@ function inicializarPreferencias() {
 window.cerrarSesion = async function(event) {
   event?.preventDefault();
   try {
-    const modulo = await import("./ADIUR-auth.js");
+    const modulo = await import("./ADIUR-auth.js?v=20261122b");
     await modulo.cerrarSesionADIUR();
     localStorage.removeItem("usuarioADIUR");
     window.location.href = "ADIUR-Loing.html";
