@@ -1348,6 +1348,9 @@ let cacheJugadorasNube = [];
 // No exigir el antiguo usuarioADIUR de localStorage: provocaba volver al login.
 const usuarioGuardado = localStorage.getItem("usuarioADIUR") || "";
 const usuarioNormalizado = usuarioGuardado.trim().toLowerCase();
+const rolADIUR = localStorage.getItem("rolADIUR") || "";
+let categoriasUsuario = [];
+try { categoriasUsuario = JSON.parse(localStorage.getItem("categoriasADIUR") || "[]"); } catch (_) { categoriasUsuario = []; }
 
 document.getElementById("fechaHoy").textContent =
   new Intl.DateTimeFormat("es-AR", {
@@ -1363,19 +1366,13 @@ const clavePreferencia =
   "divisionPreferidaADIUR_" + usuarioNormalizado;
 
 function divisionPredeterminada() {
-  if (esBianca) return "Sub 14";
-
+  const todas = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
+  const permitidas = rolADIUR === "jugadora" && categoriasUsuario.length
+    ? todas.filter(categoria => categoriasUsuario.includes(categoria))
+    : todas;
   const guardada = localStorage.getItem(clavePreferencia);
-
-  const permitidas = [
-    "Sub 10",
-    "Sub 12",
-    "Sub 14",
-    "Sub 16",
-    "Primera"
-  ];
-
-  return permitidas.includes(guardada) ? guardada : "Primera";
+  if (permitidas.includes(guardada)) return guardada;
+  return permitidas[0] || "Primera";
 }
 
 function guardarPreferenciaDesdeSelector(id) {
