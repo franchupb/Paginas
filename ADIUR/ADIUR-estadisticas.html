@@ -1634,7 +1634,9 @@ function nombresPosiblesJugadoraIntegral(j){
   const base=String(j?.nombre||"").trim(),apellido=String(j?.apellido||j?.apellidos||"").trim();
   const nombres=[j?.nombreCompleto,j?.nombre_completo,j?.nombreYApellido,j?.nombre_y_apellido];
   if(base&&apellido)nombres.push(base+" "+apellido);
-  else if(base)nombres.push(base);
+  const categoria=claveCategoriaIntegral(j?.categoria);
+  const mismoNombre=base?cacheJugadorasNube.filter(otra=>claveCategoriaIntegral(otra.categoria)===categoria&&normalizarNombreIntegral(otra.nombre)===normalizarNombreIntegral(base)).length:0;
+  if(base&&(!apellido||mismoNombre<=1))nombres.push(base);
   return [...new Set(nombres.map(normalizarNombreIntegral).filter(Boolean))];
 }
 
@@ -1937,12 +1939,12 @@ async function obtenerInfoPartidosExternosJugadora(jugadora) {
     if (Array.isArray(p.jugadoras)) {
       return p.jugadoras.some(item =>
         typeof item === "string"
-          ? normalizarNombreIntegral(item) === normalizarNombreIntegral(jugadora.nombreCompleto)
+          ? nombresPosiblesJugadoraIntegral(jugadora).includes(normalizarNombreIntegral(item))
            : mismaJugadoraIntegral(item, jugadora)
       );
     }
     if (Array.isArray(p.convocadas)) {
-      return p.convocadas.some(c => normalizarNombreIntegral(c) === normalizarNombreIntegral(jugadora.nombreCompleto) || normalizarTexto(c) === normalizarTexto(jugadora.id));
+      return p.convocadas.some(c => nombresPosiblesJugadoraIntegral(jugadora).includes(normalizarNombreIntegral(c)) || normalizarTexto(c) === normalizarTexto(jugadora.id));
     }
     return mismaJugadoraIntegral(p, jugadora);
   });
