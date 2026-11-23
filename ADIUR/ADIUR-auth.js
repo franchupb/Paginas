@@ -58,5 +58,5 @@ export function observarSesionADIUR(callback) {
 }
 export async function cerrarSesionADIUR() {
   await signOut(auth);
-  try { localStorage.removeItem("usuarioADIUR"); } catch (_) {}
+  try { localStorage.removeItem("usuarioADIUR"); localStorage.removeItem("rolADIUR"); localStorage.removeItem("categoriasADIUR"); } catch (_) {}
 }
