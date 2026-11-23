@@ -153,7 +153,7 @@ body.pizarra-inmersiva .boardfoot input,body.pizarra-inmersiva .boardfoot textar
 <style id="adiur-pizarra-layout-fix">
 .contenedor{display:flex;align-items:stretch;min-height:calc(100vh - 84px);width:100%}
 #sidebar{flex:0 0 258px;min-width:0}
-.main{flex:1 1 auto;min-width:0;width:calc(100% - 258px);margin:0!important;align-self:stretch}
+.main{flex:1 1 0;min-width:0;width:auto;max-width:none;margin:0!important;align-self:stretch}
 @media(max-width:760px){.contenedor{display:block;min-height:calc(100vh - 72px)}#sidebar{position:fixed!important;z-index:150}.main{width:100%;margin:0!important}}
 </style>
 </head>
@@ -165,8 +165,8 @@ body.pizarra-inmersiva .boardfoot input,body.pizarra-inmersiva .boardfoot textar
 <button class="perfil" type="button" aria-label="Perfil de usuario"><span class="avatar" id="avatarUsuario">U</span><span class="informacion-perfil"><span class="nombre-perfil" id="nombreUsuario">Usuario</span><span class="rol-perfil" id="rolUsuario">Club ADIUR</span></span></button>
 </header>
 <div class="capa-sidebar" id="capaSidebar" aria-hidden="true"></div>
-<aside class="sidebar" id="sidebar" aria-label="Navegación principal"></aside>
 <div class="contenedor" id="layoutContenedor">
+<aside class="sidebar" id="sidebar" aria-label="Navegación principal"></aside>
 <main class="main" id="main">
 <header class="page-header">
 <div><span class="eyebrow">COMPETENCIA · ESTRATEGIA</span><h2>Pizarra táctica</h2><p>Armá jugadas, ubicá a las jugadoras y explicá movimientos con una cancha amplia y herramientas simples.</p></div>
