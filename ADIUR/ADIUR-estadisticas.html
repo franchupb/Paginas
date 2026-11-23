@@ -2886,9 +2886,9 @@ async function renderizarPanelIntegral(){
  }
  const suma=k=>resumen.reduce((a,x)=>a+(Number(x[k])||0),0);
  document.getElementById("integralTotalJugadoras").textContent=jugadoras.length;
- document.getElementById("integralTotalPartidos").textContent=suma("pj");
- document.getElementById("integralTotalMinutos").textContent=suma("min").toLocaleString("es-AR");
- document.getElementById("integralTotalGoles").textContent=suma("goles");
+ document.getElementById("integralTotalPartidos").textContent=partidosDiv.length?suma("pj"):"—";
+ document.getElementById("integralTotalMinutos").textContent=partidosDiv.length?suma("min").toLocaleString("es-AR"):"—";
+ document.getElementById("integralTotalGoles").textContent=partidosDiv.length?suma("goles"):"—";
  document.getElementById("integralCasosActivos").textContent=resumen.reduce((a,x)=>a+x.activos.length,0);
  const render=lista=>{
   if(!lista.length){tbody.innerHTML='<tr><td colspan="10" class="integral-empty">No hay jugadoras para los filtros seleccionados.</td></tr>';return;}
