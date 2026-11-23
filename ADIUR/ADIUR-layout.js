@@ -508,6 +508,15 @@
     sidebar.appendChild(bloque);
   });
 
+  // Ancla oculta de compatibilidad: algunas páginas antiguas todavía buscan
+  // #cerrarSesion al inicializar sus scripts. El cierre visible vive en el perfil.
+  const cierreCompatibilidad = document.createElement("a");
+  cierreCompatibilidad.id = "cerrarSesion";
+  cierreCompatibilidad.href = "#";
+  cierreCompatibilidad.hidden = true;
+  cierreCompatibilidad.setAttribute("aria-hidden", "true");
+  sidebar.appendChild(cierreCompatibilidad);
+
   async function importarCerrarSesionADIUR() {
     try {
       const modulo = await import("./ADIUR-auth.js?v=20261122b");
