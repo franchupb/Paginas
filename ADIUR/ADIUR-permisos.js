@@ -125,28 +125,29 @@
   }
   function aplicarCategorias(root = document) {
     if (!configActiva || configActiva.rol !== "jugadora") return;
-    const pagina = paginaActual();
-    const selectoresPorPagina = {
-      "adiur-asistencia.html": ["#filtroCategoria"],
-      "adiur-partidos.html": ["#filtroDivision"],
-      "adiur-testeos.html": ["#selectDivision"]
-    };
-    const permitidos = selectoresPorPagina[pagina] || [];
-    permitidos.forEach(selector => {
-      const select = root.querySelector(selector);
-      if (!select) return;
-      Array.from(select.options || []).forEach(option => {
-        const cat = categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent);
-        if (cat && !configActiva.categorias.includes(cat)) option.remove();
-      });
-      const opcion = Array.from(select.options || []).find(option =>
-        configActiva.categorias.includes(categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent))
+    const categoriaUnica = configActiva.categorias[0] || "Sub 16";
+    const selectores = root.querySelectorAll ? root.querySelectorAll("select") : [];
+    selectores.forEach(select => {
+      const opcionesCategoria = Array.from(select.options || []).filter(option =>
+        categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent)
       );
-      if (opcion && select.value !== opcion.value) {
+      if (!opcionesCategoria.length) return;
+
+      Array.from(select.options || []).forEach(option => {
+        const categoria = categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent);
+        if (categoria && categoria !== categoriaUnica) option.remove();
+        else if (!categoria && /todas|seleccioná una categoría|seleccionar categoría/i.test(option.textContent || "")) option.remove();
+      });
+
+      const opcion = Array.from(select.options || []).find(option =>
+        (categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent)) === categoriaUnica
+      );
+      if (opcion) {
+        const cambio = select.value !== opcion.value;
         select.value = opcion.value;
-        select.dispatchEvent(new Event("change", { bubbles: true }));
+        if (cambio) select.dispatchEvent(new Event("change", { bubbles: true }));
+        select.disabled = true;
       }
-      select.disabled = true;
     });
   }
 
@@ -171,6 +172,13 @@
         el.disabled = true;
         el.setAttribute("aria-disabled", "true");
         el.title = "Solo consulta: cada jugadora puede ver sus propias asistencias";
+      });
+      return;
+    }
+    if (pagina === "adiur-jugadoras.html") {
+      ["botonAgregar", "modalJugadora"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.hidden = true;
       });
       return;
     }
@@ -250,6 +258,11 @@
       document.querySelectorAll('a[href]').forEach(a => {
         const file = (a.getAttribute("href") || "").split(/[?#]/)[0].split("/").pop().toLowerCase();
         if (file.endsWith(".html") && !PAGINAS_JUGADORAS.has(file)) a.remove();
+      });
+      document.querySelectorAll("#sidebar .grupo-menu").forEach(grupo => {
+        const submenu = grupo.querySelector(".submenu");
+        const enlaces = submenu ? submenu.querySelectorAll('a[href]') : [];
+        if (!enlaces.length) grupo.hidden = true;
       });
       // Gimnasio: mostrar solo biblioteca; se conservan PDF y cantidad de personas al imprimir.
       if (pagina === "adiur-gimnasio.html") {
