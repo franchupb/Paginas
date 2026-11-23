@@ -1673,7 +1673,7 @@ function extraerMesDeFecha(fechaStr) {
 /* =====================================================
    CAMBIO DE MÓDULO, MES ASISTENCIA, DIVISIÓN Y JUGADORA
 ===================================================== */
-window.cambiarModuloFiltro = function() {
+window.cambiarModuloFiltro = function(sinRender = false) {
   const modulo = document.getElementById("filtroModulo").value;
   const panelIntegral = document.getElementById("panelIntegral");
   const panelTabla = document.getElementById("panelTablaEstadisticas");
@@ -1694,7 +1694,7 @@ window.cambiarModuloFiltro = function() {
     seleccionarJugadoraFicha(jugadoraActual);
   }
 
-  renderizarVistaActiva();
+  if (!sinRender) renderizarVistaActiva();
 };
 
 window.cambiarMesAsistencia = function() {
@@ -2761,9 +2761,9 @@ window.cerrarModal = function(id) {
 
 window.addEventListener("DOMContentLoaded", async () => {
   await sincronizarJugadorasDesdeBase();
-  cambiarDivision();
   document.getElementById("filtroModulo").value = "integral";
-  cambiarModuloFiltro();
+  cambiarModuloFiltro(true);
+  cambiarDivision();
 });
 /* CONSOLIDADO INDIVIDUAL · INFORMES + TESTEOS + LESIONES */
 const CACHE_FUENTES_INTEGRAL={partidos:{at:0,data:[]},lesiones:{at:0,data:[]},planillas:new Map()};
