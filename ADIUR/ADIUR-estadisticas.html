@@ -2194,48 +2194,22 @@ async function obtenerInfoTiemposJugadora(jugadora) {
 
 /* --- 5. EXTRAER DATOS DE lesiones.html --- */
 async function obtenerInfoLesionesJugadora(jugadora) {
-  let lesiones = [];
-
-  if (nubeActiva && db) {
-    try {
-      const snap = await getDocs(collection(db, "lesiones"));
-      snap.forEach(d => lesiones.push({ id: d.id, ...d.data() }));
-    } catch (e) {}
+  const lesiones=await obtenerLesionesIntegral();
+  const categoriaLesion=claveCategoriaIntegral(jugadora.categoria);
+  const deJugadora=lesiones.filter(l=>l&&categoriaRegistroIntegral(l)===categoriaLesion&&coincideJugadora(l,jugadora))
+    .sort((a,b)=>String(b.fecha||b.fechaInicio||"").localeCompare(String(a.fecha||a.fechaInicio||"")));
+  if(!deJugadora.length){
+    return {lista:[],html:'<div class="dato-fila"><span class="etiqueta">Estado físico</span><strong style="color:#18743b;">✓ Sin lesiones registradas</strong></div>'};
   }
-
-  ["lesionesADIUR_registros_v1", "lesionesADIUR", "registroLesionesADIUR", "historialLesionesADIUR"].forEach(k => {
-    const raw = localStorage.getItem(k);
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) lesiones.push(...parsed);
-      } catch (e) {}
-    }
-  });
-
-  const categoriaLesion = claveCategoriaIntegral(jugadora.categoria);
-  const deJugadora = lesiones.filter(l => l && categoriaRegistroIntegral(l) === categoriaLesion && coincideJugadora(l, jugadora));
-
-  if (deJugadora.length === 0) {
-    return {
-      lista: [],
-      html: `<div class="dato-fila"><span class="etiqueta">Estado físico</span><strong style="color:#18743b;">✓ Sin lesiones registradas</strong></div>`
-    };
-  }
-
   return {
-    lista: deJugadora,
-    html: `<div class="ficha-lista-items">` + deJugadora.slice(0, 5).map(l => {
-      const tipo = l.lesion || l.tipo || l.diagnostico || l.zona || "Lesión";
-      const estado = l.estado || l.recuperacion || "En seguimiento";
-      const fecha = l.fecha || l.fechaInicio || "";
-      return `
-        <div class="ficha-item-box lesion">
-          <strong>${escaparIntegral(tipo)}</strong> · <span style="font-size:11px;font-weight:bold;">${escaparIntegral(estado)}</span>
-          ${fecha ? `<div style="color:#777;font-size:11px;margin-top:2px;">Fecha: ${escaparIntegral(fecha)}</div>` : ""}
-        </div>
-      `;
-    }).join("") + `</div>`
+    lista:deJugadora,
+    html:'<div class="ficha-lista-items">'+deJugadora.slice(0,5).map(l=>{
+      const tipo=l.lesion||l.tipo||l.diagnostico||l.zona||"Lesión";
+      const estado=l.estado||l.recuperacion||"En seguimiento";
+      const fecha=l.fecha||l.fechaInicio||"";
+      return '<div class="ficha-item-box lesion"><strong>'+escaparIntegral(tipo)+'</strong> · <span style="font-size:11px;font-weight:bold;">'+escaparIntegral(estado)+'</span>'+
+        (fecha?'<div style="color:#777;font-size:11px;margin-top:2px;">Fecha: '+escaparIntegral(fecha)+'</div>':"")+'</div>';
+    }).join("")+'</div>'
   };
 }
 
