@@ -32,9 +32,18 @@ export async function iniciarSesionADIUR(usuario, contrasena) {
   const perfil = await getDoc(referencia);
   if (!perfil.exists() || perfil.data().activo === false) {
     await signOut(auth);
+    try { localStorage.removeItem("usuarioADIUR"); } catch (_) {}
     throw new Error("La cuenta todavía no tiene un perfil habilitado. Contactá al administrador del club.");
   }
-  return { user: credencial.user, perfil: perfil.data() };
+  const datosPerfil = perfil.data();
+  // Compatibilidad temporal con las páginas que todavía leen el usuario local.
+  // La identidad real y la autorización siguen dependiendo de Firebase Auth y Firestore.
+  try {
+    localStorage.setItem("usuarioADIUR", String(datosPerfil.usuario || usuario).trim());
+  } catch (error) {
+    console.warn("No se pudo guardar el nombre de usuario para compatibilidad:", error);
+  }
+  return { user: credencial.user, perfil: datosPerfil };
 }
 export async function obtenerPerfilADIUR(user) {
   if (!user) return null;
@@ -47,4 +56,5 @@ export function observarSesionADIUR(callback) {
 }
 export async function cerrarSesionADIUR() {
   await signOut(auth);
+  try { localStorage.removeItem("usuarioADIUR"); } catch (_) {}
 }
