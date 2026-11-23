@@ -2019,16 +2019,16 @@ window.seleccionarJugadoraFicha = async function(jugadoraId) {
   grid.innerHTML = `<div class="ficha-vacio">Cargando información de la jugadora...</div>`;
   panel.classList.add("activa");
 
-  const fallback = etiqueta => ({html:`<div class="ficha-vacio">No se pudo cargar esta sección (${etiqueta}). Volvé a intentarlo.</div>`});
-  const seguro = (promesa, etiqueta) => Promise.resolve(promesa).catch(error => {
+  const fallback = etiqueta => `<div class="ficha-vacio">No se pudo cargar esta sección (${etiqueta}). Volvé a intentarlo.</div>`;
+  const seguro = (promesa, etiqueta, devuelveObjeto = true) => Promise.resolve(promesa).catch(error => {
     console.error("Error al cargar ficha integral · "+etiqueta,error);
-    return fallback(etiqueta);
+    return devuelveObjeto ? {html:fallback(etiqueta)} : fallback(etiqueta);
   });
   const [datosTesteos, datosAsistencia, datosInformes, datosPartidosExt, datosTiempos, datosLesiones] = await Promise.all([
     seguro(obtenerInfoTesteosJugadora(jugadora),"testeos"),
     seguro(obtenerInfoAsistenciaJugadora(jugadora,"total"),"asistencia"),
-    seguro(obtenerInfoInformesJugadora(jugadora),"informes"),
-    seguro(obtenerInfoPartidosExternosJugadora(jugadora),"partidos"),
+    seguro(obtenerInfoInformesJugadora(jugadora),"informes",false),
+    seguro(obtenerInfoPartidosExternosJugadora(jugadora),"partidos",false),
     seguro(obtenerInfoTiemposJugadora(jugadora),"tiempos"),
     seguro(obtenerInfoLesionesJugadora(jugadora),"lesiones")
   ]);
