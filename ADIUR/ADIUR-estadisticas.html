@@ -2888,7 +2888,8 @@ function registroPartidoIntegral(partido,jugadora,division){
  return null;
 }
 function eventosDeJugadoraIntegral(eventos,jugadora){
- return (Array.isArray(eventos)?eventos:[]).filter(e=>{const n=normalizarTexto(typeof e.jugadora==="object"?(e.jugadora.nombre||e.jugadora.nombreCompleto):e.jugadora);return n===normalizarTexto(jugadora.nombreCompleto)||n===normalizarTexto(jugadora.id);});
+ const nombres=nombresPosiblesJugadoraIntegral(jugadora);
+ return (Array.isArray(eventos)?eventos:[]).filter(e=>{const valor=typeof e.jugadora==="object"?(e.jugadora.nombreCompleto||e.jugadora.nombre):e.jugadora;const n=normalizarNombreIntegral(valor);return nombres.includes(n)||normalizarTexto(valor)===normalizarTexto(jugadora.id);});
 }
 async function renderizarPanelIntegral(){
  const version=++versionRenderIntegral;
