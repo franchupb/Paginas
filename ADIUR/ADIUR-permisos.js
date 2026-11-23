@@ -204,14 +204,31 @@
         const file = (a.getAttribute("href") || "").split(/[?#]/)[0].split("/").pop().toLowerCase();
         if (file.endsWith(".html") && !PAGINAS_JUGADORAS.has(file)) a.remove();
       });
-      // Gimnasio: solo la biblioteca de rutinas. Se ocultan acciones de carga/edición.
+      // Gimnasio: las jugadoras acceden únicamente a la biblioteca de rutinas.
       if (pagina === "adiur-gimnasio.html") {
+        const controles = document.getElementById("panelControlesRutina");
+        const editor = document.getElementById("panelEditorRutina");
+        if (controles) controles.hidden = true;
+        if (editor) editor.hidden = true;
+        const biblioteca = document.getElementById("panelBiblioteca");
+        if (biblioteca) biblioteca.hidden = false;
         document.querySelectorAll("button, a, [role=button]").forEach(el => {
-          if (/crear|agregar|editar|eliminar|guardar|rutina nueva|asignar/i.test(textoControl(el))) el.hidden = true;
+          if (/crear|agregar|editar|eliminar|guardar|rutina nueva|asignar|aplicar a jugadoras/i.test(textoControl(el))) el.hidden = true;
         });
       }
-      // Testeos: solo lectura/estadísticas; ocultar controles de carga y registro.
+      // Testeos: para las jugadoras se muestra exclusivamente la pestaña Estadísticas.
       if (pagina === "adiur-testeos.html") {
+        ["btnTabCarga", "btnTabBiblioteca"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.hidden = true;
+        });
+        const carga = document.getElementById("vistaCarga");
+        const biblioteca = document.getElementById("vistaBiblioteca");
+        const estadisticas = document.getElementById("vistaStats");
+        if (carga) { carga.classList.remove("activa"); carga.hidden = true; }
+        if (biblioteca) { biblioteca.classList.remove("activa"); biblioteca.hidden = true; }
+        if (estadisticas) { estadisticas.classList.add("activa"); estadisticas.hidden = false; }
+        document.getElementById("btnTabStats")?.classList.add("activa");
         document.querySelectorAll("button, a, [role=tab]").forEach(el => {
           if (/cargar|nuevo|registrar|agregar|editar|eliminar|testeo|registro/i.test(textoControl(el))) el.hidden = true;
         });
