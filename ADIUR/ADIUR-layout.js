@@ -521,7 +521,10 @@
 
   function actualizarEstado() {
     const abierto = !sidebar.classList.contains("oculto");
-    if (botonMenu) botonMenu.setAttribute("aria-expanded", String(abierto));
+    if (botonMenu) {
+      botonMenu.setAttribute("aria-expanded", String(abierto));
+      botonMenu.setAttribute("aria-label", abierto ? "Cerrar menú" : "Abrir menú");
+    }
     const capa = document.getElementById("capaSidebar") || document.getElementById("fondoSidebar");
     if (capa) capa.classList.toggle("visible", window.innerWidth <= 760 && abierto);
   }
@@ -553,6 +556,14 @@
     else sidebar.classList.remove("oculto");
     actualizarEstado();
   }
+
+  // Escape cierra el menú y sincroniza el overlay compartido, incluso en
+  // páginas que todavía conservan manejadores antiguos de teclado.
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !sidebar.classList.contains("oculto")) {
+      cerrarMenu();
+    }
+  });
   ajustarPantalla();
   window.addEventListener("resize", ajustarPantalla);
 
