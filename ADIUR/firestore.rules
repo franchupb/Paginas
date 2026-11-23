@@ -44,80 +44,45 @@ service cloud.firestore {
       return isAdmin() || isCoordinator();
     }
 
-    // Perfil propio: cada usuario puede consultar su perfil.
-    // Solo el administrador puede listar, crear, modificar o eliminar perfiles.
+    function coleccionAdiur(nombre) {
+      return nombre in [
+        'jugadoras',
+        'partidos',
+        'asistenciaADIUR',
+        'configuracionAsistenciaADIUR',
+        'calculadoraADIUR',
+        'planificacionADIUR',
+        'planificaciones',
+        'gimnasioADIUR',
+        'informes',
+        'informes_partidos',
+        'testeos_adiur',
+        'tiemposRendimiento',
+        'lesiones',
+        'encuestas_periodos',
+        'encuestas_respuestas'
+      ];
+    }
+
+    // El usuario consulta su propio perfil. Solo Fran (admin) administra perfiles.
     match /usuarios/{uid} {
       allow get: if signedIn() && (request.auth.uid == uid || isAdmin());
       allow list: if isAdmin();
       allow create, update, delete: if isAdmin();
     }
 
-    // Colecciones utilizadas por ADIUR FEMENINO.
-    // La autenticación y el perfil activo son obligatorios.
-    // Jugadoras: lectura y envío de respuestas de encuestas.
-    // Cuerpo técnico: lectura y edición, sin eliminación.
-    // Coordinación y administración: lectura, edición y eliminación.
+    // Datos del club: solo perfiles activos. Jugadoras consultan y responden
+    // encuestas; cuerpo técnico edita; coordinación y administración también eliminan.
     match /{coleccion}/{documento} {
-      allow read: if activeUser()
-        && coleccion in [
-          'jugadoras',
-          'partidos',
-          'asistenciaADIUR',
-          'configuracionAsistenciaADIUR',
-          'calculadoraADIUR',
-          'planificacionADIUR',
-          'planificaciones',
-          'gimnasioADIUR',
-          'informes',
-          'informes_partidos',
-          'testeos_adiur',
-          'tiemposRendimiento',
-          'lesiones',
-          'encuestas_periodos',
-          'encuestas_respuestas'
-        ];
+      allow read: if activeUser() && coleccionAdiur(coleccion);
 
-      allow create, update: if isStaff()
-        && coleccion in [
-          'jugadoras',
-          'partidos',
-          'asistenciaADIUR',
-          'configuracionAsistenciaADIUR',
-          'calculadoraADIUR',
-          'planificacionADIUR',
-          'planificaciones',
-          'gimnasioADIUR',
-          'informes',
-          'informes_partidos',
-          'testeos_adiur',
-          'tiemposRendimiento',
-          'lesiones',
-          'encuestas_periodos',
-          'encuestas_respuestas'
-        ];
+      allow create, update: if isStaff() && coleccionAdiur(coleccion);
 
       allow create: if activeUser()
         && role() == 'jugadora'
         && coleccion == 'encuestas_respuestas';
 
-      allow delete: if canDeleteClubData()
-        && coleccion in [
-          'jugadoras',
-          'partidos',
-          'asistenciaADIUR',
-          'configuracionAsistenciaADIUR',
-          'calculadoraADIUR',
-          'planificacionADIUR',
-          'planificaciones',
-          'gimnasioADIUR',
-          'informes',
-          'informes_partidos',
-          'testeos_adiur',
-          'tiemposRendimiento',
-          'lesiones',
-          'encuestas_periodos',
-          'encuestas_respuestas'
-        ];
+      allow delete: if canDeleteClubData() && coleccionAdiur(coleccion);
     }
   }
 }
