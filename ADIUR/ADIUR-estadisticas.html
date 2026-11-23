@@ -1948,8 +1948,8 @@ async function obtenerInfoPartidosExternosJugadora(jugadora) {
     const comp = p.competencia || p.torneo || "";
     return `
       <div class="ficha-item-box">
-        <strong>vs. ${rival}</strong> ${resultado ? `<span class="badge-titular">${resultado}</span>` : ""}
-        <div style="color:#666;font-size:11px;margin-top:3px;">${fecha} ${comp ? `· ${comp}` : ""}</div>
+        <strong>vs. ${escaparIntegral(rival)}</strong> ${resultado ? `<span class="badge-titular">${escaparIntegral(resultado)}</span>` : ""}
+        <div style="color:#666;font-size:11px;margin-top:3px;">${escaparIntegral(fecha)} ${comp ? `· ${escaparIntegral(comp)}` : ""}</div>
       </div>
     `;
   }).join("") + `</div>`;
@@ -2231,8 +2231,8 @@ async function obtenerInfoLesionesJugadora(jugadora) {
       const fecha = l.fecha || l.fechaInicio || "";
       return `
         <div class="ficha-item-box lesion">
-          <strong>${tipo}</strong> · <span style="font-size:11px;font-weight:bold;">${estado}</span>
-          ${fecha ? `<div style="color:#777;font-size:11px;margin-top:2px;">Fecha: ${fecha}</div>` : ""}
+          <strong>${escaparIntegral(tipo)}</strong> · <span style="font-size:11px;font-weight:bold;">${escaparIntegral(estado)}</span>
+          ${fecha ? `<div style="color:#777;font-size:11px;margin-top:2px;">Fecha: ${escaparIntegral(fecha)}</div>` : ""}
         </div>
       `;
     }).join("") + `</div>`
