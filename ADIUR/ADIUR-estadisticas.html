@@ -69,8 +69,8 @@ const app=getApps().length?getApps()[0]:initializeApp(firebaseConfig);
 const db=getFirestore(app);
 const $=id=>document.getElementById(id);
 let busquedaActual="";
-const FUENTES=["informes_partidos","asistenciaADIUR","testeos_adiur","tiemposRendimiento","lesiones"];
-const datos={jugadoras:[],informes_partidos:[],asistenciaADIUR:[],testeos_adiur:[],tiemposRendimiento:[],lesiones:[]};
+const FUENTES=["informes","asistenciaADIUR","testeos_adiur","tiemposRendimiento","lesiones"];
+const datos={jugadoras:[],informes:[],asistenciaADIUR:[],testeos_adiur:[],tiemposRendimiento:[],lesiones:[]};
 let permisos=null;
 let categoriaActiva="";
 const texto=v=>String(v??"").trim();
@@ -300,7 +300,8 @@ function aplicarPerfil(p){
 }
 window.addEventListener("adiur-permisos-listos",e=>aplicarPerfil(e.detail||window.ADIUR_PERMISOS));
 async function leerColeccion(nombre){
- const snap=await getDocs(collection(db,nombre));
+ const nombreReal = nombre === "informes" ? "informes_partidos" : nombre;
+ const snap=await getDocs(collection(db,nombreReal));
  return snap.docs.map(d=>({id:d.id,...d.data()}));
 }
 async function iniciar(){
