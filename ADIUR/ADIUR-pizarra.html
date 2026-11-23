@@ -2937,7 +2937,7 @@ function terminarDibujo(){dibujoActivo=null;manoAlzada=false;}
 function pintarPreviaLinea(){svgDibujos.querySelector("#lineaTemporal")?.remove();if(!puntosLinea.length)return;const el=svgEl("polyline",{id:"lineaTemporal",points:puntosLinea.map(p=>p.x+","+p.y).join(" "),...estiloDibujo(),fill:"none","stroke-dasharray":"8 5"});svgDibujos.appendChild(el);}
 function finalizarLinea(){if(!puntosLinea.length)return;svgDibujos.querySelector("#lineaTemporal")?.remove();if(puntosLinea.length>1)svgDibujos.appendChild(svgEl("polyline",{points:puntosLinea.map(p=>p.x+","+p.y).join(" "),...estiloDibujo(),fill:"none"}));puntosLinea=[];}
 function deshacerDibujo(){if(puntosLinea.length){puntosLinea.pop();pintarPreviaLinea();return;}const el=svgDibujos.lastElementChild;if(el&&el.tagName.toLowerCase()!=="defs")el.remove();}
-function limpiarDibujos(){if(!svgDibujos.querySelector("path,polyline,ellipse,rect,polygon,line,g"))return;if(!confirm("¿Querés borrar todos los dibujos de esta cancha?"))return;svgDibujos.querySelectorAll("path,polyline,ellipse,rect,polygon,line,g").forEach(e=>e.remove());puntosLinea=[];terminarDibujo();}
+function limpiarDibujos(){const dibujos=Array.from(svgDibujos.children).filter(el=>el.tagName.toLowerCase()!=="defs");if(!dibujos.length&&!puntosLinea.length)return;if(!confirm("¿Querés borrar todos los dibujos de esta cancha?"))return;dibujos.forEach(e=>e.remove());puntosLinea=[];terminarDibujo();}
 svgDibujos.addEventListener("pointerdown",iniciarDibujo);svgDibujos.addEventListener("pointermove",moverDibujo);svgDibujos.addEventListener("pointerup",terminarDibujo);svgDibujos.addEventListener("pointercancel",terminarDibujo);
 svgDibujos.addEventListener("dblclick",e=>{if(herramientaDibujo==="polyline"){e.preventDefault();finalizarLinea();}});
 const defs=svgEl("defs",{}),mk=svgEl("marker",{id:"puntaFlecha",markerWidth:8,markerHeight:8,refX:6,refY:3,orient:"auto",markerUnits:"strokeWidth"});mk.appendChild(svgEl("path",{d:"M0,0 L0,6 L6,3 z",fill:"context-stroke"}));defs.appendChild(mk);svgDibujos.appendChild(defs);
@@ -3363,7 +3363,7 @@ function limpiarPizarra(
       }
     );
 
-  svgDibujos.querySelectorAll("path,polyline,ellipse,rect,polygon,line,g").forEach(el=>el.remove());
+  Array.from(svgDibujos.children).filter(el=>el.tagName.toLowerCase()!=="defs").forEach(el=>el.remove());
   puntosLinea=[];
   terminarDibujo();
   arrastrando = null;
