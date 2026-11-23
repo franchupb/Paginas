@@ -202,7 +202,12 @@
     if (configActiva.rol === "jugadora") {
       document.querySelectorAll('a[href]').forEach(a => {
         const file = (a.getAttribute("href") || "").split(/[?#]/)[0].split("/").pop().toLowerCase();
-        if (file.endsWith(".html") && !PAGINAS_JUGADORAS.has(file)) a.remove();
+        if (file.endsWith(".html") && !PAGINAS_JUGADORAS.has(file)) {
+          a.remove();
+          return;
+        }
+        if (file === "adiur-gimnasio.html") a.innerHTML = '<span class="nav-punto" aria-hidden="true"></span>Biblioteca de rutinas';
+        if (file === "adiur-testeos.html") a.innerHTML = '<span class="nav-punto" aria-hidden="true"></span>Estadísticas';
       });
       // Gimnasio: las jugadoras acceden únicamente a la biblioteca de rutinas.
       if (pagina === "adiur-gimnasio.html") {
