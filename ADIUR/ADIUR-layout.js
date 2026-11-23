@@ -494,14 +494,6 @@
         titulo: "Estadísticas del club",
         descripcion: "Consultá el rendimiento general y la evolución de cada jugadora a partir de los registros de competencia, asistencia, testeos, tiempos y lesiones."
       },
-      "adiur-pizarra.html": {
-        controlesCategoria: ["division"],
-        ocultarSelectores: [".match-controls .control:first-child"],
-        selector: ".page-header",
-        eyebrow: "COMPETENCIA · ESTRATEGIA",
-        titulo: "Pizarra táctica",
-        descripcion: "Diseñá y guardá movimientos tácticos para ADIUR Femenino."
-      },
       "adiur-testeos.html": {
         controlesCategoria: ["selectDivision"],
         ocultarSelectores: [".selector-categoria"],
