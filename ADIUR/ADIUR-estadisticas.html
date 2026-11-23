@@ -1677,41 +1677,54 @@ function obtenerMinutosReglamentarios(division) {
 /* =====================================================
    USUARIO Y PERMISOS
 ===================================================== */
-const usuarioGuardado = localStorage.getItem("usuarioADIUR");
-
-if (!usuarioGuardado) {
-  window.location.href = "ADIUR-Loing.html";
-}
-
-const usuarioNormalizado = (usuarioGuardado || "").trim().toLowerCase();
+/* =====================================================
+   USUARIO Y PERMISOS
+   La sesión se valida exclusivamente desde Firebase
+   mediante ADIUR-permisos.js. No redirigir usando una
+   lectura inmediata de localStorage: al recargar, Firebase
+   puede tardar unos instantes en restaurar la sesión.
+===================================================== */
+const usuarioGuardado = localStorage.getItem("usuarioADIUR") || "";
+const usuarioNormalizado = usuarioGuardado.trim().toLowerCase();
 
 const esFran = ["fran", "francisco", "francisco perez basla"].includes(usuarioNormalizado);
 const esToto = usuarioNormalizado === "toto";
 const esBianca = ["biancadominguez", "bianca"].includes(usuarioNormalizado);
 
 const nombreMostrar = usuarioGuardado || "Usuario";
-
 document.getElementById("nombreUsuario").textContent = nombreMostrar;
 document.getElementById("avatarUsuario").textContent = nombreMostrar.charAt(0).toUpperCase();
-
 document.getElementById("rolUsuario").textContent =
   esFran ? "Administrador" :
   esToto ? "Cuerpo técnico" :
-  esBianca ? "Jugadora · Sub 14" :
+  esBianca ? "Jugadora" :
   "Club ADIUR";
 
-if (esBianca) {
-  document.getElementById("grupoPlantel")?.remove();
-  document.getElementById("grupoRendimientos")?.remove();
-  document.querySelectorAll("[data-ocultar-bianca]").forEach(enlace => {
-    enlace.style.display = "none";
-  });
-}
+/* Los accesos y el perfil definitivos los aplica ADIUR-permisos.js
+   cuando Firebase confirma la identidad del usuario. */
+window.addEventListener("adiur-permisos-listos", event => {
+  const perfil = event.detail || window.ADIUR_PERMISOS;
+  if (!perfil) return;
+  const nombre = perfil.nombre || perfil.usuario || "Usuario";
+  document.getElementById("nombreUsuario").textContent = nombre;
+  document.getElementById("avatarUsuario").textContent = nombre.charAt(0).toUpperCase();
+  document.getElementById("rolUsuario").textContent = ({
+    admin: "Administrador",
+    coordinadora: "Coordinadora",
+    cuerpo_tecnico: "Cuerpo técnico",
+    jugadora: "Jugadora"
+  })[perfil.rol] || "Club ADIUR";
+});
 
-window.cerrarSesion = function(event) {
+window.cerrarSesion = async function(event) {
   event.preventDefault();
-  localStorage.removeItem("usuarioADIUR");
-  window.location.href = "ADIUR-Loing.html";
+  try {
+    const modulo = await import("./ADIUR-auth.js?v=20261122c");
+    await modulo.cerrarSesionADIUR();
+  } catch (error) {
+    console.error("No se pudo cerrar la sesión ADIUR:", error);
+  }
+  window.location.replace("ADIUR-Loing.html");
 };
 
 /* =====================================================
