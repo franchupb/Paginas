@@ -4208,27 +4208,28 @@ function actualizarCategoriasYReRenderizar() {
   categoriasDisponibles = obtenerCategoriasDisponibles();
 
   const permisos = window.ADIUR_PERMISOS;
-  if (permisos && ["jugadora", "cuerpo_tecnico"].includes(permisos.rol)) {
-    const permitida = (permisos.categorias || [])[0];
-    const coincidePermitida = categoriasDisponibles.find(c =>
-      normalizarCategoria(c) === normalizarCategoria(permitida)
-    );
-    if (coincidePermitida || permitida) categoriaSeleccionada = coincidePermitida || permitida;
-  }
+  const perfilRestringido = permisos && ["jugadora", "cuerpo_tecnico"].includes(permisos.rol);
 
-  if (
-    !categoriasDisponibles.some(
-      categoria =>
-        normalizarCategoria(categoria) ===
-        normalizarCategoria(categoriaSeleccionada)
+  if (perfilRestringido) {
+    const permitidas = (permisos.categorias || []).map(normalizarCategoria);
+    const disponiblesPermitidas = categoriasDisponibles.filter(categoria =>
+      permitidas.includes(normalizarCategoria(categoria))
+    );
+    const actualPermitida = disponiblesPermitidas.find(categoria =>
+      normalizarCategoria(categoria) === normalizarCategoria(categoriaSeleccionada)
+    );
+    // Nunca caer en una categoría ajena si la permitida aún no tiene jugadoras cargadas.
+    categoriaSeleccionada = actualPermitida || disponiblesPermitidas[0] ||
+      (permisos.categorias || [])[0] || "";
+  } else if (
+    !categoriasDisponibles.some(categoria =>
+      normalizarCategoria(categoria) === normalizarCategoria(categoriaSeleccionada)
     )
   ) {
     categoriaSeleccionada = categoriasDisponibles[0] || "";
   } else {
-    categoriaSeleccionada = categoriasDisponibles.find(
-      categoria =>
-        normalizarCategoria(categoria) ===
-        normalizarCategoria(categoriaSeleccionada)
+    categoriaSeleccionada = categoriasDisponibles.find(categoria =>
+      normalizarCategoria(categoria) === normalizarCategoria(categoriaSeleccionada)
     ) || categoriaSeleccionada;
   }
 
