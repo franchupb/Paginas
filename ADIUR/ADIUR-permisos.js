@@ -257,7 +257,7 @@
 
   async function iniciarControlFirebase() {
     try {
-      const modulo = await import("./ADIUR-auth.js");
+      const modulo = await import("./ADIUR-auth.js?v=20261122b");
       modulo.observarSesionADIUR(async user => {
         if (!user) {
           location.replace(LOGIN_URL);
