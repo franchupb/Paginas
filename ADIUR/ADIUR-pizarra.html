@@ -997,6 +997,76 @@ body.immersive .board-studio .pitch{display:block!important;flex:1 1 auto!import
  .board-studio .top-tools .palette{gap:3px!important}
 }
 
+
+/* ===== BARRA UNICA: ADIUR · DIBUJO · RIVAL · INMERSIVO ===== */
+.board-studio>.board-topline,
+.board-studio>.show-controls{display:none!important}
+.board-studio>.controlbar{
+ display:grid!important;
+ grid-template-columns:minmax(88px,auto) minmax(0,1fr) auto auto!important;
+ grid-template-areas:"own tools rival immersive"!important;
+ align-items:center!important;
+ gap:9px!important;
+ width:100%!important;
+ min-height:58px!important;
+ height:auto!important;
+ padding:6px 12px!important;
+ overflow:visible!important;
+ border-bottom:1px solid #e6e6e6!important;
+ background:#fff!important;
+}
+.board-studio>.controlbar>.own-formation{grid-area:own!important;display:flex!important;min-width:0!important;justify-content:flex-start!important}
+.board-studio>.controlbar>.top-tools{grid-area:tools!important;display:flex!important;min-width:0!important;width:100%!important;justify-content:center!important;overflow:visible!important}
+.board-studio>.controlbar>.rival-formation{grid-area:rival!important;display:flex!important;min-width:0!important;justify-content:flex-end!important;gap:5px!important}
+.board-studio>.controlbar>.immersive-launch{
+ grid-area:immersive!important;display:flex!important;flex:0 0 auto!important;
+ align-items:center!important;justify-content:center!important;gap:5px!important;
+ min-width:36px!important;height:34px!important;padding:0 9px!important;
+ border:1px solid #f47721!important;border-radius:8px!important;
+ background:#f47721!important;color:#171717!important;
+ font:800 10px Arial!important;cursor:pointer!important;
+}
+.board-studio>.controlbar>.immersive-launch span{font-size:17px!important;line-height:1}
+.board-studio>.controlbar>.immersive-launch small{font-size:9px!important;font-weight:800!important;white-space:nowrap}
+.board-studio .rival-formation .add-rival-btn{
+ display:grid!important;place-items:center!important;flex:0 0 30px!important;
+ width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;
+ padding:0!important;border:1px solid #f47721!important;border-radius:7px!important;
+ background:#f47721!important;color:#171717!important;font-size:17px!important;font-weight:900!important;cursor:pointer!important;
+}
+.board-studio .rival-formation .add-rival-btn[aria-pressed="true"]{background:#171717!important;border-color:#171717!important;color:#f47721!important}
+@media(max-width:760px){
+ .board-studio>.controlbar{
+  grid-template-columns:76px minmax(0,1fr) 86px 31px!important;
+  grid-template-areas:"own tools rival immersive"!important;
+  gap:4px!important;min-height:49px!important;height:49px!important;
+  padding:4px 5px!important;overflow:hidden!important;
+ }
+ .board-studio .control-label{display:none!important}
+ .board-studio .own-formation select{width:100%!important;min-width:0!important;height:29px!important;padding:0 3px!important;font-size:8px!important}
+ .board-studio .rival-formation select{width:59px!important;min-width:0!important;height:29px!important;padding:0 2px!important;font-size:8px!important}
+ .board-studio .rival-formation .add-rival-btn{flex-basis:23px!important;width:23px!important;min-width:23px!important;height:27px!important;min-height:27px!important;font-size:15px!important}
+ .board-studio .top-tools{justify-content:space-between!important;gap:0!important;overflow:hidden!important}
+ .board-studio .top-tools .tool{display:flex!important;flex:1 1 0!important;width:auto!important;min-width:0!important;max-width:27px!important;height:34px!important;min-height:34px!important;padding:1px 0!important}
+ .board-studio .top-tools .tool span{font-size:14px!important}
+ .board-studio .top-tools .tool small{display:none!important}
+ .board-studio .top-tools .top-separator{display:block!important;flex:0 0 1px!important;width:1px!important;height:17px!important;margin:0 1px!important}
+ .board-studio .top-tools .palette{display:flex!important;flex:0 0 auto!important;gap:4px!important;padding:0 1px!important}
+ .board-studio .top-tools .swatch{flex:0 0 10px!important;width:10px!important;height:10px!important}
+ .board-studio .top-tools .quick-history{display:flex!important;flex:0 0 auto!important;gap:0!important}
+ .board-studio .top-tools .quick-history-btn{flex:0 0 17px!important;width:17px!important;height:23px!important;min-height:23px!important;padding:0!important;font-size:13px!important}
+ .board-studio>.controlbar>.immersive-launch{width:29px!important;min-width:29px!important;height:29px!important;padding:0!important;border-radius:7px!important}
+ .board-studio>.controlbar>.immersive-launch span{font-size:16px!important}
+ .board-studio>.controlbar>.immersive-launch small{display:none!important}
+}
+@media(max-width:390px){
+ .board-studio>.controlbar{grid-template-columns:67px minmax(0,1fr) 80px 28px!important;gap:3px!important;padding-right:3px!important;padding-left:3px!important}
+ .board-studio .rival-formation select{width:55px!important}
+ .board-studio .rival-formation .add-rival-btn{flex-basis:22px!important;width:22px!important;min-width:22px!important}
+ .board-studio .top-tools .tool{max-width:23px!important}
+ .board-studio .top-tools .palette{gap:3px!important}
+}
+
 </style>
 </head>
 <body>
@@ -1015,10 +1085,7 @@ body.immersive .board-studio .pitch{display:block!important;flex:1 1 auto!import
 <section class="studio" aria-label="Pizarra táctica">
 
 <section class="studio board-studio" aria-label="Pizarra táctica">
-<div class="board-topline">
-<div class="board-brand"><span class="board-brand-icon">A</span><div><strong>ADIUR <em>TACTICAL</em></strong><small>ESPACIO DE PLANIFICACIÓN</small></div></div>
-<div class="board-top-actions"><span class="board-live"><i></i> EDITOR ACTIVO</span><button class="immersive-launch" id="toggleImmersive" type="button" aria-pressed="false" title="Activar modo inmersivo"><span>⛶</span><small>Modo inmersivo</small></button></div>
-</div>
+
 <div class="controlbar" aria-label="Barra superior de herramientas">
 <div class="control-group formation-control own-formation"><span class="control-label">ADIUR</span><select id="formationOwn" aria-label="Formación ADIUR"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select></div>
 <div class="top-tools" aria-label="Herramientas de dibujo">
@@ -1034,8 +1101,8 @@ body.immersive .board-studio .pitch{display:block!important;flex:1 1 auto!import
 <div class="quick-history" aria-label="Historial de edición"><button class="quick-history-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button><button class="quick-history-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button></div>
 </div>
 <div class="control-group rival-formation"><span class="control-label">RIVAL</span><select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select><button class="add-rival-btn" id="addRival" type="button" title="Agregar formación rival" aria-label="Agregar formación rival" aria-pressed="false">✓</button></div>
+<button class="immersive-launch" id="toggleImmersive" type="button" aria-pressed="false" title="Activar modo inmersivo" aria-label="Activar modo inmersivo"><span>⛶</span><small>Modo inmersivo</small></button>
 </div>
-<button id="showControls" class="show-controls" type="button" aria-expanded="false">☷ Mostrar herramientas</button>
 <div class="workspace">
 <section class="pitch-stage">
 <div class="pitch-wrap"><div class="pitch" id="pitch">
