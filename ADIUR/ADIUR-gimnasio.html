@@ -4990,36 +4990,55 @@ async function sincronizarGimnasioConNube() {
   }
 }
 
-function inicializar() {
-  // Primero se prepara toda la interfaz. No se espera a Firebase.
+async function esperarPermisosADIUR() {
+  if (window.ADIUR_PERMISOS) return window.ADIUR_PERMISOS;
+  return new Promise(resolve => {
+    window.addEventListener("adiur-permisos-listos", event => {
+      resolve(event.detail || window.ADIUR_PERMISOS || null);
+    }, { once: true });
+  });
+}
+
+async function inicializar() {
+  // Esperar la identidad y los permisos centrales antes de preparar la vista.
+  await esperarPermisosADIUR();
   configurarMenu();
 
-  // Reconocer el perfil inmediatamente.
   usuario = leerUsuario();
-  esJugadora = detectarRol(usuario) === "jugadora";
+  esJugadora = window.ADIUR_PERMISOS?.rol === "jugadora" ||
+    detectarRol(usuario) === "jugadora";
   esStaff = !esJugadora;
 
-  $("nombrePerfil").textContent = nombreSesion(usuario);
-  $("avatarPerfil").textContent =
-    nombreSesion(usuario).trim().charAt(0).toUpperCase() || "U";
+  const nombrePerfil = window.ADIUR_PERMISOS?.nombre || nombreSesion(usuario);
+  $("nombrePerfil").textContent = nombrePerfil;
+  $("avatarPerfil").textContent = nombrePerfil.trim().charAt(0).toUpperCase() || "U";
 
-  jugadoraSesion = buscarJugadoraSesion();
-
-  if (esJugadora) {
-    if (!jugadoraSesion) {
-      jugadoraSesion = {
-        id: "bianca",
-        usuario: "bianca",
-        nombreCompleto: nombreSesion(usuario),
-        division: "Sub 14"
-      };
+  // Leer el plantel real de Firestore: las rutinas individuales se vinculan
+  // con el mismo ID documental que usa el resto del sistema.
+  try {
+    await window.firebaseGimnasioReady;
+    const registrosNube = await window.cargarJugadorasGimnasioNube?.();
+    if (Array.isArray(registrosNube) && registrosNube.length) {
+      jugadorasNubeCache = registrosNube;
     }
-
-    divisionSelect.value = divisionJugadora(jugadoraSesion);
-    divisionSelect.disabled = true;
-    modoSelect.value = "individual";
+  } catch (error) {
+    console.warn("No se pudo recuperar el plantel desde Firestore para Gimnasio:", error);
   }
 
+  jugadoraSesion = esJugadora ? buscarJugadoraSesion() : null;
+
+  if (esJugadora) {
+    const categoriaPerfil = window.ADIUR_PERMISOS?.categorias?.[0] || "Sub 16";
+    divisionSelect.value = jugadoraSesion
+      ? divisionJugadora(jugadoraSesion)
+      : categoriaPerfil;
+    divisionSelect.disabled = true;
+    modoSelect.value = "individual";
+
+    if (!jugadoraSesion) {
+      mostrarEstado("No se encontró tu ficha en el plantel. La biblioteca de rutinas sigue disponible.");
+    }
+  }
   poblarJugadoras();
 
   // Preparar una base local para que la página sea utilizable sin esperar la nube.
