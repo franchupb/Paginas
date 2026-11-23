@@ -2385,24 +2385,10 @@ function normalizarUsuario(valor) {
 
 const usuarioNormalizado = normalizarUsuario(usuarioGuardado);
 
-function esFran() {
-    return [
-        "fran",
-        "francisco",
-        "franciscoperezbasla"
-    ].includes(usuarioNormalizado);
-}
-
-function esToto() {
-    return usuarioNormalizado === "toto";
-}
-
-function esBianca() {
-    return [
-        "bianca",
-        "biancadominguez"
-    ].includes(usuarioNormalizado);
-}
+const rolADIUR = localStorage.getItem("rolADIUR") || "";
+function esFran() { return rolADIUR === "admin"; }
+function esToto() { return ["coordinadora", "cuerpo_tecnico"].includes(rolADIUR); }
+function esBianca() { return rolADIUR === "jugadora"; }
 
 document.getElementById("nombreUsuario").textContent =
     usuarioGuardado || "Usuario";
@@ -2415,7 +2401,7 @@ document.getElementById("avatarUsuario").textContent =
 document.getElementById("rolUsuario").textContent =
     esFran() ? "Administrador" :
     esToto() ? "Cuerpo técnico" :
-    esBianca() ? "Jugadora · Sub 14" :
+    esBianca() ? "Jugadora" :
     "Club ADIUR";
 
 document.getElementById("nombrePerfil").textContent =
@@ -2508,14 +2494,7 @@ document.querySelectorAll(".sidebar a").forEach(enlace => {
 
 /* PERMISOS DE BIANCA */
 
-if (esBianca()) {
-    document.getElementById("grupoPlantel")?.remove();
-    document.getElementById("grupoRendimientos")?.remove();
-
-    document.querySelectorAll("[data-ocultar-bianca]").forEach(enlace => {
-        enlace.style.display = "none";
-    });
-}
+// El menú se filtra desde ADIUR-permisos.js según el perfil autenticado.
 
 /* =====================================================
    PERFIL
@@ -2615,7 +2594,9 @@ if (usuarioNormalizado) {
     ];
 
     if (esBianca()) {
-        categoria.value = "Sub 14";
+        let categoriasUsuario = [];
+        try { categoriasUsuario = JSON.parse(localStorage.getItem("categoriasADIUR") || "[]"); } catch (_) {}
+        categoria.value = categoriasUsuario.find(valor => categoriasValidas.includes(valor)) || categoriasValidas[0];
     } else if (categoriasValidas.includes(preferida)) {
         categoria.value = preferida;
     }
