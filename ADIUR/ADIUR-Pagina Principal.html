@@ -1367,12 +1367,9 @@ const clavePreferencia =
 
 function divisionPredeterminada() {
   const todas = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
-  const permitidas = rolADIUR === "jugadora" && categoriasUsuario.length
-    ? todas.filter(categoria => categoriasUsuario.includes(categoria))
-    : todas;
   const guardada = localStorage.getItem(clavePreferencia);
-  if (permitidas.includes(guardada)) return guardada;
-  return permitidas[0] || "Primera";
+  if (todas.includes(guardada)) return guardada;
+  return "Sub 16";
 }
 
 function guardarPreferenciaDesdeSelector(id) {
