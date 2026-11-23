@@ -453,6 +453,84 @@ body.immersive .contenedor{height:100dvh!important}
 body.immersive .studio-head{display:none!important}
 body.immersive .controlbar{top:13px!important}
 
+
+/* ===== REDISEÑO FINAL: BARRA OCULTABLE, BOTONES INDIVIDUALES Y FICHAS SIN NÚMERO ===== */
+.studio-head{display:none!important}
+.controlbar{
+  top:12px!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important;
+  display:grid!important;grid-template-columns:minmax(170px,1fr) auto minmax(190px,1fr)!important;
+  width:min( min( calc(100vw - 32px), 1320px), 100%)!important;
+  gap:12px!important;padding:10px 13px!important;
+  border:1px solid #ffffff!important;border-radius:19px!important;
+  background:linear-gradient(112deg,#fff 0%,#fffdfb 35%,#fff0e5 72%,#f8c7a5 100%)!important;
+  box-shadow:0 12px 34px #15251b35,0 2px 7px #15251b16,inset 0 1px 0 #fff!important;
+  backdrop-filter:blur(18px) saturate(1.15)!important;
+  transition:opacity .18s ease,transform .18s ease!important;
+}
+.top-tools{gap:5px!important;padding:5px 8px!important;border:1px solid #edc5aa!important;border-radius:15px!important;background:linear-gradient(145deg,#fff 0%,#fffaf6 48%,#ffe4d1 100%)!important;box-shadow:inset 0 1px 0 #fff,0 3px 9px #a24b1b12!important}
+.top-tools .tool,.top-tools .immersive-tool,.top-tools .toolbar-hide{
+ flex:0 0 45px!important;min-height:45px!important;gap:3px!important;padding:4px 3px!important;
+ border:1px solid #ebc2a6!important;border-radius:10px!important;
+ background:linear-gradient(145deg,#fff 0%,#fff8f2 55%,#ffe6d5 100%)!important;
+ color:#70472f!important;box-shadow:0 2px 5px #743c1b12,inset 0 1px 0 #fff!important;
+}
+.top-tools .tool span{font-size:18px!important}.top-tools .tool small{font-size:7px!important;font-weight:900!important}
+.top-tools .tool:hover{border-color:#e99562!important;background:linear-gradient(145deg,#fff 0%,#ffd9c0 100%)!important;color:#a8440c!important;transform:translateY(-1px)}
+.top-tools .tool.active{border-color:#e87935!important;background:linear-gradient(145deg,#ffe2cf 0%,#f47721 100%)!important;color:#71300d!important;box-shadow:0 3px 8px #a94d1b30,inset 0 1px 0 #fff!important}
+.top-tools .immersive-tool{flex-basis:54px!important;border-color:#e7a276!important;background:linear-gradient(145deg,#fff 0%,#ffd9c0 100%)!important;color:#9a4518!important}
+.top-tools .toolbar-hide{flex-basis:43px!important;background:linear-gradient(145deg,#fff 0%,#f8eee8 100%)!important}
+.top-separator{height:33px!important;background:#e3b79d!important}
+.quick-history-btn{width:31px!important;height:31px!important;border:1px solid #e5ae8c!important;border-radius:9px!important;background:linear-gradient(145deg,#fff 0%,#ffe4d2 100%)!important;color:#873e18!important;box-shadow:0 2px 5px #783b1b16,inset 0 1px 0 #fff!important}
+.quick-history-btn:hover{border-color:#e87935!important;background:linear-gradient(145deg,#fff 0%,#ffd7bd 100%)!important}
+.formation-control,.rival-formation{padding:7px 9px!important;border:1px solid #e7b18f!important;border-radius:12px!important;background:linear-gradient(145deg,#fff 0%,#fff8f2 55%,#ffe5d3 100%)!important;box-shadow:0 3px 9px #a24b1b12,inset 0 1px 0 #fff!important}
+.formation-control select,.rival-formation select{border:1px solid #e8b18f!important;border-radius:9px!important;background:linear-gradient(180deg,#fff 0%,#fffaf7 100%)!important}
+.add-rival-btn,.reset-btn{border:1px solid #e7a77d!important;border-radius:9px!important;background:linear-gradient(145deg,#fff 0%,#ffd9c0 100%)!important;color:#813b16!important;box-shadow:0 2px 5px #743c1b12!important}
+.player-number{display:none!important}
+.player{font-size:0!important}
+.player:after{content:"";position:absolute;inset:11px;border-radius:50%;background:#ffffff30;pointer-events:none}
+.player.rival:after{background:#ffffff1c}
+.show-controls{
+ position:absolute;z-index:30;top:12px;left:50%;transform:translateX(-50%);
+ display:none;align-items:center;justify-content:center;gap:7px;
+ min-height:38px;padding:0 15px;border:1px solid #fff;border-radius:12px;
+ background:linear-gradient(110deg,#fff 0%,#fffaf6 45%,#ffd9c0 100%);
+ color:#783b1a;font:800 10px Arial;letter-spacing:.2px;
+ box-shadow:0 7px 22px #17271b35,inset 0 1px 0 #fff;cursor:pointer;
+}
+.show-controls[hidden]{display:none!important}
+body.controls-hidden .controlbar{display:none!important}
+body.controls-hidden .show-controls{display:flex}
+body.immersive .controlbar{top:12px!important}
+body.immersive.controls-hidden .show-controls{top:12px}
+@media(max-width:900px){
+ .controlbar{width:calc(100vw - 20px)!important;grid-template-columns:minmax(135px,1fr) auto minmax(155px,1fr)!important;gap:7px!important;padding:7px!important}
+ .top-tools{gap:3px!important;padding:4px!important}
+ .top-tools .tool{flex-basis:38px!important;min-height:39px!important}
+ .top-tools .immersive-tool{flex-basis:48px!important}
+ .top-tools .toolbar-hide{flex-basis:38px!important}
+ .quick-history-btn{width:26px!important;height:26px!important}
+}
+@media(max-width:680px){
+ .controlbar{top:7px!important;left:7px!important;right:7px!important;transform:none!important;width:auto!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-areas:"own rival" "tools tools"!important;gap:5px!important;padding:7px!important;border-radius:14px!important}
+ .top-tools{grid-area:tools!important;justify-self:center!important;max-width:100%!important;gap:2px!important;padding:4px!important}
+ .top-tools .tool{flex:0 0 36px!important;min-height:35px!important}
+ .top-tools .immersive-tool{flex-basis:43px!important}
+ .top-tools .toolbar-hide{flex-basis:35px!important}
+ .top-tools .tool span{font-size:15px!important}.top-tools .tool small{font-size:6px!important}
+ .top-tools .palette{gap:6px!important}.quick-history-btn{width:22px!important;height:22px!important}
+ .formation-control,.rival-formation{padding:5px!important}
+ .show-controls{top:8px;min-height:34px;padding:0 12px}
+}
+@media(max-width:390px){
+ .top-tools{gap:1px!important;padding:3px!important}
+ .top-tools .tool{flex-basis:32px!important}
+ .top-tools .immersive-tool{flex-basis:39px!important}
+ .top-tools .toolbar-hide{flex-basis:32px!important}
+ .top-tools .tool small{font-size:5.5px!important}
+ .top-tools .palette{gap:4px!important}
+ .quick-history-btn{width:20px!important;height:20px!important}
+}
+
 </style>
 </head>
 <body>
@@ -469,10 +547,7 @@ body.immersive .controlbar{top:13px!important}
 <div class="pizarra-shell">
 <section class="intro"><div><div class="kicker">ADIUR FEMENINO · COMPETENCIA</div><h2>Pizarra táctica</h2><p>Diseñá movimientos, organizá estructuras y visualizá cada fase del juego.</p></div><div class="intro-tag">● ESPACIO DE TRABAJO TÁCTICO</div></section>
 <section class="studio" aria-label="Pizarra táctica">
-<header class="studio-head">
-<div class="brand"><div class="brand-mark">A</div><div><strong>ADIUR · PIZARRA</strong></div></div>
-<div class="actions"><button class="btn primary" id="toggleImmersive" type="button" aria-pressed="false">⛶ Inmersivo</button></div>
-</header>
+
 <div class="workspace">
 <section class="pitch-stage">
 <div class="pitch-wrap"><div class="pitch" id="pitch">
@@ -491,8 +566,11 @@ body.immersive .controlbar{top:13px!important}
 <div class="palette" aria-label="Color de dibujo"><button class="swatch active" data-color="#f47721" style="background:#f47721" aria-label="Naranja" type="button"></button><button class="swatch" data-color="#e53935" style="background:#e53935" aria-label="Rojo" type="button"></button><button class="swatch" data-color="#171717" style="background:#171717" aria-label="Negro" type="button"></button></div>
 <span class="top-separator history-separator"></span>
 <div class="quick-history" aria-label="Historial de edición"><button class="quick-history-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button><button class="quick-history-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button><button class="quick-history-btn clear" id="clearDrawings" type="button" title="Borrar trazos" aria-label="Borrar trazos">⌫</button></div>
+<button class="tool immersive-tool" id="toggleImmersive" type="button" aria-pressed="false" title="Activar modo inmersivo"><span>⛶</span><small>Inmersivo</small></button>
+<button class="tool toolbar-hide" id="hideControls" type="button" title="Ocultar barra"><span>⌃</span><small>Ocultar</small></button>
 </div>
 <div class="control-group rival-formation"><span class="control-label">FORMACIÓN RIVAL</span><select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select><button class="btn add-rival-btn" id="addRival" type="button">＋ Rival</button><button class="btn reset-btn" id="resetPositions" type="button" title="Reubicar posiciones" aria-label="Reubicar posiciones">↺</button></div>
+<button id="showControls" class="show-controls" type="button" aria-expanded="false">☷ Mostrar herramientas</button>
 <div class="rival-strip" id="rivalPanel" hidden><strong>RIVAL ACTIVO</strong><button class="btn primary" id="confirmRival" type="button">Aplicar formación</button><button class="btn" id="removeRival" type="button">Quitar rival</button></div>
 <span id="status" class="status-hidden" aria-live="polite">11 posiciones iniciales listas</span>
 </section>
@@ -533,7 +611,7 @@ function setField(){$("fieldSvg").innerHTML='<g fill="none" stroke="#f7fff7" str
 function coords(e){var r=pitch.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};}
 function drawOne(d,g,w,h){var x=d.x*w,y=d.y*h,X=d.X*w,Y=d.Y*h;g.save();g.strokeStyle=d.color;g.fillStyle=d.color;g.lineWidth=4;g.lineCap="round";g.lineJoin="round";g.setLineDash(d.type==="dash"?[10,8]:[]);g.beginPath();if(d.type==="free"){(d.points||[]).forEach(function(p,i){if(i)g.lineTo(p.x*w,p.y*h);else g.moveTo(p.x*w,p.y*h);});}else if(d.type==="zone"){g.ellipse((x+X)/2,(y+Y)/2,Math.max(2,Math.abs(X-x)/2),Math.max(2,Math.abs(Y-y)/2),0,0,Math.PI*2);}else{g.moveTo(x,y);g.lineTo(X,Y);if(d.type==="arrow"){var a=Math.atan2(Y-y,X-x),len=20;g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a-.5),Y-len*Math.sin(a-.5));g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a+.5),Y-len*Math.sin(a+.5));}}g.stroke();g.restore();}
 function paint(){var r=pitch.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(!r.width||!r.height)return;ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.setTransform(dpr,0,0,dpr,0,0);drawings.forEach(function(d){drawOne(d,ctx,r.width,r.height);});if(drawing&&start&&points.length)drawOne({type:tool,x:start.x,y:start.y,X:points[points.length-1].x,Y:points[points.length-1].y,points:points,color:color},ctx,r.width,r.height);}
-function renderPlayers(){var host=$("players");host.replaceChildren();players.forEach(function(p){var el=document.createElement("button");el.type="button";el.className="player "+p.team+(p.id===selected?" selected":"");el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";el.setAttribute("aria-label",(p.team==="own"?"ADIUR":"Rival")+" · ficha "+p.number);el.title=(p.team==="own"?"ADIUR":"Rival")+" · "+p.number;var n=document.createElement("span");n.className="player-number";n.textContent=p.number;el.append(n);el.addEventListener("pointerdown",function(e){if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;renderPlayers();var move=function(v){var q=coords(v);p.x=Math.max(.025,Math.min(.975,q.x));p.y=Math.max(.035,Math.min(.965,q.y));el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";};var end=function(){window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);renderPlayers();status("Posición actualizada");};el.classList.add("selected");window.addEventListener("pointermove",move);window.addEventListener("pointerup",end,{once:true});});host.append(el);});syncCount();}
+function renderPlayers(){var host=$("players");host.replaceChildren();players.forEach(function(p){var el=document.createElement("button");el.type="button";el.className="player "+p.team+(p.id===selected?" selected":"");el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";el.setAttribute("aria-label",p.team==="own"?"Ficha de ADIUR":"Ficha del rival");el.title=p.team==="own"?"Ficha ADIUR":"Ficha rival";el.addEventListener("pointerdown",function(e){if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;renderPlayers();var move=function(v){var q=coords(v);p.x=Math.max(.025,Math.min(.975,q.x));p.y=Math.max(.035,Math.min(.965,q.y));el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";};var end=function(){window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);renderPlayers();status("Posición actualizada");};el.classList.add("selected");window.addEventListener("pointermove",move);window.addEventListener("pointerup",end,{once:true});});host.append(el);});syncCount();}
 function resize(){var r=pitch.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(!r.width||!r.height)return;canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);canvas.style.width=r.width+"px";canvas.style.height=r.height+"px";paint();}
 function setFormation(team,formation){var group=players.filter(function(p){return p.team===team;});formations[formation].forEach(function(q,i){if(group[i]){group[i].x=team==="rival"?1-q[0]:q[0];group[i].y=q[1];}});}
 function updateOwn(){snapshot();setFormation("own",$("formationOwn").value);renderPlayers();paint();status("Formación ADIUR "+$("formationOwn").value+" aplicada");}
@@ -553,11 +631,15 @@ canvas.addEventListener("pointercancel",function(){drawing=false;points=[];paint
 $("undo").addEventListener("click",function(){if(!history.length)return;future.push({players:clone(players),drawings:clone(drawings)});var s=history.pop();players=s.players;drawings=s.drawings;renderPlayers();paint();syncHistory();status("Último cambio deshecho");});
 $("redo").addEventListener("click",function(){if(!future.length)return;history.push({players:clone(players),drawings:clone(drawings)});var s=future.pop();players=s.players;drawings=s.drawings;renderPlayers();paint();syncHistory();status("Cambio recuperado");});
 $("clearDrawings").addEventListener("click",function(){if(!drawings.length)return;snapshot();drawings=[];paint();status("Trazos eliminados");});
-var immersive=$("toggleImmersive");
-function syncImmersive(){var on=document.body.classList.contains("immersive");immersive.textContent=on?"⤢ Salir":"⛶ Inmersivo";immersive.setAttribute("aria-pressed",String(on));}
-immersive.addEventListener("click",async function(){var on=document.body.classList.contains("immersive");if(on){document.body.classList.remove("immersive");if(document.fullscreenElement&&document.exitFullscreen)try{await document.exitFullscreen();}catch(e){}}else{document.body.classList.add("immersive");if(document.documentElement.requestFullscreen)try{await document.documentElement.requestFullscreen();}catch(e){}}syncImmersive();setTimeout(resize,120);});
-document.addEventListener("fullscreenchange",function(){if(!document.fullscreenElement&&document.body.classList.contains("immersive"))document.body.classList.remove("immersive");syncImmersive();setTimeout(resize,120);});
-document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();$("undo").click();}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();$("redo").click();}else if(e.key==="Escape"&&document.body.classList.contains("immersive")){document.body.classList.remove("immersive");syncImmersive();setTimeout(resize,120);}});
+var immersive=$("toggleImmersive"),hideControls=$("hideControls"),showControls=$("showControls");
+function syncImmersive(){var on=document.body.classList.contains("immersive");immersive.querySelector("small").textContent=on?"Salir":"Inmersivo";immersive.querySelector("span").textContent=on?"⤢":"⛶";immersive.setAttribute("aria-pressed",String(on));showControls.setAttribute("aria-expanded",String(!document.body.classList.contains("controls-hidden")));showControls.hidden=!document.body.classList.contains("controls-hidden");}
+function hideToolbar(){document.body.classList.add("controls-hidden");syncImmersive();}
+function showToolbar(){document.body.classList.remove("controls-hidden");syncImmersive();}
+hideControls.addEventListener("click",hideToolbar);
+showControls.addEventListener("click",showToolbar);
+immersive.addEventListener("click",async function(){var on=document.body.classList.contains("immersive");if(on){document.body.classList.remove("immersive");showToolbar();if(document.fullscreenElement&&document.exitFullscreen)try{await document.exitFullscreen();}catch(e){}}else{document.body.classList.add("immersive");hideToolbar();if(document.documentElement.requestFullscreen)try{await document.documentElement.requestFullscreen();}catch(e){}}syncImmersive();setTimeout(resize,120);});
+document.addEventListener("fullscreenchange",function(){if(!document.fullscreenElement&&document.body.classList.contains("immersive")){document.body.classList.remove("immersive");showToolbar();}syncImmersive();setTimeout(resize,120);});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();$("undo").click();}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();$("redo").click();}else if(e.key==="Escape"&&document.body.classList.contains("immersive")){document.body.classList.remove("immersive");showToolbar();syncImmersive();setTimeout(resize,120);}});
 setField();renderPlayers();syncHistory();if(window.ResizeObserver)new ResizeObserver(resize).observe(pitch);window.addEventListener("resize",resize);syncImmersive();requestAnimationFrame(resize);
 })();
 </script>
