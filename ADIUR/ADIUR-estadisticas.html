@@ -2053,6 +2053,8 @@ async function obtenerInfoAsistenciaJugadora(jugadora, mesFiltro = "total") {
 
   registros.forEach(reg => {
     if (!reg) return;
+    const categoriaRegistro=categoriaRegistroIntegral(reg);
+    if(categoriaRegistro&&categoriaRegistro!==claveCategoriaIntegral(jugadora.categoria))return;
 
     // Filtrar por mes si no es "total"
     const fechaReg = reg.fecha || reg.dia || reg.fechaEntrenamiento || "";
@@ -2064,8 +2066,9 @@ async function obtenerInfoAsistenciaJugadora(jugadora, mesFiltro = "total") {
     // Estructura A: objeto de sesión con mapa { jugadoras: { "Nombre": "Presente" } } o { asistencias: { ... } }
     const mapaJugadoras = reg.jugadoras || reg.asistencias || reg.detalle;
     if (mapaJugadoras && typeof mapaJugadoras === "object" && !Array.isArray(mapaJugadoras)) {
+      const aliasNombres=nombresPosiblesJugadoraIntegral(jugadora);
       const key = Object.keys(mapaJugadoras).find(k =>
-        normalizarTexto(k) === normalizarTexto(jugadora.nombreCompleto) ||
+        aliasNombres.includes(normalizarNombreIntegral(k)) ||
         normalizarTexto(k) === normalizarTexto(jugadora.id)
       );
       if (key) {
@@ -2088,7 +2091,7 @@ async function obtenerInfoAsistenciaJugadora(jugadora, mesFiltro = "total") {
       }
     }
     // Estructura B: registro individual por jugadora
-    else if (coincideJugadora(reg, jugadora)) {
+    else if (mismaJugadoraIntegral(reg, jugadora)) {
       const claveUnica = `${fechaReg}_${jugadora.nombreCompleto}`;
       if (fechaReg && fechasProcesadas.has(claveUnica)) return;
       if (fechaReg) fechasProcesadas.add(claveUnica);
