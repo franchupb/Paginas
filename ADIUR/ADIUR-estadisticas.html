@@ -1436,9 +1436,11 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
         <article><small>MINUTOS JUGADOS</small><strong id="integralTotalMinutos">—</strong><span>Acumulado en informes</span></article>
         <article><small>GOLES</small><strong id="integralTotalGoles">—</strong><span>Registrados en Informes</span></article>
         <article><small>LESIONES ACTIVAS</small><strong id="integralCasosActivos">—</strong><span>Casos que continúan en seguimiento</span></article>
+        <article><small>ASISTENCIA MEDIA</small><strong id="integralAsistenciaMedia">—</strong><span>Promedio de asistencia registrada</span></article>
+        <article><small>JUGADORAS CON TIEMPOS</small><strong id="integralJugadorasConTiempos">—</strong><span>Con al menos una medición cargada</span></article>
       </div>
       <div class="integral-table-head">
-        <div><h4>Resumen del plantel</h4><p>Comparación general de partidos, goles, testeos y estado de lesiones. Seleccioná un nombre para abrir su ficha integral.</p></div>
+        <div><h4>Resumen del plantel</h4><p>Comparación general de competencia, asistencia, tiempos, testeos y estado de lesiones. Seleccioná un nombre para abrir su ficha integral.</p></div>
         <input id="buscarIntegral" type="search" placeholder="Buscar jugadora..." aria-label="Buscar jugadora en estadísticas">
       </div>
       <div class="integral-table-wrap"><table class="integral-table"><thead><tr><th>JUGADORA</th><th>POSICIÓN</th><th>PJ</th><th>MIN</th><th>G</th><th>🟨</th><th>🟥</th><th>TESTEOS / MARCAS RECIENTES</th><th>SALUD / LESIONES</th><th></th></tr></thead><tbody id="cuerpoIntegral"><tr><td colspan="10" class="integral-empty">Preparando el consolidado de la categoría…</td></tr></tbody></table></div>
@@ -2235,16 +2237,17 @@ async function obtenerInfoAsistenciaJugadora(jugadora, mesFiltro = "total") {
 
   if (nubeActiva && db) {
     try {
-      const snap = await getDocs(collection(db, "asistenciaADIUR"));
-      snap.forEach(d => {
-        const dato = d.data();
-        // Si el ID del documento contiene la fecha (ej: Sub_14_2026-11-15), la preservamos
-        if (!dato.fecha && d.id) {
-          const matchFechaId = d.id.match(/(\d{4}[-/]\d{1,2}[-/]\d{1,2})/);
-          if (matchFechaId) dato.fecha = matchFechaId[1];
-        }
-        registros.push(dato);
-      });
+      if (!cacheAsistenciaNubeIntegral) {
+        cacheAsistenciaNubeIntegral = getDocs(collection(db, "asistenciaADIUR")).then(snap => snap.docs.map(d => {
+          const dato = d.data();
+          if (!dato.fecha && d.id) {
+            const matchFechaId = d.id.match(/(\d{4}[-/]\d{1,2}[-/]\d{1,2})/);
+            if (matchFechaId) dato.fecha = matchFechaId[1];
+          }
+          return dato;
+        }));
+      }
+      registros.push(...await cacheAsistenciaNubeIntegral);
     } catch (e) {}
   }
 
@@ -2404,8 +2407,11 @@ async function obtenerInfoTiemposJugadora(jugadora) {
 
   if (nubeActiva && db) {
     try {
-      const snap = await getDocs(collection(db, "tiemposRendimiento"));
-      snap.forEach(d => tiempos.push({ id: d.id, ...d.data() }));
+      if (!cacheTiemposNubeIntegral) {
+        cacheTiemposNubeIntegral = getDocs(collection(db, "tiemposRendimiento"))
+          .then(snap => snap.docs.map(d => ({id:d.id,...d.data()})));
+      }
+      tiempos.push(...await cacheTiemposNubeIntegral);
     } catch (e) {}
   }
 
@@ -3035,6 +3041,8 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 /* CONSOLIDADO INDIVIDUAL · INFORMES + TESTEOS + LESIONES */
 const CACHE_FUENTES_INTEGRAL={partidos:{at:0,data:[]},lesiones:{at:0,data:[]},planillas:new Map()};
+let cacheAsistenciaNubeIntegral = null;
+let cacheTiemposNubeIntegral = null;
 const TTL_FUENTES_INTEGRAL=15000;
 let versionRenderIntegral=0;
 function claveCategoriaIntegral(valor){return normalizarTexto(valor).replace(/[^a-z0-9]/g,"");}
@@ -3181,7 +3189,21 @@ async function renderizarPanelIntegral(){
   return competenciaCoincideIntegral(p.torneo||p.competicion||p.competencia||"",competencia);
  });
  const planillas=planillasPorCategoria.flat();
+ let fuentesExtra=[];
+ try {
+  fuentesExtra=await Promise.all(jugadoras.map(async j=>{
+   const [asistencia,tiempos]=await Promise.all([
+    obtenerInfoAsistenciaJugadora(j,"total"),
+    obtenerInfoTiemposJugadora(j)
+   ]);
+   return {id:String(j.id),asistencia,tiempos};
+  }));
+ } catch(error) {
+  console.warn("No se pudieron consolidar asistencia y tiempos:",error);
+ }
+ if(version!==versionRenderIntegral||document.getElementById("filtroJugadoraIndividual").value!==seleccion)return;
  const resumen=[];
+
  for(const j of jugadoras){
   const regs=partidosDiv.map(p=>({p,reg:registroPartidoIntegral(p,j,categoriaFiltrada?division:"")})).filter(x=>x.reg);
   let pj=0,min=0,goles=0,amarillas=0,rojas=0;
@@ -3213,6 +3235,13 @@ async function renderizarPanelIntegral(){
  document.getElementById("integralTotalMinutos").textContent=partidosDiv.length?suma("min").toLocaleString("es-AR"):"—";
  document.getElementById("integralTotalGoles").textContent=partidosDiv.length?suma("goles"):"—";
  document.getElementById("integralCasosActivos").textContent=resumen.reduce((a,x)=>a+x.activos.length,0);
+ const asistenciasValidas=fuentesExtra.map(x=>x.asistencia).filter(x=>x&&x.total>0);
+ const asistenciaMedia=asistenciasValidas.length
+  ?Math.round(asistenciasValidas.reduce((a,x)=>a+x.porcentaje,0)/asistenciasValidas.length)
+  :null;
+ const jugadorasConTiempos=fuentesExtra.filter(x=>x.tiempos&&Array.isArray(x.tiempos.lista)&&x.tiempos.lista.length>0).length;
+ document.getElementById("integralAsistenciaMedia").textContent=asistenciaMedia===null?"—":asistenciaMedia+"%";
+ document.getElementById("integralJugadorasConTiempos").textContent=jugadorasConTiempos;
  const render=lista=>{
   if(!lista.length){tbody.innerHTML='<tr><td colspan="10" class="integral-empty">No hay jugadoras para mostrar.</td></tr>';return;}
   tbody.innerHTML=lista.map(x=>{
