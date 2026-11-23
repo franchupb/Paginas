@@ -353,6 +353,106 @@ body.immersive .studio-head{display:none}
 body.immersive .workspace{position:relative}
 body.immersive .controlbar{top:12px}
 
+
+/* ===== AJUSTE FINAL: CANCHA A SANGRE + BARRA FLOTANTE ADIUR ===== */
+html,body{height:100%;background:#347b43!important}
+body{overflow:hidden}
+.contenedor{display:flex!important;width:100%;height:calc(100dvh - 84px)!important;min-height:0!important;background:#347b43!important}
+.main{display:flex!important;flex:1 1 0!important;width:calc(100% - 258px);height:calc(100dvh - 84px)!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;background:#347b43!important}
+.pizarra-shell{display:flex!important;flex:1 1 auto!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important}
+.studio{position:relative!important;display:flex!important;flex:1 1 auto!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;border:0!important;border-radius:0!important;background:#347b43!important}
+.studio-head{position:relative;z-index:12;flex:0 0 42px!important;min-height:42px!important}
+.workspace{position:relative!important;display:block!important;flex:1 1 0!important;width:100%!important;height:auto!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;background:#347b43!important}
+.pitch-stage{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;background:#347b43!important}
+.pitch-wrap{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;border:0!important;border-radius:0!important;background:#347b43!important}
+.pitch{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;aspect-ratio:auto!important;overflow:hidden!important;border:0!important;border-radius:0!important;background-color:#347b43!important;background-image:repeating-linear-gradient(90deg,#ffffff0b 0,#ffffff0b 10%,#00000008 10%,#00000008 20%)!important;box-shadow:none!important}
+.field-svg,.drawing-canvas,#players{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
+.pitch-meta,.pitch-footer,.studio-foot,.historybar{display:none!important}
+
+/* Barra flotante: degradé blanco a naranja, estética limpia y unificada */
+.controlbar{position:absolute!important;z-index:20!important;top:13px!important;left:14px!important;right:14px!important;display:grid!important;grid-template-columns:minmax(185px,1fr) auto minmax(210px,1fr)!important;align-items:center!important;gap:12px!important;width:auto!important;min-height:62px!important;padding:8px 11px!important;border:1px solid #ffffffd9!important;border-radius:17px!important;background:linear-gradient(105deg,rgba(255,255,255,.98) 0%,rgba(255,250,246,.97) 48%,rgba(255,220,195,.97) 100%)!important;box-shadow:0 9px 28px #17271b30,0 2px 6px #17271b14,inset 0 1px 0 #fff!important;backdrop-filter:blur(14px) saturate(1.2)!important;pointer-events:none!important}
+.controlbar>*{pointer-events:auto!important}
+.formation-control,.rival-formation{display:flex!important;align-items:center!important;gap:8px!important;min-width:0!important;padding:5px 8px!important;border:1px solid #e9a47780!important;border-radius:11px!important;background:linear-gradient(135deg,#ffffff 0%,#fff5ed 100%)!important;box-shadow:0 2px 7px #8e481515!important}
+.formation-control{justify-content:flex-start!important}
+.rival-formation{justify-content:flex-end!important}
+.formation-control .control-label,.rival-formation .control-label{color:#9a4b1c!important;font-size:8px!important;font-weight:900!important;letter-spacing:.75px!important;white-space:nowrap!important}
+.formation-control select,.rival-formation select{height:32px!important;min-width:88px!important;padding:0 26px 0 10px!important;border:1px solid #edc4a9!important;border-radius:8px!important;background:#fff!important;color:#272727!important;font-size:10px!important;font-weight:800!important;box-shadow:0 1px 2px #5a2a1010!important}
+.formation-control select:focus,.rival-formation select:focus{border-color:#f47721!important;box-shadow:0 0 0 3px #f4772120!important}
+.top-tools{display:flex!important;align-items:center!important;justify-content:center!important;gap:3px!important;min-width:0!important;padding:4px 7px!important;border:1px solid #e7a77d80!important;border-radius:12px!important;background:linear-gradient(135deg,#fff 0%,#fff1e6 100%)!important;box-shadow:0 2px 8px #8e48151a!important}
+.top-tools .tool{display:flex!important;flex:0 0 42px!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;min-height:40px!important;padding:3px 2px!important;border:1px solid transparent!important;border-radius:8px!important;background:transparent!important;color:#6b5142!important}
+.top-tools .tool span{font-size:17px!important;line-height:1!important}
+.top-tools .tool small{font-size:7px!important;font-weight:800!important}
+.top-tools .tool:hover{border-color:#f5c7a8!important;background:#fff!important;color:#a7470c!important}
+.top-tools .tool.active{border-color:#f5a36d!important;background:linear-gradient(145deg,#fff 0%,#ffe4d2 100%)!important;color:#c6530b!important;box-shadow:0 2px 5px #a84c1b20!important}
+.top-separator{width:1px!important;height:28px!important;margin:0 4px!important;background:#e4b99e!important}
+.top-tools .palette{display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;padding:0 3px!important}
+.top-tools .swatch{width:15px!important;height:15px!important;flex:0 0 15px!important;border:2px solid #fff!important;box-shadow:0 0 0 1px #bca18f!important}
+.top-tools .swatch.active{outline:2px solid #e96e22!important;outline-offset:2px!important}
+.quick-history{display:flex!important;align-items:center!important;gap:3px!important}
+.quick-history-btn{display:grid!important;place-items:center!important;width:27px!important;height:27px!important;padding:0!important;border:1px solid #e8b18e!important;border-radius:8px!important;background:linear-gradient(145deg,#fff 0%,#ffeadc 100%)!important;color:#773b1a!important;font-size:16px!important;cursor:pointer!important;box-shadow:0 1px 3px #783b1b14!important}
+.quick-history-btn:hover{border-color:#f47721!important;background:#fff!important}
+.quick-history-btn:disabled{opacity:.35!important;cursor:not-allowed!important}
+.quick-history-btn.clear{color:#a33b2c!important}
+.add-rival-btn,.reset-btn{min-height:30px!important;padding:0 9px!important;border:1px solid #e6a47c!important;border-radius:8px!important;background:linear-gradient(145deg,#fff 0%,#ffeadc 100%)!important;color:#843d16!important;font-size:9px!important;font-weight:800!important;white-space:nowrap!important}
+.add-rival-btn:hover,.reset-btn:hover{border-color:#f47721!important;background:#fff!important}
+.reset-btn{width:30px!important;padding:0!important;font-size:16px!important}
+.rival-strip{position:absolute!important;z-index:22!important;top:86px!important;right:14px!important;display:flex!important;align-items:center!important;gap:7px!important;padding:7px 10px!important;border:1px solid #fff!important;border-radius:11px!important;background:linear-gradient(110deg,#fff 0%,#fff0e5 100%)!important;box-shadow:0 6px 18px #17271b2b!important;backdrop-filter:blur(12px)!important}
+.rival-strip[hidden]{display:none!important}
+.rival-strip>strong{color:#98441c!important;font-size:8px!important}
+.rival-strip .btn{min-height:27px!important;padding:0 8px!important;border-radius:7px!important;font-size:8px!important}
+.status-hidden{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important}
+
+@media(max-width:900px){
+ .controlbar{top:9px!important;left:9px!important;right:9px!important;grid-template-columns:minmax(150px,1fr) auto minmax(175px,1fr)!important;gap:6px!important;padding:6px!important;min-height:56px!important;border-radius:14px!important}
+ .formation-control,.rival-formation{gap:5px!important;padding:4px 6px!important}
+ .formation-control .control-label,.rival-formation .control-label{font-size:7px!important;letter-spacing:.4px!important}
+ .formation-control select,.rival-formation select{min-width:69px!important;height:29px!important;padding-left:6px!important;font-size:8px!important}
+ .top-tools{gap:1px!important;padding:3px 4px!important}
+ .top-tools .tool{flex-basis:37px!important;min-height:36px!important}
+ .top-tools .tool span{font-size:15px!important}.top-tools .tool small{font-size:6px!important}
+ .top-tools .palette{gap:6px!important}.top-tools .swatch{width:13px!important;height:13px!important;flex-basis:13px!important}
+ .quick-history{gap:2px!important}.quick-history-btn{width:23px!important;height:23px!important;font-size:14px!important}
+ .add-rival-btn,.reset-btn{min-height:26px!important;padding:0 6px!important;font-size:8px!important}
+ .reset-btn{width:26px!important;padding:0!important}
+}
+@media(max-width:680px){
+ .contenedor{height:calc(100dvh - 72px)!important;min-height:0!important}
+ .main{width:100%!important;height:calc(100dvh - 72px)!important}
+ .studio-head{flex-basis:38px!important;min-height:38px!important;padding:4px 8px!important}
+ .controlbar{top:7px!important;left:7px!important;right:7px!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-areas:"own rival" "tools tools"!important;gap:5px!important;padding:6px!important;min-height:0!important;border-radius:12px!important}
+ .own-formation{grid-area:own!important;justify-content:flex-start!important}
+ .rival-formation{grid-area:rival!important;justify-content:flex-end!important}
+ .formation-control,.rival-formation{gap:4px!important;padding:4px 5px!important;border-radius:8px!important}
+ .formation-control .control-label,.rival-formation .control-label{font-size:6px!important;letter-spacing:.25px!important}
+ .formation-control select,.rival-formation select{flex:1!important;width:100%!important;min-width:0!important;height:26px!important;padding:0 4px!important;font-size:8px!important}
+ .rival-formation .add-rival-btn{min-height:26px!important;padding:0 5px!important;font-size:7px!important}
+ .rival-formation .reset-btn{width:25px!important;min-width:25px!important;height:26px!important}
+ .top-tools{grid-area:tools!important;justify-self:center!important;max-width:100%!important;gap:0!important;padding:2px 4px!important;border-radius:9px!important}
+ .top-tools .tool{flex:0 0 38px!important;min-height:33px!important}
+ .top-tools .tool span{font-size:14px!important}.top-tools .tool small{font-size:6px!important}
+ .top-tools .palette{gap:7px!important;padding:0 3px!important}
+ .top-tools .swatch{width:13px!important;height:13px!important;flex-basis:13px!important}
+ .top-separator{height:22px!important;margin:0 2px!important}
+ .quick-history-btn{width:21px!important;height:21px!important;font-size:13px!important}
+ .rival-strip{top:103px!important;right:7px!important;gap:5px!important;padding:5px!important}
+ .rival-strip>strong{display:none!important}
+ .rival-strip .btn{min-height:23px!important;padding:0 6px!important;font-size:7px!important}
+ .player{width:clamp(24px,6vw,33px)!important;height:clamp(24px,6vw,33px)!important}
+}
+@media(max-width:390px){
+ .controlbar{left:5px!important;right:5px!important;gap:4px!important;padding:5px!important}
+ .formation-control,.rival-formation{gap:3px!important;padding:3px!important}
+ .formation-control .control-label,.rival-formation .control-label{font-size:5.5px!important}
+ .rival-formation .add-rival-btn{padding:0 4px!important;font-size:6px!important}
+ .top-tools .tool{flex-basis:35px!important}
+ .top-tools .palette{gap:5px!important}
+ .quick-history-btn{width:20px!important;height:20px!important}
+}
+body.immersive .main{height:100dvh!important;width:100vw!important}
+body.immersive .contenedor{height:100dvh!important}
+body.immersive .studio-head{display:none!important}
+body.immersive .controlbar{top:13px!important}
+
 </style>
 </head>
 <body>
