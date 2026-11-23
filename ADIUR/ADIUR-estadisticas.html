@@ -889,7 +889,7 @@ body{background:#f3f5f8}.contenido{max-width:1740px;margin:30px auto;padding:0 2
 .contenido>.panel{border-radius:15px;box-shadow:0 4px 18px rgba(20,31,48,.04)}
 .controles-filtros{gap:12px}.campo-filtro label{font-size:9px;letter-spacing:.7px}
 .campo-filtro select{min-height:42px;border-radius:9px;border-color:#dce2e9}
-.integral-panel{margin:0 0 23px;padding:22px;border:1px solid #e1e7ee;border-radius:17px;background:#fff;box-shadow:0 7px 24px rgba(20,31,48,.045)}
+.integral-panel{display:none;margin:0 0 23px;padding:22px;border:1px solid #e1e7ee;border-radius:17px;background:#fff;box-shadow:0 7px 24px rgba(20,31,48,.045)}
 .integral-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px}
 .integral-kicker{color:#c45a18;font-size:9px;font-weight:900;letter-spacing:1.6px}
 .integral-heading h3{margin:7px 0 5px;color:#192231;font-size:20px;font-weight:900;letter-spacing:-.5px}
@@ -2911,7 +2911,7 @@ async function renderizarPanelIntegral(){
    const j=x.j,ini=j.nombreCompleto.trim().split(/\s+/).slice(0,2).map(z=>z[0]||"").join("").toUpperCase(),test=x.test?x.test.mes:"—";
    const marcas=x.test?x.test.columnas.slice(0,3).map(c=>escaparIntegral(c.label||c.nombre||c.id)+": "+escaparIntegral(x.test.valores[c.id])).join(" · "):"Sin planilla cargada";
    const status=x.activos.length?'<span class="integral-badge active">'+x.activos.length+' caso(s) activo(s)</span>':x.casos.length?'<span class="integral-badge closed">Historial cerrado</span>':'<span class="integral-badge">Sin casos registrados</span>';
-   return '<tr><td><div class="integral-player"><span class="integral-avatar">'+escaparIntegral(ini)+'</span><div><strong>'+escaparIntegral(j.nombreCompleto)+'</strong><small>'+escaparIntegral(j.categoria||division)+'</small></div></div></td><td>'+escaparIntegral(j.posicion||"Sin asignar")+'</td><td class="integral-num">'+(x.pj||"—")+'</td><td class="integral-num">'+(x.min||"—")+'</td><td class="integral-num">'+(x.goles||"—")+'</td><td>'+(x.amarillas||"—")+'</td><td>'+(x.rojas||"—")+'</td><td><strong>'+escaparIntegral(test)+'</strong><small class="integral-test-marks">'+marcas+'</small></td><td>'+status+'</td><td><button class="integral-open" type="button" data-integral-id="'+escaparIntegral(j.id)+'">Ver ficha</button></td></tr>';
+   return '<tr><td><div class="integral-player"><span class="integral-avatar">'+escaparIntegral(ini)+'</span><div><strong>'+escaparIntegral(j.nombreCompleto)+'</strong><small>'+escaparIntegral(j.categoria||division)+'</small></div></div></td><td>'+escaparIntegral(j.posicion||"Sin asignar")+'</td><td class="integral-num">'+(x.pj?x.pj:"—")+'</td><td class="integral-num">'+(x.pj?x.min:"—")+'</td><td class="integral-num">'+(x.pj?x.goles:"—")+'</td><td>'+(x.pj?x.amarillas:"—")+'</td><td>'+(x.pj?x.rojas:"—")+'</td><td><strong>'+escaparIntegral(test)+'</strong><small class="integral-test-marks">'+marcas+'</small></td><td>'+status+'</td><td><button class="integral-open" type="button" data-integral-id="'+escaparIntegral(j.id)+'">Ver ficha</button></td></tr>';
   }).join("");
   tbody.querySelectorAll("[data-integral-id]").forEach(btn=>btn.addEventListener("click",()=>seleccionarJugadoraFicha(btn.dataset.integralId)));
  };
