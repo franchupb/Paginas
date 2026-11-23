@@ -2292,8 +2292,8 @@ async function renderizarPanelPartidosEInformesExternos() {
       const res = p.resultado || (p.golesAdiur !== undefined && p.golesRival !== undefined ? `${p.golesAdiur} - ${p.golesRival}` : "");
       return `
         <div class="item-partido-info">
-          <div class="meta">${fecha} ${comp ? `· ${comp}` : ""}</div>
-          <strong>ADIUR vs. ${rival}</strong> ${res ? `<span class="badge-titular" style="margin-left:6px;">${res}</span>` : ""}
+          <div class="meta">${escaparIntegral(fecha)} ${comp ? `· ${escaparIntegral(comp)}` : ""}</div>
+          <strong>ADIUR vs. ${escaparIntegral(rival)}</strong> ${res ? `<span class="badge-titular" style="margin-left:6px;">${escaparIntegral(res)}</span>` : ""}
         </div>
       `;
     }).join("");
@@ -2310,9 +2310,9 @@ async function renderizarPanelPartidosEInformesExternos() {
       const texto = inf.detalle || inf.observaciones || inf.descripcion || inf.comentario || "";
       return `
         <div class="item-partido-info">
-          <div class="meta">${fecha} ${jug ? `· Jugadora: <strong>${jug}</strong>` : ""}</div>
-          <strong>${titulo}</strong>
-          <div style="color:#444;margin-top:2px;">${texto}</div>
+          <div class="meta">${escaparIntegral(fecha)} ${jug ? `· Jugadora: <strong>${escaparIntegral(jug)}</strong>` : ""}</div>
+          <strong>${escaparIntegral(titulo)}</strong>
+          <div style="color:#444;margin-top:2px;">${escaparIntegral(texto)}</div>
         </div>
       `;
     }).join("");
@@ -2355,10 +2355,10 @@ async function renderizarTablaAsistencia() {
       <tr>
         <td class="fija-izquierda">
           <span class="enlace-jugadora-tabla" onclick="seleccionarJugadoraFicha('${idEscapado}')">
-            <strong>${j.nombreCompleto}</strong>
+            <strong>${escaparIntegral(j.nombreCompleto)}</strong>
           </span>
         </td>
-        <td>${j.posicion}</td>
+        <td>${escaparIntegral(j.posicion)}</td>
         <td><strong>${etiquetaPeriodo}</strong></td>
         <td>${info.total}</td>
         <td><strong>${info.presentes}</strong></td>
@@ -2409,9 +2409,9 @@ async function renderizarTablaTiempos() {
         </td>
         <td>${j.posicion}</td>
         <td>${info.lista.length}</td>
-        <td>${ultimo ? (ultimo.prueba || ultimo.ejercicio || ultimo.distancia || ultimo.tipo || "Prueba") : "-"}</td>
-        <td><strong>${ultimo ? (ultimo.tiempo || ultimo.marca || ultimo.valor || ultimo.resultado || "-") : "-"}</strong></td>
-        <td>${ultimo ? (ultimo.fecha || "-") : "-"}</td>
+        <td>${ultimo ? escaparIntegral(ultimo.prueba || ultimo.ejercicio || ultimo.distancia || ultimo.tipo || "Prueba") : "-"}</td>
+        <td><strong>${ultimo ? escaparIntegral(ultimo.tiempo || ultimo.marca || ultimo.valor || ultimo.resultado || "-") : "-"}</strong></td>
+        <td>${ultimo ? escaparIntegral(ultimo.fecha || "-") : "-"}</td>
       </tr>
     `;
   }));
@@ -2448,7 +2448,7 @@ async function renderizarTablaLesiones() {
     const idEscapado = String(j.id).replace(/'/g, "\\'");
     const estadoBadge = !ultima
       ? `<span class="badge-titular">Apta / Sin lesiones</span>`
-      : `<span class="badge-fuera">${ultima.estado || ultima.recuperacion || "Con lesión"}</span>`;
+      : `<span class="badge-fuera">${escaparIntegral(ultima.estado || ultima.recuperacion || "Con lesión")}</span>`;
 
     return `
       <tr>
@@ -2459,8 +2459,8 @@ async function renderizarTablaLesiones() {
         </td>
         <td>${j.posicion}</td>
         <td>${estadoBadge}</td>
-        <td>${ultima ? (ultima.lesion || ultima.tipo || ultima.diagnostico || ultima.zona || "-") : "-"}</td>
-        <td>${ultima ? (ultima.fecha || ultima.fechaInicio || "-") : "-"}</td>
+        <td>${ultima ? escaparIntegral(ultima.lesion || ultima.tipo || ultima.diagnostico || ultima.zona || "-") : "-"}</td>
+        <td>${ultima ? escaparIntegral(ultima.fecha || ultima.fechaInicio || "-") : "-"}</td>
         <td>${info.lista.length}</td>
       </tr>
     `;
@@ -2507,15 +2507,15 @@ async function renderizarTablaTesteos() {
             <strong>${j.nombreCompleto}</strong>
           </span>
         </td>
-        <td><strong>${info.encontrado ? info.mes : "-"}</strong></td>
-        <td>${v.salto_sin || "-"}</td>
-        <td>${v.salto_con || "-"}</td>
-        <td>${v.vel_30 || "-"}</td>
-        <td>${v.vo2_30_15 || "-"}</td>
-        <td>${v.illinois_mod || "-"}</td>
-        <td>${v.peso || "-"}</td>
-        <td>${v.altura || "-"}</td>
-        <td><strong>${info.encontrado ? info.imc : "-"}</strong></td>
+        <td><strong>${info.encontrado ? escaparIntegral(info.mes) : "-"}</strong></td>
+        <td>${escaparIntegral(v.salto_sin ?? "-")}</td>
+        <td>${escaparIntegral(v.salto_con ?? "-")}</td>
+        <td>${escaparIntegral(v.vel_30 ?? "-")}</td>
+        <td>${escaparIntegral(v.vo2_30_15 ?? "-")}</td>
+        <td>${escaparIntegral(v.illinois_mod ?? "-")}</td>
+        <td>${escaparIntegral(v.peso ?? "-")}</td>
+        <td>${escaparIntegral(v.altura ?? "-")}</td>
+        <td><strong>${info.encontrado ? escaparIntegral(info.imc) : "-"}</strong></td>
       </tr>
     `;
   }));
