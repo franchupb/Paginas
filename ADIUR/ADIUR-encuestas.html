@@ -247,7 +247,7 @@ async function guardarRespuesta(e){
  try{const ref=fb.doc(db,"encuestas_respuestas",p.id+"_"+uid),estadoActual=await fb.getDoc(fb.doc(db,"encuestas_periodos",p.id));if(!estadoActual.exists()||estadoActual.data().estado!=="abierta")throw new Error("El cuerpo técnico cerró esta encuesta. Ya no se aceptan respuestas.");const existente=await fb.getDoc(ref);if(existente.exists())throw new Error("Ya existe una respuesta para este período.");await fb.setDoc(ref,{periodoId:p.id,tipo:p.tipo,categoria:p.categoria,fecha:p.fecha,uid,jugadora:jugadoraNombre||nombre,respuestas:respuestasForm,creadoEn:fb.serverTimestamp()});estado("¡Respuesta enviada! Gracias por completar "+tipoNombre(p.tipo)+".","ok");$("formularioJugador").classList.add("oculto");$("encuestasDisponibles").classList.remove("oculto");periodoSeleccionado="";renderJugadora()}
  catch(err){console.error(err);estado(err.message||"No se pudo enviar la respuesta. Intentá nuevamente.","error")}finally{if(b.isConnected){b.disabled=false;b.textContent="Enviar respuesta"}}
 }
-function publicarPeriodo(e){
+async function publicarPeriodo(e){
  e.preventDefault();if(!puedePublicar())return;
  const categoria=$("nuevaCategoria").value,tipo=$("nuevoTipo").value,fecha=$("nuevaFecha").value,estadoInicial=$("nuevoEstado").value;
  if(periodos.some(p=>norm(p.categoria)===norm(categoria)&&p.tipo===tipo&&p.fecha===fecha)){estado("Ya existe una publicación de ese tipo para esa categoría y fecha.","error");return}
