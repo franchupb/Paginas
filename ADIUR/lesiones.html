@@ -2420,7 +2420,7 @@ function renderizarResumenOperativo(){
             <span class="operativo-caso-estado badge ${estadoBadge(r.estado)}">${escapeHTML(r.estado)}</span>
             <span class="operativo-caso-flecha" aria-hidden="true">›</span>
         </button>
-        <div class="operativo-caso-acciones"><button type="button" class="btn btn-secondary btn-small" data-accion="abrir-caso" data-id="${escapeHTML(r.id)}">Abrir expediente</button><button type="button" class="btn btn-primary btn-small" data-accion="cargar-seguimiento" data-id="${escapeHTML(r.id)}">＋ Registrar jornada</button></div>
+        <div class="operativo-caso-acciones"><button type="button" class="btn btn-secondary btn-small" data-accion="abrir-caso" data-id="${escapeHTML(r.id)}">Abrir expediente</button><button type="button" class="btn btn-primary btn-small" data-accion="cargar-seguimiento" data-id="${escapeHTML(r.id)}">＋ Registrar jornada</button><button type="button" class="btn btn-secondary btn-small" data-accion="dar-alta" data-id="${escapeHTML(r.id)}" title="Cerrar el expediente registrando el alta">✓ Dar el alta</button></div>
     </article>`;
 
     const renderGrupo=(clase,titulo,descripcion,items,etiqueta,detalleFn)=>{
@@ -2473,6 +2473,19 @@ $("resumenOperativo").addEventListener("click",e=>{
         renderizarTabla();
         $("panelRegistros").scrollIntoView({behavior:"smooth",block:"start"});
         toast(`Mostrando ${objetivo.length} ${objetivo.length===1?"caso del grupo seleccionado":"casos del grupo seleccionado"}.`);
+        return;
+    }
+    if(accion==="dar-alta"){
+        const id=boton.dataset.id;
+        const r=registros.find(x=>x.id===id&&x.categoria===categoriaActual());
+        if(!r||CERRADOS.has(r.estado)){toast("Este expediente ya está cerrado o no pertenece a la categoría seleccionada.",true);return;}
+        if(!confirm(`¿Confirmás registrar el ALTA de ${r.jugadora}? El expediente se cerrará y quedará guardado en el registro histórico.`))return;
+        const anterior=registros;
+        const ahora=new Date().toISOString();
+        registros=registros.map(x=>x.id===id?{...x,estado:"Alta deportiva confirmada",fechaRetorno:fechaHoy(),actualizadoEn:ahora}:x);
+        if(!guardarRegistros()){registros=anterior;return;}
+        actualizarTodo();
+        toast("Alta registrada. El expediente quedó cerrado y guardado.");
         return;
     }
     if(accion==="abrir-caso"||accion==="cargar-seguimiento"){
