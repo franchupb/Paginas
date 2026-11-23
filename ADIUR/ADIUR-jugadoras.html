@@ -1730,22 +1730,11 @@
         .toLowerCase();
     }
     const usuarioActual = normalizarUsuario(usuarioGuardado);
-    function esToto() {
-      return usuarioActual === "toto";
-    }
-    function esBianca() {
-      return [
-        "biancadominguez",
-        "bianca"
-      ].includes(usuarioActual);
-    }
-    function esFran() {
-      return [
-        "fran",
-        "francisco",
-        "francisco perez basla"
-      ].includes(usuarioActual);
-    }
+    const rolADIUR = localStorage.getItem("rolADIUR") || "";
+    function esToto() { return rolADIUR === "cuerpo_tecnico"; }
+    function esBianca() { return rolADIUR === "jugadora"; }
+    function esFran() { return rolADIUR === "admin"; }
+    function puedeEditarPlantel() { return ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolADIUR); }
     // Si no existe una sesión, regresar al inicio de sesión.
     if (!usuarioGuardado) {
       window.location.href = "ADIUR-Loing.html";
@@ -1779,8 +1768,7 @@
     // Mantener los permisos originales de la página de jugadoras.
     if (
       !usuarioGuardado ||
-      esBianca() ||
-      (!esToto() && !esFran())
+      !["admin", "coordinadora", "cuerpo_tecnico", "jugadora"].includes(rolADIUR)
     ) {
       document.body.innerHTML = `
         <div style="
@@ -1879,10 +1867,10 @@
       let idEnEdicion = null;
 
       function puedeAccederCategoria(categoria) {
-        return (esFran() || esToto()) && categoriasPermitidas.includes(categoria);
+        return categoriasPermitidas.includes(categoria);
       }
       function puedeEliminar() {
-        return esFran();
+        return ["admin", "coordinadora"].includes(rolADIUR);
       }
 
       // --- ESCUCHAR CAMBIOS EN TIEMPO REAL DESDE FIREBASE ---
@@ -2227,7 +2215,7 @@
         renderizarJugadoras();
       });
 
-      document.getElementById("botonAgregar").style.display = (esToto() || esFran()) ? "inline-block" : "none";
+      document.getElementById("botonAgregar").style.display = puedeEditarPlantel() ? "inline-block" : "none";
     }
   </script>
 
