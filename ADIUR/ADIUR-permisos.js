@@ -123,25 +123,29 @@
       Array.from(select.options || []).some(o => categoriaDeTexto(o.value) || categoriaDeTexto(o.textContent));
   }
   function aplicarCategorias(root = document) {
-    if (!configActiva || configActiva.categorias.length === 5) return;
-    root.querySelectorAll("select").forEach(select => {
-      if (!esSelectorCategoria(select)) return;
+    if (!configActiva || configActiva.rol !== "jugadora") return;
+    const pagina = paginaActual();
+    const selectoresPorPagina = {
+      "adiur-asistencia.html": ["#filtroCategoria"],
+      "adiur-partidos.html": ["#filtroDivision"],
+      "adiur-testeos.html": ["#selectDivision"]
+    };
+    const permitidos = selectoresPorPagina[pagina] || [];
+    permitidos.forEach(selector => {
+      const select = root.querySelector(selector);
+      if (!select) return;
       Array.from(select.options || []).forEach(option => {
         const cat = categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent);
-        const todas = /^(todas?|todas las divisiones|todas las categorias|todas las categorías)$/i.test((option.textContent || "").trim());
-        if ((cat && !configActiva.categorias.includes(cat)) || todas) option.remove();
+        if (cat && !configActiva.categorias.includes(cat)) option.remove();
       });
-      const permitida = Array.from(select.options || []).find(o =>
-        configActiva.categorias.includes(categoriaDeTexto(o.value) || categoriaDeTexto(o.textContent)));
-      if (configActiva.categorias.length === 1 && permitida) {
-        select.value = permitida.value;
-        select.disabled = true;
+      const opcion = Array.from(select.options || []).find(option =>
+        configActiva.categorias.includes(categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent))
+      );
+      if (opcion) {
+        select.value = opcion.value;
         select.dispatchEvent(new Event("change", { bubbles: true }));
       }
-    });
-    root.querySelectorAll("[data-division], [data-categoria], [data-category]").forEach(el => {
-      const cat = categoriaDeTexto(el.getAttribute("data-division") || el.getAttribute("data-categoria") || el.getAttribute("data-category"));
-      if (cat && !configActiva.categorias.includes(cat)) el.hidden = true;
+      select.disabled = true;
     });
   }
 
@@ -150,26 +154,6 @@
       select.id, select.name, select.getAttribute("aria-label"), select.getAttribute("data-field")
     ].join(" "));
   }
-  function filtrarJugadora(root = document) {
-    if (configActiva?.rol !== "jugadora") return;
-    root.querySelectorAll("select").forEach(select => {
-      if (!esSelectorJugadora(select)) return;
-      Array.from(select.options || []).forEach(option => {
-        const label = (option.textContent || "").trim();
-        if (!label || /seleccion|todas|ninguna/i.test(label)) return;
-        if (normalizar(label) !== normalizar(configActiva.jugadora)) option.remove();
-      });
-      const propia = Array.from(select.options || []).find(o => normalizar(o.textContent) === normalizar(configActiva.jugadora));
-      if (propia) select.value = propia.value;
-      select.disabled = true;
-    });
-    const propia = normalizar(configActiva.jugadora);
-    root.querySelectorAll("tr, [data-jugadora], .rutina-card, .jugadora-card, .registro-card, .tarjeta-jugadora, [data-player]").forEach(el => {
-      const texto = normalizar(el.innerText || el.textContent || el.getAttribute("data-jugadora") || el.getAttribute("data-player"));
-      if (texto && !texto.includes(propia)) el.hidden = true;
-    });
-  }
-
   const PALABRAS_BORRADO = /eliminar|borrar|suprimir|quitar|dar de baja/i;
   const PALABRAS_EDICION = /guardar|agregar|añadir|nuevo|crear|editar|modificar|actualizar|importar|cargar|registrar|duplicar|publicar|aplicar|restaurar|reset|save|submit|enviar|confirmar/i;
   const PALABRAS_LECTURA = /cerrar|cancelar|volver|abrir|ver|filtrar|buscar|siguiente|anterior|mes|semana|dia|día|imprimir|descargar|mostrar|ocultar|menu|menú|perfil|sesion|sesión|inicio|pizarra|calendario|estadisticas|estadísticas/i;
@@ -179,18 +163,60 @@
       .filter(Boolean).join(" ").toLowerCase();
   }
   function aplicarSoloLectura(root = document) {
-    if (configActiva?.puedeEditar) return;
+    if (configActiva?.rol !== "jugadora") return;
+    const pagina = paginaActual();
+    if (!["adiur-calendario.html", "adiur-partidos.html", "adiur-gimnasio.html"].includes(pagina)) return;
+
+    const permitidos = new Set([
+      "mesAnterior", "mesSiguiente", "categoria", "division", "buscarRutina",
+      "busqueda", "filtroDivision", "filtroCompeticion",
+      "modalPDF", "modalAgregarPersona", "modalQuitarPersona", "modalCerrarInferior",
+      "cerrarModal", "cerrarPerfil"
+    ]);
+
     root.querySelectorAll("button, input, select, textarea, [contenteditable=true]").forEach(el => {
+      if (permitidos.has(el.id) || el.closest("#controlPersonasRutina")) return;
       const texto = textoControl(el);
-      const navegacion = el.matches("a, [role=tab]") ||
+      const lectura = el.matches("a, [role=tab]") ||
         (el.matches("button") && !PALABRAS_EDICION.test(texto) && !PALABRAS_BORRADO.test(texto)) ||
         (el.matches("input") && (el.type === "search" || /buscar|filtro|fecha|mes|semana|orden/i.test(texto)));
-      if (navegacion) return;
+      if (lectura) return;
       if (el.matches("input, textarea, select")) { el.disabled = true; el.readOnly = true; }
       else if (el.matches("[contenteditable=true]")) el.setAttribute("contenteditable", "false");
       else { el.disabled = true; el.setAttribute("aria-disabled", "true"); }
       el.classList.add("adiur-solo-lectura");
     });
+
+    if (pagina === "adiur-calendario.html") {
+      document.body.classList.add("adiur-vista-calendario-jugadora");
+      const modal = document.getElementById("fondoModal");
+      if (modal) modal.hidden = true;
+    }
+
+    if (pagina === "adiur-partidos.html") {
+      ["btnNuevo", "btnEliminarModo", "btnEliminarModo"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.hidden = true;
+      });
+      document.querySelectorAll("#contenedorFixture [data-accion]").forEach(el => el.remove());
+    }
+
+    if (pagina === "adiur-gimnasio.html") {
+      ["panelControlesRutina", "panelEditorRutina", "botonesGestion"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.hidden = true;
+      });
+      const biblioteca = document.getElementById("panelBiblioteca");
+      if (biblioteca) biblioteca.hidden = false;
+      ["modalEditar", "modalEliminar"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.hidden = true;
+      });
+      ["modalPDF", "modalAgregarPersona", "modalQuitarPersona", "controlPersonasRutina"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.hidden = false;
+      });
+    }
   }
   function aplicarAccesosPagina() {
     if (!configActiva) return;
@@ -202,23 +228,19 @@
     if (configActiva.rol === "jugadora") {
       document.querySelectorAll('a[href]').forEach(a => {
         const file = (a.getAttribute("href") || "").split(/[?#]/)[0].split("/").pop().toLowerCase();
-        if (file.endsWith(".html") && !PAGINAS_JUGADORAS.has(file)) {
-          a.remove();
-          return;
-        }
-        if (file === "adiur-gimnasio.html") a.innerHTML = '<span class="nav-punto" aria-hidden="true"></span>Biblioteca de rutinas';
-        if (file === "adiur-testeos.html") a.innerHTML = '<span class="nav-punto" aria-hidden="true"></span>Estadísticas';
+        if (file.endsWith(".html") && !PAGINAS_JUGADORAS.has(file)) a.remove();
       });
-      // Gimnasio: las jugadoras acceden únicamente a la biblioteca de rutinas.
+      // Gimnasio: mostrar solo biblioteca; se conservan PDF y cantidad de personas al imprimir.
       if (pagina === "adiur-gimnasio.html") {
-        const controles = document.getElementById("panelControlesRutina");
-        const editor = document.getElementById("panelEditorRutina");
-        if (controles) controles.hidden = true;
-        if (editor) editor.hidden = true;
+        ["panelControlesRutina", "panelEditorRutina", "botonesGestion"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.hidden = true;
+        });
         const biblioteca = document.getElementById("panelBiblioteca");
         if (biblioteca) biblioteca.hidden = false;
-        document.querySelectorAll("button, a, [role=button]").forEach(el => {
-          if (/crear|agregar|editar|eliminar|guardar|rutina nueva|asignar|aplicar a jugadoras/i.test(textoControl(el))) el.hidden = true;
+        ["modalEditar", "modalEliminar"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.hidden = true;
         });
       }
       // Testeos: para las jugadoras se muestra exclusivamente la pestaña Estadísticas.
@@ -235,7 +257,8 @@
         if (estadisticas) { estadisticas.classList.add("activa"); estadisticas.hidden = false; }
         document.getElementById("btnTabStats")?.classList.add("activa");
         document.querySelectorAll("button, a, [role=tab]").forEach(el => {
-          if (/cargar|nuevo|registrar|agregar|editar|eliminar|testeo|registro/i.test(textoControl(el))) el.hidden = true;
+          if (/cargar|nuevo|registrar|agregar|editar|eliminar|testeo|registro/i.test(textoControl(el)) &&
+              !/pdf|imprimir|abrir|cerrar/i.test(textoControl(el))) el.hidden = true;
         });
       }
     }
@@ -250,7 +273,6 @@
     if (!configActiva) return;
     mostrarPerfil();
     aplicarCategorias();
-    filtrarJugadora();
     aplicarSoloLectura();
     aplicarAccesosPagina();
   }
@@ -276,6 +298,7 @@
           // La matriz de este archivo manda sobre rol y categorías. Firestore solo identifica y habilita la cuenta.
           perfilActivo = perfil;
           configActiva = base;
+          document.body.classList.toggle("adiur-perfil-jugadora", base.rol === "jugadora");
           // La matriz central es la fuente de verdad también para las páginas
           // que aún conservan controles de compatibilidad locales.
           try {
