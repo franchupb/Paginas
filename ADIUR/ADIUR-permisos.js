@@ -166,6 +166,14 @@
   function aplicarSoloLectura(root = document) {
     if (configActiva?.rol !== "jugadora") return;
     const pagina = paginaActual();
+    if (pagina === "adiur-asistencia.html") {
+      document.querySelectorAll("#cuerpoTabla button[data-fecha][data-jugadora]").forEach(el => {
+        el.disabled = true;
+        el.setAttribute("aria-disabled", "true");
+        el.title = "Solo consulta: cada jugadora puede ver sus propias asistencias";
+      });
+      return;
+    }
     if (!["adiur-calendario.html", "adiur-partidos.html", "adiur-gimnasio.html"].includes(pagina)) return;
 
     const permitidos = new Set([
@@ -179,7 +187,8 @@
       if (permitidos.has(el.id) || el.closest("#controlPersonasRutina")) return;
       const texto = textoControl(el);
       const lectura = el.matches("a, [role=tab]") ||
-        (el.matches("button") && !PALABRAS_EDICION.test(texto) && !PALABRAS_BORRADO.test(texto)) ||
+        (el.matches("button") && (/pdf|imprimir|descargar|abrir|ver/i.test(texto) ||
+          (!PALABRAS_EDICION.test(texto) && !PALABRAS_BORRADO.test(texto)))) ||
         (el.matches("input") && (el.type === "search" || /buscar|filtro|fecha|mes|semana|orden/i.test(texto)));
       if (lectura) return;
       if (el.matches("input, textarea, select")) { el.disabled = true; el.readOnly = true; }
@@ -219,6 +228,7 @@
       });
       const biblioteca = document.getElementById("panelBiblioteca");
       if (biblioteca) biblioteca.hidden = false;
+      document.querySelectorAll("#listaRutinasGuardadas [data-editar-rutina], #listaRutinasGuardadas [data-eliminar-rutina]").forEach(el => el.hidden = true);
       ["modalEditar", "modalEliminar"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.hidden = true;
@@ -267,6 +277,7 @@
         if (biblioteca) { biblioteca.classList.remove("activa"); biblioteca.hidden = true; }
         if (estadisticas) { estadisticas.classList.add("activa"); estadisticas.hidden = false; }
         document.getElementById("btnTabStats")?.classList.add("activa");
+        window.cambiarPestana?.("stats");
         document.querySelectorAll("button, a, [role=tab]").forEach(el => {
           if (/cargar|nuevo|registrar|agregar|editar|eliminar|testeo|registro/i.test(textoControl(el)) &&
               !/pdf|imprimir|abrir|cerrar/i.test(textoControl(el))) el.hidden = true;
@@ -338,7 +349,9 @@
             } else if (paginaActual() === "adiur-partidos.html") {
               window.renderizarFixture?.();
             } else if (paginaActual() === "adiur-testeos.html") {
-              window.renderizarEstadisticas?.();
+              window.cambiarPestana?.("stats");
+            } else if (paginaActual() === "adiur-calendario.html") {
+              window.renderizarCalendario?.();
             } else if (paginaActual() === "adiur-gimnasio.html") {
               window.renderizarBiblioteca?.();
             }
