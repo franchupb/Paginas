@@ -392,12 +392,10 @@ a {
 
 .paneles {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  align-items: stretch;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
 }
-
-.paneles > .panel { min-width:0; padding:16px; }
 
 .panel {
   min-width: 0;
@@ -809,10 +807,6 @@ a {
 ===================================================== */
 
 @media (max-width: 1150px) {
-  .paneles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-@media (max-width: 620px) {
   .paneles { grid-template-columns: 1fr; }
 }
 
@@ -1165,7 +1159,9 @@ a {
 
     <section class="paneles">
 
-      <!-- ÚLTIMOS 2 PARTIDOS JUGADOS (DESDE ADIUR-Partidos.html) -->
+
+
+            <!-- ÚLTIMOS 2 PARTIDOS JUGADOS (DESDE ADIUR-Partidos.html) -->
         <article class="panel">
 
           <div class="panel-cabecera">
@@ -1197,39 +1193,7 @@ a {
 
         </article>
 
-        <!-- PRÓXIMOS CUMPLEAÑOS DE LAS JUGADORAS -->
-        <article class="panel">
-
-          <div class="panel-cabecera">
-            <div>
-              <h3>🎂 PRÓXIMOS CUMPLEAÑOS</h3>
-              <p>Cumpleaños del plantel ordenados por cercanía.</p>
-            </div>
-
-            <select
-              class="selector-division"
-              id="filtroCumpleanos"
-              aria-label="Filtrar cumpleaños por división"
-              onchange="renderizarCumpleanos()"
-            >
-              <option value="Todas">Todas las divisiones</option>
-              <option value="Sub 10">Sub 10</option>
-              <option value="Sub 12">Sub 12</option>
-              <option value="Sub 14">Sub 14</option>
-              <option value="Sub 16">Sub 16</option>
-              <option value="Primera">Primera</option>
-            </select>
-          </div>
-
-          <div class="lista-cumpleanos" id="listaCumpleanos"></div>
-
-          <a class="boton-secundario" href="ADIUR-jugadoras.html">
-            Ver plantel completo →
-          </a>
-
-        </article>
-
-      <!-- CALENDARIO DEL CLUB -->
+            <!-- CALENDARIO DEL CLUB -->
       <article class="panel">
 
         <div class="panel-cabecera">
@@ -1319,7 +1283,39 @@ a {
 
       </article>
 
-      <article class="panel panel-pizarra-acceso">
+              <!-- PRÓXIMOS CUMPLEAÑOS DE LAS JUGADORAS -->
+        <article class="panel">
+
+          <div class="panel-cabecera">
+            <div>
+              <h3>🎂 PRÓXIMOS CUMPLEAÑOS</h3>
+              <p>Cumpleaños del plantel ordenados por cercanía.</p>
+            </div>
+
+            <select
+              class="selector-division"
+              id="filtroCumpleanos"
+              aria-label="Filtrar cumpleaños por división"
+              onchange="renderizarCumpleanos()"
+            >
+              <option value="Todas">Todas las divisiones</option>
+              <option value="Sub 10">Sub 10</option>
+              <option value="Sub 12">Sub 12</option>
+              <option value="Sub 14">Sub 14</option>
+              <option value="Sub 16">Sub 16</option>
+              <option value="Primera">Primera</option>
+            </select>
+          </div>
+
+          <div class="lista-cumpleanos" id="listaCumpleanos"></div>
+
+          <a class="boton-secundario" href="ADIUR-jugadoras.html">
+            Ver plantel completo →
+          </a>
+
+        </article>
+
+            <article class="panel panel-pizarra-acceso">
         <div class="pizarra-preview-visual" aria-hidden="true">
           <div class="preview-top"><span>ADIUR · TACTICAL BOARD</span><span class="preview-live">● WORKSPACE</span></div>
           <div class="preview-field">
