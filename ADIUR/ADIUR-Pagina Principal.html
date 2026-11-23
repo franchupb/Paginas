@@ -942,6 +942,15 @@ a {
     max-width: 60px;
   }
 }
+
+/* En móviles evitamos descargar la fotografía original de 19 MB.
+   Se conserva el contraste y la jerarquía visual del banner. */
+@media (max-width: 760px) {
+  .banner {
+    background-image: linear-gradient(90deg, rgba(0,0,0,.78), rgba(0,0,0,.25));
+  }
+}
+
 </style>
 <script src="ADIUR-permisos.js?v=20261123perf1"></script>
 
