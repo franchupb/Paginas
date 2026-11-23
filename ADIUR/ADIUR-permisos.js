@@ -463,13 +463,17 @@
 
   if (/^(index|loing)\.html$/i.test(paginaActual())) return;
 
-  // Evita que se vean por un instante categorías o controles de otros perfiles
-  // antes de que Firebase confirme el usuario y la navegación compartida termine.
-  document.documentElement.classList.add("adiur-permisos-pendientes");
-  const estiloEspera = document.createElement("style");
-  estiloEspera.id = "adiur-espera-permisos";
-  estiloEspera.textContent = "html.adiur-permisos-pendientes body{visibility:hidden!important}";
-  (document.head || document.documentElement).appendChild(estiloEspera);
+  // En Partidos no ocultamos todo el documento mientras se resuelve la sesión:
+  // la pantalla en blanco impedía ver incluso el error real de inicialización.
+  // Los permisos de edición/categoría siguen aplicándose al confirmar Firebase.
+  const esPaginaPartidos = paginaActual() === "adiur-partidos.html";
+  if (!esPaginaPartidos) {
+    document.documentElement.classList.add("adiur-permisos-pendientes");
+    const estiloEspera = document.createElement("style");
+    estiloEspera.id = "adiur-espera-permisos";
+    estiloEspera.textContent = "html.adiur-permisos-pendientes body{visibility:hidden!important}";
+    (document.head || document.documentElement).appendChild(estiloEspera);
+  }
 
   function mostrarPaginaAutorizada() {
     if (!configActiva) return;
