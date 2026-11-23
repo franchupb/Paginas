@@ -520,7 +520,7 @@
   }
 
   // El cierre de sesión queda asociado al perfil de la barra superior.
-  const perfil = barra.querySelector(".perfil");
+  const perfil = barra.querySelector(".perfil, .perfil-superior");
   let menuPerfil = document.getElementById("menuPerfil");
   if (perfil) {
     perfil.setAttribute("aria-haspopup", "menu");
@@ -550,9 +550,9 @@
 
     perfil.addEventListener("click", event => {
       event.preventDefault();
-      event.stopPropagation();
+      event.stopImmediatePropagation();
       alternarMenuPerfil();
-    });
+    }, true);
     if (!perfil.matches("button, a")) {
       perfil.addEventListener("keydown", event => {
         if (event.key === "Enter" || event.key === " ") {
