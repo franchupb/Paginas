@@ -2827,6 +2827,8 @@ window.addEventListener("DOMContentLoaded", async () => {
   cambiarModuloFiltro();
 });
 /* CONSOLIDADO INDIVIDUAL · INFORMES + TESTEOS + LESIONES */
+const CACHE_FUENTES_INTEGRAL={partidos:{at:0,data:[]},lesiones:{at:0,data:[]},planillas:new Map()};
+const TTL_FUENTES_INTEGRAL=15000;
 function claveCategoriaIntegral(valor){return normalizarTexto(valor).replace(/[^a-z0-9]/g,"");}
 function escaparIntegral(valor){return String(valor??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function numeroIntegral(valor){if(valor===null||valor===undefined||String(valor).trim()==="")return null;const n=Number(String(valor).replace(",", "."));return Number.isFinite(n)?n:null;}
@@ -2838,20 +2840,23 @@ function mismaJugadoraIntegral(reg,j){
 }
 function categoriaRegistroIntegral(reg){return claveCategoriaIntegral(reg?.division||reg?.categoria||"");}
 async function obtenerPartidosIntegral(){
+ if(Date.now()-CACHE_FUENTES_INTEGRAL.partidos.at<TTL_FUENTES_INTEGRAL)return CACHE_FUENTES_INTEGRAL.partidos.data;
  const base=await obtenerTodosInformesExternos();
  ["informesADIURPartidosV2","informesADIURJornadasV1"].forEach(k=>{try{const v=JSON.parse(localStorage.getItem(k)||"[]");if(Array.isArray(v))base.push(...v);}catch(_){}});
  const mapa=new Map();
  base.forEach((p,i)=>{if(!p||typeof p!=="object")return;const key=String(p.id||p.uid||[p.fecha,p.division||p.categoria,p.rival,p.jornada].join("|")||i);const old=mapa.get(key);if(!old||String(p.actualizadoEn||"")>=String(old.actualizadoEn||""))mapa.set(key,p);});
- return [...mapa.values()];
+ const resultado=[...mapa.values()];CACHE_FUENTES_INTEGRAL.partidos={at:Date.now(),data:resultado};return resultado;
 }
 async function obtenerLesionesIntegral(){
+ if(Date.now()-CACHE_FUENTES_INTEGRAL.lesiones.at<TTL_FUENTES_INTEGRAL)return CACHE_FUENTES_INTEGRAL.lesiones.data;
  const lista=[];
  try{const raw=JSON.parse(localStorage.getItem("lesionesADIUR_registros_v1")||"[]");if(Array.isArray(raw))lista.push(...raw);}catch(_){}
  if(nubeActiva&&db){try{const snap=await getDocs(collection(db,"lesiones"));snap.forEach(d=>lista.push({id:d.id,...d.data()}));}catch(e){console.warn("No se pudieron leer lesiones:",e);}}
- const mapa=new Map();lista.forEach((x,i)=>{if(!x)return;const key=String(x.id||[x.fecha,x.categoria,x.jugadora,x.zona].join("|")||i);mapa.set(key,x);});return [...mapa.values()];
+ const mapa=new Map();lista.forEach((x,i)=>{if(!x)return;const key=String(x.id||[x.fecha,x.categoria,x.jugadora,x.zona].join("|")||i);mapa.set(key,x);});const resultado=[...mapa.values()];CACHE_FUENTES_INTEGRAL.lesiones={at:Date.now(),data:resultado};return resultado;
 }
 const MESES_TESTEO_INTEGRAL=["Diciembre","Noviembre","Octubre","Septiembre","Agosto","Julio","Junio","Mayo","Abril","Marzo","Febrero","Enero"];
 async function obtenerPlanillasIntegral(division){
+ const cache=CACHE_FUENTES_INTEGRAL.planillas.get(division);if(cache&&Date.now()-cache.at<TTL_FUENTES_INTEGRAL)return cache.data;
  const clave=division.replace(/\s+/g,"_");
  const resultados=await Promise.all(MESES_TESTEO_INTEGRAL.map(async mes=>{
   const id=clave+"_"+mes;let data=null;
@@ -2859,7 +2864,7 @@ async function obtenerPlanillasIntegral(division){
   if(!data&&nubeActiva&&db){try{const snap=await getDoc(doc(db,"testeos_adiur",id));if(snap.exists())data=snap.data();}catch(_){}}
   return data?{mes,data}:null;
  }));
- return resultados.filter(Boolean);
+ const salida=resultados.filter(Boolean);CACHE_FUENTES_INTEGRAL.planillas.set(division,{at:Date.now(),data:salida});return salida;
 }
 function registroTesteoIntegral(planillas,jugadora){
  for(const item of planillas){
