@@ -54,48 +54,24 @@
     }
   };
 
-  // ÚNICO LUGAR PARA CONFIGURAR USUARIOS Y SUS PERMISOS.
-  // Las contraseñas nunca se guardan aquí: las administra Firebase Authentication.
+  // Etiquetas de compatibilidad para perfiles antiguos. Nunca conceden permisos;
+  // el rol y las categorías se leen exclusivamente desde Firestore.
   const USUARIOS = Object.freeze({
-    fran: {
-      nombre: "Fran", rol: "admin",
-      categorias: ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"],
-      puedeGestionarUsuarios: true, puedeEditar: true, puedeEliminar: true
-    },
-    maylen: {
-      nombre: "Maylen", rol: "coordinadora",
-      categorias: ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"],
-      puedeGestionarUsuarios: false, puedeEditar: true, puedeEliminar: true
-    },
-    darlen: {
-      nombre: "Darlen", rol: "coordinadora",
-      categorias: ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"],
-      puedeGestionarUsuarios: false, puedeEditar: true, puedeEliminar: true
-    },
-    toto: {
-      nombre: "Toto", rol: "cuerpo_tecnico",
-      categorias: ["Sub 16", "Primera"],
-      puedeGestionarUsuarios: false, puedeEditar: true, puedeEliminar: false
-    },
-    tincho: {
-      nombre: "Tincho", rol: "cuerpo_tecnico",
-      categorias: ["Sub 14", "Primera"],
-      puedeGestionarUsuarios: false, puedeEditar: true, puedeEliminar: false
-    },
-    lucas: {
-      nombre: "Lucas", rol: "cuerpo_tecnico",
-      categorias: ["Primera"],
-      puedeGestionarUsuarios: false, puedeEditar: true, puedeEliminar: false
-    },
+    fran: { nombre: "Fran" },
+    maylen: { nombre: "Maylen" },
+    darlen: { nombre: "Darlen" },
+    toto: { nombre: "Toto" },
+    tincho: { nombre: "Tincho" },
+    lucas: { nombre: "Lucas" },
     guadaluped: {
-      nombre: "Guadalupe Demaria", usuario: "Guadalupe_D",
-      rol: "jugadora", categorias: ["Sub 16"], jugadora: "Guadalupe Demaria",
-      puedeGestionarUsuarios: false, puedeEditar: false, puedeEliminar: false
+      nombre: "Guadalupe Demaria",
+      usuario: "Guadalupe_D",
+      jugadora: "Guadalupe Demaria"
     },
     jazmind: {
-      nombre: "Jazmin De Nicola Forte", usuario: "Jazmin_D",
-      rol: "jugadora", categorias: ["Sub 16"], jugadora: "Jazmin De Nicola Forte",
-      puedeGestionarUsuarios: false, puedeEditar: false, puedeEliminar: false
+      nombre: "Jazmin De Nicola Forte",
+      usuario: "Jazmin_D",
+      jugadora: "Jazmin De Nicola Forte"
     }
   });
 
