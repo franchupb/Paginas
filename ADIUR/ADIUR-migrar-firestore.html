@@ -93,6 +93,10 @@ async function migrarColeccion(origenNombre,destinoNombre,transformar){
    contenido.jugadoraId=item.datos.jugadoraId;
    contenido.jugadora=item.datos.jugadora;
    contenido.tipo="individual";
+   const prefijoIndividual="INDIVIDUAL::"+item.datos.categoria+"::"+item.datos.jugadoraId;
+   if(contenido.datos&&typeof contenido.datos==="object"){
+    contenido.datos=Object.fromEntries(Object.entries(contenido.datos).filter(([clave])=>clave===prefijoIndividual));
+   }
   }
   const final={...contenido,migradoDesde:"principal",migradoEn:serverTimestamp()};
   await setDoc(ref,final);
