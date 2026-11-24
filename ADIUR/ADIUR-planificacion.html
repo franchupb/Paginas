@@ -2297,7 +2297,7 @@ button:disabled {
     padding-top: 6px;
   }
 }
-</style>
+\n.opcion-pruebas-ttt,.opcion-test-fisico{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e5e8ec;border-radius:9px;background:#fff;color:#343840;font-size:12px;line-height:1.4}.opcion-pruebas-ttt{margin-top:12px;background:#fffaf6;border-color:#f3d7c4;font-weight:750}.opcion-pruebas-ttt input,.opcion-test-fisico input{width:17px;height:17px;flex:0 0 17px;accent-color:#f47721}.lista-testeos-fisicos{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}.opcion-test-fisico{align-items:flex-start}.opcion-test-fisico span{display:flex;flex-direction:column;gap:3px}.opcion-test-fisico small{color:#656b75;font-size:11px}.aviso-testeos-vacios{margin:0;padding:10px;border:1px dashed #e3c7b4;border-radius:8px;color:#7a6253;font-size:11px;line-height:1.5}\n</style>
 <script src="ADIUR-permisos.js?v=20261124-authnav1"></script>
 </head>
 
@@ -2556,7 +2556,9 @@ window.firebasePlanificacionReady = (async () => {
     doc,
     getDoc,
     setDoc,
-    serverTimestamp
+    serverTimestamp,
+    collection,
+    getDocs
   } = await import(
     "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
   );
@@ -2609,6 +2611,11 @@ window.firebasePlanificacionReady = (async () => {
     return colaGuardado;
   };
 
+  window.cargarCatalogoTesteosNube = async () => {
+    const snapshot = await getDocs(collection(db, "testeos_adiur"));
+    return snapshot.docs.map(documento => documento.data());
+  };
+
   return true;
 
 })();
@@ -2626,6 +2633,46 @@ const DIAS_SEMANA = [
 ];
 
 const DIAS_RUTINA_GIMNASIO = ["Día 1", "Día 2", "Día 3"];
+
+function claveCatalogoTesteos(columna) {
+  const grupo = String(columna?.grupo || "General").trim();
+  const etiqueta = String(columna?.label || "").trim();
+  if (!etiqueta || columna?.esComp) return "";
+  return normalizarTexto(grupo) + "|" + normalizarTexto(etiqueta);
+}
+
+function incorporarColumnasTesteos(mapa, item, categoria) {
+  if (!item || normalizarTexto(item.division || "") !== normalizarTexto(categoria)) return;
+  (Array.isArray(item.columnas) ? item.columnas : []).forEach(columna => {
+    const id = claveCatalogoTesteos(columna);
+    if (!id) return;
+    mapa.set(id, { id, grupo: String(columna.grupo || "General"), label: String(columna.label || "").trim() });
+  });
+}
+
+async function cargarCatalogoTesteos(categoria) {
+  const mapa = new Map();
+  try {
+    const biblioteca = JSON.parse(localStorage.getItem("bibliotecaTesteosADIUR") || "[]");
+    if (Array.isArray(biblioteca)) biblioteca.forEach(item => incorporarColumnasTesteos(mapa, item, categoria));
+  } catch (error) { console.warn("No se pudo leer la biblioteca local de testeos.", error); }
+  try {
+    Object.keys(localStorage).forEach(clave => {
+      if (!clave.startsWith("testeos_adiur_") || clave.startsWith("testeos_adiur___biblioteca__")) return;
+      try { incorporarColumnasTesteos(mapa, JSON.parse(localStorage.getItem(clave) || "null"), categoria); }
+      catch (error) { console.warn("No se pudo leer una planilla local de testeos.", error); }
+    });
+  } catch (error) { console.warn("No se pudo recorrer el almacenamiento local de testeos.", error); }
+  try {
+    if (typeof window.cargarCatalogoTesteosNube === "function") {
+      const documentos = await window.cargarCatalogoTesteosNube();
+      documentos.forEach(item => incorporarColumnasTesteos(mapa, item, categoria));
+    }
+  } catch (error) { console.warn("No se pudo cargar el catálogo de testeos desde Firebase; se usarán los datos locales.", error); }
+  catalogoTesteos = [...mapa.values()].sort((a, b) =>
+    normalizarTexto(a.grupo).localeCompare(normalizarTexto(b.grupo)) || normalizarTexto(a.label).localeCompare(normalizarTexto(b.label))
+  );
+}
 
 const DIAS_BASE_POR_CATEGORIA = {
   "Sub 10": [1, 3, 5],
@@ -2653,6 +2700,7 @@ let sesionesActuales = [];
 let temporizadorMensaje = null;
 let modoEdicion = true;
 let microcicloGuardado = false;
+let catalogoTesteos = [];
 
 const COMPETICIONES_POR_DIVISION = {
   "Sub 10": ["Rosarina", "Copa Oro - ARF", "Copa Plata - ARF"],
@@ -3009,6 +3057,7 @@ function crearBloqueFisicoVacio() {
   return {
     tipo: "",
     duracion: "",
+    testeosSeleccionados: [],
     diaRutina: "",
     semanaRutina: "",
     areaPasadas: "",
@@ -3080,10 +3129,13 @@ function normalizarBloquesFisicos(bloquesGuardados, contenidoAntiguo = "") {
 
         return {
           ...crearBloqueFisicoVacio(),
-          tipo: ["Gimnasio", "Pasadas", "Pliometría"].includes(bloque?.tipo)
+          tipo: ["Gimnasio", "Pasadas", "Pliometría", "Testeos"].includes(bloque?.tipo)
             ? bloque.tipo
             : "",
           duracion: normalizarDuracion(bloque?.duracion),
+          testeosSeleccionados: Array.isArray(bloque?.testeosSeleccionados)
+            ? bloque.testeosSeleccionados.filter(prueba => prueba && typeof prueba === "object" && String(prueba.id || "").trim() && String(prueba.label || "").trim()).map(prueba => ({ id: String(prueba.id), grupo: String(prueba.grupo || "General"), label: String(prueba.label) }))
+            : [],
           diaRutina: DIAS_RUTINA_GIMNASIO.includes(diaGuardado)
             ? diaGuardado
             : "",
@@ -3266,6 +3318,7 @@ function crearSesionVacia(diaSemana = 0, intensidad = "media") {
     tttBloques: crearBloquesTTTVacios(),
     fisico: "",
     fisicoBloques: crearBloquesFisicosVacios(),
+    pruebasTTT: false,
     rival: "",
     competicion: "",
     activa: false,
@@ -3341,6 +3394,7 @@ function normalizarSesion(registro, indicePredeterminado) {
     Boolean(ec.trim()) ||
     Boolean(ecDuracion.trim()) ||
     Boolean(ttt.trim()) ||
+    original.pruebasTTT === true ||
     fisicoBloques.some(bloque =>
       Boolean(bloque.tipo) ||
       Boolean(bloque.duracion) ||
@@ -3368,6 +3422,7 @@ function normalizarSesion(registro, indicePredeterminado) {
     ttt,
     tttBloques,
     fisicoBloques,
+    pruebasTTT: original.pruebasTTT === true,
     rival: original.rival || "",
     competicion: original.competicion || original.torneo || "",
     activa,
@@ -3931,6 +3986,7 @@ function crearActividadCalendario(sesion, indice, fecha) {
     ec: (!esPartido && !esSuspendido) ? sesion.ec : "",
     duracionEntradaCalor: (!esPartido && !esSuspendido) ? sesion.ecDuracion : "",
     ttt: (!esPartido && !esSuspendido) ? sesion.ttt : "",
+    pruebasTTT: (!esPartido && !esSuspendido) && sesion.pruebasTTT === true,
     tttBloques: (!esPartido && !esSuspendido) ? clonarObjeto(sesion.tttBloques) : [],
     fisico: (!esPartido && !esSuspendido) ? sesion.fisico : "",
     fisicoBloques: (!esPartido && !esSuspendido) ? clonarObjeto(sesion.fisicoBloques) : [],
@@ -4094,7 +4150,7 @@ function cambiarSemana(desplazamiento) {
   seleccionarSemana(semanaActual + desplazamiento);
 }
 
-function seleccionarCategoria(valor) {
+async function seleccionarCategoria(valor) {
   if (!CATEGORIAS.includes(valor)) return;
   if (valor === categoriaActual) return;
 
@@ -4102,6 +4158,7 @@ function seleccionarCategoria(valor) {
 
   categoriaActual = valor;
   guardarPreferenciaCategoria();
+  await cargarCatalogoTesteos(categoriaActual);
 
   const semana = obtenerSemana(semanaActual, categoriaActual);
 
@@ -4175,7 +4232,8 @@ function crearOpcionesTipoFisico(valor) {
     { valor: "", etiqueta: "Seleccionar tipo..." },
     { valor: "Gimnasio", etiqueta: "Gimnasio" },
     { valor: "Pasadas", etiqueta: "Pasadas" },
-    { valor: "Pliometría", etiqueta: "Pliometría" }
+    { valor: "Pliometría", etiqueta: "Pliometría" },
+    { valor: "Testeos", etiqueta: "Testeos" }
   ];
 
   return opciones.map(opcion => `
@@ -4377,6 +4435,10 @@ function renderizarBloquesTTT(sesion, indice) {
     <div class="subbloques-entrenamiento">
       ${bloquesHTML}
       ${botonAgregar}
+      <label class="opcion-pruebas-ttt">
+        <input type="checkbox" data-index="${indice}" data-ttt-pruebas="true" ${sesion.pruebasTTT === true ? "checked" : ""}>
+        <span>Se realizarán pruebas técnico-tácticas este día</span>
+      </label>
     </div>
   `;
 }
@@ -4468,6 +4530,14 @@ function renderizarDetallesFisicos(bloque, indice, indiceBloque) {
     `;
   }
 
+  if (bloque.tipo === "Testeos") {
+    const seleccionados = Array.isArray(bloque.testeosSeleccionados) ? bloque.testeosSeleccionados : [];
+    const lista = catalogoTesteos.length
+      ? catalogoTesteos.map(prueba => '<label class="opcion-test-fisico"><input type="checkbox" ' + base + ' data-block-field="testeosSeleccionados" value="' + escaparHTML(prueba.id) + '" ' + (seleccionados.some(item => item.id === prueba.id) ? "checked" : "") + '><span><strong>' + escaparHTML(prueba.grupo) + '</strong><small>' + escaparHTML(prueba.label) + '</small></span></label>').join("")
+      : '<p class="aviso-testeos-vacios">No se encontraron pruebas configuradas para esta categoría en Testeos.</p>';
+    return '<div class="detalles-fisicos detalles-testeos"><div class="campo campo-lista-testeos"><label>SELECCIONÁ LOS TESTEOS QUE SE REALIZARÁN</label><div class="lista-testeos-fisicos">' + lista + '</div></div></div>';
+  }
+
   if (bloque.tipo === "Pliometría") {
     return `
       <div class="detalles-fisicos">
@@ -4491,7 +4561,7 @@ function renderizarDetallesFisicos(bloque, indice, indiceBloque) {
 
   return `
     <div class="detalle-fisico-vacio">
-      Seleccioná Gimnasio, Pasadas o Pliometría para completar los datos del bloque.
+      Seleccioná Gimnasio, Pasadas, Pliometría o Testeos para completar los datos del bloque.
     </div>
   `;
 }
@@ -4868,6 +4938,7 @@ function renderizarContenidoSesionLectura(sesion, indice) {
       </h5>
 
       ${bloquesTTT || `<p class="lectura-vacio">Sin bloques técnico-tácticos registrados.</p>`}
+      ${sesion.pruebasTTT === true ? '<div class="lectura-bloque"><strong>✓ Se realizarán pruebas técnico-tácticas</strong></div>' : ""}
     </section>
 
     <section class="lectura-seccion">
@@ -5357,6 +5428,15 @@ function procesarCambio(evento) {
 
   if (!elemento) return;
 
+  if (elemento.dataset.tttPruebas === "true") {
+    const indiceSesion = Number(elemento.dataset.index);
+    if (!Number.isInteger(indiceSesion) || !sesionesActuales[indiceSesion]) return;
+    sesionesActuales[indiceSesion].pruebasTTT = elemento.checked === true;
+    sesionesActuales[indiceSesion].activa = true;
+    guardarDatosAutomaticamente(false);
+    return;
+  }
+
   const grupoBloques = elemento.dataset.blockGroup;
 
   if (grupoBloques) {
@@ -5386,10 +5466,23 @@ function procesarCambio(evento) {
 
     const bloque = bloques[indiceBloque];
 
+    if (grupoBloques === "fisicoBloques" && campoBloque === "testeosSeleccionados") {
+      if (bloque.tipo !== "Testeos" || elemento.type !== "checkbox") return;
+      const prueba = catalogoTesteos.find(item => item.id === elemento.value);
+      if (!prueba) return;
+      const seleccionados = Array.isArray(bloque.testeosSeleccionados) ? bloque.testeosSeleccionados : [];
+      bloque.testeosSeleccionados = elemento.checked
+        ? [...seleccionados.filter(item => item.id !== prueba.id), { id: prueba.id, grupo: prueba.grupo, label: prueba.label }]
+        : seleccionados.filter(item => item.id !== prueba.id);
+      sesion.activa = true;
+      guardarDatosAutomaticamente(false);
+      return;
+    }
+
     if (grupoBloques === "fisicoBloques" && campoBloque === "tipo") {
       const tipoNuevo = elemento.value;
 
-      if (!["", "Gimnasio", "Pasadas", "Pliometría"].includes(tipoNuevo)) {
+      if (!["", "Gimnasio", "Pasadas", "Pliometría", "Testeos"].includes(tipoNuevo)) {
         return;
       }
 
@@ -5714,6 +5807,7 @@ async function inicializarPlanificacion() {
   }
 
   categoriaActual = obtenerCategoriaPredeterminada();
+  await cargarCatalogoTesteos(categoriaActual);
 
 // Calcular automáticamente el microciclo según la fecha actual
 const hoy = new Date();
