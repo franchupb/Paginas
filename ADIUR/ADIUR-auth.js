@@ -57,7 +57,7 @@ export async function iniciarSesionADIUR(usuario, contrasena) {
 export async function obtenerPerfilADIUR(user) {
   if (!user) return null;
   const snapshot = await getDoc(doc(db, "usuarios", user.uid));
-  if (!snapshot.exists() || snapshot.data().activo === false) return null;
+  if (!snapshot.exists() || snapshot.data().activo !== true) return null;
   return snapshot.data();
 }
 export async function observarSesionADIUR(callback) {
