@@ -282,7 +282,7 @@ main{padding:20px 10px 28px}
 .cronometro-controles .btn{width:100%;white-space:normal;padding:9px 8px}
 }
 </style>
-<script src="TORITO-permisos.js?v=20261118-s16c"></script>
+<script src="TORITO-permisos.js?v=20261124-auth2"></script>
 </head>
 <body>
 <header class="barra-superior">
@@ -372,7 +372,18 @@ main{padding:20px 10px 28px}
 <script>
 "use strict";
 
-const STORAGE_KEY="tiemposRendimientoTORITO_v3";
+const UID_TIEMPOS_TORITO = localStorage.getItem("uidTORITO") || "sin-uid";
+const ROL_TIEMPOS_TORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+const PUEDE_EDITAR_TIEMPOS_TORITO = localStorage.getItem("puedeEditarTORITO") === "true";
+const CATEGORIAS_TIEMPOS_TORITO = (() => {
+  try {
+    const v = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+    if (Array.isArray(v) && v.length) return v;
+  } catch (_) {}
+  return ROL_TIEMPOS_TORITO === "admin" ? ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"] : [];
+})();
+const STORAGE_KEY="tiemposRendimientoTORITO_v4_" + UID_TIEMPOS_TORITO;
+const STORAGE_KEY_LEGADA="tiemposRendimientoTORITO_v3";
 const AREAS=["POTENCIA ANAEROBICA","TOLERANCIA ANAEROBICA","RESISTENCIA ANAEROBICA","VO2 MÀX","SUPERAEROBICO","SUBAEROBICO","VELOCIDAD","REGENERATIVO"];
 const $=id=>document.getElementById(id);
 let datasetRendimiento=[],baseJugadoras=[],idEvaluacionEditando=null,toastTimer=null;
@@ -436,14 +447,17 @@ function normalizarRegistro(r,i=0){
 }
 function cargarRegistros(){
     try{
-        const a=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
-        return Array.isArray(a)?a.map(normalizarRegistro).filter(r=>r&&r.jugadora&&r.pasadas.length):[];
+        let raw=localStorage.getItem(STORAGE_KEY);
+        if(!raw && ROL_TIEMPOS_TORITO==="admin") raw=localStorage.getItem(STORAGE_KEY_LEGADA);
+        const a=JSON.parse(raw||"[]");
+        return Array.isArray(a)?a.map(normalizarRegistro).filter(r=>r&&r.jugadora&&r.pasadas.length&&CATEGORIAS_TIEMPOS_TORITO.includes(r.categoria)):[];
     }catch(e){
         console.warn("No se pudo leer el historial.",e);
         return[];
     }
 }
 function guardarRegistros(){
+    if(!PUEDE_EDITAR_TIEMPOS_TORITO){mostrarToast("Tu perfil puede consultar los tiempos, pero no modificarlos.",true);return false;}
     try{
         localStorage.setItem(STORAGE_KEY,JSON.stringify(datasetRendimiento));
         return true;
@@ -456,7 +470,7 @@ function guardarRegistros(){
 // Puente entre la página de tiempos y Firebase.
 window.aplicarRegistrosTiemposNube = function(lista){
     datasetRendimiento = Array.isArray(lista)
-        ? lista.map(normalizarRegistro).filter(r => r && r.jugadora && r.pasadas.length)
+        ? lista.map(normalizarRegistro).filter(r => r && r.jugadora && r.pasadas.length && CATEGORIAS_TIEMPOS_TORITO.includes(r.categoria))
         : [];
 
     try{
@@ -483,8 +497,9 @@ window.aplicarJugadorasNube = function(lista){
             id: String(j.id),
             nombre: String(j.nombre || "").trim(),
             categoria: String(j.categoria || "").trim()
-        })).filter(j => j.nombre && j.categoria)
+        })).filter(j => j.nombre && CATEGORIAS_TIEMPOS_TORITO.includes(j.categoria))
         : [];
+    try { localStorage.setItem("jugadorasTORITO_" + UID_TIEMPOS_TORITO, JSON.stringify(baseJugadoras)); } catch (_) {}
 
     cargarCategorias();
     actualizarTodo();
@@ -508,7 +523,7 @@ window.aplicarJugadorasTiemposNube = function(lista){
     
 /* Obtiene las jugadoras guardadas por Jugadoras.html sin inventar nombres ni registros. */
 function leerBaseJugadoras(){
-    const claves=["jugadorasTORITO","torito_jugadoras","jugadorasTORITO_v1","plantelTORITO","baseJugadorasTORITO","torito_toritoJugadoras"];
+    const claves=["jugadorasTORITO_" + UID_TIEMPOS_TORITO];
     const encontrados=[];
     const visitar=(v,catHeredada="")=>{
         if(Array.isArray(v)){
@@ -534,17 +549,13 @@ function leerBaseJugadoras(){
             const raw=localStorage.getItem(k);
             if(raw)visitar(JSON.parse(raw));
         });
-        for(let i=0;i<localStorage.length;i++){
-            const k=localStorage.key(i);
-            if(!k||claves.includes(k)||!/jugadora|plantel/i.test(k))continue;
-            try{visitar(JSON.parse(localStorage.getItem(k)));}catch(_){}
-        }
+
     }catch(e){
         console.warn("No se pudo leer Jugadoras.html.",e);
     }
     const map=new Map();
     encontrados.forEach(j=>{
-        if(!j.nombre)return;
+        if(!j.nombre || !CATEGORIAS_TIEMPOS_TORITO.includes(j.categoria))return;
         const id=normalizarTexto(j.nombre)+"|"+normalizarTexto(j.categoria);
         if(!map.has(id))map.set(id,{...j,id});
     });
@@ -1058,7 +1069,7 @@ actualizarTodo();
 
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
     getFirestore,
@@ -1066,8 +1077,10 @@ import {
     onSnapshot,
     doc,
     setDoc,
-    deleteDoc
-} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+    deleteDoc,
+    query,
+    where
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCsOaJVo8P5reZvfp7vjBkhkP79C_mEO94",
@@ -1079,21 +1092,36 @@ const firebaseConfig = {
     measurementId: "G-32VFQHWP5Y"
   };
 
-const app = initializeApp(firebaseConfig);
+const appExistente = getApps().find(item => item.name === "[DEFAULT]");
+if (appExistente && appExistente.options.projectId !== firebaseConfig.projectId) throw new Error("La aplicación Firebase predeterminada no pertenece a TORITO.");
+const app = appExistente || initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const rolPerfilTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+let categoriasAutorizadasTORITO = [];
+try {
+    const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+    if (Array.isArray(guardadas)) categoriasAutorizadasTORITO = guardadas;
+} catch (_) {}
+if (rolPerfilTORITO === "admin" && !categoriasAutorizadasTORITO.length) {
+    categoriasAutorizadasTORITO = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
+}
+const puedeEditarTORITO = localStorage.getItem("puedeEditarTORITO") === "true";
+const puedeEliminarTORITO = localStorage.getItem("puedeEliminarTORITO") === "true";
+const categoriasJugadoraPorId = new Map();
 
 // ======================================
 // JUGADORAS: ESCUCHAR CAMBIOS EN FIREBASE
 // ======================================
 
 onSnapshot(
-    collection(db,"torito_jugadoras"),
+    query(collection(db,"torito_jugadoras"),where("categoria","in",categoriasAutorizadasTORITO)),
     (snapshot) => {
         const lista = snapshot.docs.map(documento => ({
             id: documento.id,
             nombre: documento.data().nombre || "",
             categoria: documento.data().categoria || ""
         }));
+        lista.forEach(j => categoriasJugadoraPorId.set(j.id, j.categoria));
 
         if (typeof window.aplicarJugadorasNube === "function") {
             window.aplicarJugadorasNube(lista);
@@ -1109,7 +1137,7 @@ onSnapshot(
 // ======================================
 
 onSnapshot(
-    collection(db,"torito_tiemposRendimiento"),
+    query(collection(db,"torito_tiemposRendimiento"),where("categoria","in",categoriasAutorizadasTORITO)),
     (snapshot) => {
         const lista = snapshot.docs.map(documento => ({
             ...documento.data(),
@@ -1137,6 +1165,9 @@ onSnapshot(
 // ======================================
 
 window.guardarRegistroTiemposNube = async function(registro) {
+    if (!puedeEditarTORITO || !categoriasAutorizadasTORITO.includes(registro.categoria)) {
+        throw new Error("El perfil no puede modificar registros de esta categoría.");
+    }
     await setDoc(
         doc(db,"torito_tiemposRendimiento", String(registro.id)),
         registro
@@ -1148,6 +1179,9 @@ window.guardarRegistroTiemposNube = async function(registro) {
 // ======================================
 
 window.eliminarRegistroTiemposNube = async function(id) {
+    if (!puedeEditarTORITO || !puedeEliminarTORITO) {
+        throw new Error("El perfil no puede eliminar registros.");
+    }
     await deleteDoc(
         doc(db,"torito_tiemposRendimiento", String(id))
     );

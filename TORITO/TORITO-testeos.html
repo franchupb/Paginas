@@ -1901,7 +1901,7 @@ a{text-decoration:none;color:inherit}
   }
 }
 </style>
-<script src="TORITO-permisos.js?v=20261118-s16c"></script>
+<script src="TORITO-permisos.js?v=20261124-auth2"></script>
 </head>
 
 <body>
@@ -2383,7 +2383,7 @@ a{text-decoration:none;color:inherit}
 <div id="printRoutine"></div>
 
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getFirestore,
   doc,
@@ -2391,7 +2391,9 @@ import {
   setDoc,
   writeBatch,
   collection,
-  getDocs
+  getDocs,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
@@ -2412,12 +2414,20 @@ let db=null;
 let nubeActiva=false;
 
 try{
-  const app=initializeApp(firebaseConfig);
+  const appExistente = getApps().find(item => item.name === "[DEFAULT]");
+  if (appExistente && appExistente.options.projectId !== firebaseConfig.projectId) {
+    throw new Error("La aplicación Firebase predeterminada no pertenece a TORITO.");
+  }
+  const app = appExistente || initializeApp(firebaseConfig);
   db=getFirestore(app);
   nubeActiva=true;
 }catch(error){
   console.warn("Modo local:",error);
 }
+const rolPerfilTORITO=String(localStorage.getItem("rolTORITO")||"").toLowerCase();
+let categoriasAutorizadasTORITO=[];
+try{const guardadas=JSON.parse(localStorage.getItem("categoriasTORITO")||"[]");if(Array.isArray(guardadas))categoriasAutorizadasTORITO=guardadas;}catch(_){}
+if(rolPerfilTORITO==="admin"&&!categoriasAutorizadasTORITO.length)categoriasAutorizadasTORITO=["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
 
 /* =====================================================
    USUARIO Y PERMISOS
@@ -2776,7 +2786,7 @@ async function cargarJugadorasPorDivision(division){
 
   if(nubeActiva&&db){
     try{
-      const snap=await getDocs(collection(db,"torito_jugadoras"));
+      const snap=await getDocs(query(collection(db,"torito_jugadoras"),where("categoria","in",categoriasAutorizadasTORITO)));
 
       snap.forEach(d=>{
         listaTotal.push({id:d.id,...d.data()});
@@ -2795,7 +2805,7 @@ async function cargarJugadorasPorDivision(division){
   }
 
   if(listaTotal.length===0){
-    const raw=localStorage.getItem("jugadorasTORITO")||localStorage.getItem("plantelTORITO");
+    const raw=localStorage.getItem("jugadorasTORITO_"+(localStorage.getItem("uidTORITO")||"sin-uid"));
 
     if(raw){
       try{listaTotal=JSON.parse(raw)}catch(e){}
@@ -2876,7 +2886,7 @@ async function cargarDatosPlanilla(division,mes){
 
   if(!cargadoDeNube){
 
-    const raw=localStorage.getItem("torito_testeos_torito_"+clave);
+    const raw=localStorage.getItem("torito_testeos_torito_"+(localStorage.getItem("uidTORITO")||"sin-uid")+"_"+clave) || (localStorage.getItem("rolTORITO")==="admin" ? localStorage.getItem("torito_testeos_torito_"+clave) : null);
 
     if(raw){
       try{

@@ -1,0 +1,231 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function profilePath() {
+      return /databases/$(database)/documents/usuarios/$(request.auth.uid);
+    }
+
+    function hasProfile() {
+      return signedIn() && exists(profilePath());
+    }
+
+    function profile() {
+      return get(profilePath()).data;
+    }
+
+    function activeUser() {
+      return hasProfile() && profile().activo == true;
+    }
+
+    function isAdmin() {
+      return activeUser() && profile().rol == 'admin';
+    }
+
+    function categoryOf(data) {
+      return data.keys().hasAny(['categoria'])
+        ? data.categoria
+        : data.keys().hasAny(['division'])
+          ? data.division
+          : null;
+    }
+
+    function hasCategory(category) {
+      return activeUser() && (
+        isAdmin() ||
+        (
+          category != null &&
+          profile().categorias is list &&
+          category in profile().categorias
+        )
+      );
+    }
+
+    function canReadCategoryData(data) {
+      return activeUser() && hasCategory(categoryOf(data));
+    }
+
+    function canEditCategoryData(data) {
+      return activeUser() &&
+        profile().puedeEditar == true &&
+        profile().rol != 'jugadora' &&
+        hasCategory(categoryOf(data));
+    }
+
+    function canDeleteCategoryData(data) {
+      return isAdmin() &&
+        profile().puedeEliminar == true &&
+        hasCategory(categoryOf(data));
+    }
+
+    // Los perfiles solo pueden leer su propio documento.
+    // La administración gestiona altas, bajas y permisos desde un entorno confiable.
+    match /usuarios/{uid} {
+      allow get: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow list: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Colecciones cuyos documentos deben llevar categoria o division.
+    match /torito_jugadoras/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    match /torito_partidos/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    match /torito_asistenciaTORITO/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    match /torito_configuracionAsistenciaTORITO/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    match /torito_testeos_torito/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    match /torito_tiemposRendimiento/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    match /torito_informes/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    match /torito_lesiones/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    // Las pizarras también deben identificar la categoría en cada documento.
+    match /torito_pizarraTacticaTORITO/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    // Nuevas colecciones: un documento independiente por categoría.
+    match /torito_planificacion_categorias/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    match /torito_gimnasio_categorias/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    match /torito_calendario_categorias/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    match /torito_calculadora_categorias/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    match /torito_estadisticas_categorias/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    match /torito_encuestas_categorias/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
+    // Documentos antiguos que agrupan varias categorías: solo administración
+    // hasta que la migración verificada termine. Nunca se exponen a Liana.
+    match /torito_plantel/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /torito_planificacionTORITO/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /torito_gimnasioTORITO/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    // Denegación por defecto para cualquier colección no declarada.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

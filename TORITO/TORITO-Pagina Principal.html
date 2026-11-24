@@ -939,7 +939,7 @@ a {
 }
 </style>
 
-<script src="TORITO-permisos.js?v=20261118-s16c"></script>
+<script src="TORITO-permisos.js?v=20261124-auth2"></script>
 </head>
 
 <body>
@@ -1317,8 +1317,8 @@ a {
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
    CONEXIÓN A FIRESTORE (TORITO)
@@ -1336,7 +1336,11 @@ const firebaseConfig = {
 let db = null;
 let nubeActiva = false;
 try {
-  const app = initializeApp(firebaseConfig);
+  const appExistente = getApps().find(item => item.name === "[DEFAULT]");
+  if (appExistente && appExistente.options.projectId !== firebaseConfig.projectId) {
+    throw new Error("La aplicación Firebase predeterminada no pertenece a TORITO.");
+  }
+  const app = appExistente || initializeApp(firebaseConfig);
   db = getFirestore(app);
   nubeActiva = true;
 } catch (e) {
@@ -1351,6 +1355,18 @@ let cacheJugadorasNube = [];
 ===================================================== */
 
 const usuarioGuardado = localStorage.getItem("usuarioTORITO");
+const rolPerfilTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+const uidPerfilTORITO = localStorage.getItem("uidTORITO") || "sin-uid";
+let categoriasAutorizadasTORITO = [];
+try {
+  const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+  if (Array.isArray(guardadas)) categoriasAutorizadasTORITO = guardadas;
+} catch (_) {}
+if (rolPerfilTORITO === "admin" && !categoriasAutorizadasTORITO.length) {
+  categoriasAutorizadasTORITO = ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
+}
+const categoriasPermitidasSetTORITO = new Set(categoriasAutorizadasTORITO);
+
 
 if (!usuarioGuardado) {
   window.location.href = "TORITO-Loing.html";
@@ -1593,7 +1609,7 @@ function construirEscudo(url, nombre) {
 async function sincronizarPartidosDesdeNube() {
   if (!nubeActiva || !db) return;
   try {
-    const snap = await getDocs(collection(db,"torito_partidos"));
+    const snap = await getDocs(query(collection(db,"torito_partidos"),where("categoria","in",categoriasAutorizadasTORITO)));
     const lista = [];
     snap.forEach(d => lista.push({ id: d.id, ...d.data() }));
     cachePartidosNube = lista;
@@ -2006,10 +2022,10 @@ async function sincronizarJugadorasDesdeNube() {
   let lista = [];
   if (nubeActiva && db) {
     try {
-      const snap = await getDocs(collection(db,"torito_jugadoras"));
+      const snap = await getDocs(query(collection(db,"torito_jugadoras"),where("categoria","in",categoriasAutorizadasTORITO)));
       snap.forEach(d => lista.push({ id: d.id, ...d.data() }));
 
-      if (lista.length === 0) {
+      if (lista.length === 0 && rolPerfilTORITO === "admin") {
         const docPlantel = await getDoc(doc(db,"torito_plantel", "jugadoras"));
         if (docPlantel.exists() && Array.isArray(docPlantel.data().lista)) {
           lista = docPlantel.data().lista;
@@ -2021,20 +2037,20 @@ async function sincronizarJugadorasDesdeNube() {
   }
 
   if (lista.length === 0) {
-    const raw = localStorage.getItem("jugadorasTORITO") || localStorage.getItem("plantelTORITO");
+    const raw = localStorage.getItem("jugadorasTORITO_" + uidPerfilTORITO);
     if (raw) {
       try { lista = JSON.parse(raw); } catch (e) {}
     }
   }
 
-  cacheJugadorasNube = lista;
+  cacheJugadorasNube = lista.filter(j => categoriasPermitidasSetTORITO.has(j.categoria || j.division));
 }
 
 function obtenerTodasJugadoras() {
   if (cacheJugadorasNube.length > 0) return cacheJugadorasNube;
-  const raw = localStorage.getItem("jugadorasTORITO") || localStorage.getItem("plantelTORITO");
+  const raw = localStorage.getItem("jugadorasTORITO_" + uidPerfilTORITO);
   if (raw) {
-    try { return JSON.parse(raw); } catch (e) {}
+    try { return JSON.parse(raw).filter(j => categoriasPermitidasSetTORITO.has(j.categoria || j.division)); } catch (e) {}
   }
   return [];
 }
@@ -2212,13 +2228,13 @@ let fechaSeleccionada = fechaISODeHoy();
 function leerActividades() {
   try {
     const datos = JSON.parse(
-      localStorage.getItem("actividadesTORITO") || "{}"
+      localStorage.getItem("actividadesTORITO_" + uidPerfilTORITO) || "{}"
     );
 
     return datos &&
       typeof datos === "object" &&
       !Array.isArray(datos)
-      ? datos
+      ? Object.fromEntries(Object.entries(datos).filter(([categoria]) => categoriasPermitidasSetTORITO.has(categoria)))
       : {};
   } catch (error) {
     console.error("No se pudieron leer las actividades:", error);

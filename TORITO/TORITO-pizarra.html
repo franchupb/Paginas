@@ -1333,7 +1333,7 @@ body{background:#f2f4f6;color:var(--coach-ink)}
 }
 
 </style>
-<script src="TORITO-permisos.js?v=20261118-s16c"></script>
+<script src="TORITO-permisos.js?v=20261124-auth2"></script>
 </head>
 
 
@@ -2913,46 +2913,45 @@ function idDocumentoPizarra(division){
 ===================================================== */
 
 window.firebasePizarraReady = (async()=>{
-  const [{initializeApp,getApps},{getFirestore,doc,getDoc,setDoc,serverTimestamp}] =
-    await Promise.all([
-      import("https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js"),
-      import("https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js")
-    ]);
+  const { db } = await import("./TORITO-auth.js?v=20261124-auth2");
+  const { doc, getDoc, setDoc, serverTimestamp } = await import(
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+  );
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCsOaJVo8P5reZvfp7vjBkhkP79C_mEO94",
-    authDomain: "torito-56078.firebaseapp.com",
-    projectId: "torito-56078",
-    storageBucket: "torito-56078.firebasestorage.app",
-    messagingSenderId: "497702302753",
-    appId: "1:497702302753:web:04d419e13ded4b59371f60",
-    measurementId: "G-32VFQHWP5Y"
-  };
-
-  const appExistente = getApps().find(item=>item.name==="[DEFAULT]");
-  if(appExistente && appExistente.options.projectId!==firebaseConfig.projectId){
-    throw new Error("Ya existe una aplicación Firebase predeterminada de otro proyecto.");
+  const rolPerfilTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+  let categoriasPermitidasTORITO = [];
+  try {
+    const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+    if (Array.isArray(guardadas)) categoriasPermitidasTORITO = guardadas;
+  } catch (_) {}
+  if (rolPerfilTORITO === "admin" && !categoriasPermitidasTORITO.length) {
+    categoriasPermitidasTORITO = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
   }
-  const app = appExistente || initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const puedeEditarTORITO = localStorage.getItem("puedeEditarTORITO") === "true";
 
-  window.cargarPizarraDesdeNube = async(division)=>{
-    const referencia = doc(db,"torito_pizarraTacticaTORITO",idDocumentoPizarra(division));
+  window.cargarPizarraDesdeNube = async division => {
+    if (!categoriasPermitidasTORITO.includes(division)) {
+      throw new Error("La categoría no está autorizada para este perfil.");
+    }
+    const referencia = doc(db, "torito_pizarraTacticaTORITO", idDocumentoPizarra(division));
     const resultado = await getDoc(referencia);
-    if(!resultado.exists()) return null;
+    if (!resultado.exists()) return null;
     const documento = resultado.data();
     return documento && documento.datos ? documento.datos : null;
   };
 
-  window.guardarPizarraEnNube = async(division,datos)=>{
-    const referencia = doc(db,"torito_pizarraTacticaTORITO",idDocumentoPizarra(division));
+  window.guardarPizarraEnNube = async (division, datos) => {
+    if (!puedeEditarTORITO || !categoriasPermitidasTORITO.includes(division)) {
+      throw new Error("El perfil no puede modificar la pizarra de esta categoría.");
+    }
+    const referencia = doc(db, "torito_pizarraTacticaTORITO", idDocumentoPizarra(division));
     const copia = JSON.parse(JSON.stringify(datos));
-    await setDoc(referencia,{
+    await setDoc(referencia, {
       division,
-      datos:copia,
-      actualizado:serverTimestamp(),
-      actualizadoPor:usuario || "Usuario"
-    });
+      datos: copia,
+      actualizado: serverTimestamp(),
+      actualizadoPor: localStorage.getItem("usuarioTORITO") || "Usuario"
+    }, { merge: true });
     return true;
   };
 

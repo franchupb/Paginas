@@ -1615,7 +1615,7 @@ hr {
   }
 }
 </style>
-<script src="TORITO-permisos.js?v=20261118-s16c"></script>
+<script src="TORITO-permisos.js?v=20261124-auth2"></script>
 </head>
 
 <body>
@@ -2061,9 +2061,19 @@ hr {
    CONFIGURACIÓN
 ===================================================== */
 
-const STORAGE_KEY = "calculadoraTORITOPlanAtemporalV1";
-const LEGACY_STORAGE_KEY = "calculadoraTORITOPlanSemanalV3";
-const DAYS_KEY = "calculadoraTORITODiasV1";
+const UID_TORITO = localStorage.getItem("uidTORITO") || "sin-uid";
+const ROL_TORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+const STORAGE_KEY = "calculadoraTORITOPlanAtemporalV2_" + UID_TORITO;
+const LEGACY_ATEMPORAL_KEY = "calculadoraTORITOPlanAtemporalV1";
+const LEGACY_STORAGE_KEY = ROL_TORITO === "admin" ? "calculadoraTORITOPlanSemanalV3" : "__legacy_disabled__";
+const DAYS_KEY = "calculadoraTORITODiasV2_" + UID_TORITO;
+const CATEGORIAS_TORITO_USUARIO = (() => {
+  try {
+    const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+    if (Array.isArray(guardadas) && guardadas.length) return guardadas;
+  } catch (_) {}
+  return ROL_TORITO === "admin" ? ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"] : [];
+})();
 
 const DAYS = [
   "Lunes",
@@ -2143,7 +2153,10 @@ function loadJSON(key, fallback) {
 
 function obtenerPlanesAtemporales() {
   try {
-    const actual = localStorage.getItem(STORAGE_KEY);
+    let actual = localStorage.getItem(STORAGE_KEY);
+    if (actual === null && ROL_TORITO === "admin") {
+      actual = localStorage.getItem(LEGACY_ATEMPORAL_KEY);
+    }
 
     if (actual !== null) {
       const datos = JSON.parse(actual);
@@ -2216,6 +2229,9 @@ function obtenerPlanesAtemporales() {
 function savePlans() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(plans));
+    if (typeof window.sincronizarCalculadoraNube === "function") {
+      window.sincronizarCalculadoraNube().catch(error => console.error("No se pudo sincronizar la calculadora:", error));
+    }
     return true;
   } catch (error) {
     console.error("No se pudo guardar la calculadora:", error);
@@ -2227,6 +2243,9 @@ function savePlans() {
 function saveTrainingDays() {
   try {
     localStorage.setItem(DAYS_KEY, JSON.stringify(trainingDays));
+    if (typeof window.sincronizarCalculadoraNube === "function") {
+      window.sincronizarCalculadoraNube().catch(error => console.error("No se pudieron sincronizar los días de entrenamiento:", error));
+    }
     return true;
   } catch (error) {
     console.error("No se pudieron guardar los días:", error);
@@ -2237,6 +2256,29 @@ function saveTrainingDays() {
 
 plans = obtenerPlanesAtemporales();
 trainingDays = loadJSON(DAYS_KEY, {});
+
+window.obtenerDatosCalculadoraLocal = () => ({
+  plans: JSON.parse(JSON.stringify(plans)),
+  trainingDays: JSON.parse(JSON.stringify(trainingDays))
+});
+window.aplicarDatosCalculadoraNube = datos => {
+  Object.entries(datos || {}).forEach(([categoria, registro]) => {
+    if (!CATEGORIAS_TORITO_USUARIO.includes(categoria)) return;
+    if (registro && registro.plans && typeof registro.plans === "object") {
+      plans[categoria] = registro.plans;
+    }
+    if (registro && Array.isArray(registro.trainingDays)) {
+      trainingDays[categoria] = DAYS.filter(day => registro.trainingDays.includes(day));
+    }
+  });
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(plans));
+    localStorage.setItem(DAYS_KEY, JSON.stringify(trainingDays));
+  } catch (error) {
+    console.warn("No se pudo guardar la copia local de la calculadora:", error);
+  }
+  if (typeof renderDays === "function") renderDays();
+};
 
 let huboCambiosEnDias = false;
 
@@ -3124,7 +3166,7 @@ function mostrarNotificacion(texto) {
    CALCULADORA INTERACTIVA DE DISTRIBUCIÓN DE VOLUMEN
 ===================================================== */
 
-const VOLUME_STORAGE_KEY = "calculadoraTORITOVolumenDeseadoV1";
+const VOLUME_STORAGE_KEY = "calculadoraTORITOVolumenDeseadoV2_" + UID_TORITO;
 
 const DISTRIBUCION_VOLUMEN = [
   { id: "pelota", porcentaje: 14 },
@@ -3199,6 +3241,9 @@ function actualizarCalculadoraVolumen() {
 
   try {
     localStorage.setItem(VOLUME_STORAGE_KEY, String(volumen));
+  if (typeof window.sincronizarCalculadoraNube === "function") {
+    window.sincronizarCalculadoraNube().catch(error => console.error("No se pudo sincronizar el volumen de calculadora:", error));
+  }
   } catch (error) {
     console.warn("No se pudo guardar el volumen deseado.", error);
   }
@@ -3379,5 +3424,79 @@ inicializarCalculadora();
 
 
 
+
+<script type="module">
+import { db } from "./TORITO-auth.js?v=20261124-auth2";
+import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const rol = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+const uid = localStorage.getItem("uidTORITO") || "sin-uid";
+let categorias = [];
+try {
+  const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+  if (Array.isArray(guardadas)) categorias = guardadas;
+} catch (_) {}
+if (rol === "admin" && !categorias.length) categorias = ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
+const puedeEditar = localStorage.getItem("puedeEditarTORITO") === "true";
+const slug = value => String(value).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"_");
+let nubeLista = false;
+let cola = Promise.resolve();
+
+window.sincronizarCalculadoraNube = () => {
+  if (!nubeLista) return Promise.resolve(false);
+  if (!puedeEditar) return Promise.reject(new Error("El perfil de TORITO es de solo lectura."));
+  const datos = typeof window.obtenerDatosCalculadoraLocal === "function"
+    ? window.obtenerDatosCalculadoraLocal()
+    : null;
+  if (!datos) return Promise.resolve(false);
+  const volumen = localStorage.getItem("calculadoraTORITOVolumenDeseadoV2_" + uid) || "9000";
+  const escrituras = categorias.map(categoria => setDoc(
+    doc(db, "torito_calculadora_categorias", slug(categoria)),
+    {
+      categoria,
+      plans: datos.plans[categoria] || {},
+      trainingDays: datos.trainingDays[categoria] || [],
+      volume: volumen,
+      actualizado: serverTimestamp()
+    },
+    { merge: true }
+  ));
+  cola = cola.catch(() => {}).then(() => Promise.all(escrituras));
+  return cola;
+};
+
+try {
+  const datosNube = {};
+  for (const categoria of categorias) {
+    const ref = doc(db, "torito_calculadora_categorias", slug(categoria));
+    const snapshot = await getDoc(ref);
+    if (snapshot.exists()) {
+      datosNube[categoria] = snapshot.data();
+    } else if (rol === "admin" && typeof window.obtenerDatosCalculadoraLocal === "function") {
+      const locales = window.obtenerDatosCalculadoraLocal();
+      const plan = locales.plans[categoria];
+      const dias = locales.trainingDays[categoria];
+      if ((plan && Object.keys(plan).length) || (Array.isArray(dias) && dias.length)) {
+        await setDoc(ref, {
+          categoria,
+          plans: plan || {},
+          trainingDays: dias || [],
+          volume: localStorage.getItem("calculadoraTORITOVolumenDeseadoV2_" + uid) || "9000",
+          migradoDesde: "localStorage",
+          migradoEn: serverTimestamp()
+        }, { merge: false });
+        datosNube[categoria] = { categoria, plans: plan || {}, trainingDays: dias || [] };
+      }
+    }
+  }
+  if (typeof window.aplicarDatosCalculadoraNube === "function") {
+    window.aplicarDatosCalculadoraNube(datosNube);
+  }
+  nubeLista = true;
+} catch (error) {
+  console.error("No se pudo cargar la calculadora TORITO desde Firebase:", error);
+  nubeLista = false;
+}
+</script>
 </body>
 </html>

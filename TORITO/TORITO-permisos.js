@@ -1,354 +1,305 @@
 /* ==========================================================
-   TORITO — CONTROL CENTRALIZADO DE PERMISOS
-   Inicio de sesión local. Esto restringe la interfaz, pero NO
-   sustituye reglas de seguridad de Firestore.
+   TORITO · AUTORIZACIÓN CENTRALIZADA
+   La identidad y los permisos se validan con Firebase Auth + Firestore.
+   Este archivo controla la interfaz; las reglas de Firestore son
+   la barrera real para proteger los datos.
 ========================================================== */
 (function () {
   "use strict";
 
-  const SESSION_KEY = "usuarioTORITO";
   const LOGIN_URL = "TORITO-Loing.html";
-  const DIVISION_FIJA = { ct_s16: "Sub 16", jugadora_s14: "Sub 14" };
-  const PAGINAS_BIANCA = new Set([
-    "pagina principal.html",
-    "partidos.html",
-    "TORITO-calendario.html",
-    "TORITO-gimnasio.html",
-    "TORITO-testeos.html"
+  const INICIO_URL = "TORITO-Pagina Principal.html";
+  const CATEGORIAS = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
+  const PAGINAS_JUGADORA = new Set([
+    "torito-pagina principal.html",
+    "torito-partidos.html",
+    "torito-calendario.html",
+    "torito-gimnasio.html",
+    "torito-testeos.html"
   ]);
-  const normalizar = value => String(value ?? "")
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase().replace(/[\s._-]+/g, "").trim();
+  const normalizar = value => String(value ?? "").normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[\s._-]+/g, "").trim();
 
-  let usuario = "";
-  try { usuario = String(localStorage.getItem(SESSION_KEY) || "").trim(); }
-  catch (_) { usuario = ""; }
-
-  if (!usuario) {
-    if (!/^(index|loing)\.html$/i.test(location.pathname.split("/").pop() || "")) {
-      location.replace(LOGIN_URL);
-    }
-    return;
-  }
-
-  const u = normalizar(usuario);
-  const rol = ["fran", "francisco", "franciscoperezbasla"].includes(u)
-    ? "admin"
-    : u === "toto" ? "ct_s16"
-    : ["bianca", "biancadominguez"].includes(u) ? "jugadora_s14"
-    : "desconocido";
-
-  if (rol === "desconocido") {
-    try { localStorage.removeItem(SESSION_KEY); } catch (_) {}
-    location.replace(LOGIN_URL);
-    return;
-  }
-
-  const pagina = decodeURIComponent(location.pathname.split("/").pop() || "")
-    .toLowerCase();
-  if (rol === "jugadora_s14" && !PAGINAS_BIANCA.has(pagina)) {
-    location.replace("TORITO-Pagina Principal.html");
-    return;
-  }
-
-  const divisionPermitida = DIVISION_FIJA[rol] || null;
-  const nombreRol = rol === "admin" ? "Administrador"
-    : rol === "ct_s16" ? "CT S16" : "Jugadora S14";
-
-  function actualizarPerfil() {
-    const nombre = rol === "jugadora_s14" ? "Bianca Domínguez" : usuario;
-    ["nombreUsuario", "nombrePerfil", "saludoUsuario"].forEach(id => {
-      const el = document.getElementById(id);
-      if (el && el.textContent !== nombre) el.textContent = nombre;
-    });
-    ["avatarUsuario", "avatarPerfil"].forEach(id => {
-      const el = document.getElementById(id);
-      const inicial = (nombre.trim()[0] || "U").toUpperCase();
-      if (el && el.textContent !== inicial) el.textContent = inicial;
-    });
-    ["rolUsuario", "rolPerfil"].forEach(id => {
-      const el = document.getElementById(id);
-      if (el && el.textContent !== nombreRol) el.textContent = nombreRol;
-    });
-  }
-
-  function normalizarDivision(value) {
-    const s = String(value || "").normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "").toLowerCase()
-      .replace(/[^a-z0-9]/g, "");
-    const mapa = {
-      sub10: "Sub 10", s10: "Sub 10", u10: "Sub 10",
-      sub12: "Sub 12", s12: "Sub 12", u12: "Sub 12",
-      sub14: "Sub 14", s14: "Sub 14", u14: "Sub 14",
-      sub16: "Sub 16", s16: "Sub 16", u16: "Sub 16",
-      primera: "Primera"
-    };
-    return mapa[s] || null;
-  }
+  document.documentElement.classList.add("torito-permisos-pendientes");
+  const estilo = document.createElement("style");
+  estilo.textContent = "html.torito-permisos-pendientes body{visibility:hidden!important}html.torito-permisos-pendientes:before{content:'Verificando acceso seguro…';position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;background:#f7f7f7;color:#333;font:600 14px system-ui,sans-serif;visibility:visible}";
+  document.head.appendChild(estilo);
 
   function categoriaDeTexto(value) {
     const texto = String(value || "").trim();
-    const exacta = normalizarDivision(texto);
-    if (exacta) return exacta;
-    const coincidencia = texto.match(/(?:^|[^a-z0-9])(sub\s*10|sub\s*12|sub\s*14|sub\s*16|s10|s12|s14|s16|primera)(?:$|[^a-z0-9])/i);
-    return coincidencia ? normalizarDivision(coincidencia[1]) : null;
+    const s = normalizar(texto);
+    const mapa = {
+      sub10:"Sub 10",s10:"Sub 10",u10:"Sub 10",
+      sub12:"Sub 12",s12:"Sub 12",u12:"Sub 12",
+      sub14:"Sub 14",s14:"Sub 14",u14:"Sub 14",
+      sub16:"Sub 16",s16:"Sub 16",u16:"Sub 16",
+      primera:"Primera"
+    };
+    if (mapa[s]) return mapa[s];
+    const match = texto.match(/(?:^|[^a-z0-9])(sub\s*10|sub\s*12|sub\s*14|sub\s*16|s10|s12|s14|s16|primera)(?:$|[^a-z0-9])/i);
+    return match ? mapa[normalizar(match[1])] || null : null;
   }
-
-  function esSelectorDeDivision(select) {
-    if (!select || select.tagName !== "SELECT") return false;
-    return Array.from(select.options || []).some(option =>
-      categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent)
-    );
-  }
-
-  function opcionDeDivision(select, division) {
-    return Array.from(select.options || []).find(option =>
-      categoriaDeTexto(option.value) === division ||
-      categoriaDeTexto(option.textContent) === division
-    ) || null;
-  }
-
-  function fijarSelectoresDivision(root = document) {
-    if (!divisionPermitida) return;
-    root.querySelectorAll("select").forEach(select => {
-      if (!esSelectorDeDivision(select)) return;
-      const opcionPermitida = opcionDeDivision(select, divisionPermitida);
-      if (!opcionPermitida) {
-        select.disabled = true;
-        select.dataset.toritoDivisionBloqueada = "1";
-        select.setAttribute("aria-label", "No hay una opción autorizada para " + divisionPermitida);
-        return;
-      }
-      Array.from(select.options || []).forEach(option => {
-        const division = categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent);
-        const esOpcionTodas = /^(todas?|todas las divisiones|todas las categorias|todas las categorías)$/i.test(String(option.textContent || "").trim());
-        if ((division && division !== divisionPermitida) || esOpcionTodas) option.remove();
-      });
-      const opcionFinal = opcionDeDivision(select, divisionPermitida);
-      if (!opcionFinal) {
-        select.disabled = true;
-        select.dataset.toritoDivisionBloqueada = "1";
-        return;
-      }
-      const indicePermitido = Array.from(select.options || []).indexOf(opcionFinal);
-      const cambioNecesario = select.selectedIndex !== indicePermitido;
-      select.selectedIndex = indicePermitido;
-      select.disabled = true;
-      select.dataset.toritoDivisionProcesada = "1";
-      select.dataset.toritoDivisionBloqueada = "0";
-      select.setAttribute("aria-label", "División fijada por permisos: " + divisionPermitida);
-      if (cambioNecesario) select.dispatchEvent(new Event("change", { bubbles: true }));
-    });
-  }
-
-  function divisionDelElemento(elemento) {
-    if (!elemento || elemento.nodeType !== 1) return null;
-    for (const atributo of ["data-division", "data-categoria", "data-category"]) {
-      const division = categoriaDeTexto(elemento.getAttribute(atributo));
-      if (division) return division;
-    }
-    return null;
-  }
-
-  function ocultarBloquesDeOtrasDivisiones(root = document) {
-    if (!divisionPermitida) return;
-    const selectores = [
-      "[data-division]", "[data-categoria]", "[data-category]",
-      ".division-section", ".categoria-card", ".division-card",
-      ".category-card", ".stats > .stat"
-    ].join(",");
-    root.querySelectorAll(selectores).forEach(elemento => {
-      let division = divisionDelElemento(elemento);
-      if (!division && elemento.matches(".division-section")) {
-        const encabezado = elemento.querySelector(".division-heading h1, .division-heading h2, .division-heading h3, h1, h2, h3");
-        division = categoriaDeTexto(encabezado?.textContent);
-      }
-      if (!division && elemento.matches(".stats > .stat")) {
-        const texto = String(elemento.innerText || elemento.textContent || "").trim();
-        const coincidencias = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"]
-          .filter(nombre => new RegExp("(^|[^a-z0-9])" + nombre.replace(" ", "\\s*") + "([^a-z0-9]|$)", "i").test(texto));
-        if (coincidencias.length === 1) division = coincidencias[0];
-      }
-      if (division && division !== divisionPermitida) {
-        elemento.hidden = true;
-        elemento.setAttribute("aria-hidden", "true");
-        elemento.dataset.toritoDivisionOculta = "1";
-      } else if (elemento.dataset.toritoDivisionOculta === "1") {
-        elemento.hidden = false;
-        elemento.removeAttribute("aria-hidden");
-        delete elemento.dataset.toritoDivisionOculta;
-      }
-    });
-  }
-
-  function controlarCambioDeDivision(event) {
-    if (!divisionPermitida || !event.target?.matches?.("select")) return;
-    const select = event.target;
-    if (!esSelectorDeDivision(select)) return;
-    const seleccion = categoriaDeTexto(select.value) || categoriaDeTexto(select.selectedOptions?.[0]?.textContent);
-    if (seleccion === divisionPermitida) return;
-    const permitida = opcionDeDivision(select, divisionPermitida);
-    if (!permitida) {
-      select.disabled = true;
-      return;
-    }
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    select.selectedIndex = Array.from(select.options || []).indexOf(permitida);
-    select.disabled = true;
-    select.dispatchEvent(new Event("change", { bubbles: true }));
-  }
-  const nombresAjeno = new Set();
-  function esSelectorJugadora(select) {
-    const id = (select.id + " " + select.name + " " + select.getAttribute("aria-label")).toLowerCase();
-    return /jugadora|jugador|atleta|plantel/.test(id);
-  }
-  function filtrarSelectoresBianca(root = document) {
-    if (rol !== "jugadora_s14") return;
-    root.querySelectorAll("select").forEach(select => {
-      if (!esSelectorJugadora(select)) return;
-      Array.from(select.options || []).forEach(option => {
-        const t = option.textContent.trim();
-        if (!t || /seleccion|todas|ninguna|bianca/i.test(t)) return;
-        nombresAjeno.add(t.toLocaleLowerCase("es-AR"));
-        option.remove();
-      });
-      const bianca = Array.from(select.options || []).find(o => /bianca/i.test(o.textContent));
-      if (bianca) select.value = bianca.value;
-      select.disabled = true;
-    });
-  }
-
-  const PALABRAS_BORRADO = /eliminar|borrar|suprimir|quitar|dar de baja/i;
-  const PALABRAS_CAMBIO = /guardar|agregar|añadir|nuevo|crear|editar|modificar|actualizar|importar|cargar|registrar|duplicar|publicar|aplicar|restaurar|reset|save|submit|enviar|confirmar/i;
-  const PALABRAS_NAVEGACION = /cerrar|cancelar|volver|abrir|ver|filtrar|buscar|siguiente|anterior|mes|semana|dia|día|imprimir|descargar|mostrar|ocultar|menu|menú|perfil|sesion|sesión|inicio|pizarra|calendario/i;
 
   function textoControl(el) {
     return [
-      el.textContent, el.value, el.getAttribute("aria-label"),
-      el.title, el.id, el.name, el.className, el.getAttribute("data-accion"),
-      el.getAttribute("data-action"), el.getAttribute("data-operacion"), el.getAttribute("onclick")
+      el.textContent, el.value, el.getAttribute("aria-label"), el.title,
+      el.id, el.name, el.className, el.getAttribute("data-accion"),
+      el.getAttribute("data-action"), el.getAttribute("data-operacion"),
+      el.getAttribute("onclick")
     ].filter(Boolean).join(" ").toLowerCase();
   }
-  function esControlSoloLecturaPermitido(el) {
-    const t = textoControl(el);
-    if (el.matches("a, [role=tab]")) return true;
-    if (el.matches("button")) {
-      return !PALABRAS_CAMBIO.test(t) && !PALABRAS_BORRADO.test(t);
-    }
-    if (el.matches("select")) {
-      return !esSelectorJugadora(el) && !Array.from(el.options || []).some(o => categoriaDeTexto(o.value) || categoriaDeTexto(o.textContent));
-    }
-    if (el.matches("input")) {
-      return el.type === "search" || /buscar|filtro|fecha|mes|semana|orden|busqueda|búsqueda/i.test(t);
-    }
-    return false;
+
+  function esperarDOM() {
+    if (document.readyState !== "loading") return Promise.resolve();
+    return new Promise(resolve => document.addEventListener("DOMContentLoaded", resolve, { once:true }));
   }
 
-  function aplicarSoloLectura(root = document) {
-    if (rol !== "jugadora_s14") return;
-    root.querySelectorAll("button, input, select, textarea, [contenteditable=true]").forEach(el => {
-      if (esControlSoloLecturaPermitido(el)) return;
-      if (el.matches("input, textarea, select")) {
-        el.disabled = true;
-        el.readOnly = true;
-      } else if (el.matches("[contenteditable=true]")) {
-        el.setAttribute("contenteditable", "false");
-      } else {
-        el.disabled = true;
-        el.setAttribute("aria-disabled", "true");
-      }
-      el.classList.add("torito-solo-lectura");
-    });
-    root.querySelectorAll("form").forEach(form => {
-      form.addEventListener("submit", bloquearAccion, true);
-    });
+  function mostrarErrorAcceso(mensaje) {
+    document.documentElement.classList.remove("torito-permisos-pendientes");
+    document.body.innerHTML = "";
+    const main = document.createElement("main");
+    main.style.cssText = "min-height:100vh;display:grid;place-content:center;padding:24px;text-align:center;font:15px system-ui,sans-serif;color:#252525";
+    const titulo = document.createElement("h1");
+    titulo.textContent = "No se pudo verificar el acceso";
+    const texto = document.createElement("p");
+    texto.textContent = mensaje;
+    const link = document.createElement("a");
+    link.href = LOGIN_URL;
+    link.textContent = "Volver al inicio de sesión";
+    link.style.cssText = "color:#d95d0b;font-weight:700";
+    main.append(titulo,texto,link);
+    document.body.appendChild(main);
   }
 
-  function bloquearAccion(event) {
-    if (rol === "admin") return;
-    if (rol === "jugadora_s14" && event.type === "submit") {
-      event.preventDefault();
-      event.stopImmediatePropagation();
+  async function iniciar() {
+    await esperarDOM();
+    let modulo;
+    try {
+      modulo = await import("./TORITO-auth.js?v=20261124-auth2");
+    } catch (error) {
+      console.error("No se pudo cargar la autenticación de TORITO:", error);
+      mostrarErrorAcceso("No está disponible el módulo de autenticación. Intentá nuevamente más tarde.");
       return;
     }
-    const target = event.target;
-    const control = target.closest?.("button, input[type=submit], input[type=button]");
-    if (!control) return;
-    const t = textoControl(control);
-    if (rol === "jugadora_s14" && !esControlSoloLecturaPermitido(control)) {
-      event.preventDefault(); event.stopImmediatePropagation();
-    } else if (rol === "ct_s16" && PALABRAS_BORRADO.test(t)) {
-      event.preventDefault(); event.stopImmediatePropagation();
+
+    const sesion = await new Promise(resolve => {
+      let cancelar = () => {};
+      let resuelta = false;
+      cancelar = modulo.observarSesionTORITO((user, perfil, error) => {
+        if (resuelta) return;
+        resuelta = true;
+        cancelar();
+        resolve({ user, perfil, error });
+      });
+    });
+
+    if (!sesion.user || !sesion.perfil) {
+      try { localStorage.removeItem("usuarioTORITO"); } catch (_) {}
+      location.replace(LOGIN_URL);
+      return;
     }
-  }
 
-  function ocultarRegistrosDeOtrasJugadoras() {
-    if (rol !== "jugadora_s14" || !["partidos.html", "TORITO-gimnasio.html", "TORITO-testeos.html"].includes(pagina)) return;
-    const nombres = Array.from(nombresAjeno).filter(n => n.length >= 4);
-    if (!nombres.length) return;
-    document.querySelectorAll("tr, [data-jugadora], .rutina-card, .jugadora-card, .registro-card, .tarjeta-jugadora").forEach(item => {
-      const texto = (item.innerText || item.textContent || "").toLocaleLowerCase("es-AR");
-      if (nombres.some(nombre => texto.includes(nombre))) item.hidden = true;
-    });
-  }
+    const perfil = sesion.perfil;
+    const usuario = perfil.nombre || perfil.usuario || "Usuario";
+    const rol = perfil.rol;
+    const categoriasPermitidas = rol === "admin" ? CATEGORIAS.slice() : perfil.categorias.slice();
+    const permitidas = new Set(categoriasPermitidas);
+    const puedeEditar = perfil.puedeEditar === true && rol !== "jugadora";
+    const puedeEliminar = perfil.puedeEliminar === true && rol === "admin";
+    const pagina = decodeURIComponent(location.pathname.split("/").pop() || "").toLowerCase();
 
-  function aplicarPermisos() {
-    document.querySelectorAll('a[href]').forEach(a => {
-      const destino = (a.getAttribute('href') || '').split(/[?#]/)[0].toLowerCase();
-      if (/^(biblioteca|biblioteca de ejercicios|multimedia|lesiones)\.html$/.test(destino)) {
-        a.hidden = true;
-        a.removeAttribute('href');
-        a.setAttribute('aria-disabled', 'true');
-      }
-    });
-    actualizarPerfil();
-    fijarSelectoresDivision();
-    ocultarBloquesDeOtrasDivisiones();
-    filtrarSelectoresBianca();
-    ocultarRegistrosDeOtrasJugadoras();
-    aplicarSoloLectura();
-    if (rol === "ct_s16") {
-      document.querySelectorAll("button, a, [role=button]").forEach(el => {
-        if (PALABRAS_BORRADO.test(textoControl(el))) {
-          el.hidden = true;
-          el.setAttribute("aria-hidden", "true");
+    if (rol === "jugadora" && !PAGINAS_JUGADORA.has(pagina)) {
+      location.replace(INICIO_URL);
+      return;
+    }
+
+    function esSelectorCategoria(select) {
+      if (!select || select.tagName !== "SELECT") return false;
+      return Array.from(select.options || []).some(o => categoriaDeTexto(o.value) || categoriaDeTexto(o.textContent));
+    }
+
+    function aplicarCategorias(root = document) {
+      root.querySelectorAll("select").forEach(select => {
+        if (!esSelectorCategoria(select)) return;
+        const valorAnterior = categoriaDeTexto(select.value);
+        Array.from(select.options || []).forEach(option => {
+          const categoria = categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent);
+          const todas = /^(todas?|todas las divisiones|todas las categorías|todas las categorias)$/i.test(String(option.textContent || "").trim());
+          if ((categoria && !permitidas.has(categoria)) || (todas && categoriasPermitidas.length < CATEGORIAS.length)) option.remove();
+        });
+        if (categoriasPermitidas.length === 1) {
+          const opcion = Array.from(select.options || []).find(o =>
+            categoriaDeTexto(o.value) === categoriasPermitidas[0] ||
+            categoriaDeTexto(o.textContent) === categoriasPermitidas[0]
+          );
+          if (opcion) {
+            select.value = opcion.value;
+            select.disabled = true;
+            select.dataset.toritoCategoriaFija = "1";
+            select.setAttribute("aria-label", "Categoría autorizada: " + categoriasPermitidas[0]);
+            if (valorAnterior !== categoriasPermitidas[0]) select.dispatchEvent(new Event("change", { bubbles:true }));
+          }
+        } else {
+          select.disabled = false;
+          delete select.dataset.toritoCategoriaFija;
         }
       });
     }
-    if (rol === "jugadora_s14") {
-      document.querySelectorAll("a[href]").forEach(a => {
-        const href = (a.getAttribute("href") || "").split("?")[0].toLowerCase();
-        if (/^(jugadoras|asistencia|planificacion|calculadora|informes|estadisticas|pizarra|pruebas|tiempos|encuestas)\.html$/.test(href)) a.remove();
+
+    function divisionElemento(elemento) {
+      for (const atributo of ["data-division","data-categoria","data-category"]) {
+        const categoria = categoriaDeTexto(elemento.getAttribute(atributo));
+        if (categoria) return categoria;
+      }
+      return null;
+    }
+
+    function ocultarOtrasCategorias(root = document) {
+      const selectores = "[data-division],[data-categoria],[data-category],.division-section,.categoria-card,.division-card,.category-card";
+      root.querySelectorAll(selectores).forEach(elemento => {
+        let categoria = divisionElemento(elemento);
+        if (!categoria && elemento.matches(".division-section")) {
+          const h = elemento.querySelector("h1,h2,h3");
+          categoria = categoriaDeTexto(h?.textContent);
+        }
+        if (categoria && !permitidas.has(categoria)) {
+          elemento.hidden = true;
+          elemento.setAttribute("aria-hidden","true");
+        }
       });
-      document.querySelectorAll("[data-ocultar-bianca]").forEach(el => el.remove());
     }
-  }
 
-  document.addEventListener("change", controlarCambioDeDivision, true);
-  document.addEventListener("click", bloquearAccion, true);
-  document.addEventListener("submit", bloquearAccion, true);
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", aplicarPermisos, { once: true });
-  } else {
+    function filtrarJugadoras(root = document) {
+      if (rol !== "jugadora") return;
+      const nombrePropio = normalizar(perfil.nombre || perfil.usuario);
+      root.querySelectorAll("select").forEach(select => {
+        const descriptor = normalizar([select.id,select.name,select.getAttribute("aria-label")].join(" "));
+        if (!/jugadora|jugador|atleta|plantel/.test(descriptor)) return;
+        Array.from(select.options || []).forEach(option => {
+          const texto = normalizar(option.textContent);
+          if (texto && !/seleccion|todas|ninguna/.test(texto) && texto !== nombrePropio) option.remove();
+        });
+        select.disabled = true;
+      });
+    }
+
+    const PALABRAS_BORRADO = /eliminar|borrar|suprimir|quitar|dar de baja/i;
+    const PALABRAS_CAMBIO = /guardar|agregar|añadir|nuevo|crear|editar|modificar|actualizar|importar|cargar|registrar|duplicar|publicar|aplicar|restaurar|reset|save|submit|enviar|confirmar/i;
+    const PALABRAS_NAVEGACION = /cerrar|cancelar|volver|abrir|ver|filtrar|buscar|siguiente|anterior|mes|semana|día|dia|imprimir|descargar|mostrar|ocultar|menú|menu|perfil|sesión|sesion|inicio|pizarra|calendario/i;
+
+    function controlPermitidoSoloLectura(el) {
+      const t = textoControl(el);
+      if (el.matches("a,[role=tab]")) return true;
+      if (el.matches("button,[role=button]")) return !PALABRAS_CAMBIO.test(t) && !PALABRAS_BORRADO.test(t) || PALABRAS_NAVEGACION.test(t);
+      if (el.matches("select")) return !esSelectorCategoria(el) && !/jugadora|jugador|atleta|plantel/i.test(t);
+      if (el.matches("input")) return el.type === "search" || /buscar|filtro|fecha|mes|semana|orden|búsqueda|busqueda/i.test(t);
+      return false;
+    }
+
+    function bloquearAccion(event) {
+      const control = event.target?.closest?.("button,input[type=submit],input[type=button],[role=button]");
+      if (event.type === "submit" && !puedeEditar) {
+        event.preventDefault(); event.stopImmediatePropagation(); return;
+      }
+      if (!control) return;
+      const t = textoControl(control);
+      if (!puedeEditar && !controlPermitidoSoloLectura(control)) {
+        event.preventDefault(); event.stopImmediatePropagation();
+      } else if (!puedeEliminar && PALABRAS_BORRADO.test(t)) {
+        event.preventDefault(); event.stopImmediatePropagation();
+      }
+    }
+
+    function aplicarSoloLectura(root = document) {
+      if (puedeEditar) return;
+      root.querySelectorAll("button,input,select,textarea,[contenteditable=true]").forEach(el => {
+        if (controlPermitidoSoloLectura(el)) return;
+        if (el.matches("input,select,textarea")) el.disabled = true;
+        else if (el.matches("[contenteditable=true]")) el.setAttribute("contenteditable","false");
+        else { el.disabled = true; el.setAttribute("aria-disabled","true"); }
+        el.classList.add("torito-solo-lectura");
+      });
+      root.querySelectorAll("form").forEach(form => form.addEventListener("submit", bloquearAccion, true));
+    }
+
+    function actualizarPerfil() {
+      [ "nombreUsuario", "nombrePerfil", "saludoUsuario", "tituloPerfil" ].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = usuario;
+      });
+      [ "avatarUsuario", "avatarPerfil" ].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = (usuario.trim()[0] || "U").toUpperCase();
+      });
+      const etiquetaRol = rol === "admin" ? "Administrador"
+        : rol === "coordinadora" ? "Coordinación"
+        : rol === "cuerpo_tecnico" ? "Cuerpo técnico"
+        : "Jugadora";
+      [ "rolUsuario", "rolPerfil" ].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = etiquetaRol;
+      });
+    }
+
+    function aplicarPermisos(root = document) {
+      actualizarPerfil();
+      aplicarCategorias(root);
+      ocultarOtrasCategorias(root);
+      filtrarJugadoras(root);
+      aplicarSoloLectura(root);
+      if (!puedeEliminar) {
+        root.querySelectorAll("button,a,[role=button]").forEach(el => {
+          if (PALABRAS_BORRADO.test(textoControl(el))) {
+            el.hidden = true;
+            el.setAttribute("aria-hidden","true");
+          }
+        });
+      }
+      root.querySelectorAll('a[href]').forEach(a => {
+        const destino = (a.getAttribute("href") || "").split(/[?#]/)[0].toLowerCase();
+        if (/^(biblioteca|multimedia)\.html$/.test(destino)) {
+          a.hidden = true;
+          a.removeAttribute("href");
+          a.setAttribute("aria-disabled","true");
+        }
+      });
+    }
+
+    document.addEventListener("change", event => {
+      if (!esSelectorCategoria(event.target)) return;
+      const seleccion = categoriaDeTexto(event.target.value) || categoriaDeTexto(event.target.selectedOptions?.[0]?.textContent);
+      if (seleccion && !permitidas.has(seleccion)) {
+        event.preventDefault(); event.stopImmediatePropagation();
+        event.target.value = categoriasPermitidas[0] || "";
+      }
+    }, true);
+    document.addEventListener("click", bloquearAccion, true);
+    document.addEventListener("submit", bloquearAccion, true);
     aplicarPermisos();
+    const observer = new MutationObserver(records => {
+      if (records.some(r => r.addedNodes.length || r.removedNodes.length)) aplicarPermisos();
+    });
+    observer.observe(document.documentElement,{childList:true,subtree:true});
+
+    window.TORITO_PERMISOS = Object.freeze({
+      uid: perfil.uid,
+      usuario,
+      rol,
+      categorias: Object.freeze(categoriasPermitidas.slice()),
+      division: categoriasPermitidas.length === 1 ? categoriasPermitidas[0] : null,
+      puedeEditar,
+      puedeEliminar,
+      puedeGestionarUsuarios: perfil.puedeGestionarUsuarios === true,
+      puedeAccederCategoria: categoria => permitidas.has(categoriaDeTexto(categoria)),
+      puedeEditarCategoria: categoria => puedeEditar && permitidas.has(categoriaDeTexto(categoria)),
+      puedeEliminarCategoria: categoria => puedeEliminar && permitidas.has(categoriaDeTexto(categoria))
+    });
+    window.esperarPermisosTORITO = () => Promise.resolve(window.TORITO_PERMISOS);
+    document.documentElement.classList.remove("torito-permisos-pendientes");
   }
 
-  const observer = new MutationObserver(records => {
-    let changed = false;
-    for (const record of records) {
-      if (record.type === "childList" && (record.addedNodes.length || record.removedNodes.length)) changed = true;
-    }
-    if (changed) aplicarPermisos();
-  });
-  observer.observe(document.documentElement, { childList: true, subtree: true });
-
-  window.TORITO_PERMISOS = Object.freeze({
-    usuario: rol === "jugadora_s14" ? "Bianca Domínguez" : usuario,
-    rol,
-    division: divisionPermitida,
-    puedeEditar: rol !== "jugadora_s14",
-    puedeEliminar: rol === "admin",
-    paginasBianca: Array.from(PAGINAS_BIANCA)
+  iniciar().catch(error => {
+    console.error("TORITO: falló la validación central de permisos:",error);
+    mostrarErrorAcceso("No fue posible verificar la sesión y los permisos. No se habilitó el acceso a los datos.");
   });
 })();

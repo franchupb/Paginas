@@ -1,0 +1,33 @@
+name: TORITO syntax and Firestore rules validation
+
+on:
+  push:
+    branches:
+      - master
+      - "work/**"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check-inline-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check inline JavaScript in TORITO pages
+        run: node scripts/check-torito-html.mjs
+
+  test-firestore-rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Firebase test dependencies
+        run: npm install --no-save firebase@10.12.2 @firebase/rules-unit-testing@3.0.3 firebase-tools
+      - name: Test TORITO Firestore rules in emulator
+        run: npx firebase emulators:exec --only firestore --project demo-torito-rules --config firebase.torito.json "node scripts/test-torito-firestore-rules.mjs"
