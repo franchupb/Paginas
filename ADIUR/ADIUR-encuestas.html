@@ -212,14 +212,18 @@ function periodoCat(){return periodos.filter(p=>categoriaKey(p.categoria)===cate
 function respuestasDe(id){return respuestas.filter(r=>r.periodoId===id)}
 function yaRespondio(id){return respuestas.some(r=>r.periodoId===id&&r.uid===uid)}
 function cargarPlantel(){
- const unsub=fb.onSnapshot(fb.collection(db,"jugadoras"),snap=>{plantel=snap.docs.map(d=>{const x=d.data();return{id:d.id,nombre:x.nombre||x.nombreCompleto||x.nombre_completo||[x.nombres,x.apellido||x.apellidos].filter(Boolean).join(" "),categoria:x.categoria||x.division||x.categoría||x.category||"",estado:x.estado||x.status||"Activo"}});renderTodo()},e=>{console.error(e);estado("No se pudo cargar el plantel.","error")});unsubs.push(unsub)
+ const consulta=fb.query(fb.collection(db,"jugadoras"),fb.where("categoria","in",perfil.categorias));
+ const unsub=fb.onSnapshot(consulta,snap=>{plantel=snap.docs.map(d=>{const x=d.data();return{id:d.id,nombre:x.nombre||x.nombreCompleto||x.nombre_completo||[x.nombres,x.apellido||x.apellidos].filter(Boolean).join(" "),categoria:x.categoria||x.division||x.categoría||x.category||"",estado:x.estado||x.status||"Activo"}});renderTodo()},e=>{console.error(e);estado("No se pudo cargar el plantel de tus categorías.","error")});unsubs.push(unsub)
 }
 function escucharDatos(){
  const periodosRef=fb.collection(db,"encuestas_periodos");
- const up=fb.onSnapshot(periodosRef,s=>{periodos=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error(e);estado("No se pudieron cargar las publicaciones. Revisá las reglas de Firestore.","error")});unsubs.push(up);
+ const consultaPeriodos=fb.query(periodosRef,fb.where("categoria","in",perfil.categorias));
+ const up=fb.onSnapshot(consultaPeriodos,s=>{periodos=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error(e);estado("No se pudieron cargar las publicaciones de tus categorías.","error")});unsubs.push(up);
  const respuestasRef=fb.collection(db,"encuestas_respuestas");
- const q=esJugadora()?fb.query(respuestasRef,fb.where("uid","==",uid)):respuestasRef;
- const ur=fb.onSnapshot(q,s=>{respuestas=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error(e);estado("No se pudieron cargar las respuestas. Revisá las reglas de Firestore.","error")});unsubs.push(ur)
+ const consultaRespuestas=esJugadora()
+   ?fb.query(respuestasRef,fb.where("uid","==",uid),fb.where("categoria","in",perfil.categorias))
+   :fb.query(respuestasRef,fb.where("categoria","in",perfil.categorias));
+ const ur=fb.onSnapshot(consultaRespuestas,s=>{respuestas=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error(e);estado("No se pudieron cargar las respuestas autorizadas.","error")});unsubs.push(ur)
 }
 function renderTodo(){if(!perfil)return;if(esJugadora())renderJugadora();else renderCT()}
 function renderJugadora(){
