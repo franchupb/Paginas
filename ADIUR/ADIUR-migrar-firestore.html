@@ -47,19 +47,36 @@ try{
  }
 }catch(error){informar("No se pudo verificar la sesión: "+(error.code||error.message));}
 
+function mezclarConPrioridadExistente(origen,existente){
+ if(Array.isArray(origen)||Array.isArray(existente))return Array.isArray(existente)?existente:origen;
+ const esObjeto=v=>v&&typeof v==="object"&&!Array.isArray(v);
+ if(esObjeto(origen)||esObjeto(existente)){
+  const a=esObjeto(origen)?origen:{},b=esObjeto(existente)?existente:{},salida={...a};
+  for(const clave of Object.keys(b)){
+   salida[clave]=Object.prototype.hasOwnProperty.call(a,clave)
+    ?mezclarConPrioridadExistente(a[clave],b[clave])
+    :b[clave];
+  }
+  return salida;
+ }
+ return existente===undefined?origen:existente;
+}
 async function migrarColeccion(nombre, transformar){
  const origen=await getDoc(doc(db,nombre,"principal"));
- if(!origen.exists())return {nombre,estado:"sin documento principal",creados:0,omitidos:0};
+ if(!origen.exists())return {nombre,estado:"sin documento principal",creados:0,actualizados:0,omitidos:0};
  const datos=transformar(origen.data());
- let creados=0,omitidos=0;
+ let creados=0,actualizados=0,omitidos=0;
  for(const item of datos){
   const ref=doc(db,nombre,item.id);
   const existente=await getDoc(ref);
-  if(existente.exists()){omitidos++;continue;}
-  await setDoc(ref,{...item.datos,migradoDesde:"principal",migradoEn:serverTimestamp()});
-  creados++;
+  if(existente.exists()&&existente.data().migradoDesde==="principal"){omitidos++;continue;}
+  const contenido=existente.exists()
+   ?mezclarConPrioridadExistente(item.datos,existente.data())
+   :item.datos;
+  await setDoc(ref,{...contenido,migradoDesde:"principal",migradoEn:serverTimestamp()});
+  if(existente.exists())actualizados++;else creados++;
  }
- return {nombre,estado:"ok",creados,omitidos};
+ return {nombre,estado:"ok",creados,actualizados,omitidos};
 }
 
 boton.addEventListener("click",async()=>{
@@ -87,7 +104,7 @@ boton.addEventListener("click",async()=>{
     id:slug(c),datos:{categoria:c,plans:Object.prototype.hasOwnProperty.call(planes,c)?{[c]:planes[c]}:{},trainingDays:Object.prototype.hasOwnProperty.call(dias,c)?{[c]:dias[c]}:{},volume:String(original.volume||""),actualizadoEn:new Date().toISOString()}
    }));
   }));
-  informar("Migración finalizada.\n\n"+resultados.map(r=>r.nombre+": "+r.estado+" · creados: "+r.creados+" · existentes omitidos: "+r.omitidos).join("\n")+"\n\nLos documentos originales principal siguen intactos. Revisá las páginas con cada cuenta antes de eliminar cualquier respaldo.");
+  informar("Migración finalizada.\n\n"+resultados.map(r=>r.nombre+": "+r.estado+" · creados: "+r.creados+" · combinados: "+r.actualizados+" · ya migrados: "+r.omitidos).join("\n")+"\n\nLos documentos originales principal siguen intactos. Revisá las páginas con cada cuenta antes de eliminar cualquier respaldo.");
   boton.textContent="Migración revisada";
  }catch(error){
   console.error("Error en migración ADIUR:",error);
