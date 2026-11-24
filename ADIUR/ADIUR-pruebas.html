@@ -955,25 +955,39 @@ try {
 /* =====================================================
    USUARIO Y PERMISOS
 ===================================================== */
-const usuarioGuardado = (localStorage.getItem("usuarioADIUR") || "").trim();
-if (!usuarioGuardado) {
-  window.location.href = "ADIUR-Loing.html";
+let usuarioGuardado = (localStorage.getItem("usuarioADIUR") || "").trim();
+let usuarioNormalizado = usuarioGuardado.toLowerCase();
+let rolADIUR = localStorage.getItem("rolADIUR") || "";
+let esFran = rolADIUR === "admin";
+let esToto = rolADIUR === "cuerpo_tecnico";
+let esBianca = rolADIUR === "jugadora";
+let puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolADIUR);
+
+function aplicarPerfilCentralPruebas(perfil) {
+  if (!perfil) return;
+  usuarioGuardado = String(perfil.usuario || perfil.nombre || localStorage.getItem("usuarioADIUR") || "").trim();
+  usuarioNormalizado = usuarioGuardado.toLowerCase();
+  rolADIUR = String(perfil.rol || "").toLowerCase();
+  esFran = rolADIUR === "admin";
+  esToto = rolADIUR === "cuerpo_tecnico";
+  esBianca = rolADIUR === "jugadora";
+  puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolADIUR);
+  document.getElementById("nombreUsuario").textContent = perfil.nombre || usuarioGuardado || "Usuario";
+  document.getElementById("avatarUsuario").textContent = (perfil.nombre || usuarioGuardado || "U").trim().charAt(0).toUpperCase();
+  document.getElementById("rolUsuario").textContent = esFran ? "Administrador" : rolADIUR === "coordinadora" ? "Coordinadora" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora" : "Club ADIUR";
+  const acciones = document.getElementById("accionesTecnico");
+  if (acciones) acciones.style.display = puedeEditar ? "" : "none";
+  if (esBianca && Array.isArray(perfil.categorias) && perfil.categorias.length) {
+    const selector = document.getElementById("selectDivision");
+    if (selector) {
+      const opcion = Array.from(selector.options).find(o => normalizarCategoriaPlantel(o.value || o.textContent) === normalizarCategoriaPlantel(perfil.categorias[0]));
+      if (opcion) { selector.value = opcion.value; selector.dispatchEvent(new Event("change", { bubbles: true })); }
+    }
+  }
+  if (typeof renderizarTablaPlanilla === "function") renderizarTablaPlanilla();
 }
-
-const usuarioNormalizado = usuarioGuardado.toLowerCase();
-const rolADIUR = localStorage.getItem("rolADIUR") || "";
-const esFran = rolADIUR === "admin";
-const esToto = rolADIUR === "cuerpo_tecnico";
-const esBianca = rolADIUR === "jugadora";
-const puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolADIUR);
-
-document.getElementById("nombreUsuario").textContent = usuarioGuardado;
-document.getElementById("avatarUsuario").textContent = usuarioGuardado.charAt(0).toUpperCase();
-document.getElementById("rolUsuario").textContent = esFran ? "Administrador" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora" : "Club ADIUR";
-
-if (!puedeEditar) {
-  document.getElementById("accionesTecnico").style.display = "none";
-}
+if (window.ADIUR_PERMISOS) aplicarPerfilCentralPruebas(window.ADIUR_PERMISOS);
+else window.addEventListener("adiur-permisos-listos", event => aplicarPerfilCentralPruebas(event.detail || window.ADIUR_PERMISOS), { once: true });
 
 window.cerrarSesion = function(event) {
   event.preventDefault();
