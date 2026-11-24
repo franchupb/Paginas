@@ -57,6 +57,11 @@
       rol: "jugadora", categorias: ["Sub 16"], jugadora: "Jazmin De Nicola Forte",
       puedeGestionarUsuarios: false, puedeEditar: false, puedeEliminar: false
     }
+,    suyaip: {
+      nombre: "Suyai Palazzini", usuario: "Suyai_P",
+      rol: "jugadora", categorias: ["Sub 14"], jugadora: "Suyai Palazzini",
+      puedeGestionarUsuarios: false, puedeEditar: false, puedeEliminar: false
+    }
   });
 
   const PAGINAS_JUGADORAS = new Set([
