@@ -191,6 +191,15 @@ service cloud.firestore {
       allow delete: if canDeleteCategoryData(resource.data);
     }
 
+    match /torito_estadisticas_categorias/{id} {
+      allow get, list: if canReadCategoryData(resource.data);
+      allow create: if canEditCategoryData(request.resource.data);
+      allow update: if canEditCategoryData(resource.data)
+        && canEditCategoryData(request.resource.data)
+        && categoryOf(resource.data) == categoryOf(request.resource.data);
+      allow delete: if canDeleteCategoryData(resource.data);
+    }
+
     match /torito_encuestas_categorias/{id} {
       allow get, list: if canReadCategoryData(resource.data);
       allow create: if canEditCategoryData(request.resource.data);
