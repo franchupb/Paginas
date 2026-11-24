@@ -2692,15 +2692,52 @@ const firebaseConfig = {
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 
-  // Se consulta únicamente la documentación de las divisiones autorizadas.
+  const normalizarIdentidadNube = valor => String(valor || "")
+    .normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const nombreJugadoraNube = jugadora => String(
+    jugadora?.nombreCompleto || jugadora?.nombreYApellido || jugadora?.nombre ||
+    [jugadora?.nombres, jugadora?.apellido || jugadora?.apellidos].filter(Boolean).join(" ") ||
+    jugadora?.jugadora || ""
+  ).trim();
+  const idJugadoraNube = jugadora => String(
+    jugadora?.id || jugadora?.usuario || jugadora?.username ||
+    jugadora?.nombreUsuario || jugadora?.login || nombreJugadoraNube(jugadora)
+  ).trim();
+
+  // Las rutinas generales se comparten dentro de la categoría. Las individuales
+  // se guardan en documentos separados y las jugadoras solo descargan el propio.
   window.cargarGimnasioNube = async () => {
     const perfil = await window.esperarPermisosADIUR();
     const categorias = perfil?.categorias || [];
     if (!categorias.length) throw new Error("No hay categorías autorizadas para el gimnasio.");
-    const consulta = query(collection(dbCloud, "gimnasioADIUR_categorias"), where("categoria", "in", categorias));
-    const resultado = await getDocs(consulta);
+
+    const consultaGeneral = query(
+      collection(dbCloud, "gimnasioADIUR_categorias"),
+      where("categoria", "in", categorias)
+    );
+    const consultaIndividual = perfil.rol === "jugadora"
+      ? query(
+          collection(dbCloud, "gimnasioADIUR_individuales"),
+          where("categoria", "in", categorias),
+          where("jugadora", "==", perfil.jugadora)
+        )
+      : query(
+          collection(dbCloud, "gimnasioADIUR_individuales"),
+          where("categoria", "in", categorias)
+        );
+
+    const [generales, individuales] = await Promise.all([
+      getDocs(consultaGeneral),
+      getDocs(consultaIndividual)
+    ]);
     const datos = {};
-    resultado.forEach(snapshot => {
+    generales.forEach(snapshot => {
+      const registro = snapshot.data();
+      if (categorias.includes(registro.categoria) && registro.datos && typeof registro.datos === "object") {
+        Object.assign(datos, registro.datos);
+      }
+    });
+    individuales.forEach(snapshot => {
       const registro = snapshot.data();
       if (categorias.includes(registro.categoria) && registro.datos && typeof registro.datos === "object") {
         Object.assign(datos, registro.datos);
@@ -2709,9 +2746,11 @@ const firebaseConfig = {
     return Object.keys(datos).length ? datos : null;
   };
 
-  // El plantel también se limita a las divisiones del perfil autenticado.
+  // El plantel se limita a las divisiones del perfil autenticado.
   window.cargarJugadorasGimnasioNube = async () => {
-    const consulta = await window.crearConsultaCategoriasADIUR(collection(dbCloud, "jugadoras"), query, where, "categoria");
+    const consulta = await window.crearConsultaCategoriasADIUR(
+      collection(dbCloud, "jugadoras"), query, where, "categoria"
+    );
     const snapshot = await getDocs(consulta);
     return snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
   };
@@ -2720,26 +2759,65 @@ const firebaseConfig = {
   window.guardarGimnasioEnNube = async datos => {
     const perfil = await window.esperarPermisosADIUR();
     const categorias = perfil?.categorias || [];
-    if (!categorias.length) throw new Error("No hay categorías autorizadas para guardar rutinas.");
+    if (!categorias.length || !["admin", "coordinadora", "cuerpo_tecnico"].includes(perfil.rol)) {
+      throw new Error("No tenés permisos para guardar rutinas del gimnasio.");
+    }
+
     const copia = JSON.parse(JSON.stringify(datos || {}));
-    const entradas = categorias.map(categoria => {
+    const jugadoras = await window.cargarJugadorasGimnasioNube();
+    const tareas = [];
+
+    for (const categoria of categorias) {
       const prefijoGeneral = "GENERAL::" + categoria + "::";
       const prefijoIndividual = "INDIVIDUAL::" + categoria + "::";
-      const datosCategoria = Object.fromEntries(Object.entries(copia).filter(([clave]) =>
-        clave === categoria || clave === "GENERAL::" + categoria ||
-        clave.startsWith(prefijoGeneral) || clave.startsWith(prefijoIndividual)
+      const general = Object.fromEntries(Object.entries(copia).filter(([clave]) =>
+        clave === categoria || clave === "GENERAL::" + categoria || clave.startsWith(prefijoGeneral)
       ));
-      return [categoria, datosCategoria];
-    }).filter(([, datosCategoria]) => Object.keys(datosCategoria).length);
-    colaGuardado = colaGuardado.catch(() => {}).then(async () => {
-      for (const [categoria, datosCategoria] of entradas) {
-        await setDoc(doc(dbCloud, "gimnasioADIUR_categorias", idCategoria(categoria)), {
+      if (Object.keys(general).length) {
+        tareas.push(() => setDoc(doc(dbCloud, "gimnasioADIUR_categorias", idCategoria(categoria)), {
           categoria,
           tipo: "categoria",
-          datos: datosCategoria,
+          datos: general,
           actualizado: serverTimestamp()
-        });
+        }));
       }
+
+      const individuales = new Map();
+      Object.entries(copia).forEach(([clave, rutina]) => {
+        if (!clave.startsWith(prefijoIndividual)) return;
+        const idOrigen = clave.slice(prefijoIndividual.length);
+        const normalizado = normalizarIdentidadNube(idOrigen);
+        const jugadora = jugadoras.find(item => {
+          const alias = [
+            item.id, item.usuario, item.username, item.nombreUsuario, item.login,
+            nombreJugadoraNube(item)
+          ].map(normalizarIdentidadNube);
+          return alias.includes(normalizado) &&
+            normalizarIdentidadNube(item.categoria || item.division) === normalizarIdentidadNube(categoria);
+        });
+        const id = jugadora ? idJugadoraNube(jugadora) : idOrigen;
+        const claveDocumento = idCategoria(categoria) + "__" + idCategoria(id);
+        if (!individuales.has(claveDocumento)) {
+          individuales.set(claveDocumento, {
+            categoria,
+            jugadoraId: id,
+            jugadora: jugadora ? nombreJugadoraNube(jugadora) : "",
+            datos: {}
+          });
+        }
+        individuales.get(claveDocumento).datos[clave] = rutina;
+      });
+
+      for (const [id, registro] of individuales) {
+        tareas.push(() => setDoc(doc(dbCloud, "gimnasioADIUR_individuales", id), {
+          ...registro,
+          actualizado: serverTimestamp()
+        }));
+      }
+    }
+
+    colaGuardado = colaGuardado.catch(() => {}).then(async () => {
+      for (const tarea of tareas) await tarea();
     });
     return colaGuardado;
   };
