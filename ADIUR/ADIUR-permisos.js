@@ -455,6 +455,7 @@
             rol,
             categorias,
             jugadora: jugadora || null,
+            jugadoraId: String(perfil.jugadoraId || "").trim() || null,
             puedeGestionarUsuarios: rol === "admin",
             puedeEditar: ["admin", "coordinadora", "cuerpo_tecnico"].includes(rol),
             puedeEliminar: ["admin", "coordinadora"].includes(rol)
@@ -488,6 +489,7 @@
             rol: base.rol,
             categorias: [...base.categorias],
             jugadora: base.jugadora || null,
+            jugadoraId: base.jugadoraId || null,
             puedeEditar: base.puedeEditar,
             puedeEliminar: base.puedeEliminar,
             puedeGestionarUsuarios: base.puedeGestionarUsuarios
