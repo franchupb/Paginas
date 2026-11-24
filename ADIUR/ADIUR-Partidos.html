@@ -1752,7 +1752,7 @@ body.eliminando .btn-puntos {
     }
 }
 </style>
-<script src="ADIUR-permisos.js?v=20261123func5"></script>
+<script src="ADIUR-permisos.js?v=20261123func11"></script>
 </head>
 
 <body>
@@ -2289,7 +2289,9 @@ import {
     doc,
     setDoc,
     deleteDoc,
-    onSnapshot
+    onSnapshot,
+    query,
+    where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
@@ -2316,6 +2318,12 @@ try {
 } catch (error) {
     console.warn("Firebase en modo local:", error);
 }
+
+const perfilPartidos = await window.esperarPermisosADIUR();
+if (!perfilPartidos) throw new Error("No se pudieron validar los permisos del fixture.");
+const consultaPartidosNube = await window.crearConsultaCategoriasADIUR(
+    collection(db, "partidos"), query, where, "categoria"
+);
 
 const elEstadoGuardado = document.getElementById("estadoGuardado");
 
@@ -2382,20 +2390,10 @@ window.addEventListener("adiur-permisos-listos", sincronizarPerfilPartidos);
 if (window.ADIUR_PERMISOS) sincronizarPerfilPartidos({ detail: window.ADIUR_PERMISOS });
 
 function obtenerCategoriasVisiblesPartidos() {
-    const perfil = window.ADIUR_PERMISOS;
-    let categorias = Array.isArray(perfil?.categorias) ? perfil.categorias : null;
-
-    if (!categorias) {
-        try {
-            const guardadas = JSON.parse(localStorage.getItem("categoriasADIUR") || "null");
-            if (Array.isArray(guardadas)) categorias = guardadas;
-        } catch (_) {}
-    }
-
-    // Admin y coordinadoras conservan la vista completa.
-    if (!categorias || !["cuerpo_tecnico", "jugadora"].includes(rolADIUR)) {
-        return [...DIVISIONES];
-    }
+    const categorias = Array.isArray(window.ADIUR_PERMISOS?.categorias)
+        ? window.ADIUR_PERMISOS.categorias
+        : [];
+    if (!categorias.length) return [];
 
     const permitidas = new Set(categorias.map(valor =>
         String(valor || "").normalize("NFD")
@@ -2576,7 +2574,7 @@ document.getElementById("cerrarSesion").addEventListener("click", event => {
         console.warn("No se pudo limpiar el usuario guardado.");
     }
 
-    window.location.href = "ADIUR-Loing.html";
+    window.cerrarSesionADIURCentral(event);
 });
 
 /* =====================================================
@@ -2883,7 +2881,7 @@ function cargarPartidosLocales() {
         if (!texto) return [];
         const datos = JSON.parse(texto);
         if (!Array.isArray(datos)) return [];
-        return datos.map((p, indice) => normalizarObjetoPartido(p, indice));
+        return datos.map((p, indice) => normalizarObjetoPartido(p, indice)).filter(p => obtenerCategoriasVisiblesPartidos().includes(p.categoria || p.division));
     } catch (error) {
         console.error("Error cargando fixture local:", error);
         return [];
@@ -2961,7 +2959,7 @@ function iniciarSincronizacionNube() {
     }
 
     onSnapshot(
-        collection(db, "partidos"),
+        consultaPartidosNube,
         async snapshot => {
             const listaNube = [];
             snapshot.forEach(docSnap => {

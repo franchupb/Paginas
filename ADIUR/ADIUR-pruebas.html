@@ -728,7 +728,7 @@ thead .col-fija-nombre {
   }
 }
 </style>
-<script src="ADIUR-permisos.js?v=20261123func5"></script>
+<script src="ADIUR-permisos.js?v=20261123func11"></script>
 </head>
 
 <body>
@@ -926,7 +926,7 @@ thead .col-fija-nombre {
 
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
    CONFIGURACIÓN DE FIREBASE CLOUD FIRESTORE (adiur-b1913)
@@ -951,6 +951,9 @@ try {
 } catch (e) {
   console.warn("Modo offline/localStorage activado:", e);
 }
+const perfilPruebas = await window.esperarPermisosADIUR();
+if (!perfilPruebas) throw new Error("No se pudieron validar los permisos de Pruebas.");
+const categoriasPermitidasPruebas = perfilPruebas.categorias || [];
 
 /* =====================================================
    USUARIO Y PERMISOS
@@ -997,8 +1000,7 @@ else window.addEventListener("adiur-permisos-listos", event => aplicarPerfilCent
 
 window.cerrarSesion = function(event) {
   event.preventDefault();
-  localStorage.removeItem("usuarioADIUR");
-  window.location.href = "ADIUR-Loing.html";
+  window.cerrarSesionADIURCentral(event);
 };
 
 window.alternarSidebar = function() {
@@ -1058,17 +1060,9 @@ async function cargarJugadorasPorDivision(division) {
   // 1. Intentar leer desde Firestore (colección "jugadoras" o documento "plantel/jugadoras")
   if (nubeActiva && db) {
     try {
-      const snapCol = await getDocs(collection(db, "jugadoras"));
-      snapCol.forEach(docSnap => {
-        listaTotal.push({ id: docSnap.id, ...docSnap.data() });
-      });
-
-      if (listaTotal.length === 0) {
-        const docPlantel = await getDoc(doc(db, "plantel", "jugadoras"));
-        if (docPlantel.exists() && Array.isArray(docPlantel.data().lista)) {
-          listaTotal = docPlantel.data().lista;
-        }
-      }
+      const consulta = await window.crearConsultaCategoriasADIUR(collection(db, "jugadoras"), query, where, "categoria");
+      const snapCol = await getDocs(consulta);
+      snapCol.forEach(docSnap => listaTotal.push({ id: docSnap.id, ...docSnap.data() }));
     } catch (err) {
       console.warn("Leyendo jugadoras desde respaldo local:", err);
     }
@@ -1113,9 +1107,15 @@ async function cargarDatosPlanilla(division, mes) {
   let cargadoDeNube = false;
   if (nubeActiva && db) {
     try {
-      const refDoc = doc(db, "testeos_adiur", clave);
-      const snap = await getDoc(refDoc);
-      if (snap.exists()) {
+      // Consultar por división evita un get directo a un documento que aún
+      // no existe, que Firestore no puede autorizar usando resource.data.
+      const consulta = query(
+        collection(db, "testeos_adiur"),
+        where("division", "==", division)
+      );
+      const resultado = await getDocs(consulta);
+      const snap = resultado.docs.find(documento => documento.id === clave) || null;
+      if (snap) {
         const data = snap.data();
         columnasActuales = Array.isArray(data.columnas) && data.columnas.length > 0 ? data.columnas : JSON.parse(JSON.stringify(COLUMNAS_POR_DEFECTO));
         valoresActuales = data.valores || {};

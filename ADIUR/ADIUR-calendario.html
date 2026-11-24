@@ -1768,7 +1768,7 @@ main {
     }
 }
 </style>
-<script src="ADIUR-permisos.js?v=20261123func5"></script>
+<script src="ADIUR-permisos.js?v=20261123func11"></script>
 </head>
 
 <body>
@@ -2523,8 +2523,7 @@ document.getElementById("fondoPerfil").addEventListener("click", event => {
 
 document.getElementById("cerrarSesion").addEventListener("click", event => {
     event.preventDefault();
-    eliminarAlmacenamiento("usuarioADIUR");
-    window.location.href = "ADIUR-Loing.html";
+    window.cerrarSesionADIURCentral(event);
 });
 
 /* =====================================================
@@ -3266,6 +3265,11 @@ function guardarDatos(datos) {
         "actividadesADIUR",
         JSON.stringify(datos)
     );
+    if (typeof window.guardarCalendarioNube === "function") {
+        window.guardarCalendarioNube(datos).catch(error =>
+            console.error("No se pudo sincronizar el calendario con Firebase:", error)
+        );
+    }
 }
 
 function obtenerActividad(cat, fecha) {
@@ -3689,6 +3693,55 @@ actualizarVistaPreviaCalendario();
 </script>
 
 
+
+<script type="module">
+import { db } from "./ADIUR-auth.js?v=20261123-authpersist2";
+import { collection, doc, onSnapshot, query, where, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const perfilCalendario = await window.esperarPermisosADIUR();
+if (!perfilCalendario) throw new Error("No se pudieron validar los permisos del calendario.");
+const categoriasCalendario = perfilCalendario.categorias || [];
+const idCategoria = categoria => String(categoria).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"");
+let calendarioListo = false;
+
+window.guardarCalendarioNube = async function(datos) {
+  if (!calendarioListo) return;
+  for (const categoria of categoriasCalendario) {
+    const actividades = datos?.[categoria];
+    if (!actividades || typeof actividades !== "object") continue;
+    await setDoc(doc(db,"calendarioADIUR",idCategoria(categoria)),{
+      categoria,
+      actividades,
+      actualizadoEn:new Date().toISOString()
+    });
+  }
+};
+
+const consultaCalendario = query(collection(db,"calendarioADIUR"),where("categoria","in",categoriasCalendario));
+onSnapshot(consultaCalendario,async snapshot=>{
+  const datosLocales = typeof leerDatos === "function" ? leerDatos() : {};
+  const categoriasNube = new Set();
+  snapshot.forEach(documento=>{
+    const registro=documento.data();
+    if(!categoriasCalendario.includes(registro.categoria))return;
+    categoriasNube.add(registro.categoria);
+    datosLocales[registro.categoria]=registro.actividades||{};
+  });
+  if(!calendarioListo){
+    calendarioListo=true;
+    for(const categoria of categoriasCalendario){
+      const local=datosLocales[categoria];
+      if(!categoriasNube.has(categoria)&&local&&Object.keys(local).length){
+        await window.guardarCalendarioNube({[categoria]:local});
+      }
+    }
+  }
+  guardarAlmacenamiento("actividadesADIUR",JSON.stringify(datosLocales));
+  window.renderizarCalendario?.();
+},error=>{
+  console.error("No se pudo sincronizar el calendario:",error);
+});
+</script>
 
 <script type="module" src="ADIUR-layout.js?v=20261123-filtros5"></script>
 </body>

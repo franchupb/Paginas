@@ -1939,7 +1939,7 @@ a {
 }
 
 </style>
-<script src="ADIUR-permisos.js?v=20261123func5"></script>
+<script src="ADIUR-permisos.js?v=20261123func11"></script>
 </head>
 
 <body>
@@ -2362,7 +2362,7 @@ a {
 <script type="module">
   import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-  import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCc0dPIEkaKxbHoRC2CgZK412dXVGPOdTI",
@@ -2375,8 +2375,12 @@ a {
   };
 
   const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+  try { getAnalytics(app); } catch (error) { console.warn("Analytics no disponible; Firestore seguirá funcionando:", error); }
   const db = getFirestore(app);
+
+  const perfilAsistencia = await window.esperarPermisosADIUR();
+  if (!perfilAsistencia) throw new Error("No se pudieron validar los permisos de asistencia.");
+  const categoriasPermitidasAsistencia = Array.isArray(perfilAsistencia.categorias) ? perfilAsistencia.categorias : [];
 
 /* =====================================================
    USUARIO Y PERMISOS
@@ -2433,8 +2437,7 @@ document.getElementById("rolUsuario").textContent =
 
 window.cerrarSesion = function(event) {
   event.preventDefault();
-  localStorage.removeItem("usuarioADIUR");
-  window.location.href = "ADIUR-Loing.html";
+  window.cerrarSesionADIURCentral(event);
 }
 
 window.alternarSidebar = function() {
@@ -2609,7 +2612,7 @@ function cargarJugadorasLocales() {
 
 jugadoras = cargarJugadorasLocales();
 
-onSnapshot(collection(db, "jugadoras"), (snapshot) => {
+onSnapshot(await window.crearConsultaCategoriasADIUR(collection(db, "jugadoras"), query, where, "categoria"), (snapshot) => {
   let listaNube = [];
   snapshot.forEach((docSnap) => {
     listaNube.push({ id: docSnap.id, ...docSnap.data() });
@@ -2937,17 +2940,20 @@ function escucharDiasEntrenamientoNube(categoria) {
 
   categoriaEscuchadaDiasNube = categoria;
 
-  const referencia = doc(
-    db,
-    "configuracionAsistenciaADIUR",
-    claveDiasEntrenamiento(categoria)
+  // Se escucha mediante una consulta filtrada por categoría, no con get
+  // directo a un documento que quizá todavía no exista. Así Firestore puede
+  // validar el alcance incluso cuando la configuración aún no fue creada.
+  const referencia = query(
+    collection(db, "configuracionAsistenciaADIUR"),
+    where("categoria", "==", categoria)
   );
 
   cancelarEscuchaDiasNube = onSnapshot(
     referencia,
     async (snapshot) => {
-      if (snapshot.exists()) {
-        const datos = snapshot.data();
+      const documento = snapshot.docs[0] || null;
+      if (documento) {
+        const datos = documento.data();
 
         if (Array.isArray(datos.dias)) {
           const claveLocal = claveDiasEntrenamiento(categoria);
@@ -3049,13 +3055,17 @@ function guardarSesionesLocales() {
 
 let sesiones = cargarSesionesLocales();
 
-onSnapshot(collection(db, "asistenciaADIUR"), async (snapshot) => {
+onSnapshot(await window.crearConsultaCategoriasADIUR(collection(db, "asistenciaADIUR"), query, where, "categoria"), async (snapshot) => {
   const remotas = {};
   snapshot.forEach(docSnap => { remotas[docSnap.id] = docSnap.data(); });
-  const combinadas = { ...remotas };
+  // Mantener en el respaldo local los registros de otras divisiones sin
+  // mezclarlos ni volver a subirlos desde una cuenta que no tiene acceso.
+  const combinadas = { ...sesiones, ...remotas };
   const pendientes = [];
 
-  Object.entries(sesiones).forEach(([id, local]) => {
+  Object.entries(sesiones).filter(([, local]) =>
+    categoriasPermitidasAsistencia.includes(local?.categoria)
+  ).forEach(([id, local]) => {
     const nube = remotas[id];
     if (!nube) {
       combinadas[id] = local;
@@ -3143,7 +3153,7 @@ window.guardarTodoManual = async function() {
   const boton = document.getElementById("botonGuardarAsistencia");
   const originalTexto = boton.innerHTML;
   boton.disabled = true;
-  boton.innerHTML = "⏳ Guardando todas las categorías...";
+  boton.innerHTML = "⏳ Guardando tus categorías...";
 
   try {
     Object.values(sesiones).forEach(sesion => {
@@ -3151,7 +3161,9 @@ window.guardarTodoManual = async function() {
     });
     guardarSesionesLocales();
 
-    const promesas = Object.keys(sesiones).map(clave => {
+    const promesas = Object.keys(sesiones).filter(clave =>
+      categoriasPermitidasAsistencia.includes(sesiones[clave]?.categoria)
+    ).map(clave => {
       const sesion = sesiones[clave];
       if (!sesion) return Promise.resolve();
       // Aseguramos que el ID del documento Firestore sea limpio y seguro para cualquier categoría
@@ -3170,7 +3182,7 @@ window.guardarTodoManual = async function() {
       if (indicador) indicador.textContent = "Modificá y tocá \"Guardar asistencia\"";
     }, 3500);
 
-    alert("¡Asistencia guardada correctamente en la nube para todas las categorías (Sub 10, Sub 12, Sub 14, Sub 16 y Primera)!");
+    alert("¡Asistencia guardada correctamente en la nube para tus categorías autorizadas!");
   } catch (error) {
     console.error("Error al guardar manualmente:", error);
     alert("Hubo un error al guardar. Verificá tu conexión a internet.");

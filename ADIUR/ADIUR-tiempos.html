@@ -282,7 +282,7 @@ main{padding:20px 10px 28px}
 .cronometro-controles .btn{width:100%;white-space:normal;padding:9px 8px}
 }
 </style>
-<script src="ADIUR-permisos.js?v=20261123func5"></script>
+<script src="ADIUR-permisos.js?v=20261123func11"></script>
 </head>
 <body>
 <header class="barra-superior">
@@ -467,7 +467,7 @@ window.aplicarRegistrosTiemposNube = async function(lista){
     remotos.forEach(registro => porId.set(String(registro.id), registro));
 
     const pendientesDeSubir = [];
-    locales.forEach(local => {
+    locales.filter(local => categoriasPermitidasTiempos.includes(local.categoria)).forEach(local => {
         const id = String(local.id);
         const remoto = porId.get(id);
         if (!remoto) {
@@ -1062,7 +1062,7 @@ botonMenu.addEventListener("click",()=>{sidebar.classList.toggle("oculto");actua
 fondoSidebar.addEventListener("click",cerrarMenu);
 window.addEventListener("resize",ajustarMenu);
 document.querySelectorAll(".titulo-grupo[data-grupo]").forEach(b=>b.addEventListener("click",()=>{const g=$(b.dataset.grupo);if(!g)return;g.classList.toggle("cerrado");b.setAttribute("aria-expanded",String(!g.classList.contains("cerrado")));}));
-$("cerrarSesion").addEventListener("click",e=>{e.preventDefault();if(confirm("¿Querés cerrar la sesión de ADIUR?"))window.location.href="ADIUR-Loing.html";});
+$("cerrarSesion").addEventListener("click",e=>{e.preventDefault();if(confirm("¿Querés cerrar la sesión de ADIUR?"))window.cerrarSesionADIURCentral(e);});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){cerrarModal();cerrarPerfil();if(esMovil())cerrarMenu();}});
 
 window.addEventListener("storage",e=>{
@@ -1103,7 +1103,9 @@ import {
     onSnapshot,
     doc,
     setDoc,
-    deleteDoc
+    deleteDoc,
+    query,
+    where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1118,13 +1120,18 @@ const firebaseConfig = {
 
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const perfilTiempos = await window.esperarPermisosADIUR();
+if (!perfilTiempos) throw new Error("No se pudieron validar los permisos de Tiempos.");
+const categoriasPermitidasTiempos = perfilTiempos.categorias || [];
+const consultaJugadorasTiempos = await window.crearConsultaCategoriasADIUR(collection(db, "jugadoras"), query, where, "categoria");
+const consultaRegistrosTiempos = await window.crearConsultaCategoriasADIUR(collection(db, "tiemposRendimiento"), query, where, "categoria");
 
 // ======================================
 // JUGADORAS: ESCUCHAR CAMBIOS EN FIREBASE
 // ======================================
 
 onSnapshot(
-    collection(db, "jugadoras"),
+    consultaJugadorasTiempos,
     (snapshot) => {
         const lista = snapshot.docs.map(documento => ({
             id: documento.id,
@@ -1146,7 +1153,7 @@ onSnapshot(
 // ======================================
 
 onSnapshot(
-    collection(db, "tiemposRendimiento"),
+    consultaRegistrosTiempos,
     (snapshot) => {
         const lista = snapshot.docs.map(documento => ({
             ...documento.data(),

@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Migración segura · ADIUR FEMENINO</title>
+<style>
+:root{--naranja:#f47721;--fondo:#f5f6f8;--texto:#202124;--gris:#6b7280}
+*{box-sizing:border-box}body{margin:0;background:var(--fondo);color:var(--texto);font-family:Arial,sans-serif;padding:28px}
+main{max-width:760px;margin:5vh auto;background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:28px;box-shadow:0 12px 36px #0000000c}
+h1{font-size:24px;margin:0 0 8px}p{line-height:1.55;color:var(--gris)}
+button{border:0;border-radius:10px;padding:13px 18px;background:var(--naranja);color:#fff;font-weight:700;cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
+#estado{margin-top:18px;padding:14px;border-radius:10px;background:#f6f7f8;white-space:pre-wrap;line-height:1.55}
+small{display:block;margin-top:16px;color:var(--gris)}
+</style>
+</head>
+<body>
+<main>
+<h1>Migración segura de datos ADIUR</h1>
+<p>Esta herramienta separa planificación, gimnasio y calculadora por categoría. Las rutinas individuales del gimnasio se guardan en documentos independientes para que cada jugadora pueda consultar únicamente la propia.</p>
+<p><strong>Protección de datos:</strong> no elimina ni modifica los documentos originales <code>principal</code>. Los documentos nuevos existentes se combinan sin reemplazar datos ya guardados.</p>
+<button id="migrar" disabled>Verificando sesión…</button>
+<div id="estado" role="status" aria-live="polite">Comprobando tu cuenta de Firebase…</div>
+<small>Usá esta herramienta una sola vez después de publicar las nuevas reglas de Firestore. Ingresá con una cuenta administradora.</small>
+</main>
+<script type="module">
+import { auth, obtenerPerfilADIUR, db } from "./ADIUR-auth.js?v=20261123-authpersist2";
+import {
+  collection, doc, getDoc, getDocs, query, where, setDoc, updateDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const boton=document.getElementById("migrar");
+const estado=document.getElementById("estado");
+const categorias=["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
+const slug=c=>String(c||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"");
+const normalizar=v=>String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+const nombreJugadora=j=>String(j?.nombreCompleto||j?.nombreYApellido||j?.nombre||[j?.nombres,j?.apellido||j?.apellidos].filter(Boolean).join(" ")||j?.jugadora||"").trim();
+const idJugadora=j=>String(j?.id||j?.usuario||j?.username||j?.nombreUsuario||j?.login||nombreJugadora(j)).trim();
+const informar=t=>{estado.textContent=t};
+let autorizado=false;
+
+try{
+ await auth.authStateReady();
+ const user=auth.currentUser;
+ if(!user){informar("No hay una sesión activa. Iniciá sesión con una cuenta administradora.");boton.textContent="Ir al Login";boton.disabled=false;boton.onclick=()=>location.replace("ADIUR-Loing.html");}
+ else{
+  const perfil=await obtenerPerfilADIUR(user);
+  if(!perfil||perfil.rol!=="admin"||!Array.isArray(perfil.categorias)||!categorias.every(c=>perfil.categorias.includes(c))){
+   informar("Acceso restringido. Esta herramienta requiere una cuenta admin activa con las cinco categorías habilitadas.");
+   boton.textContent="Volver";boton.disabled=false;boton.onclick=()=>location.replace("ADIUR-Pagina Principal.html");
+  }else{autorizado=true;boton.textContent="Migrar sin borrar los originales";boton.disabled=false;informar("Sesión administradora verificada. Los documentos originales se conservarán.");}
+ }
+}catch(error){informar("No se pudo verificar la sesión: "+(error.code||error.message));}
+
+function mezclarConPrioridadExistente(origen,existente){
+ if(Array.isArray(origen)||Array.isArray(existente))return Array.isArray(existente)&&existente.length?existente:origen;
+ const esObjeto=v=>v&&typeof v==="object"&&!Array.isArray(v);
+ if(esObjeto(origen)||esObjeto(existente)){
+  const a=esObjeto(origen)?origen:{},b=esObjeto(existente)?existente:{},salida={...a};
+  for(const clave of Object.keys(b)){
+   salida[clave]=Object.prototype.hasOwnProperty.call(a,clave)
+    ?mezclarConPrioridadExistente(a[clave],b[clave])
+    :b[clave];
+  }
+  return salida;
+ }
+ return existente===undefined||existente===null||existente===""?origen:existente;
+}
+
+async function migrarColeccion(origenNombre,destinoNombre,transformar){
+ const origen=await getDoc(doc(db,origenNombre,"principal"));
+ if(!origen.exists())return {nombre:destinoNombre,estado:"sin documento principal",creados:0,actualizados:0,omitidos:0};
+ const datos=await transformar(origen.data());
+ // La consulta por categoría también funciona cuando el destino está vacío;
+ // evita getDoc sobre documentos inexistentes, que no tienen resource.data.
+ const existentesSnap=await getDocs(query(collection(db,destinoNombre),where("categoria","in",categorias)));
+ const existentes=new Map(existentesSnap.docs.map(d=>[d.id,d.data()]));
+ let creados=0,actualizados=0,omitidos=0;
+ for(const item of datos){
+  const ref=doc(db,destinoNombre,item.id);
+  const previo=existentes.get(item.id);
+  if(previo?.migradoDesde==="principal"){omitidos++;continue;}
+  const contenido=previo?mezclarConPrioridadExistente(item.datos,previo):item.datos;
+  // Nunca dejar rutinas individuales dentro del documento general compartido.
+  if(destinoNombre==="gimnasioADIUR_categorias"&&contenido.datos&&typeof contenido.datos==="object"){
+   contenido.datos=Object.fromEntries(Object.entries(contenido.datos).filter(([clave])=>!clave.startsWith("INDIVIDUAL::")));
+  }
+  // Los campos que determinan la identidad del documento individual siempre
+  // se toman de la vinculación verificada, no de metadatos anteriores.
+  if(destinoNombre==="gimnasioADIUR_individuales"){
+   contenido.categoria=item.datos.categoria;
+   contenido.jugadoraId=item.datos.jugadoraId;
+   contenido.jugadora=item.datos.jugadora;
+   contenido.tipo="individual";
+   const prefijoIndividual="INDIVIDUAL::"+item.datos.categoria+"::"+item.datos.jugadoraId;
+   if(contenido.datos&&typeof contenido.datos==="object"){
+    contenido.datos=Object.fromEntries(Object.entries(contenido.datos).filter(([clave])=>clave===prefijoIndividual));
+   }
+  }
+  const final={...contenido,migradoDesde:"principal",migradoEn:serverTimestamp()};
+  await setDoc(ref,final);
+  existentes.set(item.id,final);
+  if(previo)actualizados++;else creados++;
+ }
+ return {nombre:destinoNombre,estado:"ok",creados,actualizados,omitidos};
+}
+
+async function cargarJugadoras(){
+ const consulta=query(collection(db,"jugadoras"),where("categoria","in",categorias));
+ const snapshot=await getDocs(consulta);
+ return snapshot.docs.map(d=>({id:d.id,...d.data()}));
+}
+
+async function cargarPerfilesJugadoras(){
+ const snapshot=await getDocs(collection(db,"usuarios"));
+ return snapshot.docs.map(d=>({id:d.id,...d.data()})).filter(p=>p.rol==="jugadora"&&p.activo===true);
+}
+
+function transformarRutinasGenerales(original){
+ const mapa=original.datos&&typeof original.datos==="object"?original.datos:{};
+ return categorias.map(c=>{
+  const general=Object.fromEntries(Object.entries(mapa).filter(([k])=>
+   k===c||k==="GENERAL::"+c||k.startsWith("GENERAL::"+c+"::")
+  ));
+  return {id:slug(c),datos:{categoria:c,tipo:"categoria",datos:general}};
+ }).filter(x=>Object.keys(x.datos.datos).length);
+}
+
+async function transformarRutinasIndividuales(original,jugadoras,perfiles,sinCorrespondencia,perfilesSinVinculo){
+ const mapa=original.datos&&typeof original.datos==="object"?original.datos:{};
+ const agrupadas=new Map();
+ for(const categoria of categorias){
+  const prefijo="INDIVIDUAL::"+categoria+"::";
+  for(const [clave,rutina] of Object.entries(mapa)){
+   if(!clave.startsWith(prefijo))continue;
+   const idAnterior=clave.slice(prefijo.length);
+   const claveNormalizada=normalizar(idAnterior);
+   const candidatas=jugadoras.filter(j=>{
+    const alias=[j.id,j.usuario,j.username,j.nombreUsuario,j.login,nombreJugadora(j)].map(normalizar).filter(Boolean);
+    return alias.includes(claveNormalizada)&&normalizar(j.categoria||j.division)===normalizar(categoria);
+   });
+   if(candidatas.length!==1){
+    sinCorrespondencia.push(categoria+" · "+idAnterior+(candidatas.length>1?" (identidad ambigua)":" (sin coincidencia)"));
+    continue;
+   }
+   const jugadora=candidatas[0];
+   const id=idJugadora(jugadora);
+   const nombre=nombreJugadora(jugadora);
+   const aliasJugadora=[jugadora.id,jugadora.usuario,jugadora.username,jugadora.nombreUsuario,jugadora.login,nombre].map(normalizar).filter(Boolean);
+   const perfilesCoincidentes=perfiles.filter(p=>{
+    const aliasPerfil=[p.jugadora,p.usuario,p.nombre,p.nombreCompleto,p.nombreUsuario].map(normalizar).filter(Boolean);
+    return aliasPerfil.some(alias=>aliasJugadora.includes(alias));
+   });
+   const perfil=perfilesCoincidentes.length===1?perfilesCoincidentes[0]:null;
+   if(perfil&&perfil.jugadoraId!==id){
+    await updateDoc(doc(db,"usuarios",perfil.id),{jugadoraId:id});
+    perfil.jugadoraId=id;
+   }else if(!perfil){
+    perfilesSinVinculo.push(nombre+" · "+id+(perfilesCoincidentes.length>1?" (perfil ambiguo)":""));
+   }
+   const claveNueva="INDIVIDUAL::"+categoria+"::"+id;
+   const idDocumento=slug(categoria)+"__"+slug(id);
+   if(!agrupadas.has(idDocumento)){
+    agrupadas.set(idDocumento,{id:idDocumento,datos:{
+     categoria,
+     tipo:"individual",
+     jugadoraId:id,
+     jugadora:perfil?.jugadora||(perfilesCoincidentes.length===0?nombre:""),
+     datos:{}
+    }});
+   }
+   agrupadas.get(idDocumento).datos.datos[claveNueva]=rutina;
+  }
+ }
+ return [...agrupadas.values()];
+}
+
+boton.addEventListener("click",async()=>{
+ if(!autorizado)return;
+ if(!confirm("¿Confirmás copiar los datos a las nuevas colecciones? Los documentos originales no se van a borrar."))return;
+ boton.disabled=true;boton.textContent="Migrando…";
+ const resultados=[];
+ const sinCorrespondencia=[];
+ const perfilesSinVinculo=[];
+ try{
+  resultados.push(await migrarColeccion("planificacionADIUR","planificacionADIUR_categorias",original=>{
+   const mapa=original.datos&&typeof original.datos==="object"?original.datos:{};
+   return categorias.filter(c=>mapa[c]&&typeof mapa[c]==="object").map(c=>({id:slug(c),datos:{categoria:c,datos:mapa[c]}}));
+  }));
+
+  const gymOriginal=await getDoc(doc(db,"gimnasioADIUR","principal"));
+  if(gymOriginal.exists()){
+   const [roster,perfiles]=await Promise.all([cargarJugadoras(),cargarPerfilesJugadoras()]);
+   resultados.push(await migrarColeccion("gimnasioADIUR","gimnasioADIUR_categorias",transformarRutinasGenerales));
+   resultados.push(await migrarColeccion("gimnasioADIUR","gimnasioADIUR_individuales",original=>
+    transformarRutinasIndividuales(original,roster,perfiles,sinCorrespondencia,perfilesSinVinculo)
+   ));
+  }else{
+   resultados.push({nombre:"gimnasioADIUR_categorias",estado:"sin documento principal",creados:0,actualizados:0,omitidos:0});
+   resultados.push({nombre:"gimnasioADIUR_individuales",estado:"sin documento principal",creados:0,actualizados:0,omitidos:0});
+  }
+
+  resultados.push(await migrarColeccion("calculadoraADIUR","calculadoraADIUR_categorias",original=>{
+   const planes=original.plans&&typeof original.plans==="object"?original.plans:{};
+   const dias=original.trainingDays&&typeof original.trainingDays==="object"?original.trainingDays:{};
+   return categorias.filter(c=>Object.prototype.hasOwnProperty.call(planes,c)||Object.prototype.hasOwnProperty.call(dias,c)||String(original.volume||"")!=="").map(c=>({
+    id:slug(c),datos:{categoria:c,plans:Object.prototype.hasOwnProperty.call(planes,c)?{[c]:planes[c]}:{},trainingDays:Object.prototype.hasOwnProperty.call(dias,c)?{[c]:dias[c]}:{},volume:String(original.volume||""),actualizadoEn:new Date().toISOString()}
+   }));
+  }));
+
+  const resumen=resultados.map(r=>r.nombre+": "+r.estado+" · creados: "+r.creados+" · combinados: "+r.actualizados+" · ya migrados: "+r.omitidos).join("\n");
+  const avisos=[];
+  if(sinCorrespondencia.length)avisos.push("Rutinas individuales sin jugadora identificada (se conservaron en el respaldo):\n"+sinCorrespondencia.join("\n"));
+  if(perfilesSinVinculo.length)avisos.push("Perfiles de jugadoras sin vínculo automático (revisar su campo jugadoraId):\n"+perfilesSinVinculo.join("\n"));
+  if(!avisos.length)avisos.push("Todas las rutinas individuales y perfiles de jugadoras quedaron vinculados.");
+  informar("Migración finalizada.\n\n"+resumen+"\n\n"+avisos.join("\n\n")+"\n\nLos documentos originales principal siguen intactos. Probá cada cuenta antes de eliminar cualquier respaldo.");
+  boton.textContent="Migración revisada";
+ }catch(error){
+  console.error("Error en migración ADIUR:",error);
+  informar("La migración se detuvo por un error: "+(error.code||error.message)+"\nLos documentos originales se conservaron. Corregí el permiso o la conexión y volvé a intentar; los documentos ya creados se detectarán en el siguiente intento.");
+  boton.disabled=false;boton.textContent="Reintentar migración";
+ }
+});
+</script>
+</body>
+</html>

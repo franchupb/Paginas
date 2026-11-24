@@ -2298,7 +2298,7 @@ button:disabled {
   }
 }
 </style>
-<script src="ADIUR-permisos.js?v=20261123func5"></script>
+<script src="ADIUR-permisos.js?v=20261123func11"></script>
 </head>
 
 <body>
@@ -2556,7 +2556,11 @@ window.firebasePlanificacionReady = (async () => {
     doc,
     getDoc,
     setDoc,
-    serverTimestamp
+    serverTimestamp,
+    collection,
+    getDocs,
+    query,
+    where
   } = await import(
     "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
   );
@@ -2574,38 +2578,42 @@ window.firebasePlanificacionReady = (async () => {
   const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  const referencia = doc(
-    db,
-    "planificacionADIUR",
-    "principal"
-  );
+  const idCategoria = categoria => String(categoria || "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 
-  // Cargar planificación desde la nube
+  // Cada división se guarda en su propio documento: las reglas de Firestore
+  // pueden autorizar una categoría sin exponer el resto del microciclo.
   window.cargarPlanificacionNube = async () => {
-
-    const resultado = await getDoc(referencia);
-
-    if (resultado.exists()) {
-      return resultado.data().datos || {};
-    }
-
-    return null;
+    const perfil = await window.esperarPermisosADIUR();
+    const categorias = perfil?.categorias || [];
+    if (!categorias.length) throw new Error("No hay categorías autorizadas para planificación.");
+    const consulta = query(collection(db, "planificacionADIUR_categorias"), where("categoria", "in", categorias));
+    const resultado = await getDocs(consulta);
+    const datos = {};
+    resultado.forEach(snapshot => {
+      const registro = snapshot.data();
+      if (categorias.includes(registro.categoria)) datos[registro.categoria] = registro.datos || {};
+    });
+    return Object.keys(datos).length ? datos : null;
   };
 
-  // Guardar planificación en la nube
   let colaGuardado = Promise.resolve();
-
-  window.guardarPlanificacionEnNube = (datos) => {
-
-    const copia = JSON.parse(JSON.stringify(datos));
-
-    colaGuardado = colaGuardado.catch(() => {}).then(() =>
-      setDoc(referencia, {
-        datos: copia,
-        actualizado: serverTimestamp()
-      })
-    );
-
+  window.guardarPlanificacionEnNube = async datos => {
+    const perfil = await window.esperarPermisosADIUR();
+    const categorias = perfil?.categorias || [];
+    if (!categorias.length) throw new Error("No hay categorías autorizadas para guardar planificación.");
+    const copia = JSON.parse(JSON.stringify(datos || {}));
+    const entradas = Object.entries(copia).filter(([categoria]) => categorias.includes(categoria));
+    colaGuardado = colaGuardado.catch(() => {}).then(async () => {
+      for (const [categoria, semanas] of entradas) {
+        await setDoc(doc(db, "planificacionADIUR_categorias", idCategoria(categoria)), {
+          categoria,
+          datos: semanas,
+          actualizado: serverTimestamp()
+        });
+      }
+    });
     return colaGuardado;
   };
 
@@ -5563,13 +5571,7 @@ function cerrarSesion(evento) {
   const confirmado = confirm("¿Querés cerrar la sesión?");
   if (!confirmado) return;
 
-  try {
-    localStorage.removeItem("usuarioADIUR");
-  } catch (error) {
-    console.warn("No se pudo limpiar la sesión local.", error);
-  }
-
-  window.location.href = "ADIUR-Loing.html";
+  window.cerrarSesionADIURCentral(evento);
 }
 
 /* =====================================================
@@ -5645,6 +5647,7 @@ function inicializarPerfil() {
 ===================================================== */
 
 async function inicializarPlanificacion() {
+  await window.esperarPermisosADIUR();
   inicializarPerfil();
 
   // Recuperar los datos de Firebase antes de inicializar la página

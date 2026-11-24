@@ -952,7 +952,7 @@ a {
 }
 
 </style>
-<script src="ADIUR-permisos.js?v=20261123func5"></script>
+<script src="ADIUR-permisos.js?v=20261123func11"></script>
 
 <style id="adiur-pizarra-preview">
 .panel-pizarra-acceso{overflow:hidden}
@@ -1366,7 +1366,7 @@ a {
 
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
    CONEXIÓN A FIRESTORE (adiur-b1913)
@@ -1384,13 +1384,21 @@ const firebaseConfig = {
 let db = null;
 let nubeActiva = false;
 try {
-  // Reutiliza la misma app Firebase inicializada por ADIUR-auth.js?v=20261123-authpersist1.
+  // Reutiliza la misma app Firebase inicializada por ADIUR-auth.js?v=20261123-authpersist2.
   const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   db = getFirestore(app);
   nubeActiva = true;
 } catch (e) {
   console.warn("No se pudo iniciar Firestore:", e);
 }
+
+const perfilPagina = await window.esperarPermisosADIUR();
+if (!perfilPagina) throw new Error("No se pudieron validar los permisos de ADIUR.");
+const categoriasPermitidasPagina = Array.isArray(perfilPagina.categorias) ? perfilPagina.categorias : [];
+const perteneceCategoriaPagina = valor => categoriasPermitidasPagina.some(c =>
+  String(c).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "") ===
+  String(valor || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "")
+);
 
 let cachePartidosNube = [];
 let cacheJugadorasNube = [];
@@ -1404,8 +1412,7 @@ let cacheJugadorasNube = [];
 const usuarioGuardado = localStorage.getItem("usuarioADIUR") || "";
 const usuarioNormalizado = usuarioGuardado.trim().toLowerCase();
 const rolADIUR = localStorage.getItem("rolADIUR") || "";
-let categoriasUsuario = [];
-try { categoriasUsuario = JSON.parse(localStorage.getItem("categoriasADIUR") || "[]"); } catch (_) { categoriasUsuario = []; }
+let categoriasUsuario = [...categoriasPermitidasPagina];
 
 document.getElementById("fechaHoy").textContent =
   new Intl.DateTimeFormat("es-AR", {
@@ -1457,7 +1464,7 @@ function inicializarPreferencias() {
 window.cerrarSesion = async function(event) {
   event?.preventDefault();
   try {
-    const modulo = await import("./ADIUR-auth.js?v=20261123-authpersist1");
+    const modulo = await import("./ADIUR-auth.js?v=20261123-authpersist2");
     await modulo.cerrarSesionADIUR();
     localStorage.removeItem("usuarioADIUR");
     window.location.href = "ADIUR-Loing.html";
@@ -1609,7 +1616,8 @@ function construirEscudo(url, nombre) {
 async function sincronizarPartidosDesdeNube() {
   if (!nubeActiva || !db) return;
   try {
-    const snap = await getDocs(collection(db, "partidos"));
+    const consulta = await window.crearConsultaCategoriasADIUR(collection(db, "partidos"), query, where, "categoria");
+    const snap = await getDocs(consulta);
     const lista = [];
     snap.forEach(d => lista.push({ id: d.id, ...d.data() }));
     cachePartidosNube = lista;
@@ -2034,32 +2042,26 @@ async function sincronizarJugadorasDesdeNube() {
   let lista = [];
   if (nubeActiva && db) {
     try {
-      const snap = await getDocs(collection(db, "jugadoras"));
+      const consulta = await window.crearConsultaCategoriasADIUR(collection(db, "jugadoras"), query, where, "categoria");
+      const snap = await getDocs(consulta);
       snap.forEach(d => lista.push({ id: d.id, ...d.data() }));
-
-      if (lista.length === 0) {
-        const docPlantel = await getDoc(doc(db, "plantel", "jugadoras"));
-        if (docPlantel.exists() && Array.isArray(docPlantel.data().lista)) {
-          lista = docPlantel.data().lista;
-        }
-      }
     } catch (e) {
       console.warn("Leyendo jugadoras desde almacenamiento local:", e);
     }
   }
 
   if (lista.length === 0) {
-    const raw = localStorage.getItem("jugadorasADIUR") || localStorage.getItem("plantelADIUR");
+    const raw = localStorage.getItem("jugadorasADIUR");
     if (raw) {
-      try { lista = JSON.parse(raw); } catch (e) {}
+      try { lista = JSON.parse(raw).filter(j => perteneceCategoriaPagina(j.categoria || j.division)); } catch (e) {}
     }
   }
 
-  cacheJugadorasNube = lista;
+  cacheJugadorasNube = lista.filter(j => perteneceCategoriaPagina(j.categoria || j.division));
 }
 
 function obtenerTodasJugadoras() {
-  if (cacheJugadorasNube.length > 0) return cacheJugadorasNube;
+  if (cacheJugadorasNube.length > 0) return cacheJugadorasNube.filter(j => perteneceCategoriaPagina(j.categoria || j.division));
   const raw = localStorage.getItem("jugadorasADIUR") || localStorage.getItem("plantelADIUR");
   if (raw) {
     try { return JSON.parse(raw); } catch (e) {}

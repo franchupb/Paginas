@@ -1259,7 +1259,7 @@
       .puesto-mini { min-height: 58px; }
     }
   </style>
-<script src="ADIUR-permisos.js?v=20261123func5"></script>
+<script src="ADIUR-permisos.js?v=20261123func11"></script>
 </head>
 <body>
   <header class="barra-superior">
@@ -1700,7 +1700,7 @@
   <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCc0dPIEkaKxbHoRC2CgZK412dXVGPOdTI",
@@ -1713,7 +1713,7 @@
     };
 
     const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
+    try { getAnalytics(app); } catch (error) { console.warn("Analytics no disponible; Firestore seguirá funcionando:", error); }
     const db = getFirestore(app);
 
     // =====================================================
@@ -1740,7 +1740,7 @@
     window.cerrarSesion = async function(event) {
       event?.preventDefault();
       try {
-        const modulo = await import("./ADIUR-auth.js?v=20261123-authpersist1");
+        const modulo = await import("./ADIUR-auth.js?v=20261123-authpersist2");
         await modulo.cerrarSesionADIUR();
         window.location.href = "ADIUR-Loing.html";
       } catch (error) {
@@ -1749,7 +1749,7 @@
       }
     };
 
-    function iniciarConPerfilCentral(perfil) {
+    async function iniciarConPerfilCentral(perfil) {
       usuarioGuardado = String(perfil?.usuario || perfil?.nombre || localStorage.getItem("usuarioADIUR") || "").trim();
       usuarioActual = normalizarUsuario(usuarioGuardado);
       rolADIUR = String(perfil?.rol || localStorage.getItem("rolADIUR") || "").trim().toLowerCase();
@@ -1759,7 +1759,7 @@
         return;
       }
 
-      iniciarPaginaJugadoras();
+      await iniciarPaginaJugadoras();
     }
 
     if (window.ADIUR_PERMISOS) {
@@ -1773,7 +1773,7 @@
     // =====================================================
     // INICIALIZACIÓN DE LA PÁGINA CON FIREBASE
     // =====================================================
-    function iniciarPaginaJugadoras() {
+    async function iniciarPaginaJugadoras() {
       const botonMenu = document.getElementById("botonMenu");
       const sidebar = document.getElementById("sidebar");
       const capaSidebar = document.getElementById("capaSidebar");
@@ -1838,7 +1838,7 @@
       });
       ajustarSidebarPorPantalla();
 
-      const categoriasPermitidas = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
+      const categoriasPermitidas = Array.isArray(window.ADIUR_PERMISOS?.categorias) ? window.ADIUR_PERMISOS.categorias : [];
       let jugadoras = [];
       let idEnEdicion = null;
 
@@ -1854,9 +1854,7 @@
 
       function puedeAccederCategoria(categoria) {
         const permitidasPerfil = window.ADIUR_PERMISOS?.categorias;
-        const lista = Array.isArray(permitidasPerfil) && permitidasPerfil.length
-          ? permitidasPerfil
-          : categoriasPermitidas;
+        const lista = Array.isArray(permitidasPerfil) ? permitidasPerfil : categoriasPermitidas;
         return lista.some(permitida =>
           normalizarCategoriaPlantel(permitida) === normalizarCategoriaPlantel(categoria)
         );
@@ -1866,7 +1864,10 @@
       }
 
       // --- ESCUCHAR CAMBIOS EN TIEMPO REAL DESDE FIREBASE ---
-      onSnapshot(collection(db, "jugadoras"), (snapshot) => {
+      const consultaJugadoras = await window.crearConsultaCategoriasADIUR(
+        collection(db, "jugadoras"), query, where, "categoria"
+      );
+      onSnapshot(consultaJugadoras, (snapshot) => {
         jugadoras = [];
         snapshot.forEach((docSnap) => {
           const data = docSnap.data();
@@ -1884,6 +1885,9 @@
           });
         });
         renderizarJugadoras();
+      }, error => {
+        console.error("No se pudieron cargar las jugadoras autorizadas:", error);
+        alert("No se pudo cargar el plantel de tus categorías. Revisá la conexión y los permisos de Firebase.");
       });
 
       function calcularEdad(fecha) {

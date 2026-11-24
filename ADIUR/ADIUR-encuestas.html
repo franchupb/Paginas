@@ -9,7 +9,7 @@
 window.ADIUR_MODO_ENCUESTA_PUBLICA = new URLSearchParams(location.search).has("encuesta");
 if (!window.ADIUR_MODO_ENCUESTA_PUBLICA) {
  const permisos = document.createElement("script");
- permisos.src = "ADIUR-permisos.js?v=20261123func5";
+ permisos.src = "ADIUR-permisos.js?v=20261123func11";
  permisos.async = false;
  document.head.appendChild(permisos);
 }
@@ -212,14 +212,18 @@ function periodoCat(){return periodos.filter(p=>categoriaKey(p.categoria)===cate
 function respuestasDe(id){return respuestas.filter(r=>r.periodoId===id)}
 function yaRespondio(id){return respuestas.some(r=>r.periodoId===id&&r.uid===uid)}
 function cargarPlantel(){
- const unsub=fb.onSnapshot(fb.collection(db,"jugadoras"),snap=>{plantel=snap.docs.map(d=>{const x=d.data();return{id:d.id,nombre:x.nombre||x.nombreCompleto||x.nombre_completo||[x.nombres,x.apellido||x.apellidos].filter(Boolean).join(" "),categoria:x.categoria||x.division||x.categoría||x.category||"",estado:x.estado||x.status||"Activo"}});renderTodo()},e=>{console.error(e);estado("No se pudo cargar el plantel.","error")});unsubs.push(unsub)
+ const consulta=fb.query(fb.collection(db,"jugadoras"),fb.where("categoria","in",perfil.categorias));
+ const unsub=fb.onSnapshot(consulta,snap=>{plantel=snap.docs.map(d=>{const x=d.data();return{id:d.id,nombre:x.nombre||x.nombreCompleto||x.nombre_completo||[x.nombres,x.apellido||x.apellidos].filter(Boolean).join(" "),categoria:x.categoria||x.division||x.categoría||x.category||"",estado:x.estado||x.status||"Activo"}});renderTodo()},e=>{console.error(e);estado("No se pudo cargar el plantel de tus categorías.","error")});unsubs.push(unsub)
 }
 function escucharDatos(){
  const periodosRef=fb.collection(db,"encuestas_periodos");
- const up=fb.onSnapshot(periodosRef,s=>{periodos=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error(e);estado("No se pudieron cargar las publicaciones. Revisá las reglas de Firestore.","error")});unsubs.push(up);
+ const consultaPeriodos=fb.query(periodosRef,fb.where("categoria","in",perfil.categorias));
+ const up=fb.onSnapshot(consultaPeriodos,s=>{periodos=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error(e);estado("No se pudieron cargar las publicaciones de tus categorías.","error")});unsubs.push(up);
  const respuestasRef=fb.collection(db,"encuestas_respuestas");
- const q=esJugadora()?fb.query(respuestasRef,fb.where("uid","==",uid)):respuestasRef;
- const ur=fb.onSnapshot(q,s=>{respuestas=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error(e);estado("No se pudieron cargar las respuestas. Revisá las reglas de Firestore.","error")});unsubs.push(ur)
+ const consultaRespuestas=esJugadora()
+   ?fb.query(respuestasRef,fb.where("uid","==",uid),fb.where("categoria","in",perfil.categorias))
+   :fb.query(respuestasRef,fb.where("categoria","in",perfil.categorias));
+ const ur=fb.onSnapshot(consultaRespuestas,s=>{respuestas=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error(e);estado("No se pudieron cargar las respuestas autorizadas.","error")});unsubs.push(ur)
 }
 function renderTodo(){if(!perfil)return;if(esJugadora())renderJugadora();else renderCT()}
 function renderJugadora(){
@@ -267,7 +271,7 @@ async function guardarRespuesta(e){
  const b=e.submitter;b.disabled=true;b.textContent="Enviando...";
  try{const estadoActual=await fb.getDoc(fb.doc(db,"encuestas_periodos",p.id));if(!estadoActual.exists()||estadoActual.data().estado!=="abierta")throw new Error("El cuerpo técnico cerró esta encuesta. Ya no se aceptan respuestas.");
  const datos={periodoId:p.id,tipo:p.tipo,categoria:p.categoria,fecha:p.fecha,uid:modoPublico?null:uid,jugadora:modoPublico?(nombreRespuesta+" "+apellidoRespuesta):(jugadoraNombre||nombre),nombre:modoPublico?nombreRespuesta:(jugadoraNombre||nombre),apellido:modoPublico?apellidoRespuesta:"",respuestas:respuestasForm,creadoEn:fb.serverTimestamp()};
- if(modoPublico)await fb.addDoc(fb.collection(db,"encuestas_respuestas"),datos);else{const ref=fb.doc(db,"encuestas_respuestas",p.id+"_"+uid),existente=await fb.getDoc(ref);if(existente.exists())throw new Error("Ya existe una respuesta para este período.");await fb.setDoc(ref,datos)}
+ if(modoPublico)await fb.addDoc(fb.collection(db,"encuestas_respuestas"),datos);else{const ref=fb.doc(db,"encuestas_respuestas",p.id+"_"+uid);if(respuestas.some(r=>r.periodoId===p.id&&r.uid===uid))throw new Error("Ya existe una respuesta para este período.");await fb.setDoc(ref,datos)}
  if(modoPublico){$("formularioPublico").classList.add("oculto");$("estadoPublico").textContent="¡Respuesta enviada! Gracias, "+nombreRespuesta+"."; $("estadoPublico").className="publico-mensaje ok"}else{estado("¡Respuesta enviada! Gracias por completar "+tipoNombre(p.tipo)+".","ok");$("formularioJugador").classList.add("oculto");$("encuestasDisponibles").classList.remove("oculto");renderJugadora()}periodoSeleccionado=""}
  catch(err){console.error(err);if(modoPublico){$("estadoPublico").textContent=err.message||"No se pudo enviar la respuesta. Intentá nuevamente.";$("estadoPublico").className="publico-mensaje error"}else estado(err.message||"No se pudo enviar la respuesta. Intentá nuevamente.","error")}finally{if(b.isConnected){b.disabled=false;b.textContent="Enviar respuesta"}}
 }
@@ -291,7 +295,7 @@ async function eliminarPeriodo(id){
  const p=periodos.find(x=>x.id===id);if(!p||!perfil?.puedeEliminar)return;
  if(!confirm("¿Eliminar definitivamente esta publicación y TODAS sus respuestas? Esta acción no se puede deshacer."))return;
  try{
-  const consulta=fb.query(fb.collection(db,"encuestas_respuestas"),fb.where("periodoId","==",id));
+  const consulta=fb.query(fb.collection(db,"encuestas_respuestas"),fb.where("periodoId","==",id),fb.where("categoria","in",perfil.categorias));
   const snap=await fb.getDocs(consulta);
   const docs=snap.docs;
   for(let i=0;i<docs.length;i+=450){
@@ -369,7 +373,7 @@ async function cargarEncuestaPublica(){
 async function iniciar(){
  iniciarMenu();
  try{
-  const authMod=await import("./ADIUR-auth.js?v=20261123-authpersist1");fb=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+  const authMod=await import("./ADIUR-auth.js?v=20261123-authpersist2");fb=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
   auth=authMod.auth;db=authMod.db;
   if(modoPublico){document.body.classList.add("modo-publico");await cargarEncuestaPublica();return}
   const esperarPerfil=()=>new Promise((resolve,reject)=>{if(window.ADIUR_PERMISOS){resolve(window.ADIUR_PERMISOS);return}const timer=setTimeout(()=>reject(new Error("La validación de permisos está tardando. Recargá la página.")),12000);window.addEventListener("adiur-permisos-listos",e=>{clearTimeout(timer);resolve(e.detail||window.ADIUR_PERMISOS)},{once:true})});

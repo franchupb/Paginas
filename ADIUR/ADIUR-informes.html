@@ -2779,7 +2779,7 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 }
 
 </style>
-<script src="ADIUR-permisos.js?v=20261123func5"></script>
+<script src="ADIUR-permisos.js?v=20261123func11"></script>
 </head>
 
 <body>
@@ -5415,8 +5415,10 @@ function cargarPartidos() {
 
 // Une informes locales y remotos sin borrar documentos existentes de Firestore.
 window.recibirInformesFirebase = function(listaNube) {
-  const locales = Array.isArray(partidos) ? partidos.map(normalizarPartidoGuardado) : [];
-  const remotos = Array.isArray(listaNube) ? listaNube.map(normalizarPartidoGuardado) : [];
+  const categorias = window.ADIUR_PERMISOS?.categorias || [];
+  const pertenece = partido => categorias.includes(partido?.categoria || partido?.division);
+  const locales = (Array.isArray(partidos) ? partidos.map(normalizarPartidoGuardado) : []).filter(pertenece);
+  const remotos = (Array.isArray(listaNube) ? listaNube.map(normalizarPartidoGuardado) : []).filter(pertenece);
   const mapa = new Map(remotos.map(p => [String(p.id), p]));
   const pendientes = [];
 
@@ -6185,7 +6187,7 @@ function configurarNavegacion() {
     } catch (error) {
       console.warn("No se pudo limpiar la sesión guardada.", error);
     }
-    window.location.href="ADIUR-Loing.html";
+    window.cerrarSesionADIURCentral(evento);
   });
 
   // En pantallas pequeñas, cerrar el panel al navegar desde cualquier enlace.
@@ -6480,7 +6482,9 @@ window.addEventListener("storage",evento=>{
     onSnapshot,
     doc,
     setDoc,
-    deleteDoc
+    deleteDoc,
+    query,
+    where
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
@@ -6503,22 +6507,16 @@ window.addEventListener("storage",evento=>{
   const dbInformes = getFirestore(app);
 
 
-  // Esperar a que Firebase restaure la sesión y el control central confirme
-  // el perfil antes de consultar colecciones protegidas.
-  function esperarPermisosADIUR() {
-    if (window.ADIUR_PERMISOS) return Promise.resolve(window.ADIUR_PERMISOS);
-    return new Promise(resolve => {
-      window.addEventListener("adiur-permisos-listos", evento => {
-        resolve(evento.detail || window.ADIUR_PERMISOS || null);
-      }, { once: true });
-    });
-  }
-
-  esperarPermisosADIUR().then(() => {
+  const perfilInformes = await window.esperarPermisosADIUR();
+  if (!perfilInformes) throw new Error("No se pudieron validar los permisos de Informes.");
+  const categoriasPermitidasInformes = perfilInformes.categorias || [];
+  const consultaJugadorasInformes = await window.crearConsultaCategoriasADIUR(collection(dbInformes, "jugadoras"), query, where, "categoria");
+  const consultaPartidosInformes = await window.crearConsultaCategoriasADIUR(collection(dbInformes, "partidos"), query, where, "categoria");
+  const consultaRegistrosInformes = await window.crearConsultaCategoriasADIUR(collection(dbInformes, "informes_partidos"), query, where, "division");
   // ESCUCHAR LA COLECCIÓN DE JUGADORAS
 
   onSnapshot(
-    collection(dbInformes, "jugadoras"),
+    consultaJugadorasInformes,
 
     (snapshot) => {
 
@@ -6556,7 +6554,7 @@ window.addEventListener("storage",evento=>{
 
   // Fixture compartido: Informes debe leer la misma colección en la nube que
   // utiliza Partidos, no depender del localStorage de este dispositivo.
-  onSnapshot(collection(dbInformes, "partidos"), snapshot => {
+  onSnapshot(consultaPartidosInformes, snapshot => {
     const fixtureNube = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     try {
       localStorage.setItem("fixtureADIUR", JSON.stringify(fixtureNube));
@@ -6572,11 +6570,11 @@ window.addEventListener("storage",evento=>{
   });
 
   // Sincronización de informes: comparte la colección que consume Estadísticas.
-  const coleccionInformes = collection(dbInformes, "informes_partidos");
+  const coleccionInformes = consultaRegistrosInformes;
   let idsInformesNube = new Set();
 
   window.guardarInformesFirebase = async function(lista) {
-    const actuales = Array.isArray(lista) ? lista : [];
+    const actuales = (Array.isArray(lista) ? lista : []).filter(partido => categoriasPermitidasInformes.includes(partido.categoria || partido.division));
     for (const partido of actuales) {
       await setDoc(
         doc(dbInformes, "informes_partidos", String(partido.id)),
@@ -6611,10 +6609,6 @@ window.addEventListener("storage",evento=>{
   }, error => {
     console.error("Error al sincronizar informes en Firestore:", error);
   });
-  }).catch(error => {
-    console.error("No se pudo iniciar la sincronización de Informes:", error);
-  });
-
 </script>
   
 

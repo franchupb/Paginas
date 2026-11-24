@@ -1106,6 +1106,7 @@ body.immersive .board-studio>.controlbar>.immersive-launch{
  }
 }
 
+.cloud-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.cloud-actions button{border:1px solid #dedede;border-radius:9px;background:#fff;color:#242424;padding:9px 11px;font:700 12px Arial,sans-serif;cursor:pointer}.cloud-actions button:hover{border-color:#f47721;color:#c65b10}.cloud-actions button:disabled{opacity:.55;cursor:wait}#cloudStatus{font-size:11px;color:#687078;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -1138,6 +1139,11 @@ body.immersive .board-studio>.controlbar>.immersive-launch{
 <div class="palette" aria-label="Color de dibujo"><button class="swatch active" data-color="#f47721" style="background:#f47721" aria-label="Naranja" type="button"></button><button class="swatch" data-color="#e53935" style="background:#e53935" aria-label="Rojo" type="button"></button><button class="swatch" data-color="#171717" style="background:#171717" aria-label="Negro" type="button"></button></div>
 <span class="top-separator history-separator"></span>
 <div class="quick-history" aria-label="Historial de edición"><button class="quick-history-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button><button class="quick-history-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button></div>
+</div>
+<div class="cloud-actions" aria-label="Guardado de pizarra">
+<button id="saveBoard" type="button" title="Guardar esta pizarra en tu cuenta">☁ Guardar</button>
+<button id="loadBoard" type="button" title="Recuperar tu última pizarra">↻ Cargar</button>
+<span id="cloudStatus" role="status" aria-live="polite">Sin guardar</span>
 </div>
 <div class="control-group rival-formation"><span class="control-label">RIVAL</span><select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select><button class="add-rival-btn" id="addRival" type="button" title="Agregar formación rival" aria-label="Agregar formación rival" aria-pressed="false">✓</button></div>
 <button class="immersive-launch" id="toggleImmersive" type="button" aria-pressed="false" title="Activar modo inmersivo" aria-label="Activar modo inmersivo"><span>⛶</span><small>Modo inmersivo</small></button>
@@ -1174,7 +1180,59 @@ var formations={
 };
 var players=formations["4-3-3"].map(function(p,i){return{id:"own-"+(i+1),team:"own",number:String(i+1),x:p[0],y:p[1]};});
 var drawings=[],tool="select",color="#f47721",lineWidth=4,selected=null,drawing=false,start=null,points=[],history=[],future=[];
+var firebaseContextPromise=null;
 var clone=function(v){return JSON.parse(JSON.stringify(v));};
+async function firebaseContext(){
+ if(!firebaseContextPromise)firebaseContextPromise=(async()=>{
+  const modulo=await import("./ADIUR-auth.js?v=20261123-authpersist2");
+  await modulo.auth.authStateReady();
+  const user=modulo.auth.currentUser;
+  if(!user)throw new Error("No hay una sesión activa de Firebase.");
+  const perfil=await modulo.obtenerPerfilADIUR(user);
+  if(!perfil)throw new Error("La cuenta no tiene un perfil activo.");
+  const firestore=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+  return {db:modulo.db,user,perfil,firestore};
+ })();
+ try{return await firebaseContextPromise;}catch(error){firebaseContextPromise=null;throw error;}
+}
+function estadoNube(texto,error){
+ var el=$("cloudStatus");if(el){el.textContent=texto;el.style.color=error?"#b42318":"#687078";}
+}
+function aplicarEstadoPizarra(datos){
+ if(!datos||!Array.isArray(datos.players)||!Array.isArray(datos.drawings))throw new Error("El archivo de pizarra no tiene un formato válido.");
+ players=clone(datos.players);
+ drawings=clone(datos.drawings);
+ if(formations[datos.formationOwn]) $("formationOwn").value=datos.formationOwn;
+ if(formations[datos.formationRival]) $("formationRival").value=datos.formationRival;
+ selected=null;history=[];future=[];renderPlayers();paint();syncHistory();
+}
+async function guardarPizarraNube(){
+ const boton=$("saveBoard");if(boton)boton.disabled=true;estadoNube("Guardando…");
+ try{
+  const {db,user,perfil,firestore}=await firebaseContext();
+  const payload={uid:user.uid,usuario:perfil.usuario||perfil.nombre||"",players:clone(players),drawings:clone(drawings),formationOwn:$("formationOwn").value,formationRival:$("formationRival").value,actualizadoEn:new Date().toISOString()};
+  await firestore.setDoc(firestore.doc(db,"pizarrasADIUR",user.uid),payload);
+  localStorage.setItem("pizarraADIUR_"+user.uid,JSON.stringify(payload));
+  estadoNube("Guardada en la nube");
+  status("Pizarra guardada en tu cuenta");
+ }catch(error){console.error("No se pudo guardar la pizarra:",error);estadoNube("No se pudo guardar",true);status(error.message||"Error al guardar la pizarra");}
+ finally{if(boton)boton.disabled=false;}
+}
+async function cargarPizarraNube(){
+ const boton=$("loadBoard");if(boton)boton.disabled=true;estadoNube("Cargando…");
+ try{
+  const {db,user,firestore}=await firebaseContext();
+  const ref=firestore.doc(db,"pizarrasADIUR",user.uid);
+  const snap=await firestore.getDoc(ref);
+  let datos=snap.exists()?snap.data():null;
+  if(!datos){const local=localStorage.getItem("pizarraADIUR_"+user.uid);if(local)datos=JSON.parse(local);}
+  if(!datos){estadoNube("Todavía no hay una pizarra guardada");return;}
+  aplicarEstadoPizarra(datos);
+  estadoNube(snap.exists()?"Pizarra recuperada de la nube":"Pizarra recuperada de este dispositivo");
+  status("Última pizarra recuperada");
+ }catch(error){console.error("No se pudo cargar la pizarra:",error);estadoNube("No se pudo cargar",true);status(error.message||"Error al cargar la pizarra");}
+ finally{if(boton)boton.disabled=false;}
+}
 function status(t){$("status").textContent=t;}
 function syncHistory(){$("undo").disabled=!history.length;$("redo").disabled=!future.length;}
 function snapshot(){history.push({players:clone(players),drawings:clone(drawings)});if(history.length>80)history.shift();future=[];syncHistory();}
@@ -1188,6 +1246,8 @@ function resize(){var r=pitch.getBoundingClientRect(),dpr=window.devicePixelRati
 function setFormation(team,formation){var group=players.filter(function(p){return p.team===team;});formations[formation].forEach(function(q,i){if(group[i]){group[i].x=team==="rival"?1-q[0]:q[0];group[i].y=q[1];}});}
 function updateOwn(){snapshot();setFormation("own",$("formationOwn").value);renderPlayers();paint();status("Formación ADIUR "+$("formationOwn").value+" aplicada");}
 function addRival(){var active=players.some(function(p){return p.team==="rival";});snapshot();if(active){players=players.filter(function(p){return p.team!=="rival";});$("addRival").setAttribute("aria-pressed","false");$("addRival").title="Agregar formación rival";$("addRival").setAttribute("aria-label","Agregar formación rival");renderPlayers();paint();status("Formación rival quitada");return;}var formation=$("formationRival").value;formations[formation].forEach(function(q,i){players.push({id:"rival-"+(i+1),team:"rival",number:String(i+1),x:1-q[0],y:q[1]});});$("addRival").setAttribute("aria-pressed","true");$("addRival").title="Quitar formación rival";$("addRival").setAttribute("aria-label","Quitar formación rival");renderPlayers();paint();status("Equipo rival incorporado · 11 fichas");}
+$("saveBoard").addEventListener("click",guardarPizarraNube);
+$("loadBoard").addEventListener("click",cargarPizarraNube);
 $("formationOwn").addEventListener("change",updateOwn);
 $("addRival").addEventListener("click",addRival);
 document.querySelectorAll("[data-tool]").forEach(function(b){b.addEventListener("click",function(){tool=b.dataset.tool;document.querySelectorAll("[data-tool]").forEach(function(x){x.classList.toggle("active",x===b);});status("Herramienta: "+b.querySelector("small").textContent);});});
@@ -1204,10 +1264,10 @@ function syncImmersive(){var on=document.body.classList.contains("immersive");im
 immersive.addEventListener("click",async function(){var on=document.body.classList.contains("immersive");if(on){document.body.classList.remove("immersive");if(document.fullscreenElement&&document.exitFullscreen)try{await document.exitFullscreen();}catch(e){}}else{document.body.classList.add("immersive");var target=document.querySelector(".board-studio");if(target&&target.requestFullscreen)try{await target.requestFullscreen();}catch(e){}}syncImmersive();setTimeout(resize,180);});
 document.addEventListener("fullscreenchange",function(){if(!document.fullscreenElement&&document.body.classList.contains("immersive"))document.body.classList.remove("immersive");syncImmersive();setTimeout(resize,180);});
 document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();$("undo").click();}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();$("redo").click();}else if(e.key==="Escape"&&document.body.classList.contains("immersive")){document.body.classList.remove("immersive");syncImmersive();setTimeout(resize,180);}});
-setField();renderPlayers();syncHistory();if(window.ResizeObserver)new ResizeObserver(resize).observe(pitch);window.addEventListener("resize",resize);syncImmersive();requestAnimationFrame(resize);
+setField();renderPlayers();syncHistory();if(window.ResizeObserver)new ResizeObserver(resize).observe(pitch);window.addEventListener("resize",resize);syncImmersive();requestAnimationFrame(resize);cargarPizarraNube();
 })();
 </script>
-<script src="ADIUR-permisos.js?v=20261123func5"></script>
+<script src="ADIUR-permisos.js?v=20261123func11"></script>
 <script src="ADIUR-layout.js?v=20261123-pizarra7"></script>
 </body>
 </html>
