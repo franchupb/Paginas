@@ -6347,7 +6347,9 @@ window.addEventListener("storage",evento=>{
   import {
     getFirestore,
     collection,
-    onSnapshot
+    onSnapshot,
+    query,
+    where
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
@@ -6372,12 +6374,24 @@ window.addEventListener("storage",evento=>{
   }
   const app = appExistente || initializeApp(firebaseConfig);
   const dbInformes = getFirestore(app);
+  const rolPerfilTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+  let categoriasAutorizadasTORITO = [];
+  try {
+    const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+    if (Array.isArray(guardadas)) categoriasAutorizadasTORITO = guardadas;
+  } catch (_) {}
+  if (rolPerfilTORITO === "admin" && !categoriasAutorizadasTORITO.length) {
+    categoriasAutorizadasTORITO = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
+  }
 
 
   // ESCUCHAR LA COLECCIÓN DE JUGADORAS
 
   onSnapshot(
-    collection(dbInformes,"torito_jugadoras"),
+    query(
+      collection(dbInformes,"torito_jugadoras"),
+      where("categoria","in",categoriasAutorizadasTORITO)
+    ),
 
     (snapshot) => {
 
