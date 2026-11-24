@@ -2667,6 +2667,7 @@ window.firebaseGimnasioReady = (async () => {
     doc,
     getDoc,
     setDoc,
+    deleteDoc,
     serverTimestamp,
     query,
     where
@@ -2766,6 +2767,7 @@ const firebaseConfig = {
     const copia = JSON.parse(JSON.stringify(datos || {}));
     const jugadoras = await window.cargarJugadorasGimnasioNube();
     const tareas = [];
+    const idsIndividualesEsperados = new Set();
 
     for (const categoria of categorias) {
       const prefijoGeneral = "GENERAL::" + categoria + "::";
@@ -2809,6 +2811,7 @@ const firebaseConfig = {
       });
 
       for (const [id, registro] of individuales) {
+        idsIndividualesEsperados.add(id);
         tareas.push(() => setDoc(doc(dbCloud, "gimnasioADIUR_individuales", id), {
           ...registro,
           actualizado: serverTimestamp()
@@ -2818,6 +2821,20 @@ const firebaseConfig = {
 
     colaGuardado = colaGuardado.catch(() => {}).then(async () => {
       for (const tarea of tareas) await tarea();
+
+      // Solo administración/coordinación puede eliminar. Comparar contra el
+      // estado completo ya cargado evita que rutinas borradas reaparezcan.
+      if (["admin", "coordinadora"].includes(perfil.rol)) {
+        const existentes = await getDocs(query(
+          collection(dbCloud, "gimnasioADIUR_individuales"),
+          where("categoria", "in", categorias)
+        ));
+        for (const documento of existentes.docs) {
+          if (!idsIndividualesEsperados.has(documento.id)) {
+            await deleteDoc(doc(dbCloud, "gimnasioADIUR_individuales", documento.id));
+          }
+        }
+      }
     });
     return colaGuardado;
   };
