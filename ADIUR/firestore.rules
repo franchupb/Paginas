@@ -23,66 +23,237 @@ service cloud.firestore {
       return hasProfile() && profile().activo == true;
     }
 
-    function role() {
-      return activeUser() ? profile().rol : '';
-    }
-
     function isAdmin() {
-      return activeUser() && role() == 'admin';
+      return activeUser() && profile().rol == 'admin';
     }
 
     function isCoordinator() {
-      return activeUser() && role() == 'coordinadora';
+      return activeUser() && profile().rol == 'coordinadora';
     }
 
     function isStaff() {
       return activeUser() &&
-        role() in ['admin', 'coordinadora', 'cuerpo_tecnico'];
+        profile().rol in ['admin', 'coordinadora', 'cuerpo_tecnico'];
     }
 
     function canDeleteClubData() {
       return isAdmin() || isCoordinator();
     }
 
-    function coleccionAdiur(nombre) {
-      return nombre in [
-        'jugadoras',
-        'partidos',
-        'asistenciaADIUR',
-        'configuracionAsistenciaADIUR',
-        'calculadoraADIUR',
-        'planificacionADIUR',
-        'planificaciones',
-        'gimnasioADIUR',
+    function categoryOf(data) {
+      return data.keys().hasAny(['categoria'])
+        ? data.categoria
+        : (data.keys().hasAny(['division']) ? data.division : '');
+    }
+
+    function hasCategoryPermission(category) {
+      return activeUser() &&
+        category is string &&
+        profile().categorias is list &&
+        category in profile().categorias;
+    }
+
+    function canReadCategory(data) {
+      return hasCategoryPermission(categoryOf(data));
+    }
+
+    function canWriteCategory(data) {
+      return isStaff() && hasCategoryPermission(categoryOf(data));
+    }
+
+    function canDeleteCategory(data) {
+      return canDeleteClubData() && hasCategoryPermission(categoryOf(data));
+    }
+
+    function staffOnlyCollection(name) {
+      return name in [
         'informes',
         'informes_partidos',
-        'testeos_adiur',
         'tiemposRendimiento',
-        'lesiones',
-        'encuestas_periodos',
-        'encuestas_respuestas'
+        'lesiones'
       ];
     }
 
-    // El usuario consulta su propio perfil. Solo Fran (admin) administra perfiles.
+    function periodIsOpen(periodId, category) {
+      let periodPath = /databases/$(database)/documents/encuestas_periodos/$(periodId);
+      return exists(periodPath) &&
+        get(periodPath).data.estado == 'abierta' &&
+        get(periodPath).data.categoria == category;
+    }
+
     match /usuarios/{uid} {
       allow get: if signedIn() && (request.auth.uid == uid || isAdmin());
       allow list: if isAdmin();
       allow create, update, delete: if isAdmin();
     }
 
-    // Datos del club: solo perfiles activos. Jugadoras consultan y responden
-    // encuestas; cuerpo técnico edita; coordinación y administración también eliminan.
+    // Datos que ya están separados por documento y contienen categoria
+    // (o division, en el caso de testeos_adiur).
     match /{coleccion}/{documento} {
-      allow read: if activeUser() && coleccionAdiur(coleccion);
+      allow read: if coleccion in [
+          'jugadoras',
+          'partidos',
+          'asistenciaADIUR',
+          'configuracionAsistenciaADIUR',
+          'testeos_adiur'
+        ] &&
+        canReadCategory(resource.data);
 
-      allow create, update: if isStaff() && coleccionAdiur(coleccion);
+      allow read: if coleccion in [
+          'informes',
+          'informes_partidos',
+          'tiemposRendimiento',
+          'lesiones'
+        ] &&
+        isStaff() &&
+        canReadCategory(resource.data);
 
-      allow create: if activeUser()
-        && role() == 'jugadora'
-        && coleccion == 'encuestas_respuestas';
+      allow create: if coleccion in [
+          'jugadoras',
+          'partidos',
+          'asistenciaADIUR',
+          'configuracionAsistenciaADIUR',
+          'testeos_adiur',
+          'informes',
+          'informes_partidos',
+          'tiemposRendimiento',
+          'lesiones'
+        ] &&
+        canWriteCategory(request.resource.data);
 
-      allow delete: if canDeleteClubData() && coleccionAdiur(coleccion);
+      allow update: if coleccion in [
+          'jugadoras',
+          'partidos',
+          'asistenciaADIUR',
+          'configuracionAsistenciaADIUR',
+          'testeos_adiur',
+          'informes',
+          'informes_partidos',
+          'tiemposRendimiento',
+          'lesiones'
+        ] &&
+        canWriteCategory(resource.data) &&
+        canWriteCategory(request.resource.data);
+
+      allow delete: if coleccion in [
+          'jugadoras',
+          'partidos',
+          'asistenciaADIUR',
+          'configuracionAsistenciaADIUR',
+          'testeos_adiur',
+          'informes',
+          'informes_partidos',
+          'tiemposRendimiento',
+          'lesiones'
+        ] &&
+        canDeleteCategory(resource.data);
+    }
+
+    // Planificación: documentos separados por categoría. El documento
+    // principal se conserva como respaldo y solo lo puede leer un admin.
+    match /planificacionADIUR/{documento} {
+      allow get: if documento == 'principal' && isAdmin();
+      allow list: if documento != 'principal' &&
+        isStaff() &&
+        canReadCategory(resource.data);
+      allow get: if documento != 'principal' &&
+        isStaff() &&
+        canReadCategory(resource.data);
+      allow create: if documento != 'principal' &&
+        canWriteCategory(request.resource.data);
+      allow update: if documento != 'principal' &&
+        canWriteCategory(resource.data) &&
+        canWriteCategory(request.resource.data);
+      allow delete: if documento != 'principal' &&
+        canDeleteCategory(resource.data);
+    }
+
+    // Gimnasio: cada categoría tiene su documento propio. El documento
+    // principal queda preservado como respaldo de solo lectura para admins.
+    match /gimnasioADIUR/{documento} {
+      allow get: if documento == 'principal' && isAdmin();
+      allow list: if documento != 'principal' &&
+        canReadCategory(resource.data);
+      allow get: if documento != 'principal' &&
+        canReadCategory(resource.data);
+      allow create: if documento != 'principal' &&
+        canWriteCategory(request.resource.data);
+      allow update: if documento != 'principal' &&
+        canWriteCategory(resource.data) &&
+        canWriteCategory(request.resource.data);
+      allow delete: if documento != 'principal' &&
+        canDeleteCategory(resource.data);
+    }
+
+    // Calculadora: un documento por división. El documento principal
+    // se mantiene intacto como respaldo administrativo.
+    match /calculadoraADIUR/{documento} {
+      allow get: if documento == 'principal' && isAdmin();
+      allow list: if documento != 'principal' &&
+        isStaff() &&
+        canReadCategory(resource.data);
+      allow get: if documento != 'principal' &&
+        isStaff() &&
+        canReadCategory(resource.data);
+      allow create: if documento != 'principal' &&
+        canWriteCategory(request.resource.data);
+      allow update: if documento != 'principal' &&
+        canWriteCategory(resource.data) &&
+        canWriteCategory(request.resource.data);
+      allow delete: if documento != 'principal' &&
+        canDeleteCategory(resource.data);
+    }
+
+    // Publicación de encuestas: un enlace público solo puede leer un período
+    // abierto por su ID; las consultas normales quedan limitadas por categoría.
+    match /encuestas_periodos/{periodoId} {
+      allow get: if (activeUser() && canReadCategory(resource.data)) ||
+        (!signedIn() && resource.data.estado == 'abierta');
+      allow list: if activeUser() && canReadCategory(resource.data);
+      allow create: if isStaff() && canWriteCategory(request.resource.data);
+      allow update: if isStaff() &&
+        canWriteCategory(resource.data) &&
+        canWriteCategory(request.resource.data);
+      allow delete: if canDeleteCategory(resource.data);
+    }
+
+    match /encuestas_respuestas/{respuestaId} {
+      allow read: if activeUser() && (
+        (isStaff() && canReadCategory(resource.data)) ||
+        (profile().rol == 'jugadora' && resource.data.uid == request.auth.uid)
+      );
+
+      // Una jugadora autenticada solo puede crear su propia respuesta.
+      allow create: if activeUser() &&
+        profile().rol == 'jugadora' &&
+        request.resource.data.uid == request.auth.uid &&
+        canWriteSurveyCategory(request.resource.data);
+
+      // Los enlaces públicos solo aceptan respuestas para un período abierto.
+      allow create: if !signedIn() &&
+        request.resource.data.uid == null &&
+        periodIsOpen(request.resource.data.periodoId, request.resource.data.categoria);
+
+      allow update: if false;
+      allow delete: if canDeleteClubData() &&
+        hasCategoryPermission(categoryOf(resource.data));
+    }
+
+    function canWriteSurveyCategory(data) {
+      return hasCategoryPermission(categoryOf(data));
+    }
+
+    // Documento legado de plantel completo: se conserva, pero no se usa
+    // desde las páginas y no queda disponible para cuentas no administradoras.
+    match /plantel/{documento} {
+      allow get: if isAdmin();
+      allow list: if isAdmin();
+      allow create, update, delete: if false;
+    }
+
+    // Denegar cualquier colección o documento que no esté contemplado arriba.
+    match /{documento=**} {
+      allow read, write: if false;
     }
   }
 }
