@@ -87,14 +87,14 @@ service cloud.firestore {
           'asistenciaADIUR',
           'configuracionAsistenciaADIUR',
           'calendarioADIUR',
-          'testeos_adiur'
+          'testeos_adiur',
+          'informes_partidos',
+          'tiemposRendimiento'
         ] &&
         canReadCategory(resource.data);
 
       allow read: if coleccion in [
           'informes',
-          'informes_partidos',
-          'tiemposRendimiento',
           'lesiones'
         ] &&
         isStaff() &&
