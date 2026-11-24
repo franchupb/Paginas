@@ -18,6 +18,7 @@
   // una acción usando solamente los valores de compatibilidad de localStorage.
   window.esperarPermisosADIUR = function () {
     if (window.ADIUR_PERMISOS) return Promise.resolve(window.ADIUR_PERMISOS);
+    if (window.ADIUR_PERMISOS_ERROR) return Promise.resolve(null);
     return new Promise(resolve => {
       const listo = evento => {
         window.removeEventListener("adiur-permisos-error", error);
@@ -162,7 +163,8 @@
       }, { once: true });
     }
     document.getElementById("adiur-espera-permisos")?.remove();
-    window.dispatchEvent(new CustomEvent("adiur-permisos-error", { detail: error || null }));
+    window.ADIUR_PERMISOS_ERROR = error || new Error("No se pudieron validar los permisos.");
+    window.dispatchEvent(new CustomEvent("adiur-permisos-error", { detail: window.ADIUR_PERMISOS_ERROR }));
   }
 
   let perfilActivo = null;
