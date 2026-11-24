@@ -2656,56 +2656,74 @@ a:focus-visible,
 ===================================================== */
 
 window.firebaseGimnasioReady = (async () => {
-  const { initializeApp, getApps } = await import(
-    "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
-  );
-
+  const { db } = await import("./TORITO-auth.js?v=20261124-auth2");
   const {
-    getFirestore,
-    doc,
-    getDoc,
-    setDoc,
-    serverTimestamp
-  } = await import(
-    "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
-  );
+    doc, getDoc, setDoc, serverTimestamp, collection, getDocs, query, where
+  } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
 
-const firebaseConfig = {
-    apiKey: "AIzaSyCsOaJVo8P5reZvfp7vjBkhkP79C_mEO94",
-    authDomain: "torito-56078.firebaseapp.com",
-    projectId: "torito-56078",
-    storageBucket: "torito-56078.firebasestorage.app",
-    messagingSenderId: "497702302753",
-    appId: "1:497702302753:web:04d419e13ded4b59371f60",
-    measurementId: "G-32VFQHWP5Y"
-  };
-
-  const appExistente = getApps().find(item => item.name === "[DEFAULT]");
-  if (appExistente && appExistente.options.projectId !== firebaseConfig.projectId) {
-    throw new Error("La aplicación Firebase predeterminada no pertenece a TORITO.");
+  const rolPerfilTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+  const uidTORITO = localStorage.getItem("uidTORITO") || "sin-uid";
+  let categoriasPermitidasTORITO = [];
+  try {
+    const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+    if (Array.isArray(guardadas)) categoriasPermitidasTORITO = guardadas;
+  } catch (_) {}
+  if (rolPerfilTORITO === "admin" && !categoriasPermitidasTORITO.length) {
+    categoriasPermitidasTORITO = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
   }
-  const app = appExistente || initializeApp(firebaseConfig);
-  const dbCloud = getFirestore(app);
-  const referenciaCloud = doc(dbCloud,"torito_gimnasioTORITO", "principal");
+  const puedeEditarTORITO = localStorage.getItem("puedeEditarTORITO") === "true";
+  const slugCategoria = categoria => String(categoria).normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "_");
+
+  try {
+    const snapshotJugadoras = await getDocs(query(
+      collection(db, "torito_jugadoras"),
+      where("categoria", "in", categoriasPermitidasTORITO)
+    ));
+    const jugadorasPermitidas = snapshotJugadoras.docs.map(d => ({ id:d.id, ...d.data() }));
+    localStorage.setItem("jugadorasTORITO_" + uidTORITO, JSON.stringify(jugadorasPermitidas));
+  } catch (error) {
+    console.warn("No se pudo actualizar el plantel autorizado para el gimnasio:", error);
+  }
 
   window.cargarGimnasioNube = async () => {
-    const resultado = await getDoc(referenciaCloud);
-    if (resultado.exists()) return resultado.data().datos || null;
-    return null;
+    const resultado = {};
+    for (const categoria of categoriasPermitidasTORITO) {
+      const snapshot = await getDoc(doc(db, "torito_gimnasio_categorias", slugCategoria(categoria)));
+      if (snapshot.exists()) resultado[categoria] = snapshot.data().datos || {};
+    }
+
+    if (rolPerfilTORITO === "admin") {
+      const legacy = await getDoc(doc(db, "torito_gimnasioTORITO", "principal"));
+      const datosLegacy = legacy.exists() ? (legacy.data().datos || {}) : {};
+      for (const categoria of categoriasPermitidasTORITO) {
+        if (!Object.prototype.hasOwnProperty.call(resultado, categoria) &&
+            datosLegacy[categoria] && typeof datosLegacy[categoria] === "object") {
+          resultado[categoria] = datosLegacy[categoria];
+          await setDoc(
+            doc(db, "torito_gimnasio_categorias", slugCategoria(categoria)),
+            { categoria, datos: datosLegacy[categoria], migradoDesde: "principal", migradoEn: serverTimestamp() },
+            { merge: false }
+          );
+        }
+      }
+    }
+    return resultado;
   };
 
   let colaGuardado = Promise.resolve();
-
-  window.guardarGimnasioEnNube = (datos) => {
-    const copia = JSON.parse(JSON.stringify(datos));
-
-    colaGuardado = colaGuardado.catch(() => {}).then(() =>
-      setDoc(referenciaCloud, {
-        datos: copia,
-        actualizado: serverTimestamp()
-      })
-    );
-
+  window.guardarGimnasioEnNube = datos => {
+    if (!puedeEditarTORITO) {
+      return Promise.reject(new Error("El perfil de TORITO es de solo lectura."));
+    }
+    const escrituras = categoriasPermitidasTORITO
+      .filter(categoria => Object.prototype.hasOwnProperty.call(datos || {}, categoria))
+      .map(categoria => setDoc(
+        doc(db, "torito_gimnasio_categorias", slugCategoria(categoria)),
+        { categoria, datos: datos[categoria], actualizado: serverTimestamp() },
+        { merge: true }
+      ));
+    colaGuardado = colaGuardado.catch(() => {}).then(() => Promise.all(escrituras));
     return colaGuardado;
   };
 
@@ -2739,8 +2757,10 @@ const $ = id => document.getElementById(id);
    CONFIGURACIÓN
 ===================================================== */
 
-const KEY = "gimnasioTORITORutinasV1";
-const PLAYERS_KEY = "jugadorasTORITO";
+const UID_TORITO = localStorage.getItem("uidTORITO") || "sin-uid";
+const KEY = "gimnasioTORITORutinasV2_" + UID_TORITO;
+const KEY_LEGADA = "gimnasioTORITORutinasV1";
+const PLAYERS_KEY = "jugadorasTORITO_" + UID_TORITO;
 const SESSION_KEY = "usuarioTORITO";
 
 const DIVISIONES = [
@@ -3338,7 +3358,11 @@ function normalizarRutina(rutina) {
 
 function cargarDB() {
   try {
-    const datos = JSON.parse(localStorage.getItem(KEY) || "{}");
+    let texto = localStorage.getItem(KEY);
+    if (!texto && localStorage.getItem("rolTORITO") === "admin") {
+      texto = localStorage.getItem(KEY_LEGADA);
+    }
+    const datos = JSON.parse(texto || "{}");
     return datos && typeof datos === "object" ? datos : {};
   } catch {
     return {};
