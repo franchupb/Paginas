@@ -305,6 +305,7 @@ function esperarPermisosADIUR(){
 }
 async function leerColeccion(nombre){
  const nombreReal = nombre === "informes" ? "informes_partidos" : nombre;
+ if (nombreReal === "lesiones" && permisos?.rol === "jugadora") return [];
  const campoCategoria = nombreReal === "testeos_adiur" ? "division" : "categoria";
  const consulta = await window.crearConsultaCategoriasADIUR(collection(db,nombreReal),query,where,campoCategoria);
  const snap=await getDocs(consulta);
