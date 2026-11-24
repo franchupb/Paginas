@@ -2588,7 +2588,7 @@ window.firebasePlanificacionReady = (async () => {
     const perfil = await window.esperarPermisosADIUR();
     const categorias = perfil?.categorias || [];
     if (!categorias.length) throw new Error("No hay categorías autorizadas para planificación.");
-    const consulta = query(collection(db, "planificacionADIUR"), where("categoria", "in", categorias));
+    const consulta = query(collection(db, "planificacionADIUR_categorias"), where("categoria", "in", categorias));
     const resultado = await getDocs(consulta);
     const datos = {};
     resultado.forEach(snapshot => {
