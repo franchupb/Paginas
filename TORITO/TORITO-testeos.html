@@ -2391,7 +2391,9 @@ import {
   setDoc,
   writeBatch,
   collection,
-  getDocs
+  getDocs,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
@@ -2422,6 +2424,10 @@ try{
 }catch(error){
   console.warn("Modo local:",error);
 }
+const rolPerfilTORITO=String(localStorage.getItem("rolTORITO")||"").toLowerCase();
+let categoriasAutorizadasTORITO=[];
+try{const guardadas=JSON.parse(localStorage.getItem("categoriasTORITO")||"[]");if(Array.isArray(guardadas))categoriasAutorizadasTORITO=guardadas;}catch(_){}
+if(rolPerfilTORITO==="admin"&&!categoriasAutorizadasTORITO.length)categoriasAutorizadasTORITO=["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
 
 /* =====================================================
    USUARIO Y PERMISOS
@@ -2780,7 +2786,7 @@ async function cargarJugadorasPorDivision(division){
 
   if(nubeActiva&&db){
     try{
-      const snap=await getDocs(collection(db,"torito_jugadoras"));
+      const snap=await getDocs(query(collection(db,"torito_jugadoras"),where("categoria","in",categoriasAutorizadasTORITO)));
 
       snap.forEach(d=>{
         listaTotal.push({id:d.id,...d.data()});
