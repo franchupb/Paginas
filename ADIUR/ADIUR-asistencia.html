@@ -2375,7 +2375,7 @@ a {
   };
 
   const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+  try { getAnalytics(app); } catch (error) { console.warn("Analytics no disponible; Firestore seguirá funcionando:", error); }
   const db = getFirestore(app);
 
   const perfilAsistencia = await window.esperarPermisosADIUR();
