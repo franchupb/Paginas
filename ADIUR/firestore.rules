@@ -87,6 +87,7 @@ service cloud.firestore {
           'asistenciaADIUR',
           'configuracionAsistenciaADIUR',
           'calendarioADIUR',
+          'gimnasioADIUR_categorias',
           'testeos_adiur',
           'informes_partidos',
           'tiemposRendimiento'
@@ -95,7 +96,9 @@ service cloud.firestore {
 
       allow read: if coleccion in [
           'informes',
-          'lesiones'
+          'lesiones',
+          'planificacionADIUR_categorias',
+          'calculadoraADIUR_categorias'
         ] &&
         isStaff() &&
         canReadCategory(resource.data);
@@ -106,6 +109,9 @@ service cloud.firestore {
           'asistenciaADIUR',
           'configuracionAsistenciaADIUR',
           'calendarioADIUR',
+          'gimnasioADIUR_categorias',
+          'planificacionADIUR_categorias',
+          'calculadoraADIUR_categorias',
           'testeos_adiur',
           'informes',
           'informes_partidos',
@@ -120,6 +126,9 @@ service cloud.firestore {
           'asistenciaADIUR',
           'configuracionAsistenciaADIUR',
           'calendarioADIUR',
+          'gimnasioADIUR_categorias',
+          'planificacionADIUR_categorias',
+          'calculadoraADIUR_categorias',
           'testeos_adiur',
           'informes',
           'informes_partidos',
@@ -135,6 +144,9 @@ service cloud.firestore {
           'asistenciaADIUR',
           'configuracionAsistenciaADIUR',
           'calendarioADIUR',
+          'gimnasioADIUR_categorias',
+          'planificacionADIUR_categorias',
+          'calculadoraADIUR_categorias',
           'testeos_adiur',
           'informes',
           'informes_partidos',
@@ -144,57 +156,28 @@ service cloud.firestore {
         canDeleteCategory(resource.data);
     }
 
-    // Planificación: documentos separados por categoría. El documento
-    // principal se conserva como respaldo y solo lo puede leer un admin.
+    // Los documentos antiguos se conservan como respaldo administrativo.
+    // La información operativa vive en planificacionADIUR_categorias.
     match /planificacionADIUR/{documento} {
-      allow get: if documento == 'principal' && isAdmin();
-      allow list: if isStaff() &&
-        canReadCategory(resource.data);
-      allow get: if documento != 'principal' &&
-        isStaff() &&
-        canReadCategory(resource.data);
-      allow create: if documento != 'principal' &&
-        canWriteCategory(request.resource.data);
-      allow update: if documento != 'principal' &&
-        canWriteCategory(resource.data) &&
-        canWriteCategory(request.resource.data);
-      allow delete: if documento != 'principal' &&
-        canDeleteCategory(resource.data);
+      allow get: if isAdmin();
+      allow list: if false;
+      allow create, update, delete: if false;
     }
 
-    // Gimnasio: cada categoría tiene su documento propio. El documento
-    // principal queda preservado como respaldo de solo lectura para admins.
+    // El gimnasio antiguo queda como respaldo; el uso diario está en
+    // gimnasioADIUR_categorias, con un documento independiente por división.
     match /gimnasioADIUR/{documento} {
-      allow get: if documento == 'principal' && isAdmin();
-      allow list: if canReadCategory(resource.data);
-      allow get: if documento != 'principal' &&
-        canReadCategory(resource.data);
-      allow create: if documento != 'principal' &&
-        canWriteCategory(request.resource.data);
-      allow update: if documento != 'principal' &&
-        canWriteCategory(resource.data) &&
-        canWriteCategory(request.resource.data);
-      allow delete: if documento != 'principal' &&
-        canDeleteCategory(resource.data);
+      allow get: if isAdmin();
+      allow list: if false;
+      allow create, update, delete: if false;
     }
 
-    // Calculadora: un documento por división. El documento principal
-    // se mantiene intacto como respaldo administrativo.
+    // La calculadora operativa vive en calculadoraADIUR_categorias.
+    // Se conserva la colección antigua como respaldo solo para admins.
     match /calculadoraADIUR/{documento} {
-      allow get: if documento == 'principal' && isAdmin();
-      allow list: if documento != 'principal' &&
-        isStaff() &&
-        canReadCategory(resource.data);
-      allow get: if documento != 'principal' &&
-        isStaff() &&
-        canReadCategory(resource.data);
-      allow create: if documento != 'principal' &&
-        canWriteCategory(request.resource.data);
-      allow update: if documento != 'principal' &&
-        canWriteCategory(resource.data) &&
-        canWriteCategory(request.resource.data);
-      allow delete: if documento != 'principal' &&
-        canDeleteCategory(resource.data);
+      allow get: if isAdmin();
+      allow list: if false;
+      allow create, update, delete: if false;
     }
 
     // Publicación de encuestas: un enlace público solo puede leer un período
