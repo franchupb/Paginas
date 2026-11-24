@@ -1,0 +1,21 @@
+name: ADIUR syntax validation
+
+on:
+  push:
+    branches:
+      - master
+      - "fix/**"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check-inline-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check inline JavaScript in ADIUR pages
+        run: node scripts/check-adiur-html.mjs
