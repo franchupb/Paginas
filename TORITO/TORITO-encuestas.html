@@ -1338,10 +1338,15 @@ if ((esFran || esToto) && puedeEditarEncuestas) {
   `;
 }
 
-function cerrarSesion(event) {
+async function cerrarSesion(event) {
   event.preventDefault();
-  localStorage.removeItem("usuarioTORITO");
-  window.location.href = "TORITO-Loing.html";
+  try {
+    const auth = await import("./TORITO-auth.js?v=20261124-auth2");
+    await auth.cerrarSesionTORITO();
+  } catch (error) {
+    console.error("No se pudo cerrar la sesión de TORITO:", error);
+  }
+  window.location.replace("TORITO-Loing.html");
 }
 
 function alternarSidebar() {
@@ -1614,7 +1619,7 @@ function abrirModalAgregarDia() {
 }
 
 function guardarNuevoDiaSemana(event) {
-  if (!puedeEditarEncuestas || !categoriasEncuestasPermitidas.includes(division || document.getElementById("filtroDivisionEncuesta")?.value)) {
+  if (!puedeEditarEncuestas || !categoriasEncuestasPermitidas.includes(document.getElementById("filtroDivisionEncuesta")?.value)) {
     alert("Tu perfil no puede modificar encuestas de esta categoría.");
     return;
   }
@@ -1660,7 +1665,7 @@ function guardarNuevoDiaSemana(event) {
 }
 
 function eliminarDiaSemana(division, diaId) {
-  if (!puedeEditarEncuestas || !categoriasEncuestasPermitidas.includes(division || document.getElementById("filtroDivisionEncuesta")?.value)) {
+  if (!puedeEditarEncuestas || !categoriasEncuestasPermitidas.includes(division)) {
     alert("Tu perfil no puede modificar encuestas de esta categoría.");
     return;
   }
@@ -1684,7 +1689,7 @@ function abrirModalAgregarEncuesta(diaId) {
 }
 
 function guardarNuevaEncuestaDia(event) {
-  if (!puedeEditarEncuestas || !categoriasEncuestasPermitidas.includes(division || document.getElementById("filtroDivisionEncuesta")?.value)) {
+  if (!puedeEditarEncuestas || !categoriasEncuestasPermitidas.includes(document.getElementById("filtroDivisionEncuesta")?.value)) {
     alert("Tu perfil no puede modificar encuestas de esta categoría.");
     return;
   }
@@ -1713,7 +1718,7 @@ function guardarNuevaEncuestaDia(event) {
 }
 
 function eliminarEncuesta(division, diaId, encuestaId) {
-  if (!puedeEditarEncuestas || !categoriasEncuestasPermitidas.includes(division || document.getElementById("filtroDivisionEncuesta")?.value)) {
+  if (!puedeEditarEncuestas || !categoriasEncuestasPermitidas.includes(division)) {
     alert("Tu perfil no puede modificar encuestas de esta categoría.");
     return;
   }
@@ -1934,7 +1939,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 <script type="module">
 import { db } from "./TORITO-auth.js?v=20261124-auth2";
-import { doc, getDoc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, getDoc, setDoc, onSnapshot, serverTimestamp, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const rol = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
 const uid = localStorage.getItem("uidTORITO") || "sin-uid";
@@ -1969,6 +1974,14 @@ window.sincronizarEncuestasNube = async () => {
 };
 
 try {
+  const rosterSnapshot = await getDocs(query(
+    collection(db, "torito_jugadoras"),
+    where("categoria", "in", categorias)
+  ));
+  localStorage.setItem("jugadorasTORITO_" + uid, JSON.stringify(
+    rosterSnapshot.docs.map(d => ({ id:d.id, ...d.data() }))
+  ));
+
   for (const categoria of categorias) {
     const referencia = doc(db, "torito_encuestas_categorias", slug(categoria));
     const snapshot = await getDoc(referencia);
