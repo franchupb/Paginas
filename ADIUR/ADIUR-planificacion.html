@@ -2653,6 +2653,8 @@ function incorporarColumnasTesteos(mapa, item, categoria) {
 }
 
 async function cargarCatalogoTesteos(categoria) {
+  const version = ++versionCargaCatalogoTesteos;
+  catalogoTesteosError = false;
   const mapa = new Map();
   try {
     const biblioteca = JSON.parse(localStorage.getItem("bibliotecaTesteosADIUR") || "[]");
@@ -2670,7 +2672,11 @@ async function cargarCatalogoTesteos(categoria) {
       const documentos = await window.cargarCatalogoTesteosNube();
       documentos.forEach(item => incorporarColumnasTesteos(mapa, item, categoria));
     }
-  } catch (error) { console.warn("No se pudo cargar el catálogo de testeos desde Firebase; se usarán los datos locales.", error); }
+  } catch (error) {
+    catalogoTesteosError = true;
+    console.warn("No se pudo cargar el catálogo de testeos desde Firebase; se usarán los datos locales.", error);
+  }
+  if (version !== versionCargaCatalogoTesteos) return;
   catalogoTesteos = [...mapa.values()].sort((a, b) =>
     normalizarTexto(a.grupo).localeCompare(normalizarTexto(b.grupo)) || normalizarTexto(a.label).localeCompare(normalizarTexto(b.label))
   );
@@ -2703,6 +2709,8 @@ let temporizadorMensaje = null;
 let modoEdicion = true;
 let microcicloGuardado = false;
 let catalogoTesteos = [];
+let catalogoTesteosError = false;
+let versionCargaCatalogoTesteos = 0;
 
 const COMPETICIONES_POR_DIVISION = {
   "Sub 10": ["Rosarina", "Copa Oro - ARF", "Copa Plata - ARF"],
@@ -4541,7 +4549,7 @@ function renderizarDetallesFisicos(bloque, indice, indiceBloque) {
     const seleccionados = Array.isArray(bloque.testeosSeleccionados) ? bloque.testeosSeleccionados : [];
     const lista = catalogoTesteos.length
       ? catalogoTesteos.map(prueba => '<label class="opcion-test-fisico"><input type="checkbox" ' + base + ' data-block-field="testeosSeleccionados" value="' + escaparHTML(prueba.id) + '" ' + (seleccionados.some(item => item.id === prueba.id) ? "checked" : "") + '><span><strong>' + escaparHTML(prueba.grupo) + '</strong><small>' + escaparHTML(prueba.label) + '</small></span></label>').join("")
-      : '<p class="aviso-testeos-vacios">No se encontraron pruebas configuradas para esta categoría en Testeos.</p>';
+      : '<p class="aviso-testeos-vacios">' + (catalogoTesteosError ? "No se pudo consultar Testeos en este momento. Revisá la conexión y volvé a abrir Planificación." : "No se encontraron pruebas configuradas para esta categoría en Testeos.") + '</p>';
     return '<div class="detalles-fisicos detalles-testeos"><div class="campo campo-lista-testeos"><label>SELECCIONÁ LOS TESTEOS QUE SE REALIZARÁN</label><div class="lista-testeos-fisicos">' + lista + '</div></div></div>';
   }
 
