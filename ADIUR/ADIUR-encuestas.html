@@ -295,7 +295,7 @@ async function eliminarPeriodo(id){
  const p=periodos.find(x=>x.id===id);if(!p||!perfil?.puedeEliminar)return;
  if(!confirm("¿Eliminar definitivamente esta publicación y TODAS sus respuestas? Esta acción no se puede deshacer."))return;
  try{
-  const consulta=fb.query(fb.collection(db,"encuestas_respuestas"),fb.where("periodoId","==",id));
+  const consulta=fb.query(fb.collection(db,"encuestas_respuestas"),fb.where("periodoId","==",id),fb.where("categoria","in",perfil.categorias));
   const snap=await fb.getDocs(consulta);
   const docs=snap.docs;
   for(let i=0;i<docs.length;i+=450){
