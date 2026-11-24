@@ -1719,7 +1719,7 @@
     // =====================================================
     // USUARIO Y PERMISOS
     // =====================================================
-    const usuarioGuardado = (
+    let usuarioGuardado = (
       localStorage.getItem("usuarioADIUR") || ""
     ).trim();
     function normalizarUsuario(nombre) {
@@ -1729,63 +1729,45 @@
         .trim()
         .toLowerCase();
     }
-    const usuarioActual = normalizarUsuario(usuarioGuardado);
-    const rolADIUR = localStorage.getItem("rolADIUR") || "";
+    let usuarioActual = normalizarUsuario(usuarioGuardado);
+    let rolADIUR = localStorage.getItem("rolADIUR") || "";
     function esToto() { return rolADIUR === "cuerpo_tecnico"; }
     function esBianca() { return rolADIUR === "jugadora"; }
     function esFran() { return rolADIUR === "admin"; }
     function puedeEditarPlantel() { return ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolADIUR); }
-    // Si no existe una sesión, regresar al inicio de sesión.
-    if (!usuarioGuardado) {
-      window.location.href = "ADIUR-Loing.html";
-    }
-    // Información del usuario en la barra superior.
-    document.getElementById("nombreUsuario").textContent =
-      usuarioGuardado || "Usuario";
-    document.getElementById("avatarUsuario").textContent =
-      usuarioGuardado
-        ? usuarioGuardado.charAt(0).toUpperCase()
-        : "U";
-    document.getElementById("rolUsuario").textContent =
-      esFran() ? "Administrador" :
-      esToto() ? "Cuerpo técnico" :
-      esBianca() ? "Jugadora" :
-      "Club ADIUR";
-    // Permisos de visualización del menú.
-    // El menú y sus enlaces se filtran desde ADIUR-permisos.js.
-    // Cerrar sesión.
-    window.cerrarSesion = function(event) {
-      event.preventDefault();
-      localStorage.removeItem("usuarioADIUR");
-      window.location.href = "ADIUR-Loing.html";
-    }
-    // Mantener los permisos originales de la página de jugadoras.
-    if (
-      !usuarioGuardado ||
-      !["admin", "coordinadora", "cuerpo_tecnico", "jugadora"].includes(rolADIUR)
-    ) {
-      document.body.innerHTML = `
-        <div style="
-          font-family:Arial,sans-serif;
-          text-align:center;
-          padding:70px 20px;
-          color:#222;
-        ">
-          <h1>Acceso restringido</h1>
-          <p>No tenés permisos para acceder a la página de jugadoras.</p>
-          <br>
-          <a href="ADIUR-Pagina Principal.html" style="
-            display:inline-block;
-            padding:10px 16px;
-            border-radius:8px;
-            background:#fff0e6;
-            color:#dc5e0b;
-            font-weight:bold;
-          ">Volver al inicio</a>
-        </div>
-      `;
-    } else {
+    // La autenticación y los permisos se resuelven en el módulo central.
+    // No se bloquea la página por un localStorage vacío mientras Firebase restaura la sesión.
+    window.cerrarSesion = async function(event) {
+      event?.preventDefault();
+      try {
+        const modulo = await import("./ADIUR-auth.js?v=20261122c");
+        await modulo.cerrarSesionADIUR();
+        window.location.href = "ADIUR-Loing.html";
+      } catch (error) {
+        console.error("No se pudo cerrar la sesión:", error);
+        alert("No se pudo cerrar la sesión. Intentá nuevamente.");
+      }
+    };
+
+    function iniciarConPerfilCentral(perfil) {
+      usuarioGuardado = String(perfil?.usuario || perfil?.nombre || localStorage.getItem("usuarioADIUR") || "").trim();
+      usuarioActual = normalizarUsuario(usuarioGuardado);
+      rolADIUR = String(perfil?.rol || localStorage.getItem("rolADIUR") || "").trim().toLowerCase();
+
+      if (!["admin", "coordinadora", "cuerpo_tecnico", "jugadora"].includes(rolADIUR)) {
+        document.body.innerHTML = '<main style="font-family:Arial,sans-serif;text-align:center;padding:70px 20px;color:#222"><h1>Acceso restringido</h1><p>No se pudo validar un perfil autorizado para esta página.</p><a href="ADIUR-Pagina Principal.html">Volver al inicio</a></main>';
+        return;
+      }
+
       iniciarPaginaJugadoras();
+    }
+
+    if (window.ADIUR_PERMISOS) {
+      iniciarConPerfilCentral(window.ADIUR_PERMISOS);
+    } else {
+      window.addEventListener("adiur-permisos-listos", event => {
+        iniciarConPerfilCentral(event.detail || window.ADIUR_PERMISOS);
+      }, { once: true });
     }
 
     // =====================================================
