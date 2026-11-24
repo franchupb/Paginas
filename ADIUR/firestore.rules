@@ -236,11 +236,11 @@ service cloud.firestore {
 
     // Cada usuario puede leer y guardar únicamente su propia pizarra táctica.
     match /pizarrasADIUR/{uid} {
-      allow get: if activeUser() && request.auth.uid == uid;
+      allow get: if isStaff() && request.auth.uid == uid;
       allow list: if false;
-      allow create: if activeUser() && request.auth.uid == uid && request.resource.data.uid == uid;
-      allow update: if activeUser() && request.auth.uid == uid && resource.data.uid == uid && request.resource.data.uid == uid;
-      allow delete: if activeUser() && request.auth.uid == uid && resource.data.uid == uid;
+      allow create: if isStaff() && request.auth.uid == uid && request.resource.data.uid == uid;
+      allow update: if isStaff() && request.auth.uid == uid && resource.data.uid == uid && request.resource.data.uid == uid;
+      allow delete: if isStaff() && request.auth.uid == uid && resource.data.uid == uid;
     }
 
     // Documento legado de plantel completo: se conserva, pero no se usa
