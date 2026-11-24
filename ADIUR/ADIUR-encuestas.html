@@ -9,7 +9,7 @@
 window.ADIUR_MODO_ENCUESTA_PUBLICA = new URLSearchParams(location.search).has("encuesta");
 if (!window.ADIUR_MODO_ENCUESTA_PUBLICA) {
  const permisos = document.createElement("script");
- permisos.src = "ADIUR-permisos.js?v=20261124-encuestas1";
+ permisos.src = "ADIUR-permisos.js?v=20261124-authnav1";
  permisos.async = false;
  document.head.appendChild(permisos);
 }
