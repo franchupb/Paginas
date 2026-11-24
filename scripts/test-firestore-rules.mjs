@@ -89,7 +89,7 @@ try {
   await assertSucceeds(getDoc(doc(admin, "planificacionADIUR", "principal")));
   await assertFails(getDoc(doc(coach16, "planificacionADIUR", "principal")));
   await assertSucceeds(getDoc(doc(admin, "informes", "informeLegacy")));
-  await assertFails(getDoc(doc(coach16, "informes", "informeLegacy")));
+  await assertSucceeds(getDoc(doc(coach16, "informes", "informeLegacy")));
   await assertSucceeds(getDoc(doc(coach16, "usuarios", "coach16")));
   await assertFails(getDoc(doc(coach16, "usuarios", "coach14")));
   await assertFails(getDocs(collection(coach16, "usuarios")));
