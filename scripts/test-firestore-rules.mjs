@@ -16,11 +16,11 @@ try {
     await setDoc(doc(db, "usuarios", "coach14"), { activo: true, rol: "cuerpo_tecnico", categorias: ["Sub 14"] });
     await setDoc(doc(db, "usuarios", "player16"), { activo: true, rol: "jugadora", categorias: ["Sub 16"], jugadora: "Jugadora Prueba" });
 
-    await setDoc(doc(db, "planificacionADIUR", "sub_16"), { categoria: "Sub 16", datos: { semana: 1 } });
-    await setDoc(doc(db, "planificacionADIUR", "primera"), { categoria: "Primera", datos: { semana: 2 } });
+    await setDoc(doc(db, "planificacionADIUR_categorias", "sub_16"), { categoria: "Sub 16", datos: { semana: 1 } });
+    await setDoc(doc(db, "planificacionADIUR_categorias", "primera"), { categoria: "Primera", datos: { semana: 2 } });
     await setDoc(doc(db, "planificacionADIUR", "principal"), { datos: { "Sub 16": {} } });
-    await setDoc(doc(db, "gimnasioADIUR", "sub_16"), { categoria: "Sub 16", tipo: "categoria", datos: {} });
-    await setDoc(doc(db, "calculadoraADIUR", "sub_16"), { categoria: "Sub 16", plans: {} });
+    await setDoc(doc(db, "gimnasioADIUR_categorias", "sub_16"), { categoria: "Sub 16", tipo: "categoria", datos: {} });
+    await setDoc(doc(db, "calculadoraADIUR_categorias", "sub_16"), { categoria: "Sub 16", plans: {} });
     await setDoc(doc(db, "calendarioADIUR", "sub_16"), { categoria: "Sub 16", actividades: {} });
     await setDoc(doc(db, "jugadoras", "j16"), { categoria: "Sub 16", nombre: "Jugadora Prueba" });
     await setDoc(doc(db, "jugadoras", "j1"), { categoria: "Primera", nombre: "Otra Jugadora" });
@@ -38,16 +38,16 @@ try {
   const anonymous = env.unauthenticatedContext().firestore();
 
   console.log("Test: planificación y aislamiento de categorías");
-  await assertSucceeds(getDoc(doc(coach16, "planificacionADIUR", "sub_16")));
-  await assertFails(getDoc(doc(coach16, "planificacionADIUR", "primera")));
-  await assertFails(getDoc(doc(coach14, "planificacionADIUR", "sub_16")));
-  await assertSucceeds(getDocs(query(collection(coach16, "planificacionADIUR"), where("categoria", "in", ["Sub 16"]))));
-  await assertSucceeds(setDoc(doc(coach16, "planificacionADIUR", "sub_16_new"), { categoria: "Sub 16", datos: {} }));
-  await assertFails(setDoc(doc(coach16, "planificacionADIUR", "primera_new"), { categoria: "Primera", datos: {} }));
-  const moverRef = doc(coach16, "planificacionADIUR", "mover");
+  await assertSucceeds(getDoc(doc(coach16, "planificacionADIUR_categorias", "sub_16")));
+  await assertFails(getDoc(doc(coach16, "planificacionADIUR_categorias", "primera")));
+  await assertFails(getDoc(doc(coach14, "planificacionADIUR_categorias", "sub_16")));
+  await assertSucceeds(getDocs(query(collection(coach16, "planificacionADIUR_categorias"), where("categoria", "in", ["Sub 16"]))));
+  await assertSucceeds(setDoc(doc(coach16, "planificacionADIUR_categorias", "sub_16_new"), { categoria: "Sub 16", datos: {} }));
+  await assertFails(setDoc(doc(coach16, "planificacionADIUR_categorias", "primera_new"), { categoria: "Primera", datos: {} }));
+  const moverRef = doc(coach16, "planificacionADIUR_categorias", "mover");
   await assertSucceeds(setDoc(moverRef, { categoria: "Sub 16", datos: {} }));
   await assertFails(setDoc(moverRef, { categoria: "Primera", datos: {} }));
-  await assertFails(getDocs(collection(coach16, "planificacionADIUR")));
+  await assertFails(getDocs(collection(coach16, "planificacionADIUR_categorias")));
 
   console.log("Test: plantel, gimnasio, calendario y calculadora");
   await assertSucceeds(getDoc(doc(player16, "jugadoras", "j16")));
@@ -55,12 +55,12 @@ try {
   await assertFails(getDocs(collection(coach16, "jugadoras")));
   await assertFails(getDoc(doc(player16, "jugadoras", "j1")));
   await assertFails(setDoc(doc(player16, "jugadoras", "jugadora_nueva"), { categoria: "Sub 16", nombre: "Otra" }));
-  await assertSucceeds(getDoc(doc(player16, "gimnasioADIUR", "sub_16")));
+  await assertSucceeds(getDoc(doc(player16, "gimnasioADIUR_categorias", "sub_16")));
   await assertSucceeds(getDoc(doc(player16, "calendarioADIUR", "sub_16")));
   await assertFails(setDoc(doc(player16, "calendarioADIUR", "sub_16"), { categoria: "Sub 16", actividades: {} }));
   await assertSucceeds(setDoc(doc(coach16, "calendarioADIUR", "sub_16"), { categoria: "Sub 16", actividades: {} }));
   await assertFails(setDoc(doc(coach16, "calendarioADIUR", "primera"), { categoria: "Primera", actividades: {} }));
-  await assertFails(getDoc(doc(player16, "calculadoraADIUR", "sub_16")));
+  await assertFails(getDoc(doc(player16, "calculadoraADIUR_categorias", "sub_16")));
 
   console.log("Test: respaldos, pizarras y roles");
   await assertSucceeds(getDoc(doc(admin, "planificacionADIUR", "principal")));
