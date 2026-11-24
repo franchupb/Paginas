@@ -2893,7 +2893,14 @@ function cargarPartidosLocales() {
 let partidos = cargarPartidosLocales();
 let idEditando = null;
 let modoEliminar = false;
-let migracionInicialRealizada = false;
+const CLAVE_MIGRACION_FIXTURE = "fixtureADIUR_migracion_v2";
+let migracionInicialRealizada = (() => {
+    try {
+        return localStorage.getItem(CLAVE_MIGRACION_FIXTURE) === "1";
+    } catch (_) {
+        return false;
+    }
+})();
 
 function respaldarEnLocalStorage() {
     try {
@@ -2967,6 +2974,9 @@ function iniciarSincronizacionNube() {
             // localStorage antiguo en cada actualización del listener.
             const primeraSincronizacion = !migracionInicialRealizada;
             migracionInicialRealizada = true;
+            try {
+                localStorage.setItem(CLAVE_MIGRACION_FIXTURE, "1");
+            } catch (_) {}
             let partidosFinales = listaNube;
 
             if (primeraSincronizacion && listaNube.length === 0 && partidos.length > 0) {
