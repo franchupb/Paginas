@@ -191,7 +191,8 @@ function fechaCorta(p){return fmtFecha(p.fecha)}
 function tipoNombre(t){return TIPOS[t]?.nombre||String(t||"Encuesta")}
 function tipoConfig(t){return TIPOS[t]||{nombre:tipoNombre(t),icono:"📋",descripcion:"Esta encuesta fue creada con un formato anterior y no tiene una descripción disponible."}}
 function categoriaPermitida(){return Array.isArray(perfil?.categorias)?perfil.categorias:[]}
-function mostrarPerfil(){$("nombreUsuario").textContent=nombre;$("avatarUsuario").textContent=(nombre.trim()[0]||"U").toUpperCase();$("rolUsuario").textContent=({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rol]||rol}
+function mostrarPerfil(){const nombreEl=$("nombreUsuario"),avatarEl=$("avatarUsuario"),rolEl=$("rolUsuario");if(nombreEl)nombreEl.textContent=nombre;if(avatarEl)avatarEl.textContent=(nombre.trim()[0]||"U").toUpperCase();if(rolEl)rolEl.textContent=({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rol]||rol}
+ function actualizarDescripcionPagina(texto){const el=$("descripcionPagina")||document.querySelector(".adiur-panel-descripcion");if(el)el.textContent=texto}
 function poblarCategorias(){
  categorias=categoriaPermitida();const selects=[$("filtroCategoria"),$("nuevaCategoria")];
  selects.forEach(s=>{s.innerHTML="";categorias.forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;s.appendChild(o)})});
@@ -357,8 +358,8 @@ function validarPerfil(){
  if(!["admin","coordinadora","cuerpo_tecnico","jugadora"].includes(rol))throw new Error("Tu perfil no tiene acceso a Encuestas.");
  uid=auth.currentUser?.uid||"";nombre=perfil.nombre||perfil.usuario||"Usuario";jugadoraNombre=perfil.jugadora||perfil.nombre||"";
  mostrarPerfil();poblarCategorias();
- if(esJugadora()){$("vistaJugadora").classList.remove("oculto");$("vistaTecnico").classList.add("oculto");$("bloqueCategoria").classList.add("oculto");$("descripcionPagina").textContent="Completá las encuestas que el cuerpo técnico habilite para tu categoría. Cada respuesta se guarda de forma individual."}
- else{$("vistaTecnico").classList.remove("oculto");$("vistaJugadora").classList.add("oculto");$("descripcionPagina").textContent="Administrá las publicaciones y consultá resultados por categoría y período.";$("nuevaFecha").value=fechaLocal();$("formPublicacion").addEventListener("submit",publicarPeriodo);$("selectorPeriodoResultados").addEventListener("change",renderResultadoSeleccionado);$("filtroTipoResultado").addEventListener("change",()=>{poblarSelectorResultados();renderResultadoSeleccionado()});iniciarPestanasCT()}
+ if(esJugadora()){$("vistaJugadora").classList.remove("oculto");$("vistaTecnico").classList.add("oculto");$("bloqueCategoria").classList.add("oculto");actualizarDescripcionPagina("Completá las encuestas que el cuerpo técnico habilite para tu categoría. Cada respuesta se guarda de forma individual.")}
+ else{$("vistaTecnico").classList.remove("oculto");$("vistaJugadora").classList.add("oculto");actualizarDescripcionPagina("Administrá las publicaciones y consultá resultados por categoría y período.");$("nuevaFecha").value=fechaLocal();$("formPublicacion").addEventListener("submit",publicarPeriodo);$("selectorPeriodoResultados").addEventListener("change",renderResultadoSeleccionado);$("filtroTipoResultado").addEventListener("change",()=>{poblarSelectorResultados();renderResultadoSeleccionado()});iniciarPestanasCT()}
 }
 async function cargarEncuestaPublica(){
  $("vistaPublica").classList.remove("oculto");$("vistaJugadora").classList.add("oculto");$("vistaTecnico").classList.add("oculto");$("estadoPublico").textContent="Cargando encuesta...";
