@@ -1365,6 +1365,7 @@ try {
 
 let categoriasAutorizadasTORITO = [];
 const rolPerfilTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+const uidPerfilTORITO = localStorage.getItem("uidTORITO") || "sin-uid";
 try {
   const categoriasGuardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
   if (Array.isArray(categoriasGuardadas)) categoriasAutorizadasTORITO = categoriasGuardadas;
@@ -1519,7 +1520,7 @@ async function sincronizarJugadorasDesdeBase() {
   }
 
   if (lista.length === 0) {
-    const rawLocal = localStorage.getItem("jugadorasTORITO") || localStorage.getItem("plantelTORITO");
+    const rawLocal = localStorage.getItem("jugadorasTORITO_" + uidPerfilTORITO);
     if (rawLocal) {
       try { lista = JSON.parse(rawLocal); } catch (e) {}
     }
@@ -1817,15 +1818,13 @@ async function obtenerTodosPartidosExternos() {
     } catch (e) {}
   }
 
-  ["partidosTORITO", "registroPartidosTORITO", "fixtureTORITO", "partidosJugadosTORITO"].forEach(k => {
-    const raw = localStorage.getItem(k);
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) partidos.push(...parsed);
-      } catch (e) {}
-    }
-  });
+  const fixtureLocal = localStorage.getItem("fixtureTORITO_" + uidPerfilTORITO);
+  if (fixtureLocal) {
+    try {
+      const parsed = JSON.parse(fixtureLocal);
+      if (Array.isArray(parsed)) partidos.push(...parsed);
+    } catch (e) {}
+  }
 
   return partidos;
 }
@@ -1840,15 +1839,13 @@ async function obtenerTodosInformesExternos() {
     } catch (e) {}
   }
 
-  ["informesTORITO", "informesJugadorasTORITO", "informesPartidosTORITO", "informesTecnicosTORITO"].forEach(k => {
-    const raw = localStorage.getItem(k);
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) informes.push(...parsed);
-      } catch (e) {}
-    }
-  });
+  const informesLocal = localStorage.getItem("informesTORITOPartidosV2_" + uidPerfilTORITO);
+  if (informesLocal) {
+    try {
+      const parsed = JSON.parse(informesLocal);
+      if (Array.isArray(parsed)) informes.push(...parsed);
+    } catch (e) {}
+  }
 
   return informes;
 }
@@ -1912,7 +1909,7 @@ async function obtenerInfoTesteosJugadora(jugadora) {
       } catch (e) {}
     }
     if (!data) {
-      const raw = localStorage.getItem("torito_testeos_torito_" + clave);
+      const raw = localStorage.getItem("torito_testeos_torito_" + uidPerfilTORITO + "_" + clave) || (rolPerfilTORITO === "admin" ? localStorage.getItem("torito_testeos_torito_" + clave) : null);
       if (raw) { try { data = JSON.parse(raw); } catch (e) {} }
     }
 
@@ -1977,40 +1974,7 @@ async function obtenerInfoAsistenciaJugadora(jugadora, mesFiltro = "total") {
     } catch (e) {}
   }
 
-  // Leer todas las posibles estructuras guardadas por TORITO-asistencia.html en localStorage
-  const clavesPosibles = ["asistenciaTORITO", "asistenciasTORITO", "registroAsistenciaTORITO"];
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (k && k.toLowerCase().includes("asistencia") && !clavesPosibles.includes(k)) {
-      clavesPosibles.push(k);
-    }
-  }
-
-  clavesPosibles.forEach(k => {
-    const raw = localStorage.getItem(k);
-    if (!raw) return;
-    try {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        registros.push(...parsed);
-      } else if (typeof parsed === "object" && parsed !== null) {
-        Object.entries(parsed).forEach(([claveObj, val]) => {
-          if (Array.isArray(val)) {
-            val.forEach(item => {
-              if (item && typeof item === "object") {
-                if (!item.fecha) item.fecha = claveObj;
-                registros.push(item);
-              }
-            });
-          } else if (typeof val === "object" && val !== null) {
-            const copia = { ...val };
-            if (!copia.fecha) copia.fecha = claveObj;
-            registros.push(copia);
-          }
-        });
-      }
-    } catch (e) {}
-  });
+  // No se recorren claves globales de otros usuarios: la asistencia se obtiene de Firestore con filtro de categoría.
 
   let presentes = 0, ausentes = 0, tarde = 0, justificados = 0, total = 0;
   const fechasProcesadas = new Set();
@@ -2122,15 +2086,13 @@ async function obtenerInfoTiemposJugadora(jugadora) {
     } catch (e) {}
   }
 
-  ["tiemposTORITO", "registroTiemposTORITO", "tiemposEntrenamientoTORITO"].forEach(k => {
-    const raw = localStorage.getItem(k);
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) tiempos.push(...parsed);
-      } catch (e) {}
-    }
-  });
+  const tiemposLocal = localStorage.getItem("tiemposRendimientoTORITO_v4_" + uidPerfilTORITO);
+  if (tiemposLocal) {
+    try {
+      const parsed = JSON.parse(tiemposLocal);
+      if (Array.isArray(parsed)) tiempos.push(...parsed.filter(t => categoriasAutorizadasSetTORITO.has(t.categoria)));
+    } catch (e) {}
+  }
 
   const deJugadora = tiempos.filter(t => t && coincideJugadora(t, jugadora));
 
@@ -2168,15 +2130,13 @@ async function obtenerInfoLesionesJugadora(jugadora) {
     } catch (e) {}
   }
 
-  ["lesionesTORITO", "registroLesionesTORITO", "historialLesionesTORITO"].forEach(k => {
-    const raw = localStorage.getItem(k);
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) lesiones.push(...parsed);
-      } catch (e) {}
-    }
-  });
+  const lesionesLocal = localStorage.getItem("lesionesTORITO_registros_v2_" + uidPerfilTORITO);
+  if (lesionesLocal) {
+    try {
+      const parsed = JSON.parse(lesionesLocal);
+      if (Array.isArray(parsed)) lesiones.push(...parsed.filter(l => categoriasAutorizadasSetTORITO.has(l.categoria)));
+    } catch (e) {}
+  }
 
   const deJugadora = lesiones.filter(l => l && coincideJugadora(l, jugadora));
 
@@ -2490,13 +2450,16 @@ async function renderizarTablaTesteos() {
    ESTRUCTURA DE DATOS Y LOCALSTORAGE (TABLA DE PARTIDOS)
 ===================================================== */
 function obtenerClaveDatosEstadisticas(division) {
-  return "estadisticasTORITO_" + division.replace(/\s+/g, '_');
+  return "estadisticasTORITO_" + uidPerfilTORITO + "_" + division.replace(/\s+/g, '_');
 }
 
 function obtenerJornadasActuales() {
   const division = document.getElementById("filtroDivision").value;
   const clave = obtenerClaveDatosEstadisticas(division) + "_jornadas";
   let jornadas = localStorage.getItem(clave);
+  if (!jornadas && rolPerfilTORITO === "admin") {
+    jornadas = localStorage.getItem("estadisticasTORITO_" + division.replace(/\s+/g, '_') + "_jornadas");
+  }
   if (jornadas) {
     try { return JSON.parse(jornadas); } catch(e) {}
   }
@@ -2516,6 +2479,9 @@ function obtenerDatosPartidosJugadoras() {
   const competencia = document.getElementById("filtroCompetencia").value;
   const clave = obtenerClaveDatosEstadisticas(division) + "_" + competencia.replace(/\s+/g, '_') + "_partidos";
   let datos = localStorage.getItem(clave);
+  if (!datos && rolPerfilTORITO === "admin") {
+    datos = localStorage.getItem("estadisticasTORITO_" + division.replace(/\s+/g, '_') + "_" + competencia.replace(/\s+/g, '_') + "_partidos");
+  }
   if (datos) {
     try { return JSON.parse(datos); } catch(e) {}
   }
