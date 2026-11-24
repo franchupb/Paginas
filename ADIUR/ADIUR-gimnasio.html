@@ -2689,7 +2689,7 @@ const firebaseConfig = {
   const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   const dbCloud = getFirestore(app);
   const idCategoria = categoria => String(categoria || "")
-    .normalize("NFD").replace(/[\\u0300-\\u036f]/g, "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 
   // Se consulta únicamente la documentación de las divisiones autorizadas.
