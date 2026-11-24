@@ -164,6 +164,23 @@ service cloud.firestore {
       allow create, update, delete: if false;
     }
 
+    // Rutinas individuales separadas por jugadora. El cuerpo técnico
+    // ve las rutinas de sus categorías; cada jugadora solo la propia.
+    match /gimnasioADIUR_individuales/{documento} {
+      allow get, list: if (
+          isStaff() && canReadCategory(resource.data)
+        ) || (
+          activeUser() &&
+          profile().rol == 'jugadora' &&
+          canReadCategory(resource.data) &&
+          resource.data.jugadora == profile().jugadora
+        );
+      allow create: if canWriteCategory(request.resource.data);
+      allow update: if canWriteCategory(resource.data) &&
+        canWriteCategory(request.resource.data);
+      allow delete: if canDeleteCategory(resource.data);
+    }
+
     // El gimnasio antiguo queda como respaldo; el uso diario está en
     // gimnasioADIUR_categorias, con un documento independiente por división.
     match /gimnasioADIUR/{documento} {
