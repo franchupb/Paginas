@@ -43,14 +43,21 @@ try {
   await assertSucceeds(getDocs(query(collection(coach16, "planificacionADIUR"), where("categoria", "in", ["Sub 16"]))));
   await assertSucceeds(setDoc(doc(coach16, "planificacionADIUR", "sub_16_new"), { categoria: "Sub 16", datos: {} }));
   await assertFails(setDoc(doc(coach16, "planificacionADIUR", "primera_new"), { categoria: "Primera", datos: {} }));
-  await assertFails(setDoc(doc(coach16, "planificacionADIUR", "mover"), { categoria: "Sub 16", datos: {} }).then(() => setDoc(doc(coach16, "planificacionADIUR", "mover"), { categoria: "Primera", datos: {} })));
+  const moverRef = doc(coach16, "planificacionADIUR", "mover");
+  await assertSucceeds(setDoc(moverRef, { categoria: "Sub 16", datos: {} }));
+  await assertFails(setDoc(moverRef, { categoria: "Primera", datos: {} }));
+  await assertFails(getDocs(collection(coach16, "planificacionADIUR")));
 
   await assertSucceeds(getDoc(doc(player16, "jugadoras", "j16")));
+  await assertSucceeds(getDocs(query(collection(coach16, "jugadoras"), where("categoria", "in", ["Sub 16"]))));
+  await assertFails(getDocs(collection(coach16, "jugadoras")));
   await assertFails(getDoc(doc(player16, "jugadoras", "j1")));
   await assertFails(setDoc(doc(player16, "jugadoras", "jugadora_nueva"), { categoria: "Sub 16", nombre: "Otra" }));
   await assertSucceeds(getDoc(doc(player16, "gimnasioADIUR", "sub_16")));
   await assertSucceeds(getDoc(doc(player16, "calendarioADIUR", "sub_16")));
   await assertFails(setDoc(doc(player16, "calendarioADIUR", "sub_16"), { categoria: "Sub 16", actividades: {} }));
+  await assertSucceeds(setDoc(doc(coach16, "calendarioADIUR", "sub_16"), { categoria: "Sub 16", actividades: {} }));
+  await assertFails(setDoc(doc(coach16, "calendarioADIUR", "primera"), { categoria: "Primera", actividades: {} }));
   await assertFails(getDoc(doc(player16, "calculadoraADIUR", "sub_16")));
 
   await assertSucceeds(getDoc(doc(admin, "planificacionADIUR", "principal")));
@@ -59,6 +66,8 @@ try {
   await assertFails(getDoc(doc(coach16, "plantel", "jugadoras")));
 
   await assertSucceeds(getDoc(doc(coach16, "pizarrasADIUR", "coach16")));
+  await assertSucceeds(setDoc(doc(coach16, "pizarrasADIUR", "coach16"), { uid: "coach16", players: [], drawings: [] }));
+  await assertFails(setDoc(doc(coach16, "pizarrasADIUR", "coach14"), { uid: "coach14", players: [], drawings: [] }));
   await assertFails(getDoc(doc(coach16, "pizarrasADIUR", "coach14")));
   await assertFails(getDoc(doc(player16, "pizarrasADIUR", "player16")));
 
