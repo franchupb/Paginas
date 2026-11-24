@@ -964,7 +964,7 @@ let esBianca = rolADIUR === "jugadora";
 let puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolADIUR);
 
 function normalizarCategoriaPruebas(valor) {
-  const clave = String(valor || "").normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const clave = String(valor || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
   const alias = clave.match(/^(?:sub|s|u)?(10|12|14|16)$/);
   return alias ? "sub" + alias[1] : clave;
 }
