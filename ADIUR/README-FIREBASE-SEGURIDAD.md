@@ -12,7 +12,7 @@ La regla que se había compartido anteriormente (`allow read, write: if true`) d
 2. Integrá esta rama en `master` para que las páginas nuevas y la herramienta de migración estén publicadas.
 3. En Firebase Console, abrí **Firestore Database → Rules**, reemplazá las reglas actuales por el contenido de este archivo y publicalas.
 4. Iniciá sesión en ADIUR con una cuenta cuyo perfil de Firestore tenga `rol: "admin"` y `activo: true`.
-5. Abrí `https://franchupb.github.io/Paginas/ADIUR/ADIUR-migrar-firestore.html` y ejecutá la migración. La herramienta copia planificación, gimnasio y calculadora a documentos por categoría; no borra los documentos `principal`.
+5. Abrí `https://franchupb.github.io/Paginas/ADIUR/ADIUR-migrar-firestore.html` y ejecutá la migración. La herramienta copia planificación, gimnasio y calculadora a las colecciones `planificacionADIUR_categorias`, `gimnasioADIUR_categorias` y `calculadoraADIUR_categorias`; no borra los documentos `principal`.
 6. Probá el sitio con una cuenta administradora, una coordinadora, cada cuenta de cuerpo técnico y una cuenta de jugadora. Comprobá que cada una vea únicamente las categorías asignadas y que las acciones de escritura/borrado correspondan a su rol.
 7. Conservá los documentos `principal` y `plantel` hasta terminar la verificación. No los borres como parte de esta migración.
 
