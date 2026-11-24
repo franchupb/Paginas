@@ -2307,7 +2307,7 @@ window.aplicarLesionesNube=function(lista){
     const remotos=Array.isArray(lista)?lista.map(normalizarRegistro).filter(r=>r&&r.jugadora&&r.fecha):[];
     const mapa=new Map(remotos.map(r=>[String(r.id),r]));
     const pendientes=[];
-    locales.filter(local=>categoriasPermitidasLesiones.includes(local.categoria)).forEach(local=>{
+    locales.filter(local=>(window.ADIUR_PERMISOS?.categorias || []).includes(local.categoria)).forEach(local=>{
         const id=String(local.id),remoto=mapa.get(id);
         if(!remoto){mapa.set(id,local);pendientes.push(local);return;}
         const tLocal=Date.parse(local.actualizadoEn||local.creadoEn||"")||0;
