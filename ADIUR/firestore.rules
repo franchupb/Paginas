@@ -65,15 +65,6 @@ service cloud.firestore {
       return canDeleteClubData() && hasCategoryPermission(categoryOf(data));
     }
 
-    function staffOnlyCollection(name) {
-      return name in [
-        'informes',
-        'informes_partidos',
-        'tiemposRendimiento',
-        'lesiones'
-      ];
-    }
-
     function periodIsOpen(periodId, category) {
       let periodPath = /databases/$(database)/documents/encuestas_periodos/$(periodId);
       return exists(periodPath) &&
@@ -128,6 +119,7 @@ service cloud.firestore {
           'partidos',
           'asistenciaADIUR',
           'configuracionAsistenciaADIUR',
+          'calendarioADIUR',
           'testeos_adiur',
           'informes',
           'informes_partidos',
@@ -142,6 +134,7 @@ service cloud.firestore {
           'partidos',
           'asistenciaADIUR',
           'configuracionAsistenciaADIUR',
+          'calendarioADIUR',
           'testeos_adiur',
           'informes',
           'informes_partidos',
@@ -229,7 +222,7 @@ service cloud.firestore {
       allow create: if activeUser() &&
         profile().rol == 'jugadora' &&
         request.resource.data.uid == request.auth.uid &&
-        canWriteSurveyCategory(request.resource.data);
+        hasCategoryPermission(categoryOf(request.resource.data));
 
       // Los enlaces públicos solo aceptan respuestas para un período abierto.
       allow create: if !signedIn() &&
@@ -239,10 +232,6 @@ service cloud.firestore {
       allow update: if false;
       allow delete: if canDeleteClubData() &&
         hasCategoryPermission(categoryOf(resource.data));
-    }
-
-    function canWriteSurveyCategory(data) {
-      return hasCategoryPermission(categoryOf(data));
     }
 
     // Cada usuario puede leer y guardar únicamente su propia pizarra táctica.
