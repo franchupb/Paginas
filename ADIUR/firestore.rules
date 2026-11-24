@@ -148,8 +148,7 @@ service cloud.firestore {
     // principal se conserva como respaldo y solo lo puede leer un admin.
     match /planificacionADIUR/{documento} {
       allow get: if documento == 'principal' && isAdmin();
-      allow list: if documento != 'principal' &&
-        isStaff() &&
+      allow list: if isStaff() &&
         canReadCategory(resource.data);
       allow get: if documento != 'principal' &&
         isStaff() &&
@@ -167,8 +166,7 @@ service cloud.firestore {
     // principal queda preservado como respaldo de solo lectura para admins.
     match /gimnasioADIUR/{documento} {
       allow get: if documento == 'principal' && isAdmin();
-      allow list: if documento != 'principal' &&
-        canReadCategory(resource.data);
+      allow list: if canReadCategory(resource.data);
       allow get: if documento != 'principal' &&
         canReadCategory(resource.data);
       allow create: if documento != 'principal' &&
