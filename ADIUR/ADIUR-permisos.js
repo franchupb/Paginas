@@ -138,6 +138,7 @@
   let temporizadorObserverDOM = null;
   let refrescoInicialRealizado = false;
   let permisosAplicadosTrasLayout = false;
+  let accesoPaginaDenegado = false;
 
   function mostrarPerfil() {
     if (!perfilActivo || !configActiva) return;
@@ -302,8 +303,14 @@
     if (!configActiva) return;
     const pagina = paginaActual();
     if (configActiva.rol === "jugadora" && !PAGINAS_JUGADORAS.has(pagina)) {
-      location.replace(INICIO_URL);
-      return;
+      accesoPaginaDenegado = true;
+      mostrarErrorInicializacion(
+        new Error("El rol jugadora no tiene acceso a esta sección."),
+        "Acceso restringido",
+        "Tu perfil de jugadora no tiene permiso para entrar en esta página. No te redirigimos automáticamente; podés volver al inicio o revisar el acceso con el administrador.",
+        { href: INICIO_URL, texto: "Volver al inicio" }
+      );
+      return false;
     }
     if (configActiva.rol === "jugadora") {
       document.querySelectorAll('a[href]').forEach(a => {
@@ -352,14 +359,15 @@
         if (PALABRAS_BORRADO.test(textoControl(el))) el.hidden = true;
       });
     }
+    return true;
   }
 
   function aplicarPermisos() {
-    if (!configActiva) return;
+    if (!configActiva) return false;
     mostrarPerfil();
     aplicarCategorias();
     aplicarSoloLectura();
-    aplicarAccesosPagina();
+    return aplicarAccesosPagina();
   }
 
   async function iniciarControlFirebase() {
@@ -480,7 +488,7 @@
             puedeGestionarUsuarios: base.puedeGestionarUsuarios,
             puedeGestionarPruebas: ["admin", "cuerpo_tecnico"].includes(base.rol)
           });
-          aplicarPermisos();
+          if (!aplicarPermisos()) return;
           // Si el layout ya existe, esta aplicación también cubre el menú.
           // Si todavía no existe, se volverá a aplicar una sola vez al terminar.
           permisosAplicadosTrasLayout = !!window.ADIUR_LAYOUT_LISTO;
@@ -564,9 +572,9 @@
   }
 
   function mostrarPaginaAutorizada() {
-    if (!configActiva) return;
+    if (!configActiva || accesoPaginaDenegado) return;
     if (!permisosAplicadosTrasLayout) {
-      aplicarPermisos();
+      if (!aplicarPermisos()) return;
       permisosAplicadosTrasLayout = true;
     }
     document.documentElement.classList.remove("adiur-permisos-pendientes");
