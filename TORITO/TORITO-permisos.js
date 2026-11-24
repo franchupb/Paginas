@@ -75,7 +75,7 @@
     await esperarDOM();
     let modulo;
     try {
-      modulo = await import("./TORITO-auth.js?v=20261124-auth1");
+      modulo = await import("./TORITO-auth.js?v=20261124-auth2");
     } catch (error) {
       console.error("No se pudo cargar la autenticación de TORITO:", error);
       mostrarErrorAcceso("No está disponible el módulo de autenticación. Intentá nuevamente más tarde.");
