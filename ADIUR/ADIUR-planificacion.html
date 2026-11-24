@@ -5563,13 +5563,7 @@ function cerrarSesion(evento) {
   const confirmado = confirm("¿Querés cerrar la sesión?");
   if (!confirmado) return;
 
-  try {
-    localStorage.removeItem("usuarioADIUR");
-  } catch (error) {
-    console.warn("No se pudo limpiar la sesión local.", error);
-  }
-
-  window.location.href = "ADIUR-Loing.html";
+  window.cerrarSesionADIURCentral(evento);
 }
 
 /* =====================================================
