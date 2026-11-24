@@ -369,7 +369,7 @@ async function cargarEncuestaPublica(){
 async function iniciar(){
  iniciarMenu();
  try{
-  const authMod=await import("./ADIUR-auth.js?v=20261122c");fb=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+  const authMod=await import("./ADIUR-auth.js?v=20261123-authpersist1");fb=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
   auth=authMod.auth;db=authMod.db;
   if(modoPublico){document.body.classList.add("modo-publico");await cargarEncuestaPublica();return}
   const esperarPerfil=()=>new Promise((resolve,reject)=>{if(window.ADIUR_PERMISOS){resolve(window.ADIUR_PERMISOS);return}const timer=setTimeout(()=>reject(new Error("La validación de permisos está tardando. Recargá la página.")),12000);window.addEventListener("adiur-permisos-listos",e=>{clearTimeout(timer);resolve(e.detail||window.ADIUR_PERMISOS)},{once:true})});
