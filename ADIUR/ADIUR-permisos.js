@@ -115,7 +115,13 @@
     boton.addEventListener("click", () => location.reload());
     tarjeta.append(titulo, detalle, boton);
     pantalla.appendChild(tarjeta);
-    document.body.replaceChildren(pantalla);
+    if (document.body) {
+      document.body.replaceChildren(pantalla);
+    } else {
+      document.addEventListener("DOMContentLoaded", () => {
+        if (document.body) document.body.replaceChildren(pantalla);
+      }, { once: true });
+    }
     document.getElementById("adiur-espera-permisos")?.remove();
   }
 
