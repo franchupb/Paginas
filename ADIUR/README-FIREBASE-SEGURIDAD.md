@@ -22,9 +22,9 @@ Hacé los pasos 2 a 6 en un momento de poco uso: entre la publicación del códi
 
 - Los documentos de `usuarios` están guardados con el **UID de Firebase Authentication como ID del documento**.
 - Cada perfil tiene `activo: true`, un `rol` reconocido y un array `categorias` con los nombres canónicos: `Sub 10`, `Sub 12`, `Sub 14`, `Sub 16`, `Primera`.
-- Los documentos de `jugadoras`, `partidos`, `asistenciaADIUR`, `configuracionAsistenciaADIUR`, `calendarioADIUR`, `tiemposRendimiento`, `lesiones` y `encuestas` incluyen `categoria`.
+- Los documentos de `jugadoras`, `partidos`, `asistenciaADIUR`, `configuracionAsistenciaADIUR`, `calendarioADIUR`, `tiemposRendimiento`, `lesiones`, `encuestas_periodos` y `encuestas_respuestas` incluyen `categoria`.
 - Los documentos de `testeos_adiur` e `informes_partidos` incluyen `division`.
-- Los documentos antiguos de planificación, gimnasio y calculadora se encuentran en el documento `principal` de cada colección.
+- Los documentos antiguos de planificación, gimnasio y calculadora se encuentran en el documento `principal` de las colecciones originales; las páginas nuevas usan las colecciones terminadas en `_categorias`.
 
 Si alguno de estos puntos no coincide, no publiques las reglas todavía: primero hay que adaptar el esquema real para evitar que una página quede sin acceso.
 
