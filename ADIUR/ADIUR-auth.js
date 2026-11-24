@@ -2,7 +2,7 @@
    El usuario escribe solo su nombre de usuario. El correo técnico
    se deriva internamente y nunca se muestra en pantalla. */
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -27,6 +27,13 @@ export function correoTecnicoADIUR(usuario) {
   return limpio + "@adiur-b1913.firebaseapp.com";
 }
 export async function iniciarSesionADIUR(usuario, contrasena) {
+  // Mantener la sesión al navegar entre páginas y al cerrar/abrir el navegador.
+  // Si el navegador restringe el almacenamiento, se conserva la persistencia por defecto de Firebase.
+  try {
+    await setPersistence(auth, browserLocalPersistence);
+  } catch (error) {
+    console.warn("No se pudo fijar la persistencia local de la sesión; se usará la persistencia disponible de Firebase:", error);
+  }
   const credencial = await signInWithEmailAndPassword(auth, correoTecnicoADIUR(usuario), contrasena);
   const referencia = doc(db, "usuarios", credencial.user.uid);
   const perfil = await getDoc(referencia);
@@ -53,7 +60,10 @@ export async function obtenerPerfilADIUR(user) {
   if (!snapshot.exists() || snapshot.data().activo === false) return null;
   return snapshot.data();
 }
-export function observarSesionADIUR(callback) {
+export async function observarSesionADIUR(callback) {
+  // No escuchar el primer estado hasta que Firebase termine de restaurar
+  // la sesión persistida. Evita interpretar el estado inicial como usuario desconectado.
+  if (typeof auth.authStateReady === "function") await auth.authStateReady();
   return onAuthStateChanged(auth, callback);
 }
 export async function cerrarSesionADIUR() {
