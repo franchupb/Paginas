@@ -68,8 +68,7 @@
     "adiur-partidos.html",
     "adiur-testeos.html",
     "adiur-encuestas.html",
-    "adiur-estadisticas.html",
-    "adiur-pizarra.html"
+    "adiur-estadisticas.html"
   ]);
 
   const DIVISIONES = {
@@ -92,6 +91,31 @@
   }
   function paginaActual() {
     return decodeURIComponent(location.pathname.split("/").pop() || "").toLowerCase();
+  }
+
+  function mostrarErrorInicializacion(error) {
+    console.error("ADIUR: no se pudo completar la validación de permisos.", error);
+    document.documentElement.classList.remove("adiur-permisos-pendientes");
+    const pantalla = document.createElement("main");
+    pantalla.setAttribute("role", "alert");
+    pantalla.style.cssText = "min-height:100vh;display:grid;place-items:center;padding:24px;background:#f4f5f7;font-family:Arial,sans-serif;color:#171717";
+    const tarjeta = document.createElement("section");
+    tarjeta.style.cssText = "width:min(100%,520px);padding:28px;border:1px solid #e8e8e8;border-radius:16px;background:#fff;box-shadow:0 8px 30px #0000000d";
+    const titulo = document.createElement("h1");
+    titulo.textContent = "No se pudieron verificar tus permisos";
+    titulo.style.cssText = "margin:0 0 10px;font-size:21px";
+    const detalle = document.createElement("p");
+    detalle.textContent = "Tu sesión no se cerró. Por seguridad, esta página no se mostró porque no se pudo completar su inicialización. Revisá tu conexión y volvé a intentar.";
+    detalle.style.cssText = "margin:0 0 20px;color:#747474;line-height:1.55;font-size:14px";
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.textContent = "Reintentar";
+    boton.style.cssText = "border:0;border-radius:9px;padding:11px 17px;background:#f47721;color:#fff;font-weight:700;cursor:pointer";
+    boton.addEventListener("click", () => location.reload());
+    tarjeta.append(titulo, detalle, boton);
+    pantalla.appendChild(tarjeta);
+    document.body.replaceChildren(pantalla);
+    document.getElementById("adiur-espera-permisos")?.remove();
   }
 
   let perfilActivo = null;
@@ -473,13 +497,11 @@
           }
           if (window.ADIUR_LAYOUT_LISTO) mostrarPaginaAutorizada();
         } catch (error) {
-          console.error("No se pudieron aplicar los permisos ADIUR:", error);
-          location.replace(LOGIN_URL);
+          mostrarErrorInicializacion(error);
         }
       });
     } catch (error) {
-      console.error("No se pudo iniciar el control Firebase ADIUR:", error);
-      location.replace(LOGIN_URL);
+      mostrarErrorInicializacion(error);
     }
   }
 
