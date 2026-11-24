@@ -2384,6 +2384,19 @@ function normalizarUsuario(valor) {
 }
 
 const usuarioNormalizado = normalizarUsuario(usuarioGuardado);
+const rolPerfilTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+const uidPerfilTORITO = localStorage.getItem("uidTORITO") || "sin-uid";
+const CLAVE_ACTIVIDADES_LOCAL = "actividadesTORITO_" + uidPerfilTORITO;
+let categoriasAutorizadasCalendario = [];
+try {
+    const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+    if (Array.isArray(guardadas)) categoriasAutorizadasCalendario = guardadas;
+} catch (_) {}
+if (rolPerfilTORITO === "admin" && !categoriasAutorizadasCalendario.length) {
+    categoriasAutorizadasCalendario = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
+}
+const puedeEditarCalendario = localStorage.getItem("puedeEditarTORITO") === "true";
+
 
 function esFran() {
     return [
@@ -3266,8 +3279,10 @@ function fechaLegible(fecha) {
 
 function leerDatos() {
     try {
-        const texto = leerAlmacenamiento("actividadesTORITO");
-
+        let texto = leerAlmacenamiento(CLAVE_ACTIVIDADES_LOCAL);
+        if (!texto && rolPerfilTORITO === "admin") {
+            texto = leerAlmacenamiento("actividadesTORITO");
+        }
         if (!texto) return {};
 
         const datos = JSON.parse(texto);
@@ -3275,7 +3290,7 @@ function leerDatos() {
         return datos &&
             typeof datos === "object" &&
             !Array.isArray(datos)
-            ? datos
+            ? Object.fromEntries(Object.entries(datos).filter(([categoria]) => categoriasAutorizadasCalendario.includes(categoria)))
             : {};
     } catch (error) {
         console.error("No se pudieron leer las actividades:", error);
@@ -3284,10 +3299,18 @@ function leerDatos() {
 }
 
 function guardarDatos(datos) {
-    guardarAlmacenamiento(
-        "actividadesTORITO",
-        JSON.stringify(datos)
+    const datosAutorizados = Object.fromEntries(
+        Object.entries(datos || {}).filter(([categoria]) => categoriasAutorizadasCalendario.includes(categoria))
     );
+    guardarAlmacenamiento(
+        CLAVE_ACTIVIDADES_LOCAL,
+        JSON.stringify(datosAutorizados)
+    );
+    if (typeof window.guardarCalendarioNube === "function") {
+        window.guardarCalendarioNube(datosAutorizados).catch(error => {
+            console.error("No se pudo sincronizar el calendario TORITO:", error);
+        });
+    }
 }
 
 function obtenerActividad(cat, fecha) {
@@ -3462,6 +3485,10 @@ document.addEventListener("keydown", event => {
 ===================================================== */
 
 document.getElementById("guardarActividad").addEventListener("click", () => {
+    if (!puedeEditarCalendario || !categoriasAutorizadasCalendario.includes(categoria.value)) {
+        alert("Tu perfil no puede modificar esta categoría.");
+        return;
+    }
     if (!fechaSeleccionada) {
         alert("Primero seleccioná un día del calendario.");
         return;
@@ -3518,6 +3545,10 @@ document.getElementById("guardarActividad").addEventListener("click", () => {
 ===================================================== */
 
 eliminarActividad.addEventListener("click", () => {
+    if (!puedeEditarCalendario || !categoriasAutorizadasCalendario.includes(categoria.value)) {
+        alert("Tu perfil no puede eliminar actividades de esta categoría.");
+        return;
+    }
     if (!fechaSeleccionada) return;
 
     if (!confirm("¿Querés eliminar la actividad de este día?")) {
@@ -3694,7 +3725,7 @@ document.getElementById("mesSiguiente").addEventListener("click", () => {
 ===================================================== */
 
 window.addEventListener("storage", event => {
-    if (event.key === "actividadesTORITO") {
+    if (event.key === CLAVE_ACTIVIDADES_LOCAL) {
         renderizarCalendario();
     }
 
@@ -3718,5 +3749,86 @@ actualizarVistaPreviaCalendario();
 
 
 
+
+<script type="module">
+import { db } from "./TORITO-auth.js?v=20261124-auth2";
+import { doc, getDoc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const rol = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+const uid = localStorage.getItem("uidTORITO") || "sin-uid";
+let categorias = [];
+try {
+  const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+  if (Array.isArray(guardadas)) categorias = guardadas;
+} catch (_) {}
+if (rol === "admin" && !categorias.length) categorias = ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
+const puedeEditar = localStorage.getItem("puedeEditarTORITO") === "true";
+const claveLocal = "actividadesTORITO_" + uid;
+const slug = value => String(value).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"_");
+
+async function sincronizarCalendario() {
+  const locales = (() => {
+    try { return JSON.parse(localStorage.getItem(claveLocal) || "{}"); } catch (_) { return {}; }
+  })();
+  const resultado = {};
+  for (const categoria of categorias) {
+    const referencia = doc(db, "torito_calendario_categorias", slug(categoria));
+    const snapshot = await getDoc(referencia);
+    if (snapshot.exists()) {
+      resultado[categoria] = snapshot.data().actividades || {};
+    } else if (rol === "admin") {
+      const legacy = (() => {
+        try { return JSON.parse(localStorage.getItem("actividadesTORITO") || "{}"); } catch (_) { return {}; }
+      })();
+      if (legacy[categoria] && typeof legacy[categoria] === "object") {
+        resultado[categoria] = legacy[categoria];
+        await setDoc(referencia, {
+          categoria,
+          actividades: legacy[categoria],
+          migradoDesde: "localStorage",
+          migradoEn: serverTimestamp()
+        }, { merge: false });
+      } else if (locales[categoria]) {
+        resultado[categoria] = locales[categoria];
+      }
+    } else if (locales[categoria]) {
+      resultado[categoria] = locales[categoria];
+    }
+  }
+  localStorage.setItem(claveLocal, JSON.stringify(resultado));
+  if (typeof window.renderizarCalendario === "function") window.renderizarCalendario();
+}
+
+window.guardarCalendarioNube = async datos => {
+  if (!puedeEditar) throw new Error("El perfil de TORITO es de solo lectura.");
+  const escrituras = categorias
+    .filter(categoria => Object.prototype.hasOwnProperty.call(datos || {}, categoria))
+    .map(categoria => setDoc(
+      doc(db, "torito_calendario_categorias", slug(categoria)),
+      { categoria, actividades: datos[categoria], actualizado: serverTimestamp() },
+      { merge: true }
+    ));
+  await Promise.all(escrituras);
+};
+
+try {
+  await sincronizarCalendario();
+  for (const categoria of categorias) {
+    onSnapshot(doc(db, "torito_calendario_categorias", slug(categoria)), snapshot => {
+      if (!snapshot.exists()) return;
+      let datos = {};
+      try { datos = JSON.parse(localStorage.getItem(claveLocal) || "{}"); } catch (_) {}
+      datos[categoria] = snapshot.data().actividades || {};
+      localStorage.setItem(claveLocal, JSON.stringify(datos));
+      if (typeof window.renderizarCalendario === "function" &&
+          document.getElementById("categoria")?.value === categoria) {
+        window.renderizarCalendario();
+      }
+    }, error => console.error("Error al escuchar el calendario TORITO:", error));
+  }
+} catch (error) {
+  console.error("No se pudo cargar el calendario TORITO desde la nube:", error);
+}
+</script>
 </body>
 </html>
