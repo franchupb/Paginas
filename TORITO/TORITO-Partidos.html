@@ -2289,7 +2289,9 @@ import {
     doc,
     setDoc,
     deleteDoc,
-    onSnapshot
+    onSnapshot,
+    query,
+    where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
@@ -2353,27 +2355,21 @@ function leerUsuario() {
 const usuarioGuardado = leerUsuario();
 const usuarioNormalizado = normalizarUsuario(usuarioGuardado);
 
-function esFran() {
-    return [
-        "fran",
-        "francisco",
-        "franciscoperezbasla"
-    ].includes(usuarioNormalizado);
+const rolPerfilTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+let categoriasAutorizadasTORITO = [];
+try {
+    const categoriasGuardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+    if (Array.isArray(categoriasGuardadas)) categoriasAutorizadasTORITO = categoriasGuardadas;
+} catch (_) {}
+if (rolPerfilTORITO === "admin" && !categoriasAutorizadasTORITO.length) {
+    categoriasAutorizadasTORITO = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
 }
+function esFran() { return rolPerfilTORITO === "admin"; }
+function esToto() { return ["cuerpo_tecnico", "coordinadora"].includes(rolPerfilTORITO); }
+function esBianca() { return rolPerfilTORITO === "jugadora"; }
 
-function esToto() {
-    return usuarioNormalizado === "toto";
-}
-
-function esBianca() {
-    return [
-        "bianca",
-        "biancadominguez"
-    ].includes(usuarioNormalizado);
-}
-
-const puedeEditar = esFran() || esToto();
-const puedeEliminar = esFran();
+const puedeEditar = localStorage.getItem("puedeEditarTORITO") === "true" && (esFran() || esToto());
+const puedeEliminar = localStorage.getItem("puedeEliminarTORITO") === "true" && esFran();
 
 /* Información del usuario */
 
@@ -2882,6 +2878,11 @@ function respaldarEnLocalStorage() {
 }
 
 async function guardarPartidoEnNube(partido) {
+    const categoriaPartido = partido.categoria || partido.division;
+    if (!puedeEditar || !categoriasAutorizadasTORITO.includes(categoriaPartido)) {
+        actualizarIndicadorGuardado("offline", "Sin permiso para modificar esta categoría");
+        return false;
+    }
     respaldarEnLocalStorage();
 
     if (!nubeActiva || !db) {
@@ -2906,6 +2907,12 @@ async function guardarPartidoEnNube(partido) {
 }
 
 async function eliminarPartidoEnNube(id) {
+    const partido = partidos.find(p => String(p.id) === String(id));
+    const categoriaPartido = partido?.categoria || partido?.division;
+    if (!puedeEliminar || !categoriasAutorizadasTORITO.includes(categoriaPartido)) {
+        actualizarIndicadorGuardado("offline", "Sin permiso para eliminar este partido");
+        return false;
+    }
     respaldarEnLocalStorage();
 
     if (!nubeActiva || !db) {
@@ -2932,16 +2939,19 @@ function iniciarSincronizacionNube() {
     }
 
     onSnapshot(
-        collection(db,"torito_partidos"),
+        query(
+            collection(db,"torito_partidos"),
+            where("categoria","in",categoriasAutorizadasTORITO)
+        ),
         async snapshot => {
             const listaNube = [];
             snapshot.forEach(docSnap => {
                 listaNube.push(normalizarObjetoPartido({ id: docSnap.id, ...docSnap.data() }));
             });
 
-            if (listaNube.length === 0 && partidos.length > 0 && !migracionInicialRealizada) {
+            if (listaNube.length === 0 && puedeEditar && partidos.some(p => categoriasAutorizadasTORITO.includes(p.categoria || p.division)) && !migracionInicialRealizada) {
                 migracionInicialRealizada = true;
-                for (const pLocal of partidos) {
+                for (const pLocal of partidos.filter(p => categoriasAutorizadasTORITO.includes(p.categoria || p.division))) {
                     await setDoc(doc(db,"torito_partidos", String(pLocal.id)), {
                         ...pLocal,
                         actualizadoPor: usuarioGuardado,
