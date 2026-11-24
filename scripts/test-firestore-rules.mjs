@@ -69,6 +69,8 @@ try {
   await assertSucceeds(getDoc(doc(player16, "gimnasioADIUR_individuales", "sub_16__j16")));
   await assertFails(getDoc(doc(player16, "gimnasioADIUR_individuales", "sub_16__j17")));
   await assertSucceeds(getDoc(doc(coach16, "gimnasioADIUR_individuales", "sub_16__j17")));
+  await assertSucceeds(getDocs(query(collection(coach16, "gimnasioADIUR_individuales"), where("categoria", "in", ["Sub 16"]))));
+  await assertFails(getDocs(collection(coach16, "gimnasioADIUR_individuales")));
   await assertFails(getDoc(doc(coach14, "gimnasioADIUR_individuales", "sub_16__j17")));
   await assertSucceeds(getDocs(query(collection(player16, "gimnasioADIUR_individuales"), where("categoria", "in", ["Sub 16"]), where("jugadoraId", "==", "j16"))));
   await assertFails(getDocs(query(collection(player16, "gimnasioADIUR_individuales"), where("categoria", "in", ["Sub 16"]))));
