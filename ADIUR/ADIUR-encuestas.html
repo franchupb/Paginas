@@ -190,7 +190,7 @@ function puedePublicar(){return ["admin","coordinadora","cuerpo_tecnico"].includ
 function fechaCorta(p){return fmtFecha(p.fecha)}
 function tipoNombre(t){return TIPOS[t]?.nombre||String(t||"Encuesta")}
 function tipoConfig(t){return TIPOS[t]||{nombre:tipoNombre(t),icono:"📋",descripcion:"Esta encuesta fue creada con un formato anterior y no tiene una descripción disponible."}}
-function categoriaPermitida(){return Array.isArray(perfil.categorias)&&perfil.categorias.length?perfil.categorias:["Sub 10","Sub 12","Sub 14","Sub 16","Primera"]}
+function categoriaPermitida(){return Array.isArray(perfil?.categorias)?perfil.categorias:[]}
 function mostrarPerfil(){$("nombreUsuario").textContent=nombre;$("avatarUsuario").textContent=(nombre.trim()[0]||"U").toUpperCase();$("rolUsuario").textContent=({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rol]||rol}
 function poblarCategorias(){
  categorias=categoriaPermitida();const selects=[$("filtroCategoria"),$("nuevaCategoria")];
@@ -208,19 +208,25 @@ function iniciarMenu(){
 }
 function iniciarPestanasCT(){document.querySelectorAll("[data-ct-tab]").forEach(b=>b.addEventListener("click",()=>{ctTab=b.dataset.ctTab;document.querySelectorAll("[data-ct-tab]").forEach(x=>x.classList.toggle("activa",x===b));["publicaciones","resultados"].forEach(v=>$("ct"+v[0].toUpperCase()+v.slice(1)).classList.toggle("oculto",v!==ctTab));if(ctTab==="resultados")poblarSelectorResultados()}))}
 function activo(p){return !/inactivo|baja|desvinculada/i.test(p.estado||"Activo")}
-function jugadorasDe(cat){return plantel.filter(p=>categoriaKey(p.categoria)===categoriaKey(cat)&&activo(p)).sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"))}
+function jugadorasDe(cat){return plantel.filter(p=>p.nombre&&categoriaKey(p.categoria)===categoriaKey(cat)&&activo(p)).sort((a,b)=>String(a.nombre).localeCompare(String(b.nombre),"es"))}
 function periodoCat(){return periodos.filter(p=>categoriaKey(p.categoria)===categoriaKey(categoriaActiva)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""))}
 function respuestasDe(id){return respuestas.filter(r=>r.periodoId===id)}
 function yaRespondio(id){return respuestas.some(r=>r.periodoId===id&&r.uid===uid)}
 function cargarPlantel(){
- const unsub=fb.onSnapshot(fb.collection(db,"jugadoras"),snap=>{plantel=snap.docs.map(d=>{const x=d.data();return{id:d.id,nombre:String(x.nombre||x.nombreCompleto||x.nombre_completo||[x.nombres,x.apellido||x.apellidos].filter(Boolean).join(" ")||"").trim(),categoria:x.categoria||x.division||x.categoría||x.category||"",estado:x.estado||x.status||"Activo"}}).filter(p=>p.nombre);renderTodo()},e=>{console.error(e);estado("No se pudo cargar el plantel.","error")});unsubs.push(unsub)
+ const permitidas=Array.isArray(perfil?.categorias)?perfil.categorias:[];
+ if(!permitidas.length){estado("Tu perfil no tiene categorías habilitadas para consultar el plantel.","error");return;}
+ const consulta=fb.query(fb.collection(db,"jugadoras"),fb.where("categoria","in",permitidas));
+ const unsub=fb.onSnapshot(consulta,snap=>{plantel=snap.docs.map(d=>{const x=d.data();return{id:d.id,nombre:String(x.nombre||x.nombreCompleto||x.nombre_completo||[x.nombres,x.apellido||x.apellidos].filter(Boolean).join(" ")||"").trim(),categoria:x.categoria||x.division||x.categoría||x.category||"",estado:x.estado||x.status||"Activo"}}).filter(p=>p.nombre);renderTodo()},e=>{console.error("ADIUR Encuestas · plantel:",e);estado("No se pudo cargar el plantel de tus categorías. Revisá los permisos de Firestore.","error")});unsubs.push(unsub)
 }
 function escucharDatos(){
+ const permitidas=Array.isArray(perfil?.categorias)?perfil.categorias:[];
+ if(!permitidas.length){estado("Tu perfil no tiene categorías habilitadas para consultar encuestas.","error");return;}
  const periodosRef=fb.collection(db,"encuestas_periodos");
- const up=fb.onSnapshot(periodosRef,s=>{periodos=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error(e);estado("No se pudieron cargar las publicaciones. Revisá las reglas de Firestore.","error")});unsubs.push(up);
+ const consultaPeriodos=fb.query(periodosRef,fb.where("categoria","in",permitidas));
+ const up=fb.onSnapshot(consultaPeriodos,s=>{periodos=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error("ADIUR Encuestas · publicaciones:",e);estado("No se pudieron cargar las publicaciones de tus categorías. Revisá los permisos de Firestore.","error")});unsubs.push(up);
  const respuestasRef=fb.collection(db,"encuestas_respuestas");
- const q=esJugadora()?fb.query(respuestasRef,fb.where("uid","==",uid)):respuestasRef;
- const ur=fb.onSnapshot(q,s=>{respuestas=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error(e);estado("No se pudieron cargar las respuestas. Revisá las reglas de Firestore.","error")});unsubs.push(ur)
+ const consultaRespuestas=esJugadora()?fb.query(respuestasRef,fb.where("uid","==",uid)):fb.query(respuestasRef,fb.where("categoria","in",permitidas));
+ const ur=fb.onSnapshot(consultaRespuestas,s=>{respuestas=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error("ADIUR Encuestas · respuestas:",e);estado("No se pudieron cargar las respuestas autorizadas. Revisá los permisos de Firestore.","error")});unsubs.push(ur)
 }
 function renderTodo(){if(!perfil)return;if(esJugadora())renderJugadora();else renderCT()}
 function renderJugadora(){
@@ -308,7 +314,7 @@ async function eliminarPeriodo(id){
 }
 function tarjetaPeriodo(p,archivo=false){
  const rs=respuestasDe(p.id),esperadas=jugadorasDe(p.categoria).length,porcentaje=esperadas?Math.round(rs.length/esperadas*100):0,abierta=p.estado==="abierta";
- return '<article class="periodo-card"><div class="periodo-card-top"><span class="periodo-icono">'+TIPOS[p.tipo]?.icono+'</span><span class="pill '+(abierta?"pill-abierta":"pill-cerrada")+'">'+(abierta?"● Abierta":"● Cerrada")+'</span></div><div class="periodo-fecha">'+fechaCorta(p)+'</div><h4>'+tipoNombre(p.tipo)+'</h4><div class="periodo-categoria">'+esc(p.categoria)+'</div><div class="periodo-participacion"><div><b>'+rs.length+'</b><span> / '+esperadas+' respuestas</span></div><b>'+porcentaje+'%</b></div><div class="barra-progreso"><span style="width:'+Math.min(100,porcentaje)+'%"></span></div><div class="periodo-acciones"><button type="button" class="btn btn-secundario" data-ver-periodo="'+p.id+'">Ver resultados</button>'+'<button type="button" class="btn btn-secundario" data-copiar-enlace="'+p.id+'">Copiar enlace</button>'+(abierta?'<button type="button" class="btn btn-cerrar" data-estado-periodo="'+p.id+'" data-nuevo-estado="cerrada">Deshabilitar</button>':'<button type="button" class="btn btn-abrir" data-estado-periodo="'+p.id+'" data-nuevo-estado="abierta">Habilitar</button>')+(perfil?.puedeEliminar?'<button type="button" class="btn btn-peligro" data-eliminar-periodo="'+p.id+'">Eliminar</button>':'')+'</div></article>'
+ return '<article class="periodo-card"><div class="periodo-card-top"><span class="periodo-icono">'+tipoConfig(p.tipo).icono+'</span><span class="pill '+(abierta?"pill-abierta":"pill-cerrada")+'">'+(abierta?"● Abierta":"● Cerrada")+'</span></div><div class="periodo-fecha">'+fechaCorta(p)+'</div><h4>'+tipoNombre(p.tipo)+'</h4><div class="periodo-categoria">'+esc(p.categoria)+'</div><div class="periodo-participacion"><div><b>'+rs.length+'</b><span> / '+esperadas+' respuestas</span></div><b>'+porcentaje+'%</b></div><div class="barra-progreso"><span style="width:'+Math.min(100,porcentaje)+'%"></span></div><div class="periodo-acciones"><button type="button" class="btn btn-secundario" data-ver-periodo="'+p.id+'">Ver resultados</button>'+'<button type="button" class="btn btn-secundario" data-copiar-enlace="'+p.id+'">Copiar enlace</button>'+(abierta?'<button type="button" class="btn btn-cerrar" data-estado-periodo="'+p.id+'" data-nuevo-estado="cerrada">Deshabilitar</button>':'<button type="button" class="btn btn-abrir" data-estado-periodo="'+p.id+'" data-nuevo-estado="abierta">Habilitar</button>')+(perfil?.puedeEliminar?'<button type="button" class="btn btn-peligro" data-eliminar-periodo="'+p.id+'">Eliminar</button>':'')+'</div></article>'
 }
 function enlazarTarjetas(root){
  root.querySelectorAll("[data-estado-periodo]").forEach(b=>b.addEventListener("click",()=>cambiarEstadoPeriodo(b.dataset.estadoPeriodo,b.dataset.nuevoEstado)));
