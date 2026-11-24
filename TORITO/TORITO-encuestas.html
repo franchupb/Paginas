@@ -1312,17 +1312,27 @@ if (!usuarioGuardado) {
   window.location.href = "TORITO-Loing.html";
 }
 
-const usuarioNormalizado = usuarioGuardado.toLowerCase();
-const esFran = ["fran", "francisco", "francisco perez basla"].includes(usuarioNormalizado);
-const esToto = usuarioNormalizado === "toto";
-const esBianca = ["biancadominguez", "bianca"].includes(usuarioNormalizado);
+const rolPerfilTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+const uidPerfilTORITO = localStorage.getItem("uidTORITO") || "sin-uid";
+const esFran = rolPerfilTORITO === "admin";
+const esToto = ["cuerpo_tecnico", "coordinadora"].includes(rolPerfilTORITO);
+const esBianca = rolPerfilTORITO === "jugadora";
+const puedeEditarEncuestas = localStorage.getItem("puedeEditarTORITO") === "true";
+let categoriasEncuestasPermitidas = [];
+try {
+  const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+  if (Array.isArray(guardadas)) categoriasEncuestasPermitidas = guardadas;
+} catch (_) {}
+if (esFran && !categoriasEncuestasPermitidas.length) categoriasEncuestasPermitidas = ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
+const KEY_DIAS_ENCUESTAS = "diasEncuestasTORITO_" + uidPerfilTORITO;
+const KEY_RESPUESTAS_ENCUESTAS = "torito_respuestasEncuestasSemanales_" + uidPerfilTORITO;
 
 document.getElementById("nombreUsuario").textContent = usuarioGuardado;
 document.getElementById("avatarUsuario").textContent = usuarioGuardado.charAt(0).toUpperCase();
 document.getElementById("rolUsuario").textContent = esFran ? "Administrador" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora · Sub 14" : "Club Torito";
 
 // Mostrar botón para agregar día a DT o Admin
-if (esFran || esToto) {
+if ((esFran || esToto) && puedeEditarEncuestas) {
   document.getElementById("contenedorBtnAgregarDia").innerHTML = `
     <button class="btn-principal" onclick="abrirModalAgregarDia()">+ Agregar Día a la Semana</button>
   `;
@@ -1347,7 +1357,7 @@ function toggleGrupo(id) {
    ESTRUCTURA DE DATOS (LOCALSTORAGE)
 ===================================================== */
 function obtenerJugadorasDivision(division) {
-  let datos = localStorage.getItem("jugadorasTORITO") || localStorage.getItem("plantelTORITO");
+  let datos = localStorage.getItem("jugadorasTORITO_" + uidPerfilTORITO);
   let lista = [];
   if (datos) {
     try { lista = JSON.parse(datos); } catch(e) {}
@@ -1356,7 +1366,8 @@ function obtenerJugadorasDivision(division) {
 }
 
 function obtenerEstructuraEncuestas() {
-  let datos = localStorage.getItem("diasEncuestasTORITO");
+  let datos = localStorage.getItem(KEY_DIAS_ENCUESTAS);
+  if (!datos && esFran) datos = localStorage.getItem("diasEncuestasTORITO");
   if (datos) {
     try { return JSON.parse(datos); } catch(e) {}
   }
@@ -1364,11 +1375,16 @@ function obtenerEstructuraEncuestas() {
 }
 
 function guardarEstructuraEncuestas(datos) {
-  localStorage.setItem("diasEncuestasTORITO", JSON.stringify(datos));
+  const filtrados = Object.fromEntries(Object.entries(datos || {}).filter(([categoria]) => categoriasEncuestasPermitidas.includes(categoria)));
+  localStorage.setItem(KEY_DIAS_ENCUESTAS, JSON.stringify(filtrados));
+  if (typeof window.sincronizarEncuestasNube === "function") {
+    window.sincronizarEncuestasNube().catch(error => console.error("No se pudieron sincronizar los días de encuestas:", error));
+  }
 }
 
 function obtenerRespuestas() {
-  let datos = localStorage.getItem("torito_respuestasEncuestasSemanales");
+  let datos = localStorage.getItem(KEY_RESPUESTAS_ENCUESTAS);
+  if (!datos && esFran) datos = localStorage.getItem("torito_respuestasEncuestasSemanales");
   if (datos) {
     try { return JSON.parse(datos); } catch(e) {}
   }
@@ -1376,7 +1392,11 @@ function obtenerRespuestas() {
 }
 
 function guardarRespuestas(respuestas) {
-  localStorage.setItem("torito_respuestasEncuestasSemanales", JSON.stringify(respuestas));
+  const filtradas = Object.fromEntries(Object.entries(respuestas || {}).filter(([categoria]) => categoriasEncuestasPermitidas.includes(categoria)));
+  localStorage.setItem(KEY_RESPUESTAS_ENCUESTAS, JSON.stringify(filtradas));
+  if (typeof window.sincronizarEncuestasNube === "function") {
+    window.sincronizarEncuestasNube().catch(error => console.error("No se pudieron sincronizar las respuestas:", error));
+  }
 }
 
 /* =====================================================
@@ -1594,6 +1614,10 @@ function abrirModalAgregarDia() {
 }
 
 function guardarNuevoDiaSemana(event) {
+  if (!puedeEditarEncuestas || !categoriasEncuestasPermitidas.includes(division || document.getElementById("filtroDivisionEncuesta")?.value)) {
+    alert("Tu perfil no puede modificar encuestas de esta categoría.");
+    return;
+  }
   event.preventDefault();
   const division = document.getElementById("filtroDivisionEncuesta").value;
   const nombreDia = document.getElementById("selectNombreDia").value;
@@ -1636,6 +1660,10 @@ function guardarNuevoDiaSemana(event) {
 }
 
 function eliminarDiaSemana(division, diaId) {
+  if (!puedeEditarEncuestas || !categoriasEncuestasPermitidas.includes(division || document.getElementById("filtroDivisionEncuesta")?.value)) {
+    alert("Tu perfil no puede modificar encuestas de esta categoría.");
+    return;
+  }
   if (!confirm("¿Estás seguro de eliminar este día y todas sus encuestas asociadas?")) return;
 
   let estructura = obtenerEstructuraEncuestas();
@@ -1656,6 +1684,10 @@ function abrirModalAgregarEncuesta(diaId) {
 }
 
 function guardarNuevaEncuestaDia(event) {
+  if (!puedeEditarEncuestas || !categoriasEncuestasPermitidas.includes(division || document.getElementById("filtroDivisionEncuesta")?.value)) {
+    alert("Tu perfil no puede modificar encuestas de esta categoría.");
+    return;
+  }
   event.preventDefault();
   const division = document.getElementById("filtroDivisionEncuesta").value;
   const diaId = document.getElementById("inputDiaId").value;
@@ -1681,6 +1713,10 @@ function guardarNuevaEncuestaDia(event) {
 }
 
 function eliminarEncuesta(division, diaId, encuestaId) {
+  if (!puedeEditarEncuestas || !categoriasEncuestasPermitidas.includes(division || document.getElementById("filtroDivisionEncuesta")?.value)) {
+    alert("Tu perfil no puede modificar encuestas de esta categoría.");
+    return;
+  }
   if (!confirm("¿Estás seguro de eliminar esta encuesta?")) return;
 
   let estructura = obtenerEstructuraEncuestas();
@@ -1895,5 +1931,95 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 
+
+<script type="module">
+import { db } from "./TORITO-auth.js?v=20261124-auth2";
+import { doc, getDoc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const rol = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+const uid = localStorage.getItem("uidTORITO") || "sin-uid";
+let categorias = [];
+try {
+  const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+  if (Array.isArray(guardadas)) categorias = guardadas;
+} catch (_) {}
+if (rol === "admin" && !categorias.length) categorias = ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
+const puedeEditar = localStorage.getItem("puedeEditarTORITO") === "true";
+const keyDias = "diasEncuestasTORITO_" + uid;
+const keyRespuestas = "torito_respuestasEncuestasSemanales_" + uid;
+const slug = value => String(value).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"_");
+
+function leerObjeto(key) { try { return JSON.parse(localStorage.getItem(key) || "{}"); } catch (_) { return {}; } }
+
+window.sincronizarEncuestasNube = async () => {
+  if (!puedeEditar) throw new Error("El perfil de TORITO es de solo lectura.");
+  const dias = leerObjeto(keyDias);
+  const respuestas = leerObjeto(keyRespuestas);
+  const escrituras = categorias.map(categoria => setDoc(
+    doc(db, "torito_encuestas_categorias", slug(categoria)),
+    {
+      categoria,
+      dias: Array.isArray(dias[categoria]) ? dias[categoria] : [],
+      respuestas: respuestas[categoria] || {},
+      actualizado: serverTimestamp()
+    },
+    { merge:true }
+  ));
+  await Promise.all(escrituras);
+};
+
+try {
+  for (const categoria of categorias) {
+    const referencia = doc(db, "torito_encuestas_categorias", slug(categoria));
+    const snapshot = await getDoc(referencia);
+    if (snapshot.exists()) {
+      const dato = snapshot.data();
+      const dias = leerObjeto(keyDias);
+      const respuestas = leerObjeto(keyRespuestas);
+      dias[categoria] = Array.isArray(dato.dias) ? dato.dias : [];
+      respuestas[categoria] = dato.respuestas || {};
+      localStorage.setItem(keyDias, JSON.stringify(dias));
+      localStorage.setItem(keyRespuestas, JSON.stringify(respuestas));
+    } else if (rol === "admin") {
+      const legacyDias = leerObjeto("diasEncuestasTORITO");
+      const legacyRespuestas = leerObjeto("torito_respuestasEncuestasSemanales");
+      if (legacyDias[categoria] || legacyRespuestas[categoria]) {
+        await setDoc(referencia, {
+          categoria,
+          dias: Array.isArray(legacyDias[categoria]) ? legacyDias[categoria] : [],
+          respuestas: legacyRespuestas[categoria] || {},
+          migradoDesde: "localStorage",
+          migradoEn: serverTimestamp()
+        }, { merge:false });
+        const dias = leerObjeto(keyDias);
+        const respuestas = leerObjeto(keyRespuestas);
+        dias[categoria] = legacyDias[categoria] || [];
+        respuestas[categoria] = legacyRespuestas[categoria] || {};
+        localStorage.setItem(keyDias, JSON.stringify(dias));
+        localStorage.setItem(keyRespuestas, JSON.stringify(respuestas));
+      }
+    }
+  }
+
+  for (const categoria of categorias) {
+    onSnapshot(doc(db, "torito_encuestas_categorias", slug(categoria)), snapshot => {
+      if (!snapshot.exists()) return;
+      const dato = snapshot.data();
+      const dias = leerObjeto(keyDias);
+      const respuestas = leerObjeto(keyRespuestas);
+      dias[categoria] = Array.isArray(dato.dias) ? dato.dias : [];
+      respuestas[categoria] = dato.respuestas || {};
+      localStorage.setItem(keyDias, JSON.stringify(dias));
+      localStorage.setItem(keyRespuestas, JSON.stringify(respuestas));
+      if (document.getElementById("filtroDivisionEncuesta")?.value === categoria &&
+          typeof window.renderizarCalendarioSemana === "function") {
+        window.renderizarCalendarioSemana();
+      }
+    }, error => console.error("Error al escuchar encuestas TORITO:", error));
+  }
+} catch (error) {
+  console.error("No se pudieron cargar las encuestas TORITO desde Firestore:", error);
+}
+</script>
 </body>
 </html>
