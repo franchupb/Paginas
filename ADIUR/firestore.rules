@@ -183,7 +183,10 @@ service cloud.firestore {
     // Publicación de encuestas: un enlace público solo puede leer un período
     // abierto por su ID; las consultas normales quedan limitadas por categoría.
     match /encuestas_periodos/{periodoId} {
-      allow get: if (activeUser() && canReadCategory(resource.data)) ||
+      // Las encuestas abiertas funcionan también si quien abre el enlace
+      // ya tiene una sesión activa de otra categoría.
+      allow get: if (activeUser() && resource.data.estado == 'abierta') ||
+        (activeUser() && canReadCategory(resource.data)) ||
         (!signedIn() && resource.data.estado == 'abierta');
       allow list: if activeUser() && canReadCategory(resource.data);
       allow create: if isStaff() && canWriteCategory(request.resource.data);
@@ -206,9 +209,9 @@ service cloud.firestore {
         hasCategoryPermission(categoryOf(request.resource.data));
 
       // Los enlaces públicos solo aceptan respuestas para un período abierto.
-      allow create: if !signedIn() &&
-        request.resource.data.uid == null &&
-        periodIsOpen(request.resource.data.periodoId, request.resource.data.categoria);
+      allow create: if request.resource.data.uid == null &&
+        periodIsOpen(request.resource.data.periodoId, request.resource.data.categoria) &&
+        (!signedIn() || activeUser());
 
       allow update: if false;
       allow delete: if canDeleteClubData() &&
