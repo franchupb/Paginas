@@ -48,7 +48,7 @@ try{
 }catch(error){informar("No se pudo verificar la sesión: "+(error.code||error.message));}
 
 function mezclarConPrioridadExistente(origen,existente){
- if(Array.isArray(origen)||Array.isArray(existente))return Array.isArray(existente)?existente:origen;
+ if(Array.isArray(origen)||Array.isArray(existente))return Array.isArray(existente)&&existente.length?existente:origen;
  const esObjeto=v=>v&&typeof v==="object"&&!Array.isArray(v);
  if(esObjeto(origen)||esObjeto(existente)){
   const a=esObjeto(origen)?origen:{},b=esObjeto(existente)?existente:{},salida={...a};
@@ -59,7 +59,7 @@ function mezclarConPrioridadExistente(origen,existente){
   }
   return salida;
  }
- return existente===undefined?origen:existente;
+ return existente===undefined||existente===null||existente===""?origen:existente;
 }
 async function migrarColeccion(nombre, transformar){
  const origen=await getDoc(doc(db,nombre,"principal"));
