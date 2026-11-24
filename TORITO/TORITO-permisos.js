@@ -257,7 +257,7 @@
       }
       root.querySelectorAll('a[href]').forEach(a => {
         const destino = (a.getAttribute("href") || "").split(/[?#]/)[0].toLowerCase();
-        if (/^(biblioteca|multimedia|lesiones)\.html$/.test(destino)) {
+        if (/^(biblioteca|multimedia)\.html$/.test(destino)) {
           a.hidden = true;
           a.removeAttribute("href");
           a.setAttribute("aria-disabled","true");
