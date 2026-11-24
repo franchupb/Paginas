@@ -172,8 +172,12 @@ service cloud.firestore {
         ) || (
           activeUser() &&
           profile().rol == 'jugadora' &&
-          canReadCategory(resource.data) &&
-          resource.data.jugadora == profile().jugadora
+          canReadCategory(resource.data) && (
+            (profile().jugadoraId is string &&
+              resource.data.jugadoraId == profile().jugadoraId) ||
+            (profile().jugadora is string &&
+              resource.data.jugadora == profile().jugadora)
+          )
         );
       allow create: if canWriteCategory(request.resource.data);
       allow update: if canWriteCategory(resource.data) &&
