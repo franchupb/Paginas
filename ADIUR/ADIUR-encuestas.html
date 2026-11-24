@@ -188,8 +188,9 @@ function estado(msg,tipo){$("estadoGeneral").textContent=msg;$("estadoGeneral").
 function esJugadora(){return rol==="jugadora"}
 function puedePublicar(){return ["admin","coordinadora","cuerpo_tecnico"].includes(rol)}
 function fechaCorta(p){return fmtFecha(p.fecha)}
-function tipoNombre(t){return TIPOS[t]?.nombre||t}
-function categoriaPermitida(){return Array.isArray(perfil.categorias)&&perfil.categorias.length?perfil.categorias:["Sub 10","Sub 12","Sub 14","Sub 16","Primera"]}
+function tipoNombre(t){return TIPOS[t]?.nombre||String(t||"Encuesta")}
+function tipoConfig(t){return TIPOS[t]||{nombre:tipoNombre(t),icono:"📋",descripcion:"Esta encuesta fue creada con un formato anterior y no tiene una descripción disponible."}}
+function categoriaPermitida(){return Array.isArray(perfil?.categorias)?perfil.categorias:[]}
 function mostrarPerfil(){$("nombreUsuario").textContent=nombre;$("avatarUsuario").textContent=(nombre.trim()[0]||"U").toUpperCase();$("rolUsuario").textContent=({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rol]||rol}
 function poblarCategorias(){
  categorias=categoriaPermitida();const selects=[$("filtroCategoria"),$("nuevaCategoria")];
@@ -207,30 +208,38 @@ function iniciarMenu(){
 }
 function iniciarPestanasCT(){document.querySelectorAll("[data-ct-tab]").forEach(b=>b.addEventListener("click",()=>{ctTab=b.dataset.ctTab;document.querySelectorAll("[data-ct-tab]").forEach(x=>x.classList.toggle("activa",x===b));["publicaciones","resultados"].forEach(v=>$("ct"+v[0].toUpperCase()+v.slice(1)).classList.toggle("oculto",v!==ctTab));if(ctTab==="resultados")poblarSelectorResultados()}))}
 function activo(p){return !/inactivo|baja|desvinculada/i.test(p.estado||"Activo")}
-function jugadorasDe(cat){return plantel.filter(p=>categoriaKey(p.categoria)===categoriaKey(cat)&&activo(p)).sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"))}
+function jugadorasDe(cat){return plantel.filter(p=>p.nombre&&categoriaKey(p.categoria)===categoriaKey(cat)&&activo(p)).sort((a,b)=>String(a.nombre).localeCompare(String(b.nombre),"es"))}
 function periodoCat(){return periodos.filter(p=>categoriaKey(p.categoria)===categoriaKey(categoriaActiva)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""))}
 function respuestasDe(id){return respuestas.filter(r=>r.periodoId===id)}
 function yaRespondio(id){return respuestas.some(r=>r.periodoId===id&&r.uid===uid)}
 function cargarPlantel(){
- const unsub=fb.onSnapshot(fb.collection(db,"jugadoras"),snap=>{plantel=snap.docs.map(d=>{const x=d.data();return{id:d.id,nombre:x.nombre||x.nombreCompleto||x.nombre_completo||[x.nombres,x.apellido||x.apellidos].filter(Boolean).join(" "),categoria:x.categoria||x.division||x.categoría||x.category||"",estado:x.estado||x.status||"Activo"}});renderTodo()},e=>{console.error(e);estado("No se pudo cargar el plantel.","error")});unsubs.push(unsub)
+ const permitidas=Array.isArray(perfil?.categorias)?perfil.categorias:[];
+ if(!permitidas.length){estado("Tu perfil no tiene categorías habilitadas para consultar el plantel.","error");return;}
+ const consulta=fb.query(fb.collection(db,"jugadoras"),fb.where("categoria","in",permitidas));
+ const unsub=fb.onSnapshot(consulta,snap=>{plantel=snap.docs.map(d=>{const x=d.data();return{id:d.id,nombre:String(x.nombre||x.nombreCompleto||x.nombre_completo||[x.nombres,x.apellido||x.apellidos].filter(Boolean).join(" ")||"").trim(),categoria:x.categoria||x.division||x.categoría||x.category||"",estado:x.estado||x.status||"Activo"}}).filter(p=>p.nombre);renderTodo()},e=>{console.error("ADIUR Encuestas · plantel:",e);estado("No se pudo cargar el plantel de tus categorías. Revisá los permisos de Firestore.","error")});unsubs.push(unsub)
 }
 function escucharDatos(){
+ const permitidas=Array.isArray(perfil?.categorias)?perfil.categorias:[];
+ if(!permitidas.length){estado("Tu perfil no tiene categorías habilitadas para consultar encuestas.","error");return;}
  const periodosRef=fb.collection(db,"encuestas_periodos");
- const up=fb.onSnapshot(periodosRef,s=>{periodos=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error(e);estado("No se pudieron cargar las publicaciones. Revisá las reglas de Firestore.","error")});unsubs.push(up);
+ const consultaPeriodos=fb.query(periodosRef,fb.where("categoria","in",permitidas));
+ const up=fb.onSnapshot(consultaPeriodos,s=>{periodos=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error("ADIUR Encuestas · publicaciones:",e);estado("No se pudieron cargar las publicaciones de tus categorías. Revisá los permisos de Firestore.","error")});unsubs.push(up);
  const respuestasRef=fb.collection(db,"encuestas_respuestas");
- const q=esJugadora()?fb.query(respuestasRef,fb.where("uid","==",uid)):respuestasRef;
- const ur=fb.onSnapshot(q,s=>{respuestas=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error(e);estado("No se pudieron cargar las respuestas. Revisá las reglas de Firestore.","error")});unsubs.push(ur)
+ const consultaRespuestas=esJugadora()?fb.query(respuestasRef,fb.where("uid","==",uid)):fb.query(respuestasRef,fb.where("categoria","in",permitidas));
+ const ur=fb.onSnapshot(consultaRespuestas,s=>{respuestas=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error("ADIUR Encuestas · respuestas:",e);estado("No se pudieron cargar las respuestas autorizadas. Revisá los permisos de Firestore.","error")});unsubs.push(ur)
 }
 function renderTodo(){if(!perfil)return;if(esJugadora())renderJugadora();else renderCT()}
 function renderJugadora(){
  const abiertas=periodos.filter(p=>p.estado==="abierta"&&categoriaKey(p.categoria)===categoriaKey(categoriaActiva)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));
- $("encuestasDisponibles").innerHTML=abiertas.map(p=>{const done=yaRespondio(p.id);return '<article class="encuesta-tarjeta"><div class="tarjeta-top"><span class="icono">'+TIPOS[p.tipo]?.icono+'</span><span class="estado-encuesta '+(done?"respondida":"abierta")+'">'+(done?"Completada":"Disponible")+'</span></div><h3>'+tipoNombre(p.tipo)+'</h3><p>'+TIPOS[p.tipo].descripcion+'</p><div class="tarjeta-meta"> <span>◷ '+fechaCorta(p)+'</span><span> '+esc(p.categoria)+'</span></div><button class="btn '+(done?"btn-secundario":"btn-principal")+'" type="button" data-abrir-periodo="'+esc(p.id)+'" '+(done?"disabled":"")+'>'+(done?"Ya respondiste":"Completar encuesta")+'</button></article>'}).join("");
+ $("encuestasDisponibles").innerHTML=abiertas.map(p=>{const done=yaRespondio(p.id);return '<article class="encuesta-tarjeta"><div class="tarjeta-top"><span class="icono">'+tipoConfig(p.tipo).icono+'</span><span class="estado-encuesta '+(done?"respondida":"abierta")+'">'+(done?"Completada":"Disponible")+'</span></div><h3>'+tipoNombre(p.tipo)+'</h3><p>'+tipoConfig(p.tipo).descripcion+'</p><div class="tarjeta-meta"> <span>◷ '+fechaCorta(p)+'</span><span> '+esc(p.categoria)+'</span></div><button class="btn '+(done?"btn-secundario":"btn-principal")+'" type="button" data-abrir-periodo="'+esc(p.id)+'" '+(done||!TIPOS[p.tipo]?"disabled":"")+'>'+(done?"Ya respondiste":TIPOS[p.tipo]?"Completar encuesta":"Formato no disponible")+'</button></article>'}).join("");
  $("sinEncuestas").classList.toggle("oculto",abiertas.length>0);
  $("encuestasDisponibles").querySelectorAll("[data-abrir-periodo]").forEach(b=>b.addEventListener("click",()=>abrirFormularioJugador(b.dataset.abrirPeriodo)));
 }
 function escalaSelect(id,label,items){return '<div class="campo"><label for="'+id+'">'+label+'</label><select id="'+id+'" required><option value="">Elegir respuesta</option>'+items.map((x,i)=>'<option value="'+(i+1)+'">'+(i+1)+' · '+x+'</option>').join("")+'</select></div>'}
 function abrirFormularioJugador(id){
- const p=periodos.find(x=>x.id===id);if(!p||p.estado!=="abierta"||(!modoPublico&&yaRespondio(id)))return;periodoSeleccionado=id;rpeSeleccionado=null;let fields="";
+ const p=periodos.find(x=>x.id===id);if(!p||p.estado!=="abierta"||(!modoPublico&&yaRespondio(id)))return;
+ if(!TIPOS[p.tipo]){const mensaje="Esta encuesta utiliza un formato anterior que no está disponible para responder desde esta página.";if(modoPublico){$("estadoPublico").textContent=mensaje;$("estadoPublico").className="publico-mensaje error"}else estado(mensaje,"error");return;}
+ periodoSeleccionado=id;rpeSeleccionado=null;let fields="";
  if(modoPublico)fields='<div class="form-grid"><div class="campo"><label for="respNombre">NOMBRE</label><input id="respNombre" maxlength="80" autocomplete="given-name" required></div><div class="campo"><label for="respApellido">APELLIDO</label><input id="respApellido" maxlength="80" autocomplete="family-name" required></div></div>';
  if(p.tipo==="post_partido"){
  fields+='<section class="campo campo-completo"><h4>Wellness · obligatorio</h4><p class="ayuda">1 es el valor más bajo/mejor y 5 el más alto/peor.</p><div class="form-grid">'+escalaSelect("respSueno","Nivel de sueño",["Muy bueno","Bueno","Regular","Malo","Muy malo"])+escalaSelect("respEstres","Nivel de estrés",["Muy bajo","Bajo","Moderado","Alto","Muy alto"])+escalaSelect("respFatiga","Nivel de fatiga",["Muy bajo","Bajo","Moderado","Alto","Muy alto"])+escalaSelect("respDolorMuscular","Nivel de dolor muscular",["Sin dolor","Leve","Moderado","Alto","Muy alto"])+'</div><div class="rpe-lectura" id="wellnessTotal">Completá las cuatro escalas para calcular el RPE Wellness.</div></section><div class="form-grid" style="margin-top:18px"><div class="campo campo-completo oculto" id="dolorZonaWrap"><label for="respDolorZona">¿Dónde sentís el dolor muscular? (obligatorio para 3, 4 o 5)</label><textarea id="respDolorZona" maxlength="300"></textarea></div><div class="campo"><label for="respComidaAntes">¿Qué comiste antes del partido?</label><textarea id="respComidaAntes" maxlength="300"></textarea></div><div class="campo"><label for="respComidaDespues">¿Qué comiste después del partido?</label><textarea id="respComidaDespues" maxlength="300"></textarea></div><div class="campo campo-completo"><label for="respAnimo">Estado de ánimo</label><input id="respAnimo" maxlength="200"></div></div>';
@@ -305,7 +314,7 @@ async function eliminarPeriodo(id){
 }
 function tarjetaPeriodo(p,archivo=false){
  const rs=respuestasDe(p.id),esperadas=jugadorasDe(p.categoria).length,porcentaje=esperadas?Math.round(rs.length/esperadas*100):0,abierta=p.estado==="abierta";
- return '<article class="periodo-card"><div class="periodo-card-top"><span class="periodo-icono">'+TIPOS[p.tipo]?.icono+'</span><span class="pill '+(abierta?"pill-abierta":"pill-cerrada")+'">'+(abierta?"● Abierta":"● Cerrada")+'</span></div><div class="periodo-fecha">'+fechaCorta(p)+'</div><h4>'+tipoNombre(p.tipo)+'</h4><div class="periodo-categoria">'+esc(p.categoria)+'</div><div class="periodo-participacion"><div><b>'+rs.length+'</b><span> / '+esperadas+' respuestas</span></div><b>'+porcentaje+'%</b></div><div class="barra-progreso"><span style="width:'+Math.min(100,porcentaje)+'%"></span></div><div class="periodo-acciones"><button type="button" class="btn btn-secundario" data-ver-periodo="'+p.id+'">Ver resultados</button>'+'<button type="button" class="btn btn-secundario" data-copiar-enlace="'+p.id+'">Copiar enlace</button>'+(abierta?'<button type="button" class="btn btn-cerrar" data-estado-periodo="'+p.id+'" data-nuevo-estado="cerrada">Deshabilitar</button>':'<button type="button" class="btn btn-abrir" data-estado-periodo="'+p.id+'" data-nuevo-estado="abierta">Habilitar</button>')+(perfil?.puedeEliminar?'<button type="button" class="btn btn-peligro" data-eliminar-periodo="'+p.id+'">Eliminar</button>':'')+'</div></article>'
+ return '<article class="periodo-card"><div class="periodo-card-top"><span class="periodo-icono">'+tipoConfig(p.tipo).icono+'</span><span class="pill '+(abierta?"pill-abierta":"pill-cerrada")+'">'+(abierta?"● Abierta":"● Cerrada")+'</span></div><div class="periodo-fecha">'+fechaCorta(p)+'</div><h4>'+tipoNombre(p.tipo)+'</h4><div class="periodo-categoria">'+esc(p.categoria)+'</div><div class="periodo-participacion"><div><b>'+rs.length+'</b><span> / '+esperadas+' respuestas</span></div><b>'+porcentaje+'%</b></div><div class="barra-progreso"><span style="width:'+Math.min(100,porcentaje)+'%"></span></div><div class="periodo-acciones"><button type="button" class="btn btn-secundario" data-ver-periodo="'+p.id+'">Ver resultados</button>'+'<button type="button" class="btn btn-secundario" data-copiar-enlace="'+p.id+'">Copiar enlace</button>'+(abierta?'<button type="button" class="btn btn-cerrar" data-estado-periodo="'+p.id+'" data-nuevo-estado="cerrada">Deshabilitar</button>':'<button type="button" class="btn btn-abrir" data-estado-periodo="'+p.id+'" data-nuevo-estado="abierta">Habilitar</button>')+(perfil?.puedeEliminar?'<button type="button" class="btn btn-peligro" data-eliminar-periodo="'+p.id+'">Eliminar</button>':'')+'</div></article>'
 }
 function enlazarTarjetas(root){
  root.querySelectorAll("[data-estado-periodo]").forEach(b=>b.addEventListener("click",()=>cambiarEstadoPeriodo(b.dataset.estadoPeriodo,b.dataset.nuevoEstado)));

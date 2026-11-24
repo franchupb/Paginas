@@ -1,0 +1,20 @@
+name: ADIUR JavaScript syntax validation
+
+on:
+  push:
+    branches:
+      - "fix/adiur-testeos-encuestas-2026-11-24"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check-inline-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check JavaScript in ADIUR pages
+        run: node scripts/check-adiur-html.mjs

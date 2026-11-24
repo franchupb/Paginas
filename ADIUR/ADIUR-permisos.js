@@ -461,7 +461,8 @@
             jugadora: base.jugadora || null,
             puedeEditar: base.puedeEditar,
             puedeEliminar: base.puedeEliminar,
-            puedeGestionarUsuarios: base.puedeGestionarUsuarios
+            puedeGestionarUsuarios: base.puedeGestionarUsuarios,
+            puedeGestionarPruebas: ["admin", "cuerpo_tecnico"].includes(base.rol)
           });
           aplicarPermisos();
           // Si el layout ya existe, esta aplicación también cubre el menú.

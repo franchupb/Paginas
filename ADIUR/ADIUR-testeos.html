@@ -2430,6 +2430,10 @@ let esFran=rolADIUR==="admin";
 let esToto=rolADIUR==="cuerpo_tecnico";
 let esBianca=rolADIUR==="jugadora";
 let puedeEditar=["admin","coordinadora","cuerpo_tecnico"].includes(rolADIUR);
+let puedeGestionarPruebas=false;
+
+// Ocultar la gestión hasta validar el perfil real de Firebase.
+["accionesTecnico","accionesGestion"].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display="none";});
 
 function aplicarPerfilCentralTesteos(perfil){
   if(!perfil)return;
@@ -2440,15 +2444,18 @@ function aplicarPerfilCentralTesteos(perfil){
   esToto=rolADIUR==="cuerpo_tecnico";
   esBianca=rolADIUR==="jugadora";
   puedeEditar=["admin","coordinadora","cuerpo_tecnico"].includes(rolADIUR);
+  puedeGestionarPruebas=perfil.puedeGestionarPruebas===true;
 
   document.getElementById("nombreUsuario").textContent=perfil.nombre||usuarioGuardado||"Usuario";
   document.getElementById("avatarUsuario").textContent=(perfil.nombre||usuarioGuardado||"U").trim().charAt(0).toUpperCase();
   document.getElementById("rolUsuario").textContent=esFran?"Administrador":rolADIUR==="coordinadora"?"Coordinadora":esToto?"Cuerpo técnico":esBianca?"Jugadora":"Club ADIUR";
 
-  ["accionesTecnico","accionesGestion","accionesPeriodo"].forEach(id=>{
+  ["accionesTecnico","accionesGestion"].forEach(id=>{
     const el=document.getElementById(id);
-    if(el)el.style.display=puedeEditar?"":"none";
+    if(el)el.style.display=puedeGestionarPruebas?"":"none";
   });
+  const accionesPeriodo=document.getElementById("accionesPeriodo");
+  if(accionesPeriodo)accionesPeriodo.style.display=puedeEditar?"":"none";
   if(esBianca&&Array.isArray(perfil.categorias)&&perfil.categorias.length){
     const selector=document.getElementById("selectDivision");
     if(selector){
@@ -3294,7 +3301,7 @@ function renderizarEditor(){
           <small>${completas}/${total}</small>
         </button>
 
-        ${modoGestion&&puedeEditar?`
+        ${modoGestion&&puedeGestionarPruebas?`
           <button type="button" class="prueba-configurar" data-configurar="${escapeHTML(p.id)}" title="Configurar prueba">⚙</button>
           <button type="button" class="prueba-eliminar" data-eliminar="${p.indiceOriginal}" title="Eliminar prueba">×</button>
         `:""}
@@ -3375,7 +3382,7 @@ function renderizarEditor(){
         <strong>${escapeHTML(grupoSeleccionado)}</strong>
         <small>${cantidadIntentos===1?"Un resultado por jugadora.":`Configuración: ${cantidadIntentos} intentos por jugadora.`} Las comparaciones se consultan en Estadísticas.</small>
       </div>
-      ${modoGestion&&puedeEditar
+      ${modoGestion&&puedeGestionarPruebas
         ? `<button class="btn-secundario" type="button" onclick="alternarModoEliminar()">Terminar edición</button>`
         : ""}
     </div>
@@ -3538,7 +3545,7 @@ function renderizarCarga(){
 
 window.alternarModoEliminar=function(){
 
-  if(!puedeEditar)return;
+  if(!puedeGestionarPruebas)return;
 
   modoGestion=!modoGestion;
 
@@ -3555,7 +3562,7 @@ window.alternarModoEliminar=function(){
 
 window.abrirModalAgregarTest=function(){
 
-  if(!puedeEditar)return;
+  if(!puedeGestionarPruebas)return;
 
   document.getElementById("formAgregarTest").reset();
   document.getElementById("testEditId").value="";
@@ -3574,7 +3581,7 @@ window.abrirModalAgregarTest=function(){
 
 window.abrirModalConfigurarTest=function(id){
 
-  if(!puedeEditar)return;
+  if(!puedeGestionarPruebas)return;
 
   const prueba=columnasActuales.find(c=>c.id===id);
   if(!prueba)return;
@@ -3608,7 +3615,7 @@ window.cerrarModal=function(id){
 window.agregarNuevaColumnaTest=function(event){
 
   event.preventDefault();
-  if(!puedeEditar)return;
+  if(!puedeGestionarPruebas)return;
 
   const grupo=document.getElementById("categoriaTest").value;
   const nombre=document.getElementById("nombreTest").value.trim();
@@ -3676,7 +3683,7 @@ window.agregarNuevaColumnaTest=function(event){
 
 window.eliminarColumna=function(indice){
 
-  if(!puedeEditar)return;
+  if(!puedeGestionarPruebas)return;
 
   const columna=columnasActuales[indice];
 
