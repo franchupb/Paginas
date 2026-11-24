@@ -76,6 +76,7 @@ try {
 
   console.log("Test: encuestas públicas y autenticadas");
   await assertSucceeds(getDoc(doc(player16, "encuestas_periodos", "abierta")));
+  await assertSucceeds(getDoc(doc(coach14, "encuestas_periodos", "abierta")));
   await assertSucceeds(getDoc(doc(anonymous, "encuestas_periodos", "abierta")));
   await assertFails(getDoc(doc(anonymous, "encuestas_periodos", "cerrada")));
   await assertSucceeds(setDoc(doc(player16, "encuestas_respuestas", "respuesta-propia"), {
@@ -85,6 +86,9 @@ try {
     uid: "coach16", categoria: "Sub 16", periodoId: "abierta", respuesta: "sí"
   }));
   await assertSucceeds(setDoc(doc(anonymous, "encuestas_respuestas", "respuesta-publica"), {
+    uid: null, categoria: "Sub 16", periodoId: "abierta", respuesta: "sí"
+  }));
+  await assertSucceeds(setDoc(doc(coach14, "encuestas_respuestas", "respuesta-publica-con-sesion"), {
     uid: null, categoria: "Sub 16", periodoId: "abierta", respuesta: "sí"
   }));
   await assertFails(setDoc(doc(anonymous, "encuestas_respuestas", "respuesta-cerrada"), {
