@@ -2531,12 +2531,13 @@ ajustarSidebarPorPantalla();
    CLAVES DE ALMACENAMIENTO Y NUBE
 ===================================================== */
 
-const CLAVE_JUGADORAS = "jugadorasTORITO";
-const CLAVE_DIAS_SEMANA = "diasEntrenamientoSemanaTORITO";
-const CLAVE_DIAS_SIN_ENTRENO = "diasSinEntrenamientoTORITO";
-const CLAVE_CATEGORIA = "categoriaAsistenciaSeleccionadaTORITO";
-const CLAVE_JUGADORA_SEGUIMIENTO = "jugadoraSeguimientoAsistenciaTORITO";
-const CLAVE_ORDEN_LISTA = "ordenAsistenciaJugadorasTORITO";
+const UID_ASISTENCIA_TORITO = localStorage.getItem("uidTORITO") || "sin-uid";
+const CLAVE_JUGADORAS = "jugadorasTORITO_" + UID_ASISTENCIA_TORITO;
+const CLAVE_DIAS_SEMANA = "diasEntrenamientoSemanaTORITO_" + UID_ASISTENCIA_TORITO;
+const CLAVE_DIAS_SIN_ENTRENO = "diasSinEntrenamientoTORITO_" + UID_ASISTENCIA_TORITO;
+const CLAVE_CATEGORIA = "categoriaAsistenciaSeleccionadaTORITO_" + UID_ASISTENCIA_TORITO;
+const CLAVE_JUGADORA_SEGUIMIENTO = "jugadoraSeguimientoAsistenciaTORITO_" + UID_ASISTENCIA_TORITO;
+const CLAVE_ORDEN_LISTA = "ordenAsistenciaJugadorasTORITO_" + UID_ASISTENCIA_TORITO;
 
 const DIAS_SEMANA = [
   { valor: 1, nombre: "Lunes" },
@@ -2643,6 +2644,7 @@ onSnapshot(query(
   });
   if (listaNube.length > 0) {
     jugadoras = procesarListaJugadoras(listaNube);
+    try { localStorage.setItem(CLAVE_JUGADORAS, JSON.stringify(listaNube)); } catch (_) {}
   } else {
     jugadoras = cargarJugadorasLocales();
   }
@@ -3106,7 +3108,7 @@ window.guardarTodoManual = async function() {
       if (indicador) indicador.textContent = "Modificá y tocá \"Guardar asistencia\"";
     }, 3500);
 
-    alert("¡Asistencia guardada correctamente en la nube para todas las categorías (Sub 10, Sub 12, Sub 14, Sub 16 y Primera)!");
+    alert("¡Asistencia guardada en la nube para las categorías autorizadas de tu perfil!");
   } catch (error) {
     console.error("Error al guardar manualmente:", error);
     alert("Hubo un error al guardar. Verificá tu conexión a internet.");
