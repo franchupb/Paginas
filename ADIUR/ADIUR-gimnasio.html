@@ -2789,7 +2789,7 @@ const firebaseConfig = {
         if (!clave.startsWith(prefijoIndividual)) return;
         const idOrigen = clave.slice(prefijoIndividual.length);
         const normalizado = normalizarIdentidadNube(idOrigen);
-        const jugadora = jugadoras.find(item => {
+        const candidatas = jugadoras.filter(item => {
           const alias = [
             item.id, item.usuario, item.username, item.nombreUsuario, item.login,
             nombreJugadoraNube(item)
@@ -2797,6 +2797,7 @@ const firebaseConfig = {
           return alias.includes(normalizado) &&
             normalizarIdentidadNube(item.categoria || item.division) === normalizarIdentidadNube(categoria);
         });
+        const jugadora = candidatas.length === 1 ? candidatas[0] : null;
         const id = jugadora ? idJugadoraNube(jugadora) : idOrigen;
         const claveDocumento = idCategoria(categoria) + "__" + idCategoria(id);
         if (!individuales.has(claveDocumento)) {
