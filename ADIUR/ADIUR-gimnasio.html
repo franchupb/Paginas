@@ -2733,7 +2733,7 @@ const firebaseConfig = {
     }).filter(([, datosCategoria]) => Object.keys(datosCategoria).length);
     colaGuardado = colaGuardado.catch(() => {}).then(async () => {
       for (const [categoria, datosCategoria] of entradas) {
-        await setDoc(doc(dbCloud, "gimnasioADIUR", idCategoria(categoria)), {
+        await setDoc(doc(dbCloud, "gimnasioADIUR_categorias", idCategoria(categoria)), {
           categoria,
           tipo: "categoria",
           datos: datosCategoria,
