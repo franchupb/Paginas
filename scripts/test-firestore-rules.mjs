@@ -14,12 +14,14 @@ try {
     await setDoc(doc(db, "usuarios", "coordinadora"), { activo: true, rol: "coordinadora", categorias });
     await setDoc(doc(db, "usuarios", "coach16"), { activo: true, rol: "cuerpo_tecnico", categorias: ["Sub 16"] });
     await setDoc(doc(db, "usuarios", "coach14"), { activo: true, rol: "cuerpo_tecnico", categorias: ["Sub 14"] });
-    await setDoc(doc(db, "usuarios", "player16"), { activo: true, rol: "jugadora", categorias: ["Sub 16"], jugadora: "Jugadora Prueba" });
+    await setDoc(doc(db, "usuarios", "player16"), { activo: true, rol: "jugadora", categorias: ["Sub 16"], jugadora: "Jugadora Prueba", jugadoraId: "j16" });
 
     await setDoc(doc(db, "planificacionADIUR_categorias", "sub_16"), { categoria: "Sub 16", datos: { semana: 1 } });
     await setDoc(doc(db, "planificacionADIUR_categorias", "primera"), { categoria: "Primera", datos: { semana: 2 } });
     await setDoc(doc(db, "planificacionADIUR", "principal"), { datos: { "Sub 16": {} } });
     await setDoc(doc(db, "gimnasioADIUR_categorias", "sub_16"), { categoria: "Sub 16", tipo: "categoria", datos: {} });
+    await setDoc(doc(db, "gimnasioADIUR_individuales", "sub_16__j16"), { categoria: "Sub 16", tipo: "individual", jugadoraId: "j16", jugadora: "Jugadora Prueba", datos: { rutina: [] } });
+    await setDoc(doc(db, "gimnasioADIUR_individuales", "sub_16__j17"), { categoria: "Sub 16", tipo: "individual", jugadoraId: "j17", jugadora: "Otra Jugadora", datos: { rutina: [] } });
     await setDoc(doc(db, "calculadoraADIUR_categorias", "sub_16"), { categoria: "Sub 16", plans: {} });
     await setDoc(doc(db, "calendarioADIUR", "sub_16"), { categoria: "Sub 16", actividades: {} });
     await setDoc(doc(db, "asistenciaADIUR", "sub_16_2026-11-23"), { categoria: "Sub 16", fecha: "2026-11-23", asistencias: {} });
@@ -64,6 +66,13 @@ try {
   await assertFails(getDoc(doc(player16, "jugadoras", "j1")));
   await assertFails(setDoc(doc(player16, "jugadoras", "jugadora_nueva"), { categoria: "Sub 16", nombre: "Otra" }));
   await assertSucceeds(getDoc(doc(player16, "gimnasioADIUR_categorias", "sub_16")));
+  await assertSucceeds(getDoc(doc(player16, "gimnasioADIUR_individuales", "sub_16__j16")));
+  await assertFails(getDoc(doc(player16, "gimnasioADIUR_individuales", "sub_16__j17")));
+  await assertSucceeds(getDoc(doc(coach16, "gimnasioADIUR_individuales", "sub_16__j17")));
+  await assertFails(getDoc(doc(coach14, "gimnasioADIUR_individuales", "sub_16__j17")));
+  await assertSucceeds(getDocs(query(collection(player16, "gimnasioADIUR_individuales"), where("categoria", "in", ["Sub 16"]), where("jugadoraId", "==", "j16"))));
+  await assertFails(getDocs(query(collection(player16, "gimnasioADIUR_individuales"), where("categoria", "in", ["Sub 16"]))));
+  await assertFails(setDoc(doc(player16, "gimnasioADIUR_individuales", "sub_16__j16"), { categoria: "Sub 16", jugadoraId: "j16", jugadora: "Jugadora Prueba", datos: { rutina: ["cambio"] } }));
   await assertSucceeds(getDoc(doc(coach16, "asistenciaADIUR", "sub_16_2026-11-23")));
   await assertFails(getDoc(doc(coach14, "asistenciaADIUR", "sub_16_2026-11-23")));
   await assertSucceeds(getDocs(query(collection(coach16, "configuracionAsistenciaADIUR"), where("categoria", "==", "Sub 16"))));
