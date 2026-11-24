@@ -1334,7 +1334,7 @@ tbody tr:hover td.fija-izquierda {
 
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, collection, getDocs, query, where, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
    CONEXIÓN A FIRESTORE (TORITO)
@@ -1374,8 +1374,66 @@ if (rolPerfilTORITO === "admin" && !categoriasAutorizadasTORITO.length) {
   categoriasAutorizadasTORITO = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
 }
 const categoriasAutorizadasSetTORITO = new Set(categoriasAutorizadasTORITO);
+const puedeEditarEstadisticasTORITO = localStorage.getItem("puedeEditarTORITO") === "true";
 
 let cacheJugadorasNube = [];
+const slugEstadistica = value => String(value).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"_");
+const claveEstadistica = (categoria, sufijo) => "estadisticasTORITO_" + uidPerfilTORITO + "_" + categoria.replace(/\s+/g, "_") + sufijo;
+
+window.sincronizarEstadisticasNube = async payload => {
+  if (!puedeEditarEstadisticasTORITO) throw new Error("El perfil de TORITO es de solo lectura.");
+  const categoria = payload?.categoria;
+  if (!categoriasAutorizadasSetTORITO.has(categoria)) throw new Error("Categoría no autorizada.");
+  const referencia = doc(db, "torito_estadisticas_categorias", slugEstadistica(categoria));
+  const existente = await getDoc(referencia);
+  const actual = existente.exists() ? existente.data() : { categoria, jornadas: [], partidos: {} };
+  const nuevo = { ...actual, categoria };
+  if (Array.isArray(payload.jornadas)) nuevo.jornadas = payload.jornadas;
+  if (payload.competencia) {
+    nuevo.partidos = { ...(actual.partidos || {}), [payload.competencia]: payload.datos || {} };
+  }
+  await setDoc(referencia, { ...nuevo, actualizado: serverTimestamp() }, { merge:true });
+};
+
+for (const categoria of categoriasAutorizadasTORITO) {
+  onSnapshot(doc(db, "torito_estadisticas_categorias", slugEstadistica(categoria)), async snapshot => {
+    if (!snapshot.exists()) {
+      if (rolPerfilTORITO === "admin" && puedeEditarEstadisticasTORITO) {
+        const prefijo = "estadisticasTORITO_" + uidPerfilTORITO + "_" + categoria.replace(/\s+/g, "_");
+        const jornadasRaw = localStorage.getItem(prefijo + "_jornadas");
+        const partidos = {};
+        const opciones = Array.from(document.getElementById("filtroCompetencia")?.options || []);
+        opciones.forEach(option => {
+          const competencia = option.value;
+          if (!competencia) return;
+          const raw = localStorage.getItem(prefijo + "_" + competencia.replace(/\s+/g, "_") + "_partidos");
+          if (raw) { try { partidos[competencia] = JSON.parse(raw); } catch (_) {} }
+        });
+        if (jornadasRaw || Object.keys(partidos).length) {
+          let jornadas = [];
+          try { jornadas = jornadasRaw ? JSON.parse(jornadasRaw) : []; } catch (_) {}
+          await setDoc(doc(db, "torito_estadisticas_categorias", slugEstadistica(categoria)), {
+            categoria, jornadas, partidos, migradoDesde: "localStorage", migradoEn: serverTimestamp()
+          }, { merge:false });
+        }
+      }
+      return;
+    }
+    const data = snapshot.data();
+    if (Array.isArray(data.jornadas)) {
+      localStorage.setItem(claveEstadistica(categoria, "_jornadas"), JSON.stringify(data.jornadas));
+    }
+    Object.entries(data.partidos || {}).forEach(([competencia, registros]) => {
+      localStorage.setItem(claveEstadistica(categoria, "_" + competencia.replace(/\s+/g, "_") + "_partidos"), JSON.stringify(registros || {}));
+    });
+    window.dispatchEvent(new CustomEvent("torito-estadisticas-nube-actualizadas"));
+    if (typeof window.renderizarEstadisticas === "function" &&
+        document.getElementById("filtroDivision")?.value === categoria) {
+      window.renderizarEstadisticas();
+    }
+  }, error => console.error("No se pudo sincronizar la tabla de estadísticas TORITO:", error));
+}
+
 
 const NOMBRES_MESES = {
   "01": "Enero", "02": "Febrero", "03": "Marzo", "04": "Abril",
@@ -2470,8 +2528,12 @@ function obtenerJornadasActuales() {
 
 function guardarJornadasActuales(jornadas) {
   const division = document.getElementById("filtroDivision").value;
+  if (!puedeEditarEstadisticasTORITO || !categoriasAutorizadasSetTORITO.has(division)) return;
   const clave = obtenerClaveDatosEstadisticas(division) + "_jornadas";
   localStorage.setItem(clave, JSON.stringify(jornadas));
+  if (typeof window.sincronizarEstadisticasNube === "function") {
+    window.sincronizarEstadisticasNube({ categoria: division, jornadas }).catch(error => console.error("No se pudieron guardar las jornadas en la nube:", error));
+  }
 }
 
 function obtenerDatosPartidosJugadoras() {
@@ -2491,8 +2553,12 @@ function obtenerDatosPartidosJugadoras() {
 function guardarDatosPartidosJugadoras(datos) {
   const division = document.getElementById("filtroDivision").value;
   const competencia = document.getElementById("filtroCompetencia").value;
+  if (!puedeEditarEstadisticasTORITO || !categoriasAutorizadasSetTORITO.has(division)) return;
   const clave = obtenerClaveDatosEstadisticas(division) + "_" + competencia.replace(/\s+/g, '_') + "_partidos";
   localStorage.setItem(clave, JSON.stringify(datos));
+  if (typeof window.sincronizarEstadisticasNube === "function") {
+    window.sincronizarEstadisticasNube({ categoria: division, competencia, datos }).catch(error => console.error("No se pudieron guardar las estadísticas en la nube:", error));
+  }
 }
 
 /* =====================================================
