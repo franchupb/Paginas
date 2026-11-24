@@ -227,7 +227,12 @@ service cloud.firestore {
       allow create: if activeUser() &&
         profile().rol == 'jugadora' &&
         request.resource.data.uid == request.auth.uid &&
-        hasCategoryPermission(categoryOf(request.resource.data));
+        hasCategoryPermission(categoryOf(request.resource.data)) &&
+        request.resource.data.periodoId is string &&
+        periodIsOpen(
+          request.resource.data.periodoId,
+          categoryOf(request.resource.data)
+        );
 
       // Los enlaces públicos solo aceptan respuestas para un período abierto.
       allow create: if request.resource.data.uid == null &&
