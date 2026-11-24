@@ -2915,8 +2915,8 @@ function idDocumentoPizarra(division){
 window.firebasePizarraReady = (async()=>{
   const [{initializeApp,getApps},{getFirestore,doc,getDoc,setDoc,serverTimestamp}] =
     await Promise.all([
-      import("https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js"),
-      import("https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js")
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js")
     ]);
 
   const firebaseConfig = {
