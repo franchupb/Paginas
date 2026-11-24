@@ -488,7 +488,10 @@
             puedeGestionarUsuarios: base.puedeGestionarUsuarios,
             puedeGestionarPruebas: ["admin", "cuerpo_tecnico"].includes(base.rol)
           });
-          if (!aplicarPermisos()) return;
+          if (!aplicarPermisos()) {
+            window.ADIUR_PERMISOS = null;
+            return;
+          }
           // Si el layout ya existe, esta aplicación también cubre el menú.
           // Si todavía no existe, se volverá a aplicar una sola vez al terminar.
           permisosAplicadosTrasLayout = !!window.ADIUR_LAYOUT_LISTO;
