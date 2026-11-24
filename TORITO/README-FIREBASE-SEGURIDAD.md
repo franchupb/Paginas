@@ -30,7 +30,28 @@ Esta rama prepara la autenticación de TORITO con Firebase Authentication y perf
    - `categorias: ["Primera"]`
    - `puedeEditar: false`, `puedeEliminar: false`, `puedeGestionarUsuarios: false`
 
-No pegues contraseñas, tokens ni claves privadas en GitHub o en el chat. Si las credenciales anteriores estaban escritas en un HTML publicado, cambialas en los servicios donde se reutilicen.
+No pegues contraseñas, tokens ni claves privadas en GitHub o en el chat. Si la contraseña anterior estuvo escrita en un HTML publicado, cambiala antes de volver a habilitar el acceso. El inicio de sesión ya no valida contraseñas desde el HTML: usa Firebase Authentication y genera el correo técnico `<usuario>@torito-56078.firebaseapp.com`.
+
+## Migraciones y publicación
+
+- La migración de planificación y gimnasio copia los datos del documento histórico `principal` a documentos separados, sin eliminar ni modificar el original.
+- Calendario, calculadora, encuestas, estadísticas e informes conservan sus claves antiguas y usan claves locales nuevas por UID. Cuando Fran inicia sesión, las páginas pueden copiar los datos locales antiguos a Firestore si el documento de destino todavía no existe.
+- Las reglas de `firestore.rules` son una propuesta restrictiva probada en el emulador; todavía no se desplegaron en el proyecto real.
+- No desplegar las reglas hasta comprobar que todos los documentos reales tienen el campo `categoria` o `division` requerido y que las consultas de todas las páginas usan los filtros correspondientes.
+- Los perfiles de Authentication y los documentos `usuarios/{UID}` deben crearse en Firebase Console con los UID reales. No se deben guardar contraseñas ni permitir que cada usuario modifique su propio rol.
+
+## Colecciones separadas por categoría
+
+Las páginas nuevas guardan datos en documentos independientes, identificados por categoría:
+
+- `torito_planificacion_categorias`
+- `torito_gimnasio_categorias`
+- `torito_calendario_categorias`
+- `torito_calculadora_categorias`
+- `torito_encuestas_categorias`
+- `torito_estadisticas_categorias`
+
+Las páginas de jugadoras, partidos, asistencia, pruebas, tiempos, informes, lesiones y pizarra consultan documentos con `categoria` o `division` y filtran las consultas por las categorías del perfil.
 
 ## Datos que todavía requieren migración por categoría
 
