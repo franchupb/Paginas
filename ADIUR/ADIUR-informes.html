@@ -6512,7 +6512,7 @@ window.addEventListener("storage",evento=>{
   const categoriasPermitidasInformes = perfilInformes.categorias || [];
   const consultaJugadorasInformes = await window.crearConsultaCategoriasADIUR(collection(dbInformes, "jugadoras"), query, where, "categoria");
   const consultaPartidosInformes = await window.crearConsultaCategoriasADIUR(collection(dbInformes, "partidos"), query, where, "categoria");
-  const consultaRegistrosInformes = await window.crearConsultaCategoriasADIUR(collection(dbInformes, "informes_partidos"), query, where, "categoria");
+  const consultaRegistrosInformes = await window.crearConsultaCategoriasADIUR(collection(dbInformes, "informes_partidos"), query, where, "division");
   // ESCUCHAR LA COLECCIÓN DE JUGADORAS
 
   onSnapshot(
