@@ -1193,7 +1193,7 @@ async function firebaseContext(){
   const firestore=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
   return {db:modulo.db,user,perfil,firestore};
  })();
- return firebaseContextPromise;
+ try{return await firebaseContextPromise;}catch(error){firebaseContextPromise=null;throw error;}
 }
 function estadoNube(texto,error){
  var el=$("cloudStatus");if(el){el.textContent=texto;el.style.color=error?"#b42318":"#687078";}
@@ -1202,8 +1202,8 @@ function aplicarEstadoPizarra(datos){
  if(!datos||!Array.isArray(datos.players)||!Array.isArray(datos.drawings))throw new Error("El archivo de pizarra no tiene un formato válido.");
  players=clone(datos.players);
  drawings=clone(datos.drawings);
- if(formations[$("formationOwn").value]&&datos.formationOwn) $("formationOwn").value=datos.formationOwn;
- if(formations[$("formationRival").value]&&datos.formationRival) $("formationRival").value=datos.formationRival;
+ if(formations[datos.formationOwn]) $("formationOwn").value=datos.formationOwn;
+ if(formations[datos.formationRival]) $("formationRival").value=datos.formationRival;
  selected=null;history=[];future=[];renderPlayers();paint();syncHistory();
 }
 async function guardarPizarraNube(){
