@@ -1156,10 +1156,10 @@ body.immersive .board-studio>.controlbar>.immersive-launch{
 (function(){
 "use strict";
 var $=function(id){return document.getElementById(id);};
-var savedUser=localStorage.getItem("usuarioADIUR");
-if(!savedUser){location.href="ADIUR-Loing.html";return;}
+var savedUser=localStorage.getItem("usuarioADIUR")||"Usuario";
 var role=localStorage.getItem("rolADIUR")||"";
-if(["admin","coordinadora","cuerpo_tecnico","jugadora"].indexOf(role)===-1){location.href="ADIUR-Pagina Principal.html";return;}
+// El acceso real lo valida ADIUR-permisos.js; esta página no debe expulsar
+// una sesión válida por faltar los datos locales de compatibilidad.
 var userName=localStorage.getItem("nombreUsuarioADIUR")||savedUser;
 $("nombreUsuario").textContent=userName;
 $("avatarUsuario").textContent=(userName.trim().charAt(0)||"U").toUpperCase();
