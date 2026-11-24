@@ -6342,15 +6342,13 @@ window.addEventListener("storage",evento=>{
 
 <script type="module">
 
-  import {
-    initializeApp
-  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
   import {
     getFirestore,
     collection,
     onSnapshot
-  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
   // MISMA CONFIGURACIÓN QUE JUGADORAS.HTML
@@ -6368,7 +6366,11 @@ window.addEventListener("storage",evento=>{
 
   // INICIALIZAR FIREBASE
 
-  const app = initializeApp(firebaseConfig);
+  const appExistente = getApps().find(item => item.name === "[DEFAULT]");
+  if (appExistente && appExistente.options.projectId !== firebaseConfig.projectId) {
+    throw new Error("La aplicación Firebase predeterminada no pertenece a TORITO.");
+  }
+  const app = appExistente || initializeApp(firebaseConfig);
   const dbInformes = getFirestore(app);
 
 
