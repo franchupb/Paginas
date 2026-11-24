@@ -128,6 +128,12 @@ try {
   await assertSucceeds(setDoc(doc(player16, "encuestas_respuestas", "respuesta-propia"), {
     uid: "player16", categoria: "Sub 16", periodoId: "abierta", respuesta: "sí"
   }));
+  await assertFails(setDoc(doc(player16, "encuestas_respuestas", "respuesta-propia-periodo-cerrado"), {
+    uid: "player16", categoria: "Sub 16", periodoId: "cerrada", respuesta: "no"
+  }));
+  await assertFails(setDoc(doc(player16, "encuestas_respuestas", "respuesta-propia-periodo-inexistente"), {
+    uid: "player16", categoria: "Sub 16", periodoId: "no-existe", respuesta: "no"
+  }));
   await assertFails(setDoc(doc(player16, "encuestas_respuestas", "respuesta-ajena"), {
     uid: "coach16", categoria: "Sub 16", periodoId: "abierta", respuesta: "sí"
   }));
