@@ -5415,8 +5415,10 @@ function cargarPartidos() {
 
 // Une informes locales y remotos sin borrar documentos existentes de Firestore.
 window.recibirInformesFirebase = function(listaNube) {
-  const locales = Array.isArray(partidos) ? partidos.map(normalizarPartidoGuardado) : [];
-  const remotos = Array.isArray(listaNube) ? listaNube.map(normalizarPartidoGuardado) : [];
+  const categorias = window.ADIUR_PERMISOS?.categorias || [];
+  const pertenece = partido => categorias.includes(partido?.categoria || partido?.division);
+  const locales = (Array.isArray(partidos) ? partidos.map(normalizarPartidoGuardado) : []).filter(pertenece);
+  const remotos = (Array.isArray(listaNube) ? listaNube.map(normalizarPartidoGuardado) : []).filter(pertenece);
   const mapa = new Map(remotos.map(p => [String(p.id), p]));
   const pendientes = [];
 
