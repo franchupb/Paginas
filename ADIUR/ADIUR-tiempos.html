@@ -1062,7 +1062,7 @@ botonMenu.addEventListener("click",()=>{sidebar.classList.toggle("oculto");actua
 fondoSidebar.addEventListener("click",cerrarMenu);
 window.addEventListener("resize",ajustarMenu);
 document.querySelectorAll(".titulo-grupo[data-grupo]").forEach(b=>b.addEventListener("click",()=>{const g=$(b.dataset.grupo);if(!g)return;g.classList.toggle("cerrado");b.setAttribute("aria-expanded",String(!g.classList.contains("cerrado")));}));
-$("cerrarSesion").addEventListener("click",e=>{e.preventDefault();if(confirm("¿Querés cerrar la sesión de ADIUR?"))window.location.href="ADIUR-Loing.html";});
+$("cerrarSesion").addEventListener("click",e=>{e.preventDefault();if(confirm("¿Querés cerrar la sesión de ADIUR?"))window.cerrarSesionADIURCentral(e);});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){cerrarModal();cerrarPerfil();if(esMovil())cerrarMenu();}});
 
 window.addEventListener("storage",e=>{
