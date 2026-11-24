@@ -1835,7 +1835,7 @@ async function obtenerTodosInformesExternos() {
 
   if (nubeActiva && db) {
     try {
-      const snap = await getDocs(query(collection(db,"torito_informes"),where("categoria","in",categoriasAutorizadasTORITO)));
+      const snap = await getDocs(query(collection(db,"torito_informes"),where("division","in",categoriasAutorizadasTORITO)));
       snap.forEach(d => informes.push({ id: d.id, ...d.data() }));
     } catch (e) {}
   }
