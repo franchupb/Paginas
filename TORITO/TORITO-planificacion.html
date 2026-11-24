@@ -2547,8 +2547,8 @@ button:disabled {
 
 window.firebasePlanificacionReady = (async () => {
 
-  const { initializeApp } = await import(
-    "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js"
+  const { initializeApp, getApps } = await import(
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
   );
 
   const {
@@ -2558,7 +2558,7 @@ window.firebasePlanificacionReady = (async () => {
     setDoc,
     serverTimestamp
   } = await import(
-    "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js"
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
   );
 
   const firebaseConfig = {
@@ -2571,7 +2571,11 @@ window.firebasePlanificacionReady = (async () => {
     measurementId: "G-32VFQHWP5Y"
   };
 
-  const app = initializeApp(firebaseConfig);
+  const appExistente = getApps().find(item => item.name === "[DEFAULT]");
+  if (appExistente && appExistente.options.projectId !== firebaseConfig.projectId) {
+    throw new Error("La aplicación Firebase predeterminada no pertenece a TORITO.");
+  }
+  const app = appExistente || initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
   const referencia = doc(db,"torito_planificacionTORITO",
