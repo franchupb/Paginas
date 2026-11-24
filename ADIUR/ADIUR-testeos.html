@@ -3382,7 +3382,7 @@ function renderizarEditor(){
         <strong>${escapeHTML(grupoSeleccionado)}</strong>
         <small>${cantidadIntentos===1?"Un resultado por jugadora.":`Configuración: ${cantidadIntentos} intentos por jugadora.`} Las comparaciones se consultan en Estadísticas.</small>
       </div>
-      ${modoGestion&&puedeEditar
+      ${modoGestion&&puedeGestionarPruebas
         ? `<button class="btn-secundario" type="button" onclick="alternarModoEliminar()">Terminar edición</button>`
         : ""}
     </div>
