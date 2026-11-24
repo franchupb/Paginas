@@ -4448,7 +4448,7 @@ function cargarPlantelPropio() {
   }
 
   // Respaldo local por si Firebase todavía no cargó o no hay conexión.
-  const datosLocales = leerJSON("jugadorasTORITO", null) || leerJSON(CLAVE_PLANTEL, []);
+  const datosLocales = leerJSON(CLAVE_PLANTEL, []);
 
   return (Array.isArray(datosLocales) ? datosLocales : [])
     .map((j, i) => normalizarJugador(j, "propio", i))
@@ -5312,7 +5312,7 @@ function cargarPartidos() {
   const actuales=leerJSON(CLAVE_PARTIDOS,null);
 
   if (Array.isArray(actuales)) {
-    partidos=actuales.map(normalizarPartidoGuardado);
+    partidos=actuales.map(normalizarPartidoGuardado).filter(p=>CATEGORIAS_INFORMES_TORITO.includes(p.division));
     return;
   }
 
@@ -5330,7 +5330,7 @@ function cargarPartidos() {
         golesFavor:p.golesFavor??(resultado?Number(resultado[1]):null),
         golesContra:p.golesContra??(resultado?Number(resultado[2]):null)
       });
-    });
+    }).filter(p=>CATEGORIAS_INFORMES_TORITO.includes(p.division));
     guardarJSON(CLAVE_PARTIDOS,partidos);
   } else {
     partidos=[];
