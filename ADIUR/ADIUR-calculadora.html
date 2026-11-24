@@ -3047,13 +3047,7 @@ function cerrarSesion(evento) {
     return;
   }
 
-  try {
-    localStorage.removeItem("usuarioADIUR");
-  } catch (error) {
-    console.warn("No se pudo limpiar la sesión local.", error);
-  }
-
-  window.location.href = "ADIUR-Loing.html";
+  window.cerrarSesionADIURCentral(evento);
 }
 
 /* =====================================================
