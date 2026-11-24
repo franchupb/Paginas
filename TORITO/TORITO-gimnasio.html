@@ -2762,8 +2762,10 @@ const semanasSelect = $("semanas");
 const tituloInput = $("tituloRutina");
 
 let usuario = leerUsuario();
-let esJugadora = detectarRol(usuario) === "jugadora";
-let esStaff = !esJugadora;
+const rolPerfilTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+const puedeEditarPerfilTORITO = localStorage.getItem("puedeEditarTORITO") === "true";
+let esJugadora = rolPerfilTORITO === "jugadora" || detectarRol(usuario) === "jugadora";
+let esStaff = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolPerfilTORITO) && puedeEditarPerfilTORITO;
 
 let jugadoraSesion = null;
 let db = cargarDB();
@@ -4974,8 +4976,8 @@ function inicializar() {
 
   // Reconocer el perfil inmediatamente.
   usuario = leerUsuario();
-  esJugadora = detectarRol(usuario) === "jugadora";
-  esStaff = !esJugadora;
+  esJugadora = rolPerfilTORITO === "jugadora" || detectarRol(usuario) === "jugadora";
+  esStaff = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolPerfilTORITO) && puedeEditarPerfilTORITO;
 
   $("nombrePerfil").textContent = nombreSesion(usuario);
   $("avatarPerfil").textContent =
