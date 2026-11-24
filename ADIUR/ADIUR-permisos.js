@@ -67,6 +67,7 @@
     "adiur-gimnasio.html",
     "adiur-partidos.html",
     "adiur-testeos.html",
+    "adiur-pruebas.html",
     "adiur-encuestas.html",
     "adiur-estadisticas.html"
   ]);
