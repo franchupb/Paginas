@@ -1,6 +1,6 @@
 {
   "firestore": {
-    "rules": "ADIUR/firestore.rules"
+    "rules": "../ADIUR/firestore.rules"
   },
   "emulators": {
     "firestore": {
