@@ -1396,8 +1396,8 @@ const perfilPagina = await window.esperarPermisosADIUR();
 if (!perfilPagina) throw new Error("No se pudieron validar los permisos de ADIUR.");
 const categoriasPermitidasPagina = Array.isArray(perfilPagina.categorias) ? perfilPagina.categorias : [];
 const perteneceCategoriaPagina = valor => categoriasPermitidasPagina.some(c =>
-  String(c).normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().replace(/\\s+/g, "") ===
-  String(valor || "").normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().replace(/\\s+/g, "")
+  String(c).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "") ===
+  String(valor || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "")
 );
 
 let cachePartidosNube = [];
