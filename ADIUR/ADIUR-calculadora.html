@@ -3464,7 +3464,7 @@ window.guardarCalculadoraNube = function() {
         volume,
         actualizadoEn: new Date().toISOString()
       };
-      await setDoc(doc(db, "calculadoraADIUR", idCategoriaCalculadora(categoria)), payload);
+      await setDoc(doc(db, "calculadoraADIUR_categorias", idCategoriaCalculadora(categoria)), payload);
     }
   });
   cola.catch(error=>console.error("No se pudo guardar la calculadora en Firestore:",error));
