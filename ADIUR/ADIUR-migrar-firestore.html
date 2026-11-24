@@ -82,6 +82,18 @@ async function migrarColeccion(origenNombre,destinoNombre,transformar){
   const previo=existentes.get(item.id);
   if(previo?.migradoDesde==="principal"){omitidos++;continue;}
   const contenido=previo?mezclarConPrioridadExistente(item.datos,previo):item.datos;
+  // Nunca dejar rutinas individuales dentro del documento general compartido.
+  if(destinoNombre==="gimnasioADIUR_categorias"&&contenido.datos&&typeof contenido.datos==="object"){
+   contenido.datos=Object.fromEntries(Object.entries(contenido.datos).filter(([clave])=>!clave.startsWith("INDIVIDUAL::")));
+  }
+  // Los campos que determinan la identidad del documento individual siempre
+  // se toman de la vinculación verificada, no de metadatos anteriores.
+  if(destinoNombre==="gimnasioADIUR_individuales"){
+   contenido.categoria=item.datos.categoria;
+   contenido.jugadoraId=item.datos.jugadoraId;
+   contenido.jugadora=item.datos.jugadora;
+   contenido.tipo="individual";
+  }
   const final={...contenido,migradoDesde:"principal",migradoEn:serverTimestamp()};
   await setDoc(ref,final);
   existentes.set(item.id,final);
