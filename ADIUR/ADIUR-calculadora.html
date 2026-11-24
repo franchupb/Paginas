@@ -3474,7 +3474,7 @@ window.guardarCalculadoraNube = function() {
 (async()=>{
   try{
     if (!categoriasPermitidasCalculadora.length) throw new Error("No hay categorías autorizadas para la calculadora.");
-    const consulta = query(collection(db, "calculadoraADIUR"), where("categoria", "in", categoriasPermitidasCalculadora));
+    const consulta = query(collection(db, "calculadoraADIUR_categorias"), where("categoria", "in", categoriasPermitidasCalculadora));
     const snap=await getDocs(consulta);
     const nube={plans:{},trainingDays:{},volume:""};
     snap.forEach(d=>{
