@@ -2607,7 +2607,7 @@ window.firebasePlanificacionReady = (async () => {
     const entradas = Object.entries(copia).filter(([categoria]) => categorias.includes(categoria));
     colaGuardado = colaGuardado.catch(() => {}).then(async () => {
       for (const [categoria, semanas] of entradas) {
-        await setDoc(doc(db, "planificacionADIUR", idCategoria(categoria)), {
+        await setDoc(doc(db, "planificacionADIUR_categorias", idCategoria(categoria)), {
           categoria,
           datos: semanas,
           actualizado: serverTimestamp()
