@@ -43,6 +43,8 @@ try {
     await setDoc(doc(db, "torito_calendario_categorias", "primera"), { categoria: "Primera", actividades: {} });
     await setDoc(doc(db, "torito_calculadora_categorias", "primera"), { categoria: "Primera", planes: {} });
     await setDoc(doc(db, "torito_encuestas_categorias", "primera"), { categoria: "Primera", dias: [] });
+    await setDoc(doc(db, "torito_estadisticas_categorias", "primera"), { categoria: "Primera", jornadas: [], partidos: {} });
+    await setDoc(doc(db, "torito_estadisticas_categorias", "sub_16"), { categoria: "Sub 16", jornadas: [], partidos: {} });
     await setDoc(doc(db, "torito_planificacionTORITO", "principal"), { datos: { "Primera": {}, "Sub 16": {} } });
     await setDoc(doc(db, "torito_gimnasioTORITO", "principal"), { datos: { "Primera": {}, "Sub 16": {} } });
     await setDoc(doc(db, "torito_plantel", "jugadoras"), { lista: [] });
@@ -62,6 +64,8 @@ try {
   await assertSucceeds(getDoc(doc(liana, "torito_gimnasio_categorias", "primera")));
   await assertFails(getDoc(doc(liana, "torito_gimnasio_categorias", "sub_16")));
   await assertSucceeds(getDoc(doc(liana, "torito_planificacion_categorias", "primera")));
+  await assertSucceeds(getDoc(doc(liana, "torito_estadisticas_categorias", "primera")));
+  await assertFails(getDoc(doc(liana, "torito_estadisticas_categorias", "sub_16")));
   await assertFails(getDoc(doc(liana, "torito_planificacion_categorias", "sub_16")));
   await assertSucceeds(getDoc(doc(liana, "torito_testeos_torito", "Primera_Enero")));
   await assertFails(getDoc(doc(liana, "torito_planificacionTORITO", "principal")));
@@ -72,6 +76,7 @@ try {
 
   console.log("Prueba: Fran administra todas las categorías.");
   await assertSucceeds(getDoc(doc(fran, "torito_jugadoras", "sub16-1")));
+  await assertSucceeds(getDoc(doc(fran, "torito_estadisticas_categorias", "sub_16")));
   await assertSucceeds(getDocs(query(collection(fran, "torito_jugadoras"), where("categoria", "in", ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"]))));
   await assertSucceeds(getDoc(doc(fran, "torito_planificacionTORITO", "principal")));
   await assertSucceeds(setDoc(doc(fran, "torito_jugadoras", "fran-nuevo"), { categoria: "Primera", nombre: "Registro de prueba" }));
