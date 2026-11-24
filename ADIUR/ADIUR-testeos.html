@@ -2391,7 +2391,9 @@ import {
   setDoc,
   writeBatch,
   collection,
-  getDocs
+  getDocs,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
@@ -2418,6 +2420,9 @@ try{
 }catch(error){
   console.warn("Modo local:",error);
 }
+const perfilTesteos = await window.esperarPermisosADIUR();
+if (!perfilTesteos) throw new Error("No se pudieron validar los permisos de Testeos.");
+const categoriasPermitidasTesteos = perfilTesteos.categorias || [];
 
 /* =====================================================
    USUARIO Y PERMISOS
@@ -2803,19 +2808,9 @@ async function cargarJugadorasPorDivision(division){
 
   if(nubeActiva&&db){
     try{
-      const snap=await getDocs(collection(db,"jugadoras"));
-
-      snap.forEach(d=>{
-        listaTotal.push({id:d.id,...d.data()});
-      });
-
-      if(listaTotal.length===0){
-        const plantel=await getDoc(doc(db,"plantel","jugadoras"));
-
-        if(plantel.exists()&&Array.isArray(plantel.data().lista)){
-          listaTotal=plantel.data().lista;
-        }
-      }
+      const consulta=await window.crearConsultaCategoriasADIUR(collection(db,"jugadoras"),query,where,"categoria");
+      const snap=await getDocs(consulta);
+      snap.forEach(d=>listaTotal.push({id:d.id,...d.data()}));
     }catch(error){
       console.warn("No se pudieron recuperar las jugadoras:",error);
     }
@@ -3758,7 +3753,8 @@ async function cargarBiblioteca(){
 
   if(nubeActiva&&db){
     try{
-      const snap=await getDocs(collection(db,"testeos_adiur"));
+      const consulta=await window.crearConsultaCategoriasADIUR(collection(db,"testeos_adiur"),query,where,"division");
+      const snap=await getDocs(consulta);
 
       snap.forEach(d=>{
         const data=d.data();
