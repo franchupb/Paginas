@@ -1107,9 +1107,15 @@ async function cargarDatosPlanilla(division, mes) {
   let cargadoDeNube = false;
   if (nubeActiva && db) {
     try {
-      const refDoc = doc(db, "testeos_adiur", clave);
-      const snap = await getDoc(refDoc);
-      if (snap.exists()) {
+      // Consultar por división evita un get directo a un documento que aún
+      // no existe, que Firestore no puede autorizar usando resource.data.
+      const consulta = query(
+        collection(db, "testeos_adiur"),
+        where("division", "==", division)
+      );
+      const resultado = await getDocs(consulta);
+      const snap = resultado.docs.find(documento => documento.id === clave) || null;
+      if (snap) {
         const data = snap.data();
         columnasActuales = Array.isArray(data.columnas) && data.columnas.length > 0 ? data.columnas : JSON.parse(JSON.stringify(COLUMNAS_POR_DEFECTO));
         valoresActuales = data.valores || {};
