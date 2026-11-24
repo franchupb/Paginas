@@ -2624,8 +2624,7 @@ function actualizarEstadoNube(tipo,texto){
 
 window.cerrarSesion=function(event){
   event.preventDefault();
-  localStorage.removeItem("usuarioADIUR");
-  window.location.href="ADIUR-Loing.html";
+  window.cerrarSesionADIURCentral(event);
 };
 
 /* =====================================================
