@@ -2383,7 +2383,7 @@ a{text-decoration:none;color:inherit}
 <div id="printRoutine"></div>
 
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getFirestore,
   doc,
@@ -2412,7 +2412,11 @@ let db=null;
 let nubeActiva=false;
 
 try{
-  const app=initializeApp(firebaseConfig);
+  const appExistente = getApps().find(item => item.name === "[DEFAULT]");
+  if (appExistente && appExistente.options.projectId !== firebaseConfig.projectId) {
+    throw new Error("La aplicación Firebase predeterminada no pertenece a TORITO.");
+  }
+  const app = appExistente || initializeApp(firebaseConfig);
   db=getFirestore(app);
   nubeActiva=true;
 }catch(error){
