@@ -3444,11 +3444,21 @@ button:disabled { opacity: .5; cursor: not-allowed; }
    CONFIGURACIÓN
 ===================================================== */
 
-const CLAVE_PARTIDOS = "informesTORITOPartidosV2";
-const CLAVE_PLANTEL = "toritoJugadorasInformesV1";
+const UID_INFORMES_TORITO = localStorage.getItem("uidTORITO") || "sin-uid";
+const ROL_INFORMES_TORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+const PUEDE_EDITAR_INFORMES_TORITO = localStorage.getItem("puedeEditarTORITO") === "true";
+const PUEDE_ELIMINAR_INFORMES_TORITO = localStorage.getItem("puedeEliminarTORITO") === "true";
+let CATEGORIAS_INFORMES_TORITO = [];
+try {
+  const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+  if (Array.isArray(guardadas)) CATEGORIAS_INFORMES_TORITO = guardadas;
+} catch (_) {}
+if (ROL_INFORMES_TORITO === "admin" && !CATEGORIAS_INFORMES_TORITO.length) CATEGORIAS_INFORMES_TORITO = ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
+const CLAVE_PARTIDOS = "informesTORITOPartidosV2_" + UID_INFORMES_TORITO;
+const CLAVE_PLANTEL = "jugadorasTORITO_" + UID_INFORMES_TORITO;
 const CLAVE_SESION = "usuarioTORITO";
 const CLAVE_FIXTURE = "fixtureTORITO";
-const CLAVE_INFORMES_ANTERIORES = "informesTORITOJornadasV1";
+const CLAVE_INFORMES_ANTERIORES = "informesTORITOJornadasV1_" + UID_INFORMES_TORITO;
 
 const DIVISIONES = ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
 
@@ -3713,7 +3723,11 @@ function actualizarResumenRevision() {
 
 function leerJSON(clave, defecto) {
   try {
-    const texto = localStorage.getItem(clave);
+    let texto = localStorage.getItem(clave);
+    if (!texto && ROL_INFORMES_TORITO === "admin") {
+      if (clave === CLAVE_PARTIDOS) texto = localStorage.getItem("informesTORITOPartidosV2");
+      if (clave === CLAVE_INFORMES_ANTERIORES) texto = localStorage.getItem("informesTORITOJornadasV1");
+    }
     return texto ? JSON.parse(texto) : defecto;
   } catch (error) {
     console.warn("No se pudo leer",clave,error);
@@ -3723,7 +3737,14 @@ function leerJSON(clave, defecto) {
 
 function guardarJSON(clave, valor) {
   try {
+    if (clave === CLAVE_PARTIDOS && !PUEDE_EDITAR_INFORMES_TORITO) {
+      mostrarMensaje("Tu perfil puede consultar los informes, pero no modificarlos.", "error");
+      return false;
+    }
     localStorage.setItem(clave,JSON.stringify(valor));
+    if (clave === CLAVE_PARTIDOS && typeof window.sincronizarInformesNube === "function") {
+      window.sincronizarInformesNube(valor).catch(error => console.error("No se pudieron sincronizar los informes TORITO:", error));
+    }
     return true;
   } catch (error) {
     console.error(error);
@@ -5600,6 +5621,10 @@ function guardarPartido(evento) {
 }
 
 function borrarPartido(id) {
+  if (!PUEDE_ELIMINAR_INFORMES_TORITO) {
+    mostrarMensaje("Tu perfil no puede eliminar informes.", "error");
+    return;
+  }
   const p=partidos.find(p=>String(p.id)===String(id));
   if (!p) return;
 
@@ -5611,6 +5636,9 @@ function borrarPartido(id) {
   if (!guardarJSON(CLAVE_PARTIDOS,partidos)) {
     partidos=anterior;
     return;
+  }
+  if (typeof window.eliminarInformeNube === "function") {
+    window.eliminarInformeNube(id, p.division).catch(error => console.error("No se pudo eliminar el informe de la nube:", error));
   }
 
   renderizarTodo();
@@ -6341,92 +6369,70 @@ window.addEventListener("storage",evento=>{
 </script>
 
 <script type="module">
+import { db } from "./TORITO-auth.js?v=20261124-auth2";
+import { collection, onSnapshot, query, where, doc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+const rol = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+const uid = localStorage.getItem("uidTORITO") || "sin-uid";
+let categorias = [];
+try {
+  const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+  if (Array.isArray(guardadas)) categorias = guardadas;
+} catch (_) {}
+if (rol === "admin" && !categorias.length) categorias = ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
+const puedeEditar = localStorage.getItem("puedeEditarTORITO") === "true";
+const puedeEliminar = localStorage.getItem("puedeEliminarTORITO") === "true";
+const claveInformes = "informesTORITOPartidosV2_" + uid;
 
-  import {
-    getFirestore,
-    collection,
-    onSnapshot,
-    query,
-    where
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+function leerInformesLocales() {
+  try { return JSON.parse(localStorage.getItem(claveInformes) || "[]"); } catch (_) { return []; }
+}
 
+window.sincronizarInformesNube = async lista => {
+  if (!puedeEditar) throw new Error("El perfil de TORITO es de solo lectura.");
+  const actuales = Array.isArray(lista) ? lista : [];
+  const escrituras = actuales
+    .filter(informe => informe && informe.id != null && categorias.includes(informe.division))
+    .map(informe => setDoc(
+      doc(db, "torito_informes", String(informe.id)),
+      { ...informe, division: informe.division, actualizadoEn: serverTimestamp() },
+      { merge:true }
+    ));
+  await Promise.all(escrituras);
+};
 
-  // MISMA CONFIGURACIÓN QUE JUGADORAS.HTML
+window.eliminarInformeNube = async (id, division) => {
+  if (!puedeEliminar || !categorias.includes(division)) throw new Error("El perfil no puede eliminar este informe.");
+  await deleteDoc(doc(db, "torito_informes", String(id)));
+};
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCsOaJVo8P5reZvfp7vjBkhkP79C_mEO94",
-    authDomain: "torito-56078.firebaseapp.com",
-    projectId: "torito-56078",
-    storageBucket: "torito-56078.firebasestorage.app",
-    messagingSenderId: "497702302753",
-    appId: "1:497702302753:web:04d419e13ded4b59371f60",
-    measurementId: "G-32VFQHWP5Y"
-  };
-
-
-  // INICIALIZAR FIREBASE
-
-  const appExistente = getApps().find(item => item.name === "[DEFAULT]");
-  if (appExistente && appExistente.options.projectId !== firebaseConfig.projectId) {
-    throw new Error("La aplicación Firebase predeterminada no pertenece a TORITO.");
+onSnapshot(query(
+  collection(db, "torito_informes"),
+  where("division", "in", categorias)
+), async snapshot => {
+  const nube = snapshot.docs.map(d => ({ id:d.id, ...d.data() }));
+  const locales = leerInformesLocales().filter(x => categorias.includes(x.division));
+  const porId = new Map(locales.map(x => [String(x.id), x]));
+  nube.forEach(x => porId.set(String(x.id), x));
+  const combinados = [...porId.values()].filter(x => categorias.includes(x.division));
+  localStorage.setItem(claveInformes, JSON.stringify(combinados));
+  if (nube.length < combinados.length && puedeEditar) {
+    const idsNube = new Set(nube.map(x => String(x.id)));
+    const pendientes = combinados.filter(x => !idsNube.has(String(x.id)));
+    if (pendientes.length) await window.sincronizarInformesNube(pendientes);
   }
-  const app = appExistente || initializeApp(firebaseConfig);
-  const dbInformes = getFirestore(app);
-  const rolPerfilTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
-  let categoriasAutorizadasTORITO = [];
-  try {
-    const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
-    if (Array.isArray(guardadas)) categoriasAutorizadasTORITO = guardadas;
-  } catch (_) {}
-  if (rolPerfilTORITO === "admin" && !categoriasAutorizadasTORITO.length) {
-    categoriasAutorizadasTORITO = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
-  }
+  window.dispatchEvent(new CustomEvent("torito-informes-nube-actualizados"));
+}, error => console.error("No se pudieron escuchar los informes TORITO:", error));
 
-
-  // ESCUCHAR LA COLECCIÓN DE JUGADORAS
-
-  onSnapshot(
-    query(
-      collection(dbInformes,"torito_jugadoras"),
-      where("categoria","in",categoriasAutorizadasTORITO)
-    ),
-
-    (snapshot) => {
-
-      const listaNube = [];
-
-      snapshot.forEach((documento) => {
-
-        listaNube.push({
-          id: documento.id,
-          ...documento.data()
-        });
-
-      });
-
-      // Enviar los datos al JavaScript principal de Informes.
-
-      if (typeof window.recibirJugadorasFirebase === "function") {
-
-        window.recibirJugadorasFirebase(listaNube);
-
-      }
-
-    },
-
-    (error) => {
-
-      console.error(
-        "Error al cargar las jugadoras desde Firebase:",
-        error
-      );
-
-    }
-
-  );
-
+const rosterQuery = query(
+  collection(db, "torito_jugadoras"),
+  where("categoria", "in", categorias)
+);
+onSnapshot(rosterQuery, snapshot => {
+  const lista = snapshot.docs.map(d => ({ id:d.id, ...d.data() }));
+  localStorage.setItem("jugadorasTORITO_" + uid, JSON.stringify(lista));
+  if (typeof window.recibirJugadorasFirebase === "function") window.recibirJugadorasFirebase(lista);
+}, error => console.error("No se pudo cargar el plantel autorizado para informes:", error));
 </script>
   
 
