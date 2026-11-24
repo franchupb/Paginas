@@ -200,7 +200,8 @@
       Array.from(select.options || []).some(o => categoriaDeTexto(o.value) || categoriaDeTexto(o.textContent));
   }
   function aplicarCategorias(root = document) {
-    if (!configActiva || !["jugadora", "cuerpo_tecnico"].includes(configActiva.rol)) return;
+    if (!configActiva) return;
+    const restringido = ["jugadora", "cuerpo_tecnico"].includes(configActiva.rol);
     const categoriasPermitidas = new Set(
       (configActiva.categorias || []).map(normalizarDivision).filter(Boolean)
     );
@@ -213,7 +214,7 @@
         const categoria = categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent);
         const texto = String(option.textContent || "").trim();
         if (categoria && !categoriasPermitidas.has(categoria)) option.remove();
-        else if (!categoria && /^(todas|todas las categorías|todas las divisiones|seleccioná una categoría|seleccionar categoría|elegir categoría)$/i.test(texto)) option.remove();
+        else if (restringido && !categoria && /^(todas|todas las categorías|todas las divisiones|seleccioná una categoría|seleccionar categoría|elegir categoría)$/i.test(texto)) option.remove();
       });
 
       const opcionesPermitidas = Array.from(select.options || []).filter(option => {
