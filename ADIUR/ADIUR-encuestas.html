@@ -184,7 +184,7 @@ const fmtFecha=s=>{if(!s)return "—";const p=s.split("-");return p.length===3?p
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const TIPOS={post_partido:{nombre:"Post Partido",icono:"⚽",descripcion:"Contanos cómo terminaste el partido y cómo te sentís."},post_entrenamiento:{nombre:"Post Entrenamiento",icono:"⚡",descripcion:"Registrá el esfuerzo que te demandó la sesión."}};
 let perfil=null,auth=null,db=null,fb=null,rol="",uid="",nombre="",jugadoraNombre="",categorias=[],categoriaActiva="",plantel=[],periodos=[],respuestas=[],unsubs=[],periodoSeleccionado="",ctTab="publicaciones",rpeSeleccionado=null;
-function estado(msg,tipo){$("estadoGeneral").textContent=msg;$("estadoGeneral").className="mensaje"+(tipo?" "+tipo:"")}
+function estado(msg,tipo){const el=$(modoPublico?"estadoPublico":"estadoGeneral")||$("estadoGeneral")||$("estadoPublico");if(!el){console.error("ADIUR Encuestas · no se encontró un contenedor para mostrar el estado:",msg);return}el.textContent=msg;el.className=(modoPublico?"publico-mensaje":"mensaje")+(tipo?" "+tipo:"")}
 function esJugadora(){return rol==="jugadora"}
 function puedePublicar(){return ["admin","coordinadora","cuerpo_tecnico"].includes(rol)}
 function fechaCorta(p){return fmtFecha(p.fecha)}
@@ -376,7 +376,7 @@ async function cargarEncuestaPublica(){
  }catch(err){console.error(err);$("estadoPublico").textContent=err.message||"No se pudo abrir la encuesta.";$("estadoPublico").className="publico-mensaje error"}
 }
 async function iniciar(){
- try{iniciarMenu()}catch(error){console.error("ADIUR Encuestas · menú:",error);estado("El menú no pudo inicializarse correctamente: "+(error?.message||"error desconocido"),"error")}
+ if(!modoPublico){try{iniciarMenu()}catch(error){console.error("ADIUR Encuestas · menú:",error);estado("El menú no pudo inicializarse correctamente: "+(error?.message||"error desconocido"),"error")}}
  try{
   const authMod=await import("./ADIUR-auth.js?v=20261124-encuestas1");fb=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
   auth=authMod.auth;db=authMod.db;
@@ -385,7 +385,7 @@ async function iniciar(){
   perfil=await esperarPerfil();validarPerfil();if(!esJugadora())cargarPlantel();escucharDatos();
   estado("Conectado con ADIUR · Publicaciones y respuestas sincronizadas.","ok");
   window.addEventListener("beforeunload",()=>unsubs.forEach(fn=>fn()));
- }catch(err){console.error("ADIUR Encuestas · inicialización:",err);estado("No se pudo iniciar Encuestas: "+(err?.code?("["+err.code+"] "):"")+(err?.message||"Error desconocido"),"error");document.getElementById("vistaTecnico")?.classList.add("oculto");document.getElementById("vistaJugadora")?.classList.add("oculto")}
+ }catch(err){console.error("ADIUR Encuestas · inicialización:",err);const mensaje="No se pudo iniciar Encuestas: "+(err?.code?("["+err.code+"] "):"")+(err?.message||"Error desconocido");if(modoPublico){const aviso=$("estadoPublico");if(aviso){aviso.textContent=mensaje;aviso.className="publico-mensaje error"}}else estado(mensaje,"error");document.getElementById("vistaTecnico")?.classList.add("oculto");document.getElementById("vistaJugadora")?.classList.add("oculto")}
 }
 iniciar();
 })();
