@@ -1055,17 +1055,9 @@
            definidos en el código original.
         ===================================================== */
 
-        const usuarios = {
-            "fran": {
-                contrasena: "TORITO",
-                nombre: "Fran"
-            },
+        // Las cuentas y contraseñas se validan exclusivamente en Firebase Authentication.
 
-            "liana": {
-                contrasena: "TORITO",
-                nombre: "Liana"
-            }
-        };
+
 
         /* =====================================================
            ELEMENTOS DEL FORMULARIO
@@ -1149,98 +1141,47 @@
            INICIO DE SESIÓN
         ===================================================== */
 
-        loginForm.addEventListener("submit", function(event) {
-
+        loginForm.addEventListener("submit", async function(event) {
             event.preventDefault();
-
             ocultarError();
 
-            const usuario = campoUsuario.value
-                .trim()
-                .toLowerCase();
-
+            const usuario = campoUsuario.value.trim().toLowerCase();
             const contrasena = campoContrasena.value;
-
-            /* VALIDAR CAMPOS VACÍOS */
+            const boton = loginForm.querySelector('button[type="submit"], input[type="submit"]');
 
             if (!usuario) {
-
-                mostrarError(
-                    "Ingresá tu nombre de usuario.",
-                    campoUsuario
-                );
-
+                mostrarError("Ingresá tu nombre de usuario.", campoUsuario);
                 return;
             }
-
             if (!contrasena) {
-
-                mostrarError(
-                    "Ingresá tu contraseña para continuar.",
-                    campoContrasena
-                );
-
+                mostrarError("Ingresá tu contraseña para continuar.", campoContrasena);
                 return;
             }
 
-            /* COMPROBAR USUARIO Y CONTRASEÑA */
+            const textoOriginal = boton ? (boton.textContent || boton.value) : "";
+            if (boton) {
+                boton.disabled = true;
+                if (boton.tagName === "INPUT") boton.value = "Verificando…";
+                else boton.textContent = "Verificando…";
+            }
 
-            const cuenta = Object.prototype.hasOwnProperty.call(
-                usuarios,
-                usuario
-            )
-                ? usuarios[usuario]
-                : null;
-
-            if (
-                cuenta &&
-                cuenta.contrasena === contrasena
-            ) {
-
-                /*
-                 * GUARDAR LA SESIÓN
-
-                 * Se utiliza la clave propia de TORITO
-                 * para mantener la sesión separada de ADIUR.
-                 */
-
-                try {
-
-                    localStorage.setItem(
-                        "usuarioTORITO",
-                        cuenta.nombre
-                    );
-
-                } catch (error) {
-
-                    console.error(
-                        "No se pudo guardar la sesión:",
-                        error
-                    );
-
-                    mostrarError(
-                        "No se pudo guardar la sesión. Revisá la configuración del navegador."
-                    );
-
-                    return;
-                }
-
-                /*
-                 * REDIRECCIÓN ORIGINAL
-                 */
-
-                window.location.href = "TORITO-Pagina Principal.html";
-
-            } else {
-
-                /* CREDENCIALES INCORRECTAS */
-
+            try {
+                const modulo = await import("./TORITO-auth.js?v=20261124-auth1");
+                await modulo.iniciarSesionTORITO(usuario, contrasena);
+                window.location.replace("TORITO-Pagina Principal.html");
+            } catch (error) {
+                console.error("No se pudo iniciar sesión en TORITO:", error);
                 campoContrasena.value = "";
-
                 mostrarError(
-                    "Usuario o contraseña incorrectos. Revisá los datos e intentá nuevamente.",
+                    "No se pudo iniciar sesión. Verificá tus datos o consultá con la administración del club.",
                     campoContrasena
                 );
+            } finally {
+                if (boton) {
+                    boton.disabled = false;
+                    if (boton.tagName === "INPUT") boton.value = textoOriginal;
+                    else boton.textContent = textoOriginal;
+                }
             }
         });
 
