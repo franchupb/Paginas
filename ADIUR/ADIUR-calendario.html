@@ -665,6 +665,8 @@ main {
     overflow-wrap: anywhere;
 }
 
+.actividad-pruebas{display:flex;flex-direction:column;gap:3px;width:100%;margin-top:6px;padding-top:6px;border-top:1px solid rgba(30,35,45,.08);color:#424852;font-size:8px;line-height:1.35;text-align:left;overflow-wrap:anywhere}.actividad-pruebas strong{font-size:8px;color:#242830}.actividad-pruebas span{color:#626975}
+
 .entrenamiento-carga::before {
     content: "";
     width: 6px;
@@ -3004,6 +3006,29 @@ function crearVistaActividad(datos, fecha, esVistaPrevia = false) {
 
         tarjeta.appendChild(carga);
 
+        const pruebasFisicas = (Array.isArray(datos.fisicoBloques) ? datos.fisicoBloques : [])
+            .filter(bloque => bloque && bloque.tipo === "Testeos")
+            .flatMap(bloque => Array.isArray(bloque.testeosSeleccionados) ? bloque.testeosSeleccionados : [])
+            .filter(prueba => prueba && String(prueba.label || "").trim());
+        if (datos.pruebasTTT === true || pruebasFisicas.length) {
+            const resumen = document.createElement("div");
+            resumen.className = "actividad-pruebas";
+            if (datos.pruebasTTT === true) {
+                const lineaTTT = document.createElement("strong");
+                lineaTTT.textContent = "✓ Pruebas técnico-tácticas";
+                resumen.appendChild(lineaTTT);
+            }
+            if (pruebasFisicas.length) {
+                const tituloTesteos = document.createElement("strong");
+                tituloTesteos.textContent = "Testeos físicos";
+                resumen.appendChild(tituloTesteos);
+                const nombres = document.createElement("span");
+                nombres.textContent = pruebasFisicas.map(prueba => [prueba.grupo, prueba.label].filter(Boolean).join(" · ")).join(" / ");
+                resumen.appendChild(nombres);
+            }
+            tarjeta.appendChild(resumen);
+        }
+
         return tarjeta;
     }
 
@@ -3288,7 +3313,10 @@ function obtenerActividad(cat, fecha) {
             alineacionTexto: "izquierda",
             posicionImagen: "centro",
             anchoImagen: 70,
-            altoImagen: 35
+            altoImagen: 35,
+            pruebasTTT: false,
+            tttBloques: [],
+            fisicoBloques: []
         };
     }
 
@@ -3358,7 +3386,10 @@ function obtenerActividad(cat, fecha) {
         alineacionTexto: alineacion,
         posicionImagen: posicion,
         anchoImagen: Number(actividad.anchoImagen) || 70,
-        altoImagen: Number(actividad.altoImagen) || 35
+        altoImagen: Number(actividad.altoImagen) || 35,
+        pruebasTTT: actividad.pruebasTTT === true,
+        tttBloques: Array.isArray(actividad.tttBloques) ? actividad.tttBloques : [],
+        fisicoBloques: Array.isArray(actividad.fisicoBloques) ? actividad.fisicoBloques : []
     };
 }
 
@@ -3456,6 +3487,9 @@ document.getElementById("guardarActividad").addEventListener("click", () => {
     const texto = textoActividad.value.trim();
     const imagen = imagenActividad.value;
     const estado = estadoActividad.value;
+    const actividadAnterior = datos[cat][fechaSeleccionada] && typeof datos[cat][fechaSeleccionada] === "object"
+        ? datos[cat][fechaSeleccionada]
+        : {};
 
     const tamano = Math.max(
         8,
@@ -3483,7 +3517,15 @@ document.getElementById("guardarActividad").addEventListener("click", () => {
             alineacionTexto: alineacionTexto.value,
             posicionImagen: posicionImagen.value,
             anchoImagen: ancho,
-            altoImagen: alto
+            altoImagen: alto,
+            // Conservar la información que proviene de Planificación: el Calendario solo la muestra.
+            origen: actividadAnterior.origen || "",
+            microcicloId: actividadAnterior.microcicloId || "",
+            ttt: actividadAnterior.ttt || "",
+            tttBloques: Array.isArray(actividadAnterior.tttBloques) ? actividadAnterior.tttBloques : [],
+            pruebasTTT: actividadAnterior.pruebasTTT === true,
+            fisico: actividadAnterior.fisico || "",
+            fisicoBloques: Array.isArray(actividadAnterior.fisicoBloques) ? actividadAnterior.fisicoBloques : []
         };
     }
 
