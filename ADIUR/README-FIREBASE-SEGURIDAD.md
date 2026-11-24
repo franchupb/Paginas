@@ -12,7 +12,7 @@ La regla que se había compartido anteriormente (`allow read, write: if true`) d
 2. Integrá esta rama en `master` para que las páginas nuevas y la herramienta de migración estén publicadas.
 3. En Firebase Console, abrí **Firestore Database → Rules**, reemplazá las reglas actuales por el contenido de este archivo y publicalas.
 4. Iniciá sesión en ADIUR con una cuenta cuyo perfil de Firestore tenga `rol: "admin"` y `activo: true`.
-5. Abrí `https://franchupb.github.io/Paginas/ADIUR/ADIUR-migrar-firestore.html` y ejecutá la migración. La herramienta copia planificación, gimnasio y calculadora a las colecciones `planificacionADIUR_categorias`, `gimnasioADIUR_categorias` y `calculadoraADIUR_categorias`; no borra los documentos `principal`.
+5. Abrí `https://franchupb.github.io/Paginas/ADIUR/ADIUR-migrar-firestore.html` y ejecutá la migración. La herramienta copia planificación y calculadora a `planificacionADIUR_categorias` y `calculadoraADIUR_categorias`. El gimnasio se divide entre `gimnasioADIUR_categorias` (rutinas generales) y `gimnasioADIUR_individuales` (un documento por jugadora). No borra los documentos `principal`.
 6. Probá el sitio con una cuenta administradora, una coordinadora, cada cuenta de cuerpo técnico y una cuenta de jugadora. Comprobá que cada una vea únicamente las categorías asignadas y que las acciones de escritura/borrado correspondan a su rol.
 7. Conservá los documentos `principal` y `plantel` hasta terminar la verificación. No los borres como parte de esta migración.
 
@@ -21,10 +21,10 @@ Hacé los pasos 2 a 6 en un momento de poco uso: entre la publicación del códi
 ## Supuestos que deben coincidir con Firestore
 
 - Los documentos de `usuarios` están guardados con el **UID de Firebase Authentication como ID del documento**.
-- Cada perfil tiene `activo: true`, un `rol` reconocido y un array `categorias` con los nombres canónicos: `Sub 10`, `Sub 12`, `Sub 14`, `Sub 16`, `Primera`.
+- Cada perfil tiene `activo: true`, un `rol` reconocido y un array `categorias` con los nombres canónicos: `Sub 10`, `Sub 12`, `Sub 14`, `Sub 16`, `Primera`. Los perfiles de jugadoras pueden recibir `jugadoraId` durante la migración, vinculado al ID del documento correspondiente en `jugadoras`.
 - Los documentos de `jugadoras`, `partidos`, `asistenciaADIUR`, `configuracionAsistenciaADIUR`, `calendarioADIUR`, `tiemposRendimiento`, `lesiones`, `encuestas_periodos` y `encuestas_respuestas` incluyen `categoria`.
 - Los documentos de `testeos_adiur` e `informes_partidos` incluyen `division`.
-- Los documentos antiguos de planificación, gimnasio y calculadora se encuentran en el documento `principal` de las colecciones originales; las páginas nuevas usan las colecciones terminadas en `_categorias`.
+- Los documentos antiguos de planificación, gimnasio y calculadora se encuentran en el documento `principal` de las colecciones originales; las páginas nuevas usan colecciones separadas por categoría. `gimnasioADIUR_individuales` requiere los índices definidos en `firestore.indexes.json`.
 
 Si alguno de estos puntos no coincide, no publiques las reglas todavía: primero hay que adaptar el esquema real para evitar que una página quede sin acceso.
 
