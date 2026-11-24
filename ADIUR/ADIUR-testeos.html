@@ -2423,20 +2423,47 @@ try{
    USUARIO Y PERMISOS
 ===================================================== */
 
-const usuarioGuardado=(localStorage.getItem("usuarioADIUR")||"").trim();
+let usuarioGuardado=(localStorage.getItem("usuarioADIUR")||"").trim();
+let usuarioNormalizado=usuarioGuardado.toLowerCase();
+let rolADIUR=localStorage.getItem("rolADIUR")||"";
+let esFran=rolADIUR==="admin";
+let esToto=rolADIUR==="cuerpo_tecnico";
+let esBianca=rolADIUR==="jugadora";
+let puedeEditar=["admin","coordinadora","cuerpo_tecnico"].includes(rolADIUR);
 
-if(!usuarioGuardado){
-  window.location.href="ADIUR-Loing.html";
+function aplicarPerfilCentralTesteos(perfil){
+  if(!perfil)return;
+  usuarioGuardado=String(perfil.usuario||perfil.nombre||localStorage.getItem("usuarioADIUR")||"").trim();
+  usuarioNormalizado=usuarioGuardado.toLowerCase();
+  rolADIUR=String(perfil.rol||"").toLowerCase();
+  esFran=rolADIUR==="admin";
+  esToto=rolADIUR==="cuerpo_tecnico";
+  esBianca=rolADIUR==="jugadora";
+  puedeEditar=["admin","coordinadora","cuerpo_tecnico"].includes(rolADIUR);
+
+  document.getElementById("nombreUsuario").textContent=perfil.nombre||usuarioGuardado||"Usuario";
+  document.getElementById("avatarUsuario").textContent=(perfil.nombre||usuarioGuardado||"U").trim().charAt(0).toUpperCase();
+  document.getElementById("rolUsuario").textContent=esFran?"Administrador":rolADIUR==="coordinadora"?"Coordinadora":esToto?"Cuerpo técnico":esBianca?"Jugadora":"Club ADIUR";
+
+  ["accionesTecnico","accionesGestion","accionesPeriodo"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display=puedeEditar?"":"none";
+  });
+  if(esBianca&&Array.isArray(perfil.categorias)&&perfil.categorias.length){
+    const selector=document.getElementById("selectDivision");
+    if(selector){
+      const opcion=Array.from(selector.options).find(o=>normalizar(o.value)===normalizar(perfil.categorias[0])||normalizar(o.textContent)===normalizar(perfil.categorias[0]));
+      if(opcion){selector.value=opcion.value;selector.dispatchEvent(new Event("change",{bubbles:true}));}
+    }
+  }
+  if(typeof renderizarCarga==="function")renderizarCarga();
+  if(typeof renderizarEstadisticas==="function")renderizarEstadisticas();
 }
 
-const usuarioNormalizado=usuarioGuardado.toLowerCase();
+if(window.ADIUR_PERMISOS)aplicarPerfilCentralTesteos(window.ADIUR_PERMISOS);
+else window.addEventListener("adiur-permisos-listos",event=>aplicarPerfilCentralTesteos(event.detail||window.ADIUR_PERMISOS),{once:true});
 
-const rolADIUR=localStorage.getItem("rolADIUR")||"";
-const esFran=rolADIUR==="admin";
-const esToto=rolADIUR==="cuerpo_tecnico";
-const esBianca=rolADIUR==="jugadora";
-const puedeEditar=["admin","coordinadora","cuerpo_tecnico"].includes(rolADIUR);
-
+/* Los permisos de menú, categoría y solo lectura se aplican en ADIUR-permisos.js. */
 /* =====================================================
    PERMISOS DE VISUALIZACIÓN DEL MENÚ
 ===================================================== */
