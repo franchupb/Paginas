@@ -94,7 +94,7 @@
     return decodeURIComponent(location.pathname.split("/").pop() || "").toLowerCase();
   }
 
-  function mostrarErrorInicializacion(error) {
+  function mostrarErrorInicializacion(error, tituloMensaje, detalleMensaje) {
     console.error("ADIUR: no se pudo completar la validación de permisos.", error);
     document.documentElement.classList.remove("adiur-permisos-pendientes");
     const pantalla = document.createElement("main");
@@ -103,10 +103,10 @@
     const tarjeta = document.createElement("section");
     tarjeta.style.cssText = "width:min(100%,520px);padding:28px;border:1px solid #e8e8e8;border-radius:16px;background:#fff;box-shadow:0 8px 30px #0000000d";
     const titulo = document.createElement("h1");
-    titulo.textContent = "No se pudieron verificar tus permisos";
+    titulo.textContent = tituloMensaje || "No se pudieron verificar tus permisos";
     titulo.style.cssText = "margin:0 0 10px;font-size:21px";
     const detalle = document.createElement("p");
-    detalle.textContent = "Tu sesión no se cerró. Por seguridad, esta página no se mostró porque no se pudo completar su inicialización. Revisá tu conexión y volvé a intentar.";
+    detalle.textContent = detalleMensaje || "Tu sesión no se cerró. Por seguridad, esta página no se mostró porque no se pudo completar su inicialización. Revisá tu conexión y volvé a intentar.";
     detalle.style.cssText = "margin:0 0 20px;color:#747474;line-height:1.55;font-size:14px";
     const boton = document.createElement("button");
     boton.type = "button";
@@ -364,8 +364,25 @@
           return;
         }
         try {
-          const perfil = await modulo.obtenerPerfilADIUR(user);
-          if (!perfil) { await modulo.cerrarSesionADIUR(); location.replace(LOGIN_URL); return; }
+          let perfil;
+          try {
+            perfil = await modulo.obtenerPerfilADIUR(user);
+          } catch (errorPerfil) {
+            mostrarErrorInicializacion(
+              errorPerfil,
+              "No se pudo leer tu perfil",
+              "La sesión está iniciada, pero no se pudo consultar el perfil de esta cuenta. No cerramos tu sesión ni te enviamos al Login. Revisá la conexión e intentá nuevamente."
+            );
+            return;
+          }
+          if (!perfil) {
+            mostrarErrorInicializacion(
+              new Error("No existe un perfil activo para el usuario autenticado."),
+              "Tu cuenta no tiene un perfil habilitado",
+              "La sesión está iniciada, pero no encontramos un perfil activo asociado a esta cuenta. No se cerró tu sesión. Contactá al administrador para revisar el perfil."
+            );
+            return;
+          }
           const clavesIdentidad = [
             perfil.usuario,
             String(user.email || "").split("@")[0],
@@ -407,8 +424,11 @@
           }
 
           if (!base || perfil.activo !== true) {
-            await modulo.cerrarSesionADIUR();
-            location.replace(LOGIN_URL);
+            mostrarErrorInicializacion(
+              new Error("Perfil sin rol reconocido o cuenta inactiva."),
+              "No tenés acceso habilitado a esta página",
+              "La sesión está iniciada, pero el perfil no tiene un rol reconocido o la cuenta figura inactiva. No te enviamos al Login para evitar un ciclo de redirecciones. Revisá el rol y el estado de tu cuenta."
+            );
             return;
           }
           // Este script se carga en el <head>. Firebase puede restaurar la sesión
