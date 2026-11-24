@@ -136,26 +136,28 @@ async function transformarRutinasIndividuales(original,jugadoras,perfiles,sinCor
    if(!clave.startsWith(prefijo))continue;
    const idAnterior=clave.slice(prefijo.length);
    const claveNormalizada=normalizar(idAnterior);
-   const jugadora=jugadoras.find(j=>{
+   const candidatas=jugadoras.filter(j=>{
     const alias=[j.id,j.usuario,j.username,j.nombreUsuario,j.login,nombreJugadora(j)].map(normalizar).filter(Boolean);
     return alias.includes(claveNormalizada)&&normalizar(j.categoria||j.division)===normalizar(categoria);
    });
-   if(!jugadora){
-    sinCorrespondencia.push(categoria+" · "+idAnterior);
+   if(candidatas.length!==1){
+    sinCorrespondencia.push(categoria+" · "+idAnterior+(candidatas.length>1?" (identidad ambigua)":" (sin coincidencia)"));
     continue;
    }
+   const jugadora=candidatas[0];
    const id=idJugadora(jugadora);
    const nombre=nombreJugadora(jugadora);
    const aliasJugadora=[jugadora.id,jugadora.usuario,jugadora.username,jugadora.nombreUsuario,jugadora.login,nombre].map(normalizar).filter(Boolean);
-   const perfil=perfiles.find(p=>{
+   const perfilesCoincidentes=perfiles.filter(p=>{
     const aliasPerfil=[p.jugadora,p.usuario,p.nombre,p.nombreCompleto,p.nombreUsuario].map(normalizar).filter(Boolean);
     return aliasPerfil.some(alias=>aliasJugadora.includes(alias));
    });
+   const perfil=perfilesCoincidentes.length===1?perfilesCoincidentes[0]:null;
    if(perfil&&perfil.jugadoraId!==id){
     await updateDoc(doc(db,"usuarios",perfil.id),{jugadoraId:id});
     perfil.jugadoraId=id;
    }else if(!perfil){
-    perfilesSinVinculo.push(nombre+" · "+id);
+    perfilesSinVinculo.push(nombre+" · "+id+(perfilesCoincidentes.length>1?" (perfil ambiguo)":""));
    }
    const claveNueva="INDIVIDUAL::"+categoria+"::"+id;
    const idDocumento=slug(categoria)+"__"+slug(id);
@@ -164,7 +166,7 @@ async function transformarRutinasIndividuales(original,jugadoras,perfiles,sinCor
      categoria,
      tipo:"individual",
      jugadoraId:id,
-     jugadora:perfil?.jugadora||nombre,
+     jugadora:perfil?.jugadora||(perfilesCoincidentes.length===0?nombre:""),
      datos:{}
     }});
    }
