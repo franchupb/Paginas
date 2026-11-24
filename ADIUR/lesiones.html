@@ -2307,7 +2307,7 @@ window.aplicarLesionesNube=function(lista){
     const remotos=Array.isArray(lista)?lista.map(normalizarRegistro).filter(r=>r&&r.jugadora&&r.fecha):[];
     const mapa=new Map(remotos.map(r=>[String(r.id),r]));
     const pendientes=[];
-    locales.forEach(local=>{
+    locales.filter(local=>categoriasPermitidasLesiones.includes(local.categoria)).forEach(local=>{
         const id=String(local.id),remoto=mapa.get(id);
         if(!remoto){mapa.set(id,local);pendientes.push(local);return;}
         const tLocal=Date.parse(local.actualizadoEn||local.creadoEn||"")||0;
@@ -2636,7 +2636,7 @@ iniciar();
 
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCc0dPIEkaKxbHoRC2CgZK412dXVGPOdTI",
@@ -2650,8 +2650,11 @@ const firebaseConfig = {
 
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const coleccion = collection(db, "lesiones");
-const coleccionJugadoras = collection(db, "jugadoras");
+const perfilLesiones = await window.esperarPermisosADIUR();
+if (!perfilLesiones) throw new Error("No se pudieron validar los permisos de Lesiones.");
+const categoriasPermitidasLesiones = perfilLesiones.categorias || [];
+const coleccion = await window.crearConsultaCategoriasADIUR(collection(db, "lesiones"), query, where, "categoria");
+const coleccionJugadoras = await window.crearConsultaCategoriasADIUR(collection(db, "jugadoras"), query, where, "categoria");
 
 onSnapshot(coleccionJugadoras, snapshot => {
     const lista = snapshot.docs.map(d => ({ id:d.id, ...d.data() }));
@@ -2674,7 +2677,7 @@ window.sincronizarLesionesNube = async function(lista) {
     // eliminan expedientes de Firestore. Las bajas deben ser acciones explícitas.
     const actuales = Array.isArray(lista) ? lista : [];
     for (const registro of actuales) {
-        if (!registro || registro.id == null) continue;
+        if (!registro || registro.id == null || !categoriasPermitidasLesiones.includes(registro.categoria)) continue;
         await setDoc(doc(db, "lesiones", String(registro.id)), registro, { merge: true });
         idsNube.add(String(registro.id));
     }
