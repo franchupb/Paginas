@@ -191,7 +191,7 @@ function fechaCorta(p){return fmtFecha(p.fecha)}
 function tipoNombre(t){return TIPOS[t]?.nombre||String(t||"Encuesta")}
 function tipoConfig(t){return TIPOS[t]||{nombre:tipoNombre(t),icono:"📋",descripcion:"Esta encuesta fue creada con un formato anterior y no tiene una descripción disponible."}}
 function categoriaPermitida(){return Array.isArray(perfil?.categorias)?perfil.categorias:[]}
-function mostrarPerfil(){$("nombreUsuario")?.textContent=nombre;$("avatarUsuario")?.textContent=(nombre.trim()[0]||"U").toUpperCase();$("rolUsuario")?.textContent=({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rol]||rol}
+function mostrarPerfil(){const nombreEl=$("nombreUsuario"),avatarEl=$("avatarUsuario"),rolEl=$("rolUsuario");if(nombreEl)nombreEl.textContent=nombre;if(avatarEl)avatarEl.textContent=(nombre.trim()[0]||"U").toUpperCase();if(rolEl)rolEl.textContent=({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rol]||rol}
  function actualizarDescripcionPagina(texto){const el=$("descripcionPagina")||document.querySelector(".adiur-panel-descripcion");if(el)el.textContent=texto}
 function poblarCategorias(){
  categorias=categoriaPermitida();const selects=[$("filtroCategoria"),$("nuevaCategoria")];
