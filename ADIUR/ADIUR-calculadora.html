@@ -3421,7 +3421,7 @@ const perfilCalculadora = await window.esperarPermisosADIUR();
 if (!perfilCalculadora) throw new Error("No se pudieron validar los permisos de la calculadora.");
 const categoriasPermitidasCalculadora = perfilCalculadora.categorias || [];
 const idCategoriaCalculadora = categoria => String(categoria || "")
-  .normalize("NFD").replace(/[\\u0300-\\u036f]/g, "")
+  .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
   .toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 
 function unirPlanes(local, nube) {
