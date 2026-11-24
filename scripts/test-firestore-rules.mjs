@@ -117,6 +117,12 @@ try {
   await assertSucceeds(getDoc(doc(coach14, "encuestas_periodos", "abierta")));
   await assertSucceeds(getDoc(doc(anonymous, "encuestas_periodos", "abierta")));
   await assertFails(getDoc(doc(anonymous, "encuestas_periodos", "cerrada")));
+  await assertSucceeds(getDocs(query(
+    collection(player16, "encuestas_respuestas"),
+    where("periodoId", "==", "abierta"),
+    where("uid", "==", "player16"),
+    where("categoria", "in", ["Sub 16"])
+  )));
   await assertSucceeds(setDoc(doc(player16, "encuestas_respuestas", "respuesta-propia"), {
     uid: "player16", categoria: "Sub 16", periodoId: "abierta", respuesta: "sí"
   }));
