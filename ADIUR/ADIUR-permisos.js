@@ -14,6 +14,36 @@
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase().replace(/[\s._-]+/g, "").trim();
 
+  // La sesión y los permisos se resuelven desde Firebase; nunca se autoriza
+  // una acción usando solamente los valores de compatibilidad de localStorage.
+  window.esperarPermisosADIUR = function () {
+    if (window.ADIUR_PERMISOS) return Promise.resolve(window.ADIUR_PERMISOS);
+    return new Promise(resolve => {
+      const listo = evento => {
+        window.removeEventListener("adiur-permisos-error", error);
+        resolve(evento?.detail || window.ADIUR_PERMISOS || null);
+      };
+      const error = () => {
+        window.removeEventListener("adiur-permisos-listos", listo);
+        resolve(null);
+      };
+      window.addEventListener("adiur-permisos-listos", listo, { once: true });
+      window.addEventListener("adiur-permisos-error", error, { once: true });
+    });
+  };
+
+  window.cerrarSesionADIURCentral = async function (evento) {
+    evento?.preventDefault?.();
+    try {
+      const modulo = await import("./ADIUR-auth.js?v=20261123-authpersist2");
+      await modulo.cerrarSesionADIUR();
+      location.replace(LOGIN_URL);
+    } catch (error) {
+      console.error("No se pudo cerrar la sesión de Firebase:", error);
+      alert("No se pudo cerrar la sesión. Revisá tu conexión e intentá nuevamente.");
+    }
+  };
+
   // ÚNICO LUGAR PARA CONFIGURAR USUARIOS Y SUS PERMISOS.
   // Las contraseñas nunca se guardan aquí: las administra Firebase Authentication.
   const USUARIOS = Object.freeze({
@@ -123,6 +153,7 @@
       }, { once: true });
     }
     document.getElementById("adiur-espera-permisos")?.remove();
+    window.dispatchEvent(new CustomEvent("adiur-permisos-error", { detail: error || null }));
   }
 
   let perfilActivo = null;
@@ -389,48 +420,51 @@
             perfil.nombreUsuario,
             perfil.nombre
           ].map(normalizar).filter(Boolean);
-          let base = clavesIdentidad.map(clave => USUARIOS[clave]).find(Boolean) || null;
+          const baseRegistrada = clavesIdentidad.map(clave => USUARIOS[clave]).find(Boolean) || null;
 
-          // Compatibilidad con perfiles de Firestore ya creados con variantes
-          // de nombre/rol. No se expulsa una cuenta activa solo porque su
-          // identificador no coincida literalmente con la clave de la matriz.
-          if (!base && perfil.activo === true) {
-            const rolCrudo = normalizar(perfil.rol || perfil.tipo || "");
-            const roles = {
-              admin: "admin", administrador: "admin",
-              coordinadora: "coordinadora", coordinador: "coordinadora",
-              cuerpotecnico: "cuerpo_tecnico", tecnico: "cuerpo_tecnico",
-              jugadora: "jugadora"
-            };
-            const rol = roles[rolCrudo] || null;
-            let categorias = perfil.categorias ?? perfil.categoria ?? [];
-            if (!Array.isArray(categorias)) categorias = categorias ? [categorias] : [];
-            categorias = categorias.map(normalizarDivision).filter(Boolean);
-            if (rol && (rol === "admin" || rol === "coordinadora" || categorias.length)) {
-              const nombre = String(perfil.nombre || perfil.nombreCompleto || perfil.usuario || user.email?.split("@")[0] || "Usuario").trim();
-              base = {
-                usuario: String(perfil.usuario || user.email?.split("@")[0] || clavesIdentidad[0] || "usuario"),
-                nombre,
-                rol,
-                categorias: rol === "admin" || rol === "coordinadora"
-                  ? ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"]
-                  : categorias,
-                jugadora: perfil.jugadora || (rol === "jugadora" ? nombre : null),
-                puedeGestionarUsuarios: rol === "admin",
-                puedeEditar: ["admin", "coordinadora", "cuerpo_tecnico"].includes(rol),
-                puedeEliminar: ["admin", "coordinadora"].includes(rol)
-              };
-            }
-          }
+          // El rol, las categorías y la identidad deportiva siempre salen del
+          // perfil activo de Firestore. La matriz local solo aporta etiquetas
+          // de compatibilidad cuando un perfil antiguo carece de algún nombre.
+          const rolCrudo = normalizar(perfil.rol || perfil.tipo || "");
+          const roles = {
+            admin: "admin", administrador: "admin",
+            coordinadora: "coordinadora", coordinador: "coordinadora",
+            cuerpotecnico: "cuerpo_tecnico", tecnico: "cuerpo_tecnico",
+            jugadora: "jugadora"
+          };
+          const rol = roles[rolCrudo] || null;
+          let categorias = perfil.categorias ?? perfil.categoria ?? [];
+          if (!Array.isArray(categorias)) categorias = categorias ? [categorias] : [];
+          categorias = [...new Set(categorias.map(normalizarDivision).filter(Boolean))];
+          const nombre = String(
+            perfil.nombre || perfil.nombreCompleto || perfil.usuario ||
+            baseRegistrada?.nombre || user.email?.split("@")[0] || "Usuario"
+          ).trim();
+          const jugadora = String(
+            perfil.jugadora || baseRegistrada?.jugadora || ""
+          ).trim();
 
-          if (!base || perfil.activo !== true) {
+          if (!rol || perfil.activo !== true || !categorias.length ||
+              (rol === "jugadora" && !jugadora)) {
             mostrarErrorInicializacion(
-              new Error("Perfil sin rol reconocido o cuenta inactiva."),
+              new Error("Perfil sin rol, categoría o identidad deportiva válida."),
               "No tenés acceso habilitado a esta página",
-              "La sesión está iniciada, pero el perfil no tiene un rol reconocido o la cuenta figura inactiva. No te enviamos al Login para evitar un ciclo de redirecciones. Revisá el rol y el estado de tu cuenta."
+              "El perfil de Firebase debe tener activo=true, un rol reconocido, al menos una categoría válida y, para las jugadoras, el campo jugadora. No se habilitó el acceso para evitar mostrar datos de otra división."
             );
             return;
           }
+
+          const base = {
+            usuario: String(perfil.usuario || user.email?.split("@")[0] || "usuario").trim(),
+            nombre,
+            rol,
+            categorias,
+            jugadora: jugadora || null,
+            puedeGestionarUsuarios: rol === "admin",
+            puedeEditar: ["admin", "coordinadora", "cuerpo_tecnico"].includes(rol),
+            puedeEliminar: ["admin", "coordinadora"].includes(rol)
+          };
+
           // Este script se carga en el <head>. Firebase puede restaurar la sesión
           // antes de que exista <body>; esperar al DOM evita que un acceso válido
           // termine enviado al Login por un error de inicialización de la interfaz.
@@ -440,7 +474,7 @@
             });
           }
 
-          // La matriz de este archivo manda sobre rol y categorías. Firestore solo identifica y habilita la cuenta.
+          // Firestore es la fuente de verdad para rol, categorías e identidad.
           perfilActivo = perfil;
           configActiva = base;
           document.body?.classList.toggle("adiur-perfil-jugadora", base.rol === "jugadora");
