@@ -110,6 +110,9 @@ function guardarCompatibilidad(perfil) {
     localStorage.setItem("rolTORITO", perfil.rol);
     localStorage.setItem("categoriasTORITO", JSON.stringify(perfil.categorias));
     localStorage.setItem("uidTORITO", perfil.uid);
+    localStorage.setItem("puedeEditarTORITO", perfil.puedeEditar ? "true" : "false");
+    localStorage.setItem("puedeEliminarTORITO", perfil.puedeEliminar ? "true" : "false");
+    localStorage.setItem("puedeGestionarUsuariosTORITO", perfil.puedeGestionarUsuarios ? "true" : "false");
   } catch (error) {
     console.warn("No se pudo guardar la caché visual de TORITO:", error);
   }
@@ -117,7 +120,7 @@ function guardarCompatibilidad(perfil) {
 
 function limpiarCompatibilidad() {
   try {
-    ["usuarioTORITO", "rolTORITO", "categoriasTORITO", "uidTORITO"].forEach(key => localStorage.removeItem(key));
+    ["usuarioTORITO", "rolTORITO", "categoriasTORITO", "uidTORITO", "puedeEditarTORITO", "puedeEliminarTORITO", "puedeGestionarUsuariosTORITO"].forEach(key => localStorage.removeItem(key));
   } catch (_) {}
 }
 
