@@ -2384,9 +2384,8 @@ a {
 
 const usuarioGuardado = localStorage.getItem("usuarioADIUR");
 
-if (!usuarioGuardado) {
-  window.location.href = "ADIUR-Loing.html";
-}
+// La sesión y el rol se validan en ADIUR-permisos.js con Firebase Auth.
+ // No se redirige por la ausencia temporal de datos de compatibilidad en localStorage.
 
 function normalizarTexto(valor) {
   return String(valor ?? "")
@@ -2423,9 +2422,7 @@ document.getElementById("rolUsuario").textContent =
   esBianca ? "Jugadora" :
   "Club ADIUR";
 
-if (usuarioGuardado && !["admin", "coordinadora", "cuerpo_tecnico", "jugadora"].includes(rolADIUR)) {
-  window.location.href = "ADIUR-Pagina Principal.html";
-}
+// ADIUR-permisos.js aplica el rol y las categorías reales del perfil.
 
 // El menú y la visualización de datos propios de cada jugadora se aplican
 // desde ADIUR-permisos.js para todos los perfiles de jugadora.
