@@ -1700,7 +1700,7 @@
   <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
     apiKey: "AIzaSyCsOaJVo8P5reZvfp7vjBkhkP79C_mEO94",
@@ -1734,21 +1734,17 @@
         .toLowerCase();
     }
     const usuarioActual = normalizarUsuario(usuarioGuardado);
+    const rolTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+    const puedeEditarPerfilTORITO = localStorage.getItem("puedeEditarTORITO") === "true";
+    const puedeEliminarPerfilTORITO = localStorage.getItem("puedeEliminarTORITO") === "true";
     function esToto() {
-      return usuarioActual === "toto";
+      return ["cuerpo_tecnico", "coordinadora"].includes(rolTORITO);
     }
     function esBianca() {
-      return [
-        "biancadominguez",
-        "bianca"
-      ].includes(usuarioActual);
+      return rolTORITO === "jugadora";
     }
     function esFran() {
-      return [
-        "fran",
-        "francisco",
-        "francisco perez basla"
-      ].includes(usuarioActual);
+      return rolTORITO === "admin";
     }
     // Si no existe una sesión, regresar al inicio de sesión.
     if (!usuarioGuardado) {
@@ -1878,7 +1874,14 @@
       });
       ajustarSidebarPorPantalla();
 
-      const categoriasPermitidas = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
+      const todasLasCategorias = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
+      let categoriasPermitidas = [];
+      try {
+        const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+        if (Array.isArray(guardadas)) categoriasPermitidas = guardadas.filter(c => todasLasCategorias.includes(c));
+      } catch (_) {}
+      if (esFran()) categoriasPermitidas = todasLasCategorias;
+
       let jugadoras = [];
       let idEnEdicion = null;
 
@@ -1886,11 +1889,18 @@
         return (esFran() || esToto()) && categoriasPermitidas.includes(categoria);
       }
       function puedeEliminar() {
-        return esFran();
+        return esFran() && puedeEliminarPerfilTORITO;
       }
 
-      // --- ESCUCHAR CAMBIOS EN TIEMPO REAL DESDE FIREBASE ---
-      onSnapshot(collection(db,"torito_jugadoras"), (snapshot) => {
+      // --- ESCUCHAR SOLO CATEGORÍAS AUTORIZADAS DESDE FIREBASE ---
+      if (!categoriasPermitidas.length) {
+        console.error("TORITO: el perfil no tiene categorías autorizadas.");
+        return;
+      }
+      onSnapshot(query(
+        collection(db,"torito_jugadoras"),
+        where("categoria","in",categoriasPermitidas)
+      ), (snapshot) => {
         jugadoras = [];
         snapshot.forEach((docSnap) => {
           const data = docSnap.data();
@@ -2231,7 +2241,7 @@
         renderizarJugadoras();
       });
 
-      document.getElementById("botonAgregar").style.display = (esToto() || esFran()) ? "inline-block" : "none";
+      document.getElementById("botonAgregar").style.display = (puedeEditarPerfilTORITO && (esToto() || esFran())) ? "inline-block" : "none";
     }
   </script>
 
