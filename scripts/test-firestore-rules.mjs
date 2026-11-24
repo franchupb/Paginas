@@ -146,6 +146,8 @@ try {
   await assertSucceeds(deleteDoc(doc(coordinator, "jugadoras", "borrar-coord")));
   await assertSucceeds(setDoc(doc(coach16, "jugadoras", "borrar-coach"), { categoria: "Sub 16", nombre: "Temporal" }));
   await assertFails(deleteDoc(doc(coach16, "jugadoras", "borrar-coach")));
+  await assertFails(deleteDoc(doc(coach16, "gimnasioADIUR_individuales", "sub_16__j17")));
+  await assertSucceeds(deleteDoc(doc(coordinator, "gimnasioADIUR_individuales", "sub_16__j17")));
 
   console.log("Firestore rules tests passed.");
 } finally {
