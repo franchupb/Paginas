@@ -997,8 +997,7 @@ else window.addEventListener("adiur-permisos-listos", event => aplicarPerfilCent
 
 window.cerrarSesion = function(event) {
   event.preventDefault();
-  localStorage.removeItem("usuarioADIUR");
-  window.location.href = "ADIUR-Loing.html";
+  window.cerrarSesionADIURCentral(event);
 };
 
 window.alternarSidebar = function() {
