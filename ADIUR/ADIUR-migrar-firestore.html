@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Migración segura · ADIUR FEMENINO</title>
+<style>
+:root{--naranja:#f47721;--fondo:#f5f6f8;--texto:#202124;--gris:#6b7280}
+*{box-sizing:border-box}body{margin:0;background:var(--fondo);color:var(--texto);font-family:Arial,sans-serif;padding:28px}
+main{max-width:760px;margin:5vh auto;background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:28px;box-shadow:0 12px 36px #0000000c}
+h1{font-size:24px;margin:0 0 8px}p{line-height:1.55;color:var(--gris)}
+button{border:0;border-radius:10px;padding:13px 18px;background:var(--naranja);color:#fff;font-weight:700;cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
+#estado{margin-top:18px;padding:14px;border-radius:10px;background:#f6f7f8;white-space:pre-wrap;line-height:1.55}
+small{display:block;margin-top:16px;color:var(--gris)}
+</style>
+</head>
+<body>
+<main>
+<h1>Migración segura de datos ADIUR</h1>
+<p>Esta herramienta separa planificación, gimnasio y calculadora por categoría para que las reglas de Firestore puedan limitar el acceso de cada cuenta.</p>
+<p><strong>Protección de datos:</strong> no elimina ni modifica los documentos originales <code>principal</code>. Si el documento nuevo de una categoría ya existe, lo omite para no sobrescribirlo.</p>
+<button id="migrar" disabled>Verificando sesión…</button>
+<div id="estado" role="status" aria-live="polite">Comprobando tu cuenta de Firebase…</div>
+<small>Usá esta herramienta una sola vez después de publicar las nuevas reglas de Firestore. Ingresá con una cuenta administradora.</small>
+</main>
+<script type="module">
+import { auth, obtenerPerfilADIUR } from "./ADIUR-auth.js?v=20261123-authpersist2";
+import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { db } from "./ADIUR-auth.js?v=20261123-authpersist2";
+
+const boton=document.getElementById("migrar");
+const estado=document.getElementById("estado");
+const categorias=["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
+const slug=c=>String(c).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"");
+const informar=t=>{estado.textContent=t};
+let autorizado=false;
+
+try{
+ await auth.authStateReady();
+ const user=auth.currentUser;
+ if(!user){informar("No hay una sesión activa. Iniciá sesión con una cuenta administradora.");boton.textContent="Ir al Login";boton.disabled=false;boton.onclick=()=>location.replace("ADIUR-Loing.html");}
+ else{
+  const perfil=await obtenerPerfilADIUR(user);
+  if(!perfil||perfil.rol!=="admin"){informar("Acceso restringido. Esta herramienta solo puede ejecutarla una cuenta con rol admin.");boton.textContent="Volver";boton.disabled=false;boton.onclick=()=>location.replace("ADIUR-Pagina Principal.html");}
+  else{autorizado=true;boton.textContent="Migrar sin borrar los originales";boton.disabled=false;informar("Sesión administradora verificada. Los documentos originales se conservarán.");}
+ }
+}catch(error){informar("No se pudo verificar la sesión: "+(error.code||error.message));}
+
+async function migrarColeccion(nombre, transformar){
+ const origen=await getDoc(doc(db,nombre,"principal"));
+ if(!origen.exists())return {nombre,estado:"sin documento principal",creados:0,omitidos:0};
+ const datos=transformar(origen.data());
+ let creados=0,omitidos=0;
+ for(const item of datos){
+  const ref=doc(db,nombre,item.id);
+  const existente=await getDoc(ref);
+  if(existente.exists()){omitidos++;continue;}
+  await setDoc(ref,{...item.datos,migradoDesde:"principal",migradoEn:serverTimestamp()});
+  creados++;
+ }
+ return {nombre,estado:"ok",creados,omitidos};
+}
+
+boton.addEventListener("click",async()=>{
+ if(!autorizado)return;
+ if(!confirm("¿Confirmás copiar los datos de los documentos principales a documentos separados por categoría? Los originales no se van a borrar."))return;
+ boton.disabled=true;boton.textContent="Migrando…";
+ const resultados=[];
+ try{
+  resultados.push(await migrarColeccion("planificacionADIUR",original=>{
+   const mapa=original.datos&&typeof original.datos==="object"?original.datos:{};
+   return categorias.filter(c=>mapa[c]&&typeof mapa[c]==="object").map(c=>({id:slug(c),datos:{categoria:c,datos:mapa[c]}}));
+  }));
+  resultados.push(await migrarColeccion("gimnasioADIUR",original=>{
+   const mapa=original.datos&&typeof original.datos==="object"?original.datos:{};
+   return categorias.map(c=>{
+    const general="GENERAL::"+c, prefijoIndividual="INDIVIDUAL::"+c+"::";
+    const filtrado=Object.fromEntries(Object.entries(mapa).filter(([k])=>k===c||k===general||k.startsWith(general+"::")||k.startsWith(prefijoIndividual)));
+    return {id:slug(c),datos:{categoria:c,tipo:"categoria",datos:filtrado}};
+   }).filter(x=>Object.keys(x.datos.datos).length);
+  }));
+  resultados.push(await migrarColeccion("calculadoraADIUR",original=>{
+   const planes=original.plans&&typeof original.plans==="object"?original.plans:{};
+   const dias=original.trainingDays&&typeof original.trainingDays==="object"?original.trainingDays:{};
+   return categorias.filter(c=>Object.prototype.hasOwnProperty.call(planes,c)||Object.prototype.hasOwnProperty.call(dias,c)||String(original.volume||"")!=="").map(c=>({
+    id:slug(c),datos:{categoria:c,plans:Object.prototype.hasOwnProperty.call(planes,c)?{[c]:planes[c]}:{},trainingDays:Object.prototype.hasOwnProperty.call(dias,c)?{[c]:dias[c]}:{},volume:String(original.volume||""),actualizadoEn:new Date().toISOString()}
+   }));
+  }));
+  informar("Migración finalizada.\n\n"+resultados.map(r=>r.nombre+": "+r.estado+" · creados: "+r.creados+" · existentes omitidos: "+r.omitidos).join("\n")+"\n\nLos documentos originales principal siguen intactos. Revisá las páginas con cada cuenta antes de eliminar cualquier respaldo.");
+  boton.textContent="Migración revisada";
+ }catch(error){
+  console.error("Error en migración ADIUR:",error);
+  informar("La migración se detuvo por un error: "+(error.code||error.message)+"\nLos documentos originales se conservaron. Podés corregir el permiso o la conexión y volver a intentar; los documentos nuevos ya creados se omitirán.");
+  boton.disabled=false;boton.textContent="Reintentar migración";
+ }
+});
+</script>
+</body>
+</html>
