@@ -94,7 +94,7 @@
     return decodeURIComponent(location.pathname.split("/").pop() || "").toLowerCase();
   }
 
-  function mostrarErrorInicializacion(error, tituloMensaje, detalleMensaje) {
+  function mostrarErrorInicializacion(error, tituloMensaje, detalleMensaje, enlaceAccion = null) {
     console.error("ADIUR: no se pudo completar la validación de permisos.", error);
     document.documentElement.classList.remove("adiur-permisos-pendientes");
     const pantalla = document.createElement("main");
@@ -114,6 +114,13 @@
     boton.style.cssText = "border:0;border-radius:9px;padding:11px 17px;background:#f47721;color:#fff;font-weight:700;cursor:pointer";
     boton.addEventListener("click", () => location.reload());
     tarjeta.append(titulo, detalle, boton);
+    if (enlaceAccion?.href) {
+      const enlace = document.createElement("a");
+      enlace.href = enlaceAccion.href;
+      enlace.textContent = enlaceAccion.texto || "Continuar";
+      enlace.style.cssText = "display:inline-flex;align-items:center;margin:12px 0 0 12px;color:#b94f0b;font-weight:700;font-size:14px;text-decoration:none";
+      tarjeta.appendChild(enlace);
+    }
     pantalla.appendChild(tarjeta);
     if (document.body) {
       document.body.replaceChildren(pantalla);
@@ -359,10 +366,19 @@
     try {
       const modulo = await import("./ADIUR-auth.js?v=20261123-authpersist1");
       await modulo.observarSesionADIUR(async user => {
-        if (!user) {
-          location.replace(LOGIN_URL);
+        // Firebase puede entregar un estado inicial vacío en algunos entornos.
+        // Antes de considerar la sesión cerrada, consultamos la instancia ya restaurada.
+        const usuarioAutenticado = user || modulo.auth.currentUser;
+        if (!usuarioAutenticado) {
+          mostrarErrorInicializacion(
+            new Error("Firebase no devolvió un usuario autenticado."),
+            "No se pudo confirmar tu sesión",
+            "No te redirigimos automáticamente ni modificamos tu sesión. Si acabás de ingresar, probá Reintentar. Si cerraste sesión, podés volver al acceso de ADIUR.",
+            { href: LOGIN_URL, texto: "Ir al inicio de sesión" }
+          );
           return;
         }
+        user = usuarioAutenticado;
         try {
           let perfil;
           try {
