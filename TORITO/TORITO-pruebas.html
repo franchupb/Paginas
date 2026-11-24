@@ -926,7 +926,7 @@ thead .col-fija-nombre {
 
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
    CONFIGURACIÓN DE FIREBASE CLOUD FIRESTORE (TORITO)
@@ -949,6 +949,15 @@ try {
 if (appExistente && appExistente.options.projectId !== firebaseConfig.projectId) throw new Error("La aplicación Firebase predeterminada no pertenece a TORITO.");
 const app = appExistente || initializeApp(firebaseConfig);
   db = getFirestore(app);
+const rolPerfilTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+let categoriasAutorizadasTORITO = [];
+try {
+  const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+  if (Array.isArray(guardadas)) categoriasAutorizadasTORITO = guardadas;
+} catch (_) {}
+if (rolPerfilTORITO === "admin" && !categoriasAutorizadasTORITO.length) {
+  categoriasAutorizadasTORITO = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
+}
   nubeActiva = true;
 } catch (e) {
   console.warn("Modo offline/localStorage activado:", e);
@@ -1039,7 +1048,7 @@ async function cargarJugadorasPorDivision(division) {
   // 1. Intentar leer desde Firestore (colección "jugadoras" o documento "plantel/jugadoras")
   if (nubeActiva && db) {
     try {
-      const snapCol = await getDocs(collection(db,"torito_jugadoras"));
+      const snapCol = await getDocs(query(collection(db,"torito_jugadoras"),where("categoria","in",categoriasAutorizadasTORITO)));
       snapCol.forEach(docSnap => {
         listaTotal.push({ id: docSnap.id, ...docSnap.data() });
       });
