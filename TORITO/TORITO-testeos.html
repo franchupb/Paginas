@@ -2805,7 +2805,7 @@ async function cargarJugadorasPorDivision(division){
   }
 
   if(listaTotal.length===0){
-    const raw=localStorage.getItem("jugadorasTORITO")||localStorage.getItem("plantelTORITO");
+    const raw=localStorage.getItem("jugadorasTORITO_"+(localStorage.getItem("uidTORITO")||"sin-uid"));
 
     if(raw){
       try{listaTotal=JSON.parse(raw)}catch(e){}
@@ -2886,7 +2886,7 @@ async function cargarDatosPlanilla(division,mes){
 
   if(!cargadoDeNube){
 
-    const raw=localStorage.getItem("torito_testeos_torito_"+clave);
+    const raw=localStorage.getItem("torito_testeos_torito_"+(localStorage.getItem("uidTORITO")||"sin-uid")+"_"+clave) || (localStorage.getItem("rolTORITO")==="admin" ? localStorage.getItem("torito_testeos_torito_"+clave) : null);
 
     if(raw){
       try{
