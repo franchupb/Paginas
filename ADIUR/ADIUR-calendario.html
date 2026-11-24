@@ -2523,8 +2523,7 @@ document.getElementById("fondoPerfil").addEventListener("click", event => {
 
 document.getElementById("cerrarSesion").addEventListener("click", event => {
     event.preventDefault();
-    eliminarAlmacenamiento("usuarioADIUR");
-    window.location.href = "ADIUR-Loing.html";
+    window.cerrarSesionADIURCentral(event);
 });
 
 /* =====================================================
