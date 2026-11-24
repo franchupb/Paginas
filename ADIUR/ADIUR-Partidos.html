@@ -2922,8 +2922,8 @@ async function guardarPartidoEnNube(partido) {
         return true;
     } catch (error) {
         console.error("Error guardando partido en Firestore:", error);
-        actualizarIndicadorGuardado("offline", "💾 Guardado local (sin red)");
-        return true;
+        actualizarIndicadorGuardado("offline", "⚠️ Guardado local; no se pudo sincronizar");
+        return false;
     }
 }
 
@@ -2942,8 +2942,8 @@ async function eliminarPartidoEnNube(id) {
         return true;
     } catch (error) {
         console.error("Error eliminando partido en Firestore:", error);
-        actualizarIndicadorGuardado("offline", "💾 Guardado local (sin red)");
-        return true;
+        actualizarIndicadorGuardado("offline", "⚠️ No se pudo eliminar en la nube");
+        return false;
     }
 }
 
