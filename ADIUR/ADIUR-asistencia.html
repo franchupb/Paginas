@@ -2940,17 +2940,20 @@ function escucharDiasEntrenamientoNube(categoria) {
 
   categoriaEscuchadaDiasNube = categoria;
 
-  const referencia = doc(
-    db,
-    "configuracionAsistenciaADIUR",
-    claveDiasEntrenamiento(categoria)
+  // Se escucha mediante una consulta filtrada por categoría, no con get
+  // directo a un documento que quizá todavía no exista. Así Firestore puede
+  // validar el alcance incluso cuando la configuración aún no fue creada.
+  const referencia = query(
+    collection(db, "configuracionAsistenciaADIUR"),
+    where("categoria", "==", categoria)
   );
 
   cancelarEscuchaDiasNube = onSnapshot(
     referencia,
     async (snapshot) => {
-      if (snapshot.exists()) {
-        const datos = snapshot.data();
+      const documento = snapshot.docs[0] || null;
+      if (documento) {
+        const datos = documento.data();
 
         if (Array.isArray(datos.dias)) {
           const claveLocal = claveDiasEntrenamiento(categoria);
