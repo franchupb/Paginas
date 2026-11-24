@@ -1066,7 +1066,9 @@ import {
     onSnapshot,
     doc,
     setDoc,
-    deleteDoc
+    deleteDoc,
+    query,
+    where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1083,19 +1085,32 @@ const appExistente = getApps().find(item => item.name === "[DEFAULT]");
 if (appExistente && appExistente.options.projectId !== firebaseConfig.projectId) throw new Error("La aplicación Firebase predeterminada no pertenece a TORITO.");
 const app = appExistente || initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const rolPerfilTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+let categoriasAutorizadasTORITO = [];
+try {
+    const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+    if (Array.isArray(guardadas)) categoriasAutorizadasTORITO = guardadas;
+} catch (_) {}
+if (rolPerfilTORITO === "admin" && !categoriasAutorizadasTORITO.length) {
+    categoriasAutorizadasTORITO = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
+}
+const puedeEditarTORITO = localStorage.getItem("puedeEditarTORITO") === "true";
+const puedeEliminarTORITO = localStorage.getItem("puedeEliminarTORITO") === "true";
+const categoriasJugadoraPorId = new Map();
 
 // ======================================
 // JUGADORAS: ESCUCHAR CAMBIOS EN FIREBASE
 // ======================================
 
 onSnapshot(
-    collection(db,"torito_jugadoras"),
+    query(collection(db,"torito_jugadoras"),where("categoria","in",categoriasAutorizadasTORITO)),
     (snapshot) => {
         const lista = snapshot.docs.map(documento => ({
             id: documento.id,
             nombre: documento.data().nombre || "",
             categoria: documento.data().categoria || ""
         }));
+        lista.forEach(j => categoriasJugadoraPorId.set(j.id, j.categoria));
 
         if (typeof window.aplicarJugadorasNube === "function") {
             window.aplicarJugadorasNube(lista);
@@ -1111,7 +1126,7 @@ onSnapshot(
 // ======================================
 
 onSnapshot(
-    collection(db,"torito_tiemposRendimiento"),
+    query(collection(db,"torito_tiemposRendimiento"),where("categoria","in",categoriasAutorizadasTORITO)),
     (snapshot) => {
         const lista = snapshot.docs.map(documento => ({
             ...documento.data(),
@@ -1139,6 +1154,9 @@ onSnapshot(
 // ======================================
 
 window.guardarRegistroTiemposNube = async function(registro) {
+    if (!puedeEditarTORITO || !categoriasAutorizadasTORITO.includes(registro.categoria)) {
+        throw new Error("El perfil no puede modificar registros de esta categoría.");
+    }
     await setDoc(
         doc(db,"torito_tiemposRendimiento", String(registro.id)),
         registro
@@ -1150,6 +1168,9 @@ window.guardarRegistroTiemposNube = async function(registro) {
 // ======================================
 
 window.eliminarRegistroTiemposNube = async function(id) {
+    if (!puedeEditarTORITO || !puedeEliminarTORITO) {
+        throw new Error("El perfil no puede eliminar registros.");
+    }
     await deleteDoc(
         doc(db,"torito_tiemposRendimiento", String(id))
     );
