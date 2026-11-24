@@ -61,13 +61,13 @@ function mezclarConPrioridadExistente(origen,existente){
  }
  return existente===undefined||existente===null||existente===""?origen:existente;
 }
-async function migrarColeccion(nombre, transformar){
- const origen=await getDoc(doc(db,nombre,"principal"));
- if(!origen.exists())return {nombre,estado:"sin documento principal",creados:0,actualizados:0,omitidos:0};
+async function migrarColeccion(origenNombre,destinoNombre,transformar){
+ const origen=await getDoc(doc(db,origenNombre,"principal"));
+ if(!origen.exists())return {nombre:destinoNombre,estado:"sin documento principal",creados:0,actualizados:0,omitidos:0};
  const datos=transformar(origen.data());
  let creados=0,actualizados=0,omitidos=0;
  for(const item of datos){
-  const ref=doc(db,nombre,item.id);
+  const ref=doc(db,destinoNombre,item.id);
   const existente=await getDoc(ref);
   if(existente.exists()&&existente.data().migradoDesde==="principal"){omitidos++;continue;}
   const contenido=existente.exists()
@@ -76,7 +76,7 @@ async function migrarColeccion(nombre, transformar){
   await setDoc(ref,{...contenido,migradoDesde:"principal",migradoEn:serverTimestamp()});
   if(existente.exists())actualizados++;else creados++;
  }
- return {nombre,estado:"ok",creados,actualizados,omitidos};
+ return {nombre:destinoNombre,estado:"ok",creados,actualizados,omitidos};
 }
 
 boton.addEventListener("click",async()=>{
@@ -85,11 +85,11 @@ boton.addEventListener("click",async()=>{
  boton.disabled=true;boton.textContent="Migrando…";
  const resultados=[];
  try{
-  resultados.push(await migrarColeccion("planificacionADIUR",original=>{
+  resultados.push(await migrarColeccion("planificacionADIUR","planificacionADIUR_categorias",original=>{
    const mapa=original.datos&&typeof original.datos==="object"?original.datos:{};
    return categorias.filter(c=>mapa[c]&&typeof mapa[c]==="object").map(c=>({id:slug(c),datos:{categoria:c,datos:mapa[c]}}));
   }));
-  resultados.push(await migrarColeccion("gimnasioADIUR",original=>{
+  resultados.push(await migrarColeccion("gimnasioADIUR","gimnasioADIUR_categorias",original=>{
    const mapa=original.datos&&typeof original.datos==="object"?original.datos:{};
    return categorias.map(c=>{
     const general="GENERAL::"+c, prefijoIndividual="INDIVIDUAL::"+c+"::";
@@ -97,7 +97,7 @@ boton.addEventListener("click",async()=>{
     return {id:slug(c),datos:{categoria:c,tipo:"categoria",datos:filtrado}};
    }).filter(x=>Object.keys(x.datos.datos).length);
   }));
-  resultados.push(await migrarColeccion("calculadoraADIUR",original=>{
+  resultados.push(await migrarColeccion("calculadoraADIUR","calculadoraADIUR_categorias",original=>{
    const planes=original.plans&&typeof original.plans==="object"?original.plans:{};
    const dias=original.trainingDays&&typeof original.trainingDays==="object"?original.trainingDays:{};
    return categorias.filter(c=>Object.prototype.hasOwnProperty.call(planes,c)||Object.prototype.hasOwnProperty.call(dias,c)||String(original.volume||"")!=="").map(c=>({
