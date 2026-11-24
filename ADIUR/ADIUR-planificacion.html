@@ -2579,7 +2579,7 @@ window.firebasePlanificacionReady = (async () => {
   const db = getFirestore(app);
 
   const idCategoria = categoria => String(categoria || "")
-    .normalize("NFD").replace(/[\\u0300-\\u036f]/g, "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 
   // Cada división se guarda en su propio documento: las reglas de Firestore
