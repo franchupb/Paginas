@@ -2906,9 +2906,16 @@ async function cargarDatosPlanilla(division,mes){
   let dataNube={};
   if(nubeActiva&&db){
     try{
-      const snap=await getDoc(doc(db,"testeos_adiur",clave));
+      // La consulta por división evita pedir directamente un documento
+      // que todavía no existe y mantiene el alcance que exigen las reglas.
+      const consultaPlanilla=query(
+        collection(db,"testeos_adiur"),
+        where("division","==",division)
+      );
+      const resultadoPlanilla=await getDocs(consultaPlanilla);
       if(version!==versionCarga)return;
-      if(snap.exists())dataNube=snap.data()||{};
+      const snap=resultadoPlanilla.docs.find(documento=>documento.id===clave)||null;
+      if(snap)dataNube=snap.data()||{};
     }catch(error){
       console.warn("Error leyendo Firestore:",error);
     }
