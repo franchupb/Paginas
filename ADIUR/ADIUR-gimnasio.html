@@ -2719,7 +2719,7 @@ const firebaseConfig = {
       ? query(
           collection(dbCloud, "gimnasioADIUR_individuales"),
           where("categoria", "in", categorias),
-          where("jugadora", "==", perfil.jugadora)
+          where(perfil.jugadoraId ? "jugadoraId" : "jugadora", "==", perfil.jugadoraId || perfil.jugadora)
         )
       : query(
           collection(dbCloud, "gimnasioADIUR_individuales"),
