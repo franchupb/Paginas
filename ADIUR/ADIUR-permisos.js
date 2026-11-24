@@ -32,6 +32,15 @@
     });
   };
 
+  // Construye consultas que Firestore puede validar contra las reglas de
+  // categoría. Las reglas no filtran resultados: la consulta debe acotarlos.
+  window.crearConsultaCategoriasADIUR = async function (referencia, queryFn, whereFn, campo = "categoria") {
+    const perfil = await window.esperarPermisosADIUR();
+    const categorias = Array.isArray(perfil?.categorias) ? perfil.categorias : [];
+    if (!categorias.length) throw new Error("No hay categorías autorizadas para consultar Firestore.");
+    return queryFn(referencia, whereFn(campo, "in", categorias));
+  };
+
   window.cerrarSesionADIURCentral = async function (evento) {
     evento?.preventDefault?.();
     try {
