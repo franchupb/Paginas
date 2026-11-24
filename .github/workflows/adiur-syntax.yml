@@ -30,4 +30,4 @@ jobs:
       - name: Install Firebase test dependencies
         run: npm install --no-save firebase@10.12.2 @firebase/rules-unit-testing@3.0.3 firebase-tools
       - name: Compile and test Firestore rules in emulator
-        run: npx firebase emulators:exec --only firestore --project demo-adiur-rules --config scripts/firebase-emulator.json "node scripts/test-firestore-rules.mjs"
+        run: npx firebase emulators:exec --only firestore --project demo-adiur-rules --config firebase.json "node scripts/test-firestore-rules.mjs"
