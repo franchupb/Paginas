@@ -200,6 +200,13 @@
         return categoria && categoriasPermitidas.has(categoria);
       });
       if (!opcionesPermitidas.length) return;
+      const opcionGlobal = Array.from(select.options || []).find(option =>
+        /^(todas|todas las categorías|todas las divisiones)$/i.test(String(option.textContent || "").trim())
+      );
+      if (!restringido && opcionGlobal && select.value === opcionGlobal.value) {
+        select.disabled = false;
+        return;
+      }
       if (!opcionesPermitidas.some(option => option.value === select.value)) {
         select.value = opcionesPermitidas[0].value;
         select.dispatchEvent(new Event("change", { bubbles: true }));
