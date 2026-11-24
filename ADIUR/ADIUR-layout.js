@@ -735,7 +735,7 @@
 
   async function importarCerrarSesionADIUR() {
     try {
-      const modulo = await import("./ADIUR-auth.js?v=20261123-authpersist1");
+      const modulo = await import("./ADIUR-auth.js?v=20261123-authpersist2");
       await modulo.cerrarSesionADIUR();
       window.location.href = "ADIUR-Loing.html";
     } catch (error) {
