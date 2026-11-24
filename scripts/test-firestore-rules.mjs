@@ -37,6 +37,7 @@ try {
   const coordinator = env.authenticatedContext("coordinadora").firestore();
   const anonymous = env.unauthenticatedContext().firestore();
 
+  console.log("Test: planificación y aislamiento de categorías");
   await assertSucceeds(getDoc(doc(coach16, "planificacionADIUR", "sub_16")));
   await assertFails(getDoc(doc(coach16, "planificacionADIUR", "primera")));
   await assertFails(getDoc(doc(coach14, "planificacionADIUR", "sub_16")));
@@ -48,6 +49,7 @@ try {
   await assertFails(setDoc(moverRef, { categoria: "Primera", datos: {} }));
   await assertFails(getDocs(collection(coach16, "planificacionADIUR")));
 
+  console.log("Test: plantel, gimnasio, calendario y calculadora");
   await assertSucceeds(getDoc(doc(player16, "jugadoras", "j16")));
   await assertSucceeds(getDocs(query(collection(coach16, "jugadoras"), where("categoria", "in", ["Sub 16"]))));
   await assertFails(getDocs(collection(coach16, "jugadoras")));
@@ -60,6 +62,7 @@ try {
   await assertFails(setDoc(doc(coach16, "calendarioADIUR", "primera"), { categoria: "Primera", actividades: {} }));
   await assertFails(getDoc(doc(player16, "calculadoraADIUR", "sub_16")));
 
+  console.log("Test: respaldos, pizarras y roles");
   await assertSucceeds(getDoc(doc(admin, "planificacionADIUR", "principal")));
   await assertFails(getDoc(doc(coach16, "planificacionADIUR", "principal")));
   await assertSucceeds(getDoc(doc(admin, "plantel", "jugadoras")));
@@ -71,6 +74,7 @@ try {
   await assertFails(getDoc(doc(coach16, "pizarrasADIUR", "coach14")));
   await assertFails(getDoc(doc(player16, "pizarrasADIUR", "player16")));
 
+  console.log("Test: encuestas públicas y autenticadas");
   await assertSucceeds(getDoc(doc(player16, "encuestas_periodos", "abierta")));
   await assertSucceeds(getDoc(doc(anonymous, "encuestas_periodos", "abierta")));
   await assertFails(getDoc(doc(anonymous, "encuestas_periodos", "cerrada")));
@@ -87,6 +91,7 @@ try {
     uid: null, categoria: "Sub 16", periodoId: "cerrada", respuesta: "sí"
   }));
 
+  console.log("Test: permisos de borrado");
   await assertSucceeds(setDoc(doc(coordinator, "jugadoras", "borrar-coord"), { categoria: "Sub 16", nombre: "Temporal" }));
   await assertSucceeds(deleteDoc(doc(coordinator, "jugadoras", "borrar-coord")));
   await assertSucceeds(setDoc(doc(coach16, "jugadoras", "borrar-coach"), { categoria: "Sub 16", nombre: "Temporal" }));
