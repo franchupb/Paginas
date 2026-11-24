@@ -27,7 +27,7 @@ small{display:block;margin-top:16px;color:var(--gris)}
 <script type="module">
 import { auth, obtenerPerfilADIUR, db } from "./ADIUR-auth.js?v=20261123-authpersist2";
 import {
-  collection, doc, getDoc, getDocs, query, where, setDoc, serverTimestamp
+  collection, doc, getDoc, getDocs, query, where, setDoc, updateDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const boton=document.getElementById("migrar");
@@ -71,7 +71,7 @@ function mezclarConPrioridadExistente(origen,existente){
 async function migrarColeccion(origenNombre,destinoNombre,transformar){
  const origen=await getDoc(doc(db,origenNombre,"principal"));
  if(!origen.exists())return {nombre:destinoNombre,estado:"sin documento principal",creados:0,actualizados:0,omitidos:0};
- const datos=transformar(origen.data());
+ const datos=await transformar(origen.data());
  // La consulta por categoría también funciona cuando el destino está vacío;
  // evita getDoc sobre documentos inexistentes, que no tienen resource.data.
  const existentesSnap=await getDocs(query(collection(db,destinoNombre),where("categoria","in",categorias)));
@@ -96,6 +96,11 @@ async function cargarJugadoras(){
  return snapshot.docs.map(d=>({id:d.id,...d.data()}));
 }
 
+async function cargarPerfilesJugadoras(){
+ const snapshot=await getDocs(collection(db,"usuarios"));
+ return snapshot.docs.map(d=>({id:d.id,...d.data()})).filter(p=>p.rol==="jugadora"&&p.activo===true);
+}
+
 function transformarRutinasGenerales(original){
  const mapa=original.datos&&typeof original.datos==="object"?original.datos:{};
  return categorias.map(c=>{
@@ -106,7 +111,7 @@ function transformarRutinasGenerales(original){
  }).filter(x=>Object.keys(x.datos.datos).length);
 }
 
-function transformarRutinasIndividuales(original,jugadoras,sinCorrespondencia){
+async function transformarRutinasIndividuales(original,jugadoras,perfiles,sinCorrespondencia,perfilesSinVinculo){
  const mapa=original.datos&&typeof original.datos==="object"?original.datos:{};
  const agrupadas=new Map();
  for(const categoria of categorias){
@@ -116,8 +121,7 @@ function transformarRutinasIndividuales(original,jugadoras,sinCorrespondencia){
    const idAnterior=clave.slice(prefijo.length);
    const claveNormalizada=normalizar(idAnterior);
    const jugadora=jugadoras.find(j=>{
-    const alias=[j.id,j.usuario,j.username,j.nombreUsuario,j.login,nombreJugadora(j)]
-      .map(normalizar).filter(Boolean);
+    const alias=[j.id,j.usuario,j.username,j.nombreUsuario,j.login,nombreJugadora(j)].map(normalizar).filter(Boolean);
     return alias.includes(claveNormalizada)&&normalizar(j.categoria||j.division)===normalizar(categoria);
    });
    if(!jugadora){
@@ -125,6 +129,18 @@ function transformarRutinasIndividuales(original,jugadoras,sinCorrespondencia){
     continue;
    }
    const id=idJugadora(jugadora);
+   const nombre=nombreJugadora(jugadora);
+   const aliasJugadora=[jugadora.id,jugadora.usuario,jugadora.username,jugadora.nombreUsuario,jugadora.login,nombre].map(normalizar).filter(Boolean);
+   const perfil=perfiles.find(p=>{
+    const aliasPerfil=[p.jugadora,p.usuario,p.nombre,p.nombreCompleto,p.nombreUsuario].map(normalizar).filter(Boolean);
+    return aliasPerfil.some(alias=>aliasJugadora.includes(alias));
+   });
+   if(perfil&&perfil.jugadoraId!==id){
+    await updateDoc(doc(db,"usuarios",perfil.id),{jugadoraId:id});
+    perfil.jugadoraId=id;
+   }else if(!perfil){
+    perfilesSinVinculo.push(nombre+" · "+id);
+   }
    const claveNueva="INDIVIDUAL::"+categoria+"::"+id;
    const idDocumento=slug(categoria)+"__"+slug(id);
    if(!agrupadas.has(idDocumento)){
@@ -132,7 +148,7 @@ function transformarRutinasIndividuales(original,jugadoras,sinCorrespondencia){
      categoria,
      tipo:"individual",
      jugadoraId:id,
-     jugadora:nombreJugadora(jugadora),
+     jugadora:perfil?.jugadora||nombre,
      datos:{}
     }});
    }
@@ -148,6 +164,7 @@ boton.addEventListener("click",async()=>{
  boton.disabled=true;boton.textContent="Migrando…";
  const resultados=[];
  const sinCorrespondencia=[];
+ const perfilesSinVinculo=[];
  try{
   resultados.push(await migrarColeccion("planificacionADIUR","planificacionADIUR_categorias",original=>{
    const mapa=original.datos&&typeof original.datos==="object"?original.datos:{};
@@ -156,10 +173,10 @@ boton.addEventListener("click",async()=>{
 
   const gymOriginal=await getDoc(doc(db,"gimnasioADIUR","principal"));
   if(gymOriginal.exists()){
-   const roster=await cargarJugadoras();
+   const [roster,perfiles]=await Promise.all([cargarJugadoras(),cargarPerfilesJugadoras()]);
    resultados.push(await migrarColeccion("gimnasioADIUR","gimnasioADIUR_categorias",transformarRutinasGenerales));
    resultados.push(await migrarColeccion("gimnasioADIUR","gimnasioADIUR_individuales",original=>
-    transformarRutinasIndividuales(original,roster,sinCorrespondencia)
+    transformarRutinasIndividuales(original,roster,perfiles,sinCorrespondencia,perfilesSinVinculo)
    ));
   }else{
    resultados.push({nombre:"gimnasioADIUR_categorias",estado:"sin documento principal",creados:0,actualizados:0,omitidos:0});
@@ -175,10 +192,11 @@ boton.addEventListener("click",async()=>{
   }));
 
   const resumen=resultados.map(r=>r.nombre+": "+r.estado+" · creados: "+r.creados+" · combinados: "+r.actualizados+" · ya migrados: "+r.omitidos).join("\n");
-  const aviso=sinCorrespondencia.length
-   ?"\n\nRutinas individuales que no se pudieron vincular a una jugadora (quedaron preservadas en el respaldo):\n"+sinCorrespondencia.join("\n")
-   :"\n\nTodas las rutinas individuales se vincularon con una jugadora.";
-  informar("Migración finalizada.\n\n"+resumen+aviso+"\n\nLos documentos originales principal siguen intactos. Probá cada cuenta antes de eliminar cualquier respaldo.");
+  const avisos=[];
+  if(sinCorrespondencia.length)avisos.push("Rutinas individuales sin jugadora identificada (se conservaron en el respaldo):\n"+sinCorrespondencia.join("\n"));
+  if(perfilesSinVinculo.length)avisos.push("Perfiles de jugadoras sin vínculo automático (revisar su campo jugadoraId):\n"+perfilesSinVinculo.join("\n"));
+  if(!avisos.length)avisos.push("Todas las rutinas individuales y perfiles de jugadoras quedaron vinculados.");
+  informar("Migración finalizada.\n\n"+resumen+"\n\n"+avisos.join("\n\n")+"\n\nLos documentos originales principal siguen intactos. Probá cada cuenta antes de eliminar cualquier respaldo.");
   boton.textContent="Migración revisada";
  }catch(error){
   console.error("Error en migración ADIUR:",error);
