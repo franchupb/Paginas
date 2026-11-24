@@ -2409,18 +2409,20 @@ function normalizarCategoria(valor) {
 const usuarioNormalizado = normalizarTexto(usuarioGuardado)
   .replace(/[^a-z0-9]/g, "");
 
-const esFran = [
-  "fran",
-  "francisco",
-  "franciscoperezbasla"
-].includes(usuarioNormalizado);
-
-const esToto = usuarioNormalizado === "toto";
-
-const esBianca = [
-  "bianca",
-  "biancadominguez"
-].includes(usuarioNormalizado);
+let perfilTORITO = {};
+try {
+  perfilTORITO = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+} catch (_) {}
+const rolTORITO = String(localStorage.getItem("rolTORITO") || "").toLowerCase();
+let categoriasUsuarioTORITO = [];
+try {
+  categoriasUsuarioTORITO = Array.isArray(perfilTORITO)
+    ? perfilTORITO
+    : JSON.parse(localStorage.getItem("categoriasTORITO") || "[]");
+} catch (_) { categoriasUsuarioTORITO = []; }
+const esFran = rolTORITO === "admin";
+const esToto = ["cuerpo_tecnico", "coordinadora"].includes(rolTORITO);
+const esBianca = rolTORITO === "jugadora";
 
 const nombreMostrar = usuarioGuardado || "Usuario";
 
@@ -2435,7 +2437,7 @@ document.getElementById("rolUsuario").textContent =
   esBianca ? "Jugadora · Sub 14" :
   "Club Torito";
 
-if (!esFran && !esToto && usuarioGuardado) {
+if (!esFran && !esToto && !esBianca && usuarioGuardado) {
   window.location.href = "TORITO-Pagina Principal.html";
 }
 
