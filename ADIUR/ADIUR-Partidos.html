@@ -2961,50 +2961,67 @@ function iniciarSincronizacionNube() {
                 listaNube.push(normalizarObjetoPartido({ id: docSnap.id, ...docSnap.data() }));
             });
 
-            if (listaNube.length === 0 && partidos.length > 0 && !migracionInicialRealizada) {
-                migracionInicialRealizada = true;
-                for (const pLocal of partidos) {
-                    await setDoc(doc(db, "partidos", String(pLocal.id)), {
-                        ...pLocal,
-                        actualizadoPor: usuarioGuardado,
-                        actualizadoEl: new Date().toISOString()
-                    });
+            // El respaldo local se combina una sola vez, al iniciar la sesión.
+            // Después, Firestore es la fuente de verdad. Esto evita que un
+            // registro borrado desde otro dispositivo reaparezca desde un
+            // localStorage antiguo en cada actualización del listener.
+            const primeraSincronizacion = !migracionInicialRealizada;
+            migracionInicialRealizada = true;
+            let partidosFinales = listaNube;
+
+            if (primeraSincronizacion && listaNube.length === 0 && partidos.length > 0) {
+                partidosFinales = [...partidos];
+                partidos = partidosFinales;
+                respaldarEnLocalStorage();
+
+                for (const pLocal of partidosFinales) {
+                    try {
+                        await setDoc(doc(db, "partidos", String(pLocal.id)), {
+                            ...pLocal,
+                            actualizadoPor: usuarioGuardado,
+                            actualizadoEl: new Date().toISOString()
+                        });
+                    } catch (error) {
+                        console.error("No se pudo migrar un partido local:", pLocal.id, error);
+                        actualizarIndicadorGuardado("offline", "⚠️ Hay partidos pendientes de sincronizar");
+                    }
                 }
-                actualizarIndicadorGuardado("", "☁️ Guardado en la nube");
                 return;
             }
 
-            // Combinar por ID: la respuesta de Firestore no debe borrar
-            // partidos que todavía existan únicamente en este navegador.
-            const mapa = new Map(listaNube.map(p => [String(p.id), p]));
-            const pendientesDeSubir = [];
+            if (primeraSincronizacion && listaNube.length > 0) {
+                // Recupera registros locales que aún no estaban en Firestore,
+                // pero únicamente durante la migración inicial.
+                const mapa = new Map(listaNube.map(p => [String(p.id), p]));
+                const pendientesDeSubir = [];
 
-            partidos.forEach(local => {
-                const id = String(local.id);
-                if (!mapa.has(id)) {
-                    mapa.set(id, local);
-                    pendientesDeSubir.push(local);
-                }
-            });
+                partidos.forEach(local => {
+                    const id = String(local.id);
+                    if (!mapa.has(id)) {
+                        mapa.set(id, local);
+                        pendientesDeSubir.push(local);
+                    }
+                });
+                partidosFinales = [...mapa.values()];
 
-            partidos = [...mapa.values()];
-            migracionInicialRealizada = true;
-            respaldarEnLocalStorage();
-
-            for (const pendiente of pendientesDeSubir) {
-                try {
-                    await setDoc(doc(db, "partidos", String(pendiente.id)), {
-                        ...pendiente,
-                        actualizadoPor: usuarioGuardado,
-                        actualizadoEl: new Date().toISOString()
-                    });
-                } catch (error) {
-                    console.error("No se pudo recuperar un partido local:", pendiente.id, error);
+                for (const pendiente of pendientesDeSubir) {
+                    try {
+                        await setDoc(doc(db, "partidos", String(pendiente.id)), {
+                            ...pendiente,
+                            actualizadoPor: usuarioGuardado,
+                            actualizadoEl: new Date().toISOString()
+                        });
+                    } catch (error) {
+                        console.error("No se pudo recuperar un partido local:", pendiente.id, error);
+                        actualizarIndicadorGuardado("offline", "⚠️ Hay partidos pendientes de sincronizar");
+                    }
                 }
             }
 
+            partidos = partidosFinales;
+            respaldarEnLocalStorage();
             renderizarFixture();
-            actualizarIndicadorGuardado("", "☁️ Datos locales y nube combinados");
+            actualizarIndicadorGuardado("", "☁️ Fixture sincronizado");
         },
         error => {
             console.error("No se pudo cargar el fixture desde Firestore:", error);
