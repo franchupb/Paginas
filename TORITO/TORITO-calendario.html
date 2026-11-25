@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calendario - TORITO</title>
+<title>Calendario - TORITO FEM</title>
 
 <style>
 :root {
@@ -664,6 +664,8 @@ main {
     text-transform: uppercase;
     overflow-wrap: anywhere;
 }
+
+.actividad-pruebas{display:flex;flex-direction:column;gap:3px;width:100%;margin-top:6px;padding-top:6px;border-top:1px solid rgba(30,35,45,.08);color:#424852;font-size:8px;line-height:1.35;text-align:left;overflow-wrap:anywhere}.actividad-pruebas strong{font-size:8px;color:#242830}.actividad-pruebas span{color:#626975}
 
 .entrenamiento-carga::before {
     content: "";
@@ -1788,13 +1790,13 @@ main {
 
     <img
         class="logo-superior"
-        src="TORITO%20-%20Logo.png"
+        src="TORITO - Logo.png"
         alt="Logo de TORITO"
-        onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='TORITO%20-%20Logo.png'}else{this.style.display='none'}"
+        onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='TORITO - Logo.png'}else{this.style.display='none'}"
     >
 
     <div class="titulo-superior">
-        <h1>TORITO</h1>
+        <h1>TORITO FEMENINO</h1>
         <p>Calendario</p>
     </div>
 
@@ -1807,7 +1809,7 @@ main {
         <span class="avatar" id="avatarUsuario">U</span>
         <span class="informacion-perfil">
             <span class="nombre-perfil" id="nombreUsuario">Usuario</span>
-            <span class="rol-perfil" id="rolUsuario">Club Torito</span>
+            <span class="rol-perfil" id="rolUsuario">Club TORITO</span>
         </span>
     </button>
 
@@ -2308,7 +2310,7 @@ main {
 
         <h2 id="nombrePerfil">Usuario</h2>
 
-        <p id="rolPerfil">Club Torito</p>
+        <p id="rolPerfil">Club TORITO</p>
 
         <button
             class="boton-cerrar-perfil"
@@ -2385,9 +2387,10 @@ function normalizarUsuario(valor) {
 
 const usuarioNormalizado = normalizarUsuario(usuarioGuardado);
 
-function esFran() { return (localStorage.getItem("rolTORITO") || "").trim().toLowerCase() === "admin"; }
-function esToto() { return ["editor", "cuerpo_tecnico", "coordinadora"].includes((localStorage.getItem("rolTORITO") || "").trim().toLowerCase()); }
-function esBianca() { return (localStorage.getItem("rolTORITO") || "").trim().toLowerCase() === "jugadora"; }
+const rolTORITO = localStorage.getItem("rolTORITO") || "";
+function esFran() { return rolTORITO === "admin"; }
+function esToto() { return ["coordinadora", "cuerpo_tecnico"].includes(rolTORITO); }
+function esBianca() { return rolTORITO === "jugadora"; }
 
 document.getElementById("nombreUsuario").textContent =
     usuarioGuardado || "Usuario";
@@ -2400,8 +2403,8 @@ document.getElementById("avatarUsuario").textContent =
 document.getElementById("rolUsuario").textContent =
     esFran() ? "Administrador" :
     esToto() ? "Cuerpo técnico" :
-    esBianca() ? "Jugadora · Sub 14" :
-    "Club Torito";
+    esBianca() ? "Jugadora" :
+    "Club TORITO";
 
 document.getElementById("nombrePerfil").textContent =
     usuarioGuardado || "Usuario";
@@ -2493,14 +2496,7 @@ document.querySelectorAll(".sidebar a").forEach(enlace => {
 
 /* PERMISOS DE BIANCA */
 
-if (esBianca()) {
-    document.getElementById("grupoPlantel")?.remove();
-    document.getElementById("grupoRendimientos")?.remove();
-
-    document.querySelectorAll("[data-ocultar-bianca]").forEach(enlace => {
-        enlace.style.display = "none";
-    });
-}
+// El menú se filtra desde TORITO-permisos.js según el perfil autenticado.
 
 /* =====================================================
    PERFIL
@@ -2600,7 +2596,9 @@ if (usuarioNormalizado) {
     ];
 
     if (esBianca()) {
-        categoria.value = "Sub 14";
+        let categoriasUsuario = [];
+        try { categoriasUsuario = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]"); } catch (_) {}
+        categoria.value = categoriasUsuario.find(valor => categoriasValidas.includes(valor)) || categoriasValidas[0];
     } else if (categoriasValidas.includes(preferida)) {
         categoria.value = preferida;
     }
@@ -2686,16 +2684,13 @@ const NOMBRES_POR_ARCHIVO = {
 function rutaImagen(nombre) {
     if (!nombre) return "";
 
-    let archivo = String(nombre).trim();
-    try { archivo = decodeURIComponent(archivo); } catch (error) { /* conservar la ruta original */ }
+    const archivo = String(nombre).trim();
     const normalizado = archivo.toLowerCase();
 
     if (
         normalizado === "torito" ||
         normalizado === "logo torito" ||
-        normalizado === "clubes/torito.png" ||
-        normalizado === "torito-logo torito.png" ||
-        normalizado === "torito.png" ||
+        normalizado === "TORITO - Logo.png" ||
         normalizado === "logo torito.png" ||
         normalizado === "logo torito.jpeg"
     ) {
@@ -3011,6 +3006,29 @@ function crearVistaActividad(datos, fecha, esVistaPrevia = false) {
 
         tarjeta.appendChild(carga);
 
+        const pruebasFisicas = (Array.isArray(datos.fisicoBloques) ? datos.fisicoBloques : [])
+            .filter(bloque => bloque && bloque.tipo === "Testeos")
+            .flatMap(bloque => Array.isArray(bloque.testeosSeleccionados) ? bloque.testeosSeleccionados : [])
+            .filter(prueba => prueba && String(prueba.label || "").trim());
+        if (datos.pruebasTTT === true || pruebasFisicas.length) {
+            const resumen = document.createElement("div");
+            resumen.className = "actividad-pruebas";
+            if (datos.pruebasTTT === true) {
+                const lineaTTT = document.createElement("strong");
+                lineaTTT.textContent = "✓ Pruebas técnico-tácticas";
+                resumen.appendChild(lineaTTT);
+            }
+            if (pruebasFisicas.length) {
+                const tituloTesteos = document.createElement("strong");
+                tituloTesteos.textContent = "Testeos físicos";
+                resumen.appendChild(tituloTesteos);
+                const nombres = document.createElement("span");
+                nombres.textContent = pruebasFisicas.map(prueba => [prueba.grupo, prueba.label].filter(Boolean).join(" · ")).join(" / ");
+                resumen.appendChild(nombres);
+            }
+            tarjeta.appendChild(resumen);
+        }
+
         return tarjeta;
     }
 
@@ -3295,7 +3313,10 @@ function obtenerActividad(cat, fecha) {
             alineacionTexto: "izquierda",
             posicionImagen: "centro",
             anchoImagen: 70,
-            altoImagen: 35
+            altoImagen: 35,
+            pruebasTTT: false,
+            tttBloques: [],
+            fisicoBloques: []
         };
     }
 
@@ -3365,7 +3386,10 @@ function obtenerActividad(cat, fecha) {
         alineacionTexto: alineacion,
         posicionImagen: posicion,
         anchoImagen: Number(actividad.anchoImagen) || 70,
-        altoImagen: Number(actividad.altoImagen) || 35
+        altoImagen: Number(actividad.altoImagen) || 35,
+        pruebasTTT: actividad.pruebasTTT === true,
+        tttBloques: Array.isArray(actividad.tttBloques) ? actividad.tttBloques : [],
+        fisicoBloques: Array.isArray(actividad.fisicoBloques) ? actividad.fisicoBloques : []
     };
 }
 
@@ -3374,6 +3398,7 @@ function obtenerActividad(cat, fecha) {
 ===================================================== */
 
 function abrirEditor(fecha) {
+    if (window.TORITO_PERMISOS?.rol === "jugadora") return;
     fechaSeleccionada = fecha;
 
     const actividad = obtenerActividad(categoria.value, fecha);
@@ -3462,6 +3487,9 @@ document.getElementById("guardarActividad").addEventListener("click", () => {
     const texto = textoActividad.value.trim();
     const imagen = imagenActividad.value;
     const estado = estadoActividad.value;
+    const actividadAnterior = datos[cat][fechaSeleccionada] && typeof datos[cat][fechaSeleccionada] === "object"
+        ? datos[cat][fechaSeleccionada]
+        : {};
 
     const tamano = Math.max(
         8,
@@ -3489,7 +3517,15 @@ document.getElementById("guardarActividad").addEventListener("click", () => {
             alineacionTexto: alineacionTexto.value,
             posicionImagen: posicionImagen.value,
             anchoImagen: ancho,
-            altoImagen: alto
+            altoImagen: alto,
+            // Conservar la información que proviene de Planificación: el Calendario solo la muestra.
+            origen: actividadAnterior.origen || "",
+            microcicloId: actividadAnterior.microcicloId || "",
+            ttt: actividadAnterior.ttt || "",
+            tttBloques: Array.isArray(actividadAnterior.tttBloques) ? actividadAnterior.tttBloques : [],
+            pruebasTTT: actividadAnterior.pruebasTTT === true,
+            fisico: actividadAnterior.fisico || "",
+            fisicoBloques: Array.isArray(actividadAnterior.fisicoBloques) ? actividadAnterior.fisicoBloques : []
         };
     }
 
@@ -3547,6 +3583,7 @@ function renderizarCalendario() {
         Math.ceil((desplazamiento + cantidadDias) / 7) * 7;
 
     const hoy = fechaEnFormato(new Date());
+    const vistaSoloLectura = window.TORITO_PERMISOS?.rol === "jugadora";
 
     for (let i = 0; i < totalCeldas; i++) {
         let numeroDia;
@@ -3597,30 +3634,23 @@ function renderizarCalendario() {
         numero.textContent = numeroDia;
         celda.appendChild(numero);
 
-        /* Botón para agregar o modificar */
-
-        const botonEvento = document.createElement("button");
-
-        botonEvento.type = "button";
-        botonEvento.className = "boton-agregar";
-        botonEvento.textContent = actividad ? "✎" : "+";
-        botonEvento.title = actividad
-            ? "Modificar evento"
-            : "Agregar evento";
-
-        botonEvento.setAttribute(
-            "aria-label",
-            actividad
-                ? "Modificar evento del " + fecha
-                : "Agregar evento el " + fecha
-        );
-
-        botonEvento.addEventListener("click", event => {
-            event.stopPropagation();
-            abrirEditor(fecha);
-        });
-
-        celda.appendChild(botonEvento);
+        /* Los perfiles de jugadora solo consultan el calendario. */
+        if (!vistaSoloLectura) {
+            const botonEvento = document.createElement("button");
+            botonEvento.type = "button";
+            botonEvento.className = "boton-agregar";
+            botonEvento.textContent = actividad ? "✎" : "+";
+            botonEvento.title = actividad ? "Modificar evento" : "Agregar evento";
+            botonEvento.setAttribute(
+                "aria-label",
+                actividad ? "Modificar evento del " + fecha : "Agregar evento el " + fecha
+            );
+            botonEvento.addEventListener("click", event => {
+                event.stopPropagation();
+                abrirEditor(fecha);
+            });
+            celda.appendChild(botonEvento);
+        }
 
         /* Renderizar tarjeta correspondiente */
 
@@ -3637,14 +3667,13 @@ function renderizarCalendario() {
 
         /* Abrir el editor al seleccionar el día */
 
-        celda.addEventListener("click", event => {
-            if (
-                event.target === celda ||
-                event.target.classList.contains("numero-dia")
-            ) {
-                abrirEditor(fecha);
-            }
-        });
+        if (!vistaSoloLectura) {
+            celda.addEventListener("click", event => {
+                if (event.target === celda || event.target.classList.contains("numero-dia")) {
+                    abrirEditor(fecha);
+                }
+            });
+        }
 
         diasCalendario.appendChild(celda);
     }
