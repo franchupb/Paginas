@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Testeos | TORITO</title>
+<title>Testeos | TORITO FEMENINO</title>
 
 <style>
 :root{
@@ -1901,7 +1901,7 @@ a{text-decoration:none;color:inherit}
   }
 }
 </style>
-<script src="TORITO-permisos.js?v=20261118-s16c"></script>
+<script src="TORITO-permisos.js?v=20261124-auth1"></script>
 </head>
 
 <body>
@@ -1909,10 +1909,10 @@ a{text-decoration:none;color:inherit}
 <header class="barra-superior">
   <button class="boton-menu" id="botonMenu" onclick="alternarSidebar()" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="true">☰</button>
 
-  <img class="logo-superior" src="TORITO%20-%20Logo.png" alt="Logo TORITO">
+  <img class="logo-superior" src="TORITO-Logo TORITO.jpg" alt="Logo TORITO">
 
   <div class="titulo-superior">
-    <h1>TORITO</h1>
+    <h1>TORITO FEMENINO</h1>
     <p>Rendimientos · Testeos y evaluaciones físicas</p>
   </div>
 
@@ -1922,7 +1922,7 @@ a{text-decoration:none;color:inherit}
     <div class="avatar" id="avatarUsuario">U</div>
     <div>
       <div class="nombre-perfil" id="nombreUsuario">Usuario</div>
-      <div class="rol-perfil" id="rolUsuario">Club Torito</div>
+      <div class="rol-perfil" id="rolUsuario">Club TORITO</div>
     </div>
   </div>
 </header>
@@ -2383,7 +2383,7 @@ a{text-decoration:none;color:inherit}
 <div id="printRoutine"></div>
 
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {initializeApp,getApps} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getFirestore,
   doc,
@@ -2395,24 +2395,24 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
-   FIREBASE TORITO
+   FIREBASE ORIGINAL
 ===================================================== */
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCsOaJVo8P5reZvfp7vjBkhkP79C_mEO94",
-    authDomain: "torito-56078.firebaseapp.com",
-    projectId: "torito-56078",
-    storageBucket: "torito-56078.firebasestorage.app",
-    messagingSenderId: "497702302753",
-    appId: "1:497702302753:web:04d419e13ded4b59371f60",
-    measurementId: "G-32VFQHWP5Y"
-  };
+  apiKey: "AIzaSyCsOaJVo8P5reZvfp7vjBkhkP79C_mEO94",
+  authDomain: "torito-56078.firebaseapp.com",
+  projectId: "torito-56078",
+  storageBucket: "torito-56078.firebasestorage.app",
+  messagingSenderId: "497702302753",
+  appId: "1:497702302753:web:04d419e13ded4b59371f60",
+  measurementId: "G-32VFQHWP5Y"
+};
 
 let db=null;
 let nubeActiva=false;
 
 try{
-  const app=initializeApp(firebaseConfig);
+  const app=getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   db=getFirestore(app);
   nubeActiva=true;
 }catch(error){
@@ -2423,19 +2423,54 @@ try{
    USUARIO Y PERMISOS
 ===================================================== */
 
-const usuarioGuardado=(localStorage.getItem("usuarioTORITO")||"").trim();
+let usuarioGuardado=(localStorage.getItem("usuarioTORITO")||"").trim();
+let usuarioNormalizado=usuarioGuardado.toLowerCase();
+let rolTORITO=localStorage.getItem("rolTORITO")||"";
+let esFran=rolTORITO==="admin";
+let esToto=["editor","cuerpo_tecnico"].includes(rolTORITO);
+let esBianca=rolTORITO==="jugadora";
+let puedeEditar=localStorage.getItem("puedeEditarTORITO")==="true";
+let puedeGestionarPruebas=false;
 
-if(!usuarioGuardado){
-  window.location.href="TORITO-Loing.html";
+// Ocultar la gestión hasta validar el perfil real de Firebase.
+["accionesTecnico","accionesGestion"].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display="none";});
+
+function aplicarPerfilCentralTesteos(perfil){
+  if(!perfil)return;
+  usuarioGuardado=String(perfil.usuario||perfil.nombre||localStorage.getItem("usuarioTORITO")||"").trim();
+  usuarioNormalizado=usuarioGuardado.toLowerCase();
+  rolTORITO=String(perfil.rol||"").toLowerCase();
+  esFran=rolTORITO==="admin";
+  esToto=["editor","cuerpo_tecnico"].includes(rolTORITO);
+  esBianca=rolTORITO==="jugadora";
+  puedeEditar=perfil.puedeEditar===true;
+  puedeGestionarPruebas=perfil.puedeGestionarPruebas===true;
+
+  document.getElementById("nombreUsuario").textContent=perfil.nombre||usuarioGuardado||"Usuario";
+  document.getElementById("avatarUsuario").textContent=(perfil.nombre||usuarioGuardado||"U").trim().charAt(0).toUpperCase();
+  document.getElementById("rolUsuario").textContent=esFran?"Administrador":rolTORITO==="editor"?"Editor":rolTORITO==="coordinadora"?"Coordinadora":esToto?"Cuerpo técnico":esBianca?"Jugadora":"Club TORITO";
+
+  ["accionesTecnico","accionesGestion"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display=puedeGestionarPruebas?"":"none";
+  });
+  const accionesPeriodo=document.getElementById("accionesPeriodo");
+  if(accionesPeriodo)accionesPeriodo.style.display=puedeEditar?"":"none";
+  if(esBianca&&Array.isArray(perfil.categorias)&&perfil.categorias.length){
+    const selector=document.getElementById("selectDivision");
+    if(selector){
+      const opcion=Array.from(selector.options).find(o=>normalizar(o.value)===normalizar(perfil.categorias[0])||normalizar(o.textContent)===normalizar(perfil.categorias[0]));
+      if(opcion){selector.value=opcion.value;selector.dispatchEvent(new Event("change",{bubbles:true}));}
+    }
+  }
+  if(typeof renderizarCarga==="function")renderizarCarga();
+  if(typeof renderizarEstadisticas==="function")renderizarEstadisticas();
 }
 
-const usuarioNormalizado=usuarioGuardado.toLowerCase();
+if(window.TORITO_PERMISOS)aplicarPerfilCentralTesteos(window.TORITO_PERMISOS);
+else window.addEventListener("torito-permisos-listos",event=>aplicarPerfilCentralTesteos(event.detail||window.TORITO_PERMISOS),{once:true});
 
-const esFran=["fran","francisco","francisco perez basla"].includes(usuarioNormalizado);
-const esToto=usuarioNormalizado==="toto";
-const esBianca=["biancadominguez","bianca"].includes(usuarioNormalizado);
-const puedeEditar=esFran||esToto;
-
+/* Los permisos de menú, categoría y solo lectura se aplican en TORITO-permisos.js. */
 /* =====================================================
    PERMISOS DE VISUALIZACIÓN DEL MENÚ
 ===================================================== */
@@ -2454,8 +2489,8 @@ document.getElementById("avatarUsuario").textContent=usuarioGuardado.charAt(0).t
 document.getElementById("rolUsuario").textContent=
   esFran?"Administrador":
   esToto?"Cuerpo técnico":
-  esBianca?"Jugadora · Sub 14":
-  "Club Torito";
+  esBianca?"Jugadora":
+  "Club TORITO";
 
 if(!puedeEditar){
   const accionesTecnico=document.getElementById("accionesTecnico");
@@ -2835,6 +2870,31 @@ function obtenerClavePlanilla(division,mes){
    CARGAR PLANILLA OPERATIVA
 ===================================================== */
 
+function combinarObjetosSinPerderLocales(local,nube){
+  if(Array.isArray(local)||Array.isArray(nube)){
+    const a=Array.isArray(local)?local:[],b=Array.isArray(nube)?nube:[];
+    if(a.every(x=>x&&typeof x==="object"&&x.id)&&b.every(x=>x&&typeof x==="object"&&x.id)){
+      const mapa=new Map(a.map(x=>[String(x.id),x]));
+      b.forEach(x=>mapa.set(String(x.id),mapa.has(String(x.id))
+        ?combinarObjetosSinPerderLocales(mapa.get(String(x.id)),x):x));
+      return [...mapa.values()];
+    }
+    return Array.from({length:Math.max(a.length,b.length)},(_,i)=>
+      a[i]===undefined?b[i]:b[i]===undefined?a[i]:combinarObjetosSinPerderLocales(a[i],b[i]));
+  }
+  const esObjeto=v=>v&&typeof v==="object"&&!Array.isArray(v);
+  if(esObjeto(local)||esObjeto(nube)){
+    const a=esObjeto(local)?local:{},b=esObjeto(nube)?nube:{},salida={};
+    new Set([...Object.keys(a),...Object.keys(b)]).forEach(k=>{
+      salida[k]=Object.prototype.hasOwnProperty.call(a,k)&&Object.prototype.hasOwnProperty.call(b,k)
+        ?combinarObjetosSinPerderLocales(a[k],b[k])
+        :Object.prototype.hasOwnProperty.call(b,k)?b[k]:a[k];
+    });
+    return salida;
+  }
+  return nube===undefined||nube===null||nube===""?local:nube;
+}
+
 async function cargarDatosPlanilla(division,mes){
 
   const version=++versionCarga;
@@ -2849,51 +2909,63 @@ async function cargarDatosPlanilla(division,mes){
 
   jugadorasDivision=lista;
 
-  let cargadoDeNube=false;
+  let dataLocal={};
+  const raw=localStorage.getItem("torito_testeos_torito_"+clave);
+  if(raw){
+    try{dataLocal=JSON.parse(raw)||{};}
+    catch(error){console.warn("No se pudo leer el respaldo local de testeos:",error);}
+  }
 
+  let dataNube={};
   if(nubeActiva&&db){
     try{
-      const ref=doc(db,"torito_testeos_torito",clave);
-      const snap=await getDoc(ref);
-
+      const snap=await getDoc(doc(db,"torito_testeos_torito",clave));
       if(version!==versionCarga)return;
-
-      if(snap.exists()){
-        const data=snap.data();
-
-        columnasActuales=
-          Array.isArray(data.columnas)&&data.columnas.length
-            ?data.columnas
-            :JSON.parse(JSON.stringify(COLUMNAS_POR_DEFECTO));
-
-        valoresActuales=data.valores||{};
-        cargadoDeNube=true;
-      }
+      if(snap.exists())dataNube=snap.data()||{};
     }catch(error){
       console.warn("Error leyendo Firestore:",error);
     }
   }
 
-  if(!cargadoDeNube){
+  // Combinar los valores locales y remotos para no perder mediciones que
+  // todavía no se hubieran sincronizado desde otro navegador.
+  const columnasLocales=Array.isArray(dataLocal.columnas)?dataLocal.columnas:[];
+  const columnasNube=Array.isArray(dataNube.columnas)?dataNube.columnas:[];
+  const mapaColumnas=new Map(columnasLocales.filter(x=>x&&x.id).map(x=>[String(x.id),x]));
+  columnasNube.forEach(x=>{
+    if(x&&x.id)mapaColumnas.set(String(x.id),x);
+  });
+  const columnasCombinadas=mapaColumnas.size
+    ?[...mapaColumnas.values()]
+    :JSON.parse(JSON.stringify(dataNube.columnas||dataLocal.columnas||COLUMNAS_POR_DEFECTO));
+  const valoresCombinados=combinarObjetosSinPerderLocales(dataLocal.valores||{},dataNube.valores||{});
 
-    const raw=localStorage.getItem("torito_testeos_torito_"+clave);
+  columnasActuales=columnasCombinadas.length
+    ?columnasCombinadas
+    :JSON.parse(JSON.stringify(COLUMNAS_POR_DEFECTO));
+  valoresActuales=valoresCombinados;
 
-    if(raw){
-      try{
-        const data=JSON.parse(raw);
+  const payloadCombinado={
+    ...dataLocal,
+    ...dataNube,
+    division,
+    mes,
+    columnas:columnasActuales,
+    valores:valoresActuales,
+    actualizadoPor:usuarioGuardado,
+    ultimaActualizacion:new Date().toISOString()
+  };
+  localStorage.setItem("torito_testeos_torito_"+clave,JSON.stringify(payloadCombinado));
 
-        columnasActuales=
-          data.columnas||JSON.parse(JSON.stringify(COLUMNAS_POR_DEFECTO));
-
-        valoresActuales=data.valores||{};
-      }catch(error){
-        columnasActuales=JSON.parse(JSON.stringify(COLUMNAS_POR_DEFECTO));
-        valoresActuales={};
-      }
-    }else{
-      columnasActuales=JSON.parse(JSON.stringify(COLUMNAS_POR_DEFECTO));
-      valoresActuales={};
-    }
+  const tieneDatosLocales=Object.keys(dataLocal).length>0;
+  const necesitaSubir=tieneDatosLocales&&(
+    !dataNube.columnas||
+    JSON.stringify(columnasCombinadas)!==JSON.stringify(dataNube.columnas)||
+    JSON.stringify(valoresCombinados)!==JSON.stringify(dataNube.valores||{})
+  );
+  if(window.TORITO_PERMISOS?.rol !== "jugadora" && nubeActiva&&db&&necesitaSubir){
+    try{await setDoc(doc(db,"torito_testeos_torito",clave),payloadCombinado);}
+    catch(error){console.error("No se pudieron recuperar los datos locales de testeos:",error);}
   }
 
   if(version!==versionCarga)return;
@@ -3229,7 +3301,7 @@ function renderizarEditor(){
           <small>${completas}/${total}</small>
         </button>
 
-        ${modoGestion&&puedeEditar?`
+        ${modoGestion&&puedeGestionarPruebas?`
           <button type="button" class="prueba-configurar" data-configurar="${escapeHTML(p.id)}" title="Configurar prueba">⚙</button>
           <button type="button" class="prueba-eliminar" data-eliminar="${p.indiceOriginal}" title="Eliminar prueba">×</button>
         `:""}
@@ -3310,7 +3382,7 @@ function renderizarEditor(){
         <strong>${escapeHTML(grupoSeleccionado)}</strong>
         <small>${cantidadIntentos===1?"Un resultado por jugadora.":`Configuración: ${cantidadIntentos} intentos por jugadora.`} Las comparaciones se consultan en Estadísticas.</small>
       </div>
-      ${modoGestion&&puedeEditar
+      ${modoGestion&&puedeGestionarPruebas
         ? `<button class="btn-secundario" type="button" onclick="alternarModoEliminar()">Terminar edición</button>`
         : ""}
     </div>
@@ -3473,7 +3545,7 @@ function renderizarCarga(){
 
 window.alternarModoEliminar=function(){
 
-  if(!puedeEditar)return;
+  if(!puedeGestionarPruebas)return;
 
   modoGestion=!modoGestion;
 
@@ -3490,7 +3562,7 @@ window.alternarModoEliminar=function(){
 
 window.abrirModalAgregarTest=function(){
 
-  if(!puedeEditar)return;
+  if(!puedeGestionarPruebas)return;
 
   document.getElementById("formAgregarTest").reset();
   document.getElementById("testEditId").value="";
@@ -3509,7 +3581,7 @@ window.abrirModalAgregarTest=function(){
 
 window.abrirModalConfigurarTest=function(id){
 
-  if(!puedeEditar)return;
+  if(!puedeGestionarPruebas)return;
 
   const prueba=columnasActuales.find(c=>c.id===id);
   if(!prueba)return;
@@ -3543,7 +3615,7 @@ window.cerrarModal=function(id){
 window.agregarNuevaColumnaTest=function(event){
 
   event.preventDefault();
-  if(!puedeEditar)return;
+  if(!puedeGestionarPruebas)return;
 
   const grupo=document.getElementById("categoriaTest").value;
   const nombre=document.getElementById("nombreTest").value.trim();
@@ -3611,7 +3683,7 @@ window.agregarNuevaColumnaTest=function(event){
 
 window.eliminarColumna=function(indice){
 
-  if(!puedeEditar)return;
+  if(!puedeGestionarPruebas)return;
 
   const columna=columnasActuales[indice];
 
@@ -3682,7 +3754,7 @@ async function cargarBiblioteca(){
   // Recupera también las planillas operativas de períodos anteriores.
   // Estas se guardan automáticamente, aunque no se hayan agregado a Biblioteca Test.
   Object.keys(localStorage).forEach(key=>{
-    if(!key.startsWith("testeos_torito_")||key.startsWith("testeos_torito___biblioteca__"))return;
+    if(!key.startsWith("torito_testeos_torito_")||key.startsWith("torito_testeos_torito___biblioteca__"))return;
 
     try{
       const item=JSON.parse(localStorage.getItem(key)||"null");
@@ -3785,7 +3857,7 @@ function renderizarBiblioteca(){
         </div>
 
         <h4>${escapeHTML(item.mes||"Período sin nombre")}</h4>
-        <p>Evaluación física · TORITO</p>
+        <p>Evaluación física · TORITO FEMENINO</p>
 
         <div class="biblioteca-datos">
           <span>${resumen.jugadoras} jugadoras</span>
@@ -4043,9 +4115,9 @@ function construirDocumentoPlanilla(item){
 
   return`
     <div class="planilla-cabecera">
-      <img src="TORITO%20-%20Logo.png" alt="TORITO">
+      <img src="TORITO-Logo TORITO.jpg" alt="TORITO">
       <div class="planilla-cabecera-texto">
-        <strong>TORITO · ${escapeHTML(item.division)}</strong>
+        <strong>TORITO FEMENINO · ${escapeHTML(item.division)}</strong>
         <span>TESTEOS Y EVALUACIONES FÍSICAS</span>
         <small>${escapeHTML(item.mes)} · ${fecha}</small>
       </div>
@@ -4066,7 +4138,7 @@ function construirDocumentoPlanilla(item){
     </div>
 
     <div class="planilla-pie">
-      <span>TORITO · RENDIMIENTOS</span>
+      <span>TORITO FEMENINO · RENDIMIENTOS</span>
       <span>${escapeHTML(item.division)} · ${escapeHTML(item.mes)}</span>
     </div>
   `;
@@ -4252,13 +4324,24 @@ function actualizarSelectoresStats(){
   `;
   if(pruebas.some(p=>p.id===pruebaAnterior))selectPrueba.value=pruebaAnterior;
 
+  const permisos = window.TORITO_PERMISOS;
+  const jugadorasPermitidas = permisos?.rol === "jugadora" && permisos.jugadora
+    ? jugadorasDivision.filter(nombre => normalizar(nombre) === normalizar(permisos.jugadora))
+    : jugadorasDivision;
+
   selectJugadora.innerHTML=`
     <option value="">Seleccioná una jugadora activa</option>
-    ${jugadorasDivision.map(nombre=>`
+    ${jugadorasPermitidas.map(nombre=>`
       <option value="${escapeHTML(nombre)}">${escapeHTML(nombre)}</option>
     `).join("")}
   `;
-  selectJugadora.value=jugadorasDivision.includes(jugadoraAnterior)?jugadoraAnterior:"";
+  if (permisos?.rol === "jugadora") {
+    selectJugadora.value = jugadorasPermitidas[0] || "";
+    selectJugadora.disabled = true;
+  } else {
+    selectJugadora.disabled = false;
+    selectJugadora.value=jugadorasPermitidas.includes(jugadoraAnterior)?jugadoraAnterior:"";
+  }
 
   actualizarOpcionesIntentosStats();
 }
@@ -4656,7 +4739,9 @@ window.cambiarFiltroPlanilla=function(){
 window.addEventListener("DOMContentLoaded",()=>{
 
   if(esBianca){
-    document.getElementById("selectDivision").value="Sub 14";
+    let categorias=[];
+    try{categorias=JSON.parse(localStorage.getItem("categoriasTORITO")||"[]");}catch(_){}
+    if(categorias.length)document.getElementById("selectDivision").value=categorias[0];
   }
 
   if(window.matchMedia("(max-width:760px)").matches){
@@ -4686,5 +4771,6 @@ window.addEventListener("DOMContentLoaded",()=>{
 });
 </script>
 
+<script type="module" src="TORITO-layout.js?v=20261124-layout1"></script>
 </body>
 </html>
