@@ -1333,7 +1333,7 @@ body{background:#f2f4f6;color:var(--coach-ink)}
 }
 
 </style>
-<script src="TORITO-permisos.js?v=20261118-s16c"></script>
+<script src="TORITO-permisos.js?v=20261124-auth1"></script>
 </head>
 
 
@@ -1923,9 +1923,10 @@ if(!usuario){
 
 const usuarioNormalizado = usuario.toLowerCase().replace(/\s+/g," ").trim();
 const usuarioCompacto = usuarioNormalizado.replace(/\s+/g,"");
-const esFran = ["fran","francisco","francisco perez basla","franciscoperezbasla"].includes(usuarioNormalizado) || usuarioCompacto==="franciscoperezbasla";
-const esToto = usuarioNormalizado==="toto";
-const esBianca = ["bianca","biancadominguez"].includes(usuarioCompacto);
+const rolPerfilTORITO = (localStorage.getItem("rolTORITO") || "").trim().toLowerCase();
+const esFran = rolPerfilTORITO === "admin";
+const esToto = ["editor", "cuerpo_tecnico", "coordinadora"].includes(rolPerfilTORITO);
+const esBianca = rolPerfilTORITO === "jugadora";
 const rol = esFran ? "Administrador" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora · Sub 14" : "Club Torito";
 
 document.getElementById("nombreUsuario").textContent = usuario || "Usuario";
@@ -3327,5 +3328,6 @@ document
 
 
 
+<script type="module" src="TORITO-layout.js?v=20261124-layout1"></script>
 </body>
 </html>
