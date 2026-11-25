@@ -735,7 +735,7 @@
 
   async function importarCerrarSesionTORITO() {
     try {
-      const modulo = await import("./TORITO-auth.js?v=20261123-authpersist1");
+      const modulo = await import("./TORITO-auth.js?v=20261124-auth1");
       await modulo.cerrarSesionTORITO();
       window.location.href = "TORITO-Loing.html";
     } catch (error) {
