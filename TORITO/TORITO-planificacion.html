@@ -2940,6 +2940,10 @@ function formatearRangoMicrociclo(fechaInicioISO) {
 function obtenerClaveSemana(numeroSemana, ciclo = cicloMicrocicloActual) {
   return ciclo === CICLO_NUEVO ? `${CICLO_NUEVO}-S${numeroSemana}` : String(numeroSemana);
 }
+function obtenerIdMicrocicloActual() {
+  return ORIGEN_PLANIFICACION + ":" + categoriaActual +
+    (cicloMicrocicloActual === CICLO_NUEVO ? ":" + obtenerClaveSemana(semanaActual) : ":S" + semanaActual);
+}
 function obtenerFechaPredeterminada(numeroSemana, ciclo = cicloMicrocicloActual) {
   if (ciclo === CICLO_NUEVO) return sumarDiasISO(FECHA_REINICIO_MICROCICLO, (numeroSemana - 1) * 7);
   return sumarDiasISO(FECHA_REFERENCIA, (numeroSemana - SEMANA_REFERENCIA) * 7);
@@ -3757,7 +3761,8 @@ function guardarDatosAutomaticamente(mostrarMensaje = false) {
       fechaInicio: fechaInicioActual,
       sesiones: sesionesActuales,
       guardada: microcicloGuardado,
-      sesionesPersonalizadas: true
+      sesionesPersonalizadas: true,
+      actualizadoEn: Date.now()
     };
 
     localStorage.setItem(
@@ -3924,7 +3929,6 @@ function obtenerTextoParaCalendario(sesion, fecha) {
     const torneo = sesion.competicion || "Competición a confirmar";
     const formato = sesion.tipoPartido === "torneo" ? "Torneo" : "Partido";
     return ["Partido · " + categoriaActual, formato + " · " + torneo,
-      "Rivales: " + (rivales.length ? rivales.join(", ") : "A confirmar"),
       "Fecha: " + formatearFecha(fecha, true)].join("\n");
   }
 
@@ -3962,8 +3966,7 @@ function crearActividadCalendario(sesion, indice, fecha) {
   const rivales = esPartido ? normalizarListaRivales(sesion.rivales, sesion.rival) : [];
   const club = esPartido ? obtenerClubPorNombre(rivales[0] || sesion.rival) : null;
 
-  const idMicrociclo =
-    ORIGEN_PLANIFICACION + ":" + categoriaActual + ":" + obtenerClaveSemana(semanaActual);
+  const idMicrociclo = obtenerIdMicrocicloActual();
 
   let titulo;
   let color;
@@ -4043,8 +4046,7 @@ function sincronizarCalendarioSemana() {
 
   const actividadesCategoria = actividades[categoriaActual];
 
-  const idMicrociclo =
-    ORIGEN_PLANIFICACION + ":" + categoriaActual + ":S" + semanaActual;
+  const idMicrociclo = obtenerIdMicrocicloActual();
 
   Object.keys(actividadesCategoria).forEach(fecha => {
     const actividad = actividadesCategoria[fecha];
@@ -5836,13 +5838,22 @@ async function inicializarPlanificacion() {
           ...Object.keys(esObjeto(local) ? local : {}),
           ...Object.keys(esObjeto(nube) ? nube : {})
         ]);
+        // Las listas de sesiones personalizadas se reemplazan completas: unirlas
+        // por índice volvería a recuperar sesiones que el usuario eliminó.
+        const sesionesPersonalizadas = local?.sesionesPersonalizadas === true || nube?.sesionesPersonalizadas === true;
+        const fuenteSesiones = Number(local?.actualizadoEn || 0) > Number(nube?.actualizadoEn || 0) ? local : nube;
         claves.forEach(clave => {
           const tieneLocal = esObjeto(local) && Object.prototype.hasOwnProperty.call(local, clave);
           const tieneNube = esObjeto(nube) && Object.prototype.hasOwnProperty.call(nube, clave);
-          resultado[clave] = tieneLocal && tieneNube
-            ? combinarSinPerderDatos(local[clave], nube[clave])
-            : tieneNube ? nube[clave] : local[clave];
+          if (clave === "sesiones" && sesionesPersonalizadas) {
+            resultado[clave] = Array.isArray(fuenteSesiones?.sesiones) ? fuenteSesiones.sesiones : [];
+          } else {
+            resultado[clave] = tieneLocal && tieneNube
+              ? combinarSinPerderDatos(local[clave], nube[clave])
+              : tieneNube ? nube[clave] : local[clave];
+          }
         });
+        if (sesionesPersonalizadas) resultado.sesionesPersonalizadas = true;
         return resultado;
       }
 
