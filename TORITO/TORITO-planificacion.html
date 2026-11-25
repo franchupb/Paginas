@@ -3931,8 +3931,7 @@ function obtenerTextoParaCalendario(sesion, fecha) {
     const rivales = normalizarListaRivales(sesion.rivales, sesion.rival);
     const torneo = sesion.competicion || "Competición a confirmar";
     const formato = sesion.tipoPartido === "torneo" ? "Torneo" : "Partido";
-    return ["Partido · " + categoriaActual, formato + " · " + torneo,
-      "Fecha: " + formatearFecha(fecha, true)].join("\n");
+    return ["Partido · " + categoriaActual, formato + " · " + torneo].join("\n");
   }
 
   const configuracion = obtenerConfiguracionIntensidad(sesion.intensidad);
