@@ -173,6 +173,12 @@
       el.className, el.getAttribute("data-accion"), el.getAttribute("data-action"), el.getAttribute("onclick")]
       .filter(Boolean).join(" ").toLowerCase();
   }
+  function bloquearAccion(event) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    return false;
+  }
+
   function aplicarSoloLectura(root = document) {
     if (!configActiva || (configActiva.rol !== "jugadora" && configActiva.puedeEditar !== false)) return;
     const pagina = paginaActual();
@@ -180,11 +186,22 @@
       const controles = [...(root.matches?.("button, input, select, textarea, [contenteditable=true]") ? [root] : []), ...root.querySelectorAll("button, input, select, textarea, [contenteditable=true]")];
       controles.forEach(el => {
         const texto = textoControl(el);
-        const lectura = el.matches("a, [role=tab]") || (el.matches("button") && (PALABRAS_LECTURA.test(texto) && !PALABRAS_EDICION.test(texto))) || (el.matches("input") && (el.type === "search" || /buscar|filtro|fecha|mes|semana|orden/i.test(texto)));
-        if (lectura) return;
-        if (el.matches("input, textarea, select")) { el.disabled = true; el.readOnly = true; }
-        else if (el.matches("[contenteditable=true]")) el.setAttribute("contenteditable", "false");
-        else { el.disabled = true; el.setAttribute("aria-disabled", "true"); }
+        const id = String(el.id || el.name || el.getAttribute("aria-label") || "").toLowerCase();
+        const filtro = el.matches("input, select") && (
+          el.type === "search" || el.type === "date" || el.type === "month" ||
+          /buscar|busqueda|filtro|categoria|division|fecha|mes|semana|orden|jugadora/i.test(id + " " + texto)
+        );
+        if (filtro || el.matches("a, [role=tab]")) return;
+        if (el.matches("button")) {
+          if (!PALABRAS_EDICION.test(texto) && !PALABRAS_BORRADO.test(texto)) return;
+          el.disabled = true;
+          el.setAttribute("aria-disabled", "true");
+        } else if (el.matches("[contenteditable=true]")) {
+          el.setAttribute("contenteditable", "false");
+        } else if (el.matches("input, textarea, select")) {
+          el.disabled = true;
+          el.readOnly = true;
+        }
         el.classList.add("torito-solo-lectura");
       });
       root.querySelectorAll("form").forEach(form => form.addEventListener("submit", bloquearAccion, true));
@@ -278,7 +295,7 @@
   function aplicarAccesosPagina() {
     if (!configActiva) return;
     const pagina = paginaActual();
-    if (Array.isArray(configActiva.paginasPermitidas) && configActiva.paginasPermitidas.length && !configActiva.paginasPermitidas.some(x => String(x).split(/[?#]/)[0].split("/").pop().toLowerCase() === pagina)) {
+    if (Array.isArray(configActiva.paginasPermitidas) && !configActiva.paginasPermitidas.some(x => String(x).split(/[?#]/)[0].split("/").pop().toLowerCase() === pagina)) {
       accesoPaginaDenegado = true;
       mostrarErrorInicializacion(new Error("El perfil no tiene acceso a esta sección."), "Acceso restringido", "Tu perfil de TORITO no tiene permiso para entrar en esta página.", { href: INICIO_URL, texto: "Volver al inicio" });
       return false;
