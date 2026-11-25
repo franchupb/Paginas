@@ -5594,11 +5594,17 @@ function procesarCambio(evento) {
   }
 
   if (campo === "rivales") {
-    const rivales = Array.from(elemento.selectedOptions || []).map(o => String(o.value || "").trim()).filter(Boolean);
-    sesionesActuales[indice].rivales = normalizarListaRivales(rivales);
-    sesionesActuales[indice].rival = sesionesActuales[indice].rivales[0] || "";
+    let rivales = normalizarListaRivales(
+      Array.from(elemento.selectedOptions || []).map(o => String(o.value || "").trim())
+    );
+    if (sesionesActuales[indice].tipoPartido !== "torneo" && rivales.length > 1) {
+      rivales = rivales.slice(0, 1);
+      mostrarNotificacion("Para cargar varios rivales, cambiá el formato de la jornada a Torneo.");
+    }
+    sesionesActuales[indice].rivales = rivales;
+    sesionesActuales[indice].rival = rivales[0] || "";
     sesionesActuales[indice].activa = true;
-    actualizarVistaRival(indice);
+    renderizarSemana();
     guardarDatosAutomaticamente(false);
     return;
   }
@@ -5649,6 +5655,14 @@ function procesarCambio(evento) {
   }
 
   sesionesActuales[indice][campo] = elemento.value;
+  if (campo === "tipoPartido" && !["partido", "torneo"].includes(elemento.value)) return;
+  if (campo === "tipoPartido" && elemento.value === "partido") {
+    sesionesActuales[indice].rivales = normalizarListaRivales(
+      sesionesActuales[indice].rivales,
+      sesionesActuales[indice].rival
+    ).slice(0, 1);
+    sesionesActuales[indice].rival = sesionesActuales[indice].rivales[0] || "";
+  }
   sesionesActuales[indice].activa = true;
 
   renderizarSemana();
