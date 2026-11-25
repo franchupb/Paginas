@@ -2958,11 +2958,11 @@ function leerUsuario() {
     const parseado = JSON.parse(valor);
 
     if (typeof parseado === "string") {
-      return { usuario: parseado, nombre: parseado };
+      return { usuario: parseado, nombre: localStorage.getItem("nombreTORITO") || parseado, rol: localStorage.getItem("rolTORITO") || "", jugadora: localStorage.getItem("jugadoraTORITO") || "" };
     }
 
     if (parseado && typeof parseado === "object") {
-      return parseado;
+      return { ...parseado, rol: localStorage.getItem("rolTORITO") || parseado.rol || "", jugadora: localStorage.getItem("jugadoraTORITO") || parseado.jugadora || "" };
     }
   } catch (error) {
     // No es JSON: se interpreta como el nombre guardado por el login.
@@ -2970,7 +2970,9 @@ function leerUsuario() {
 
   return {
     usuario: valor.trim(),
-    nombre: valor.trim()
+    nombre: localStorage.getItem("nombreTORITO") || valor.trim(),
+    rol: localStorage.getItem("rolTORITO") || "",
+    jugadora: localStorage.getItem("jugadoraTORITO") || ""
   };
 }
 
@@ -2997,6 +2999,9 @@ function esBianca(obj) {
 }
 
 function detectarRol(obj) {
+  const rolSesion = normalizar(obj?.rol || "");
+  if (rolSesion === "jugadora") return "jugadora";
+  if (["admin", "editor", "cuerpotecnico", "coordinadora"].includes(rolSesion)) return "staff";
   if (esBianca(obj)) return "jugadora";
 
   const valor = normalizar(obj?.rol || obj?.perfil || obj?.tipo || obj?.role || "");
@@ -3063,15 +3068,6 @@ function registroEsBianca(jugadora) {
 function obtenerTodasLasJugadoras() {
   const resultado = [...leerJugadoras()];
 
-  if (!resultado.some(registroEsBianca)) {
-    resultado.push({
-      id: "bianca",
-      usuario: "bianca",
-      nombreCompleto: "Bianca Dominguez",
-      division: "Sub 14"
-    });
-  }
-
   const vistos = new Set();
 
   return resultado.filter(jugadora => {
@@ -3095,6 +3091,7 @@ function buscarJugadoraSesion() {
     usuario?.id,
     usuario?.jugadoraId,
     usuario?.nombreCompleto,
+    usuario?.jugadora,
     usuario?.nombre,
     usuario?.usuario,
     usuario?.username,
