@@ -4738,7 +4738,7 @@ function renderizarContenidoSesion(sesion, indice) {
           <select id="campo-${indice}-rivales" data-index="${indice}" data-field="rivales" multiple size="5" aria-describedby="ayudaRivales-${indice}">
             ${crearOpcionesRivalesMultiples(sesion.rivales, sesion.rival)}
           </select>
-          <small id="ayudaRivales-${indice}" class="ayuda-rivales">Podés seleccionar varios rivales. En computadora usá Ctrl/Cmd; en celular mantené presionada la opción.</small>
+          <small id="ayudaRivales-${indice}" class="ayuda-rivales">En Partido elegí un rival; en Torneo podés seleccionar varios. En computadora usá Ctrl/Cmd para marcar más de uno.</small>
         </div>
         <div class="preview-rival" id="previewRival-${indice}">${crearHTMLPreviewRivales(sesion.rivales, sesion.rival)}</div>
         <div class="campo" style="margin-top:12px">
