@@ -3993,7 +3993,7 @@ function crearActividadCalendario(sesion, indice, fecha) {
     id: idMicrociclo + ":sesion:" + indice,
     origen: ORIGEN_PLANIFICACION,
     microcicloId: idMicrociclo,
-    microcicloSemana: String(semanaActual),
+    microcicloSemana: obtenerClaveSemana(semanaActual),
     categoria: categoriaActual,
     division: categoriaActual,
     fecha,
@@ -4140,7 +4140,7 @@ function actualizarSelectorSemana() {
     const fechaInicio = registro?.fechaInicio ? normalizarALunes(registro.fechaInicio) : obtenerFechaPredeterminada(numero, CICLO_ANTERIOR);
     opciones.push({ clave, numero, ciclo: CICLO_ANTERIOR, fechaInicio, registro });
   }
-  if (cicloMicrocicloActual === CICLO_NUEVO) {
+  if (cicloMicrocicloActual === CICLO_NUEVO || Object.keys(semanasCategoria).some(k => /^2027-S\d+$/.test(k))) {
     const nuevas = Object.keys(semanasCategoria).map(k => k.match(/^2027-S(\d+)$/)).filter(Boolean).map(m => Number(m[1]));
     const maxNuevo = Math.max(43, semanaActual, ...nuevas);
     for (let numero = 1; numero <= maxNuevo; numero++) {
@@ -4916,37 +4916,21 @@ function renderizarContenidoSesionLectura(sesion, indice) {
   }
 
   if (sesion.intensidad === "partido") {
-    const club = obtenerClubPorNombre(sesion.rival);
-    const rival = sesion.rival || "Rival a confirmar";
+    const rivales = normalizarListaRivales(sesion.rivales, sesion.rival);
     const competicion = sesion.competicion || "Competición a confirmar";
+    const formato = sesion.tipoPartido === "torneo" ? "Torneo" : "Partido";
 
     return `
       <section class="lectura-seccion">
         <h5 class="lectura-titulo">
           <span class="lectura-numero">MD</span>
-          INFORMACIÓN DEL PARTIDO
+          INFORMACIÓN DEL PARTIDO / TORNEO
         </h5>
-
         <div class="lectura-partido">
-          <div class="preview-rival">
-            ${club
-              ? `
-                <img
-                  class="imagen-rival"
-                  src="${escaparHTML(club.ruta)}"
-                  alt="Escudo de ${escaparHTML(club.nombre)}"
-                  onerror="this.style.display='none';"
-                >
-              `
-              : `<div class="placeholder-rival" aria-hidden="true">⚽</div>`
-            }
-            <span class="nombre-preview-rival">${escaparHTML(rival)}</span>
-          </div>
-
+          <div class="preview-rival">${crearHTMLPreviewRivales(rivales)}</div>
           <div class="lectura-etiquetas">
-            <span class="lectura-etiqueta">
-              <strong>Torneo:</strong> ${escaparHTML(competicion)}
-            </span>
+            <span class="lectura-etiqueta"><strong>Formato:</strong> ${formato}</span>
+            <span class="lectura-etiqueta"><strong>Competición:</strong> ${escaparHTML(competicion)}</span>
           </div>
         </div>
       </section>
