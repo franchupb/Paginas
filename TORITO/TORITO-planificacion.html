@@ -2299,6 +2299,8 @@ button:disabled {
 }
 
 .opcion-pruebas-ttt,.opcion-test-fisico{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e5e8ec;border-radius:9px;background:#fff;color:#343840;font-size:12px;line-height:1.4}.opcion-pruebas-ttt{margin-top:12px;background:#fffaf6;border-color:#f3d7c4;font-weight:750}.opcion-pruebas-ttt input,.opcion-test-fisico input{width:17px;height:17px;flex:0 0 17px;accent-color:#f47721}.lista-testeos-fisicos{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}.opcion-test-fisico{align-items:flex-start}.opcion-test-fisico span{display:flex;flex-direction:column;gap:3px}.opcion-test-fisico small{color:#656b75;font-size:11px}.aviso-testeos-vacios{margin:0;padding:10px;border:1px dashed #e3c7b4;border-radius:8px;color:#7a6253;font-size:11px;line-height:1.5}
+
+.bloque-partido select[multiple]{min-height:132px;padding:9px 11px;line-height:1.5}.ayuda-rivales{display:block;margin-top:7px;color:#697386;font-size:11px;line-height:1.45}.preview-rivales-lista{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;width:100%}.preview-rival-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid #dce6f8;border-radius:999px;background:#fff;font-size:12px}.preview-rival-chip img{width:22px;height:22px;object-fit:contain}
 </style>
 <script src="TORITO-permisos.js?v=20261125-categorias1"></script>
 </head>
@@ -2700,9 +2702,13 @@ const CANTIDAD_SESIONES_BASE = {
 
 const SEMANA_REFERENCIA = 39;
 const FECHA_REFERENCIA = "2026-10-19";
+const FECHA_REINICIO_MICROCICLO = "2027-01-18";
+const CICLO_ANTERIOR = "2026";
+const CICLO_NUEVO = "2027";
 
 let categoriaActual = "Sub 16";
 let semanaActual = 39;
+let cicloMicrocicloActual = CICLO_ANTERIOR;
 let fechaInicioActual = FECHA_REFERENCIA;
 let sesionesActuales = [];
 let temporizadorMensaje = null;
@@ -2931,9 +2937,21 @@ function formatearRangoMicrociclo(fechaInicioISO) {
   return `${fechaInicioCorta} al ${fechaFinal}`;
 }
 
-function obtenerFechaPredeterminada(numeroSemana) {
-  const diferencia = (numeroSemana - SEMANA_REFERENCIA) * 7;
-  return sumarDiasISO(FECHA_REFERENCIA, diferencia);
+function obtenerClaveSemana(numeroSemana, ciclo = cicloMicrocicloActual) {
+  return ciclo === CICLO_NUEVO ? `${CICLO_NUEVO}-S${numeroSemana}` : String(numeroSemana);
+}
+function obtenerFechaPredeterminada(numeroSemana, ciclo = cicloMicrocicloActual) {
+  if (ciclo === CICLO_NUEVO) return sumarDiasISO(FECHA_REINICIO_MICROCICLO, (numeroSemana - 1) * 7);
+  return sumarDiasISO(FECHA_REFERENCIA, (numeroSemana - SEMANA_REFERENCIA) * 7);
+}
+function obtenerSemanaDesdeFecha(fechaISO) {
+  const lunes = normalizarALunes(fechaISO);
+  const nuevo = lunes >= FECHA_REINICIO_MICROCICLO;
+  const base = fechaISOaObjeto(nuevo ? FECHA_REINICIO_MICROCICLO : FECHA_REFERENCIA);
+  const actual = fechaISOaObjeto(lunes);
+  const diferencia = Math.round((actual - base) / (7 * 24 * 60 * 60 * 1000));
+  return nuevo ? { ciclo: CICLO_NUEVO, numero: diferencia + 1 }
+    : { ciclo: CICLO_ANTERIOR, numero: SEMANA_REFERENCIA + diferencia };
 }
 
 function obtenerDiaIndex(texto) {
@@ -3335,6 +3353,8 @@ function crearSesionVacia(diaSemana = 0, intensidad = "media") {
     fisicoBloques: crearBloquesFisicosVacios(),
     pruebasTTT: false,
     rival: "",
+    rivales: [],
+    tipoPartido: "partido",
     competicion: "",
     activa: false,
     extra: false
@@ -3438,7 +3458,9 @@ function normalizarSesion(registro, indicePredeterminado) {
     tttBloques,
     fisicoBloques,
     pruebasTTT: original.pruebasTTT === true,
-    rival: original.rival || "",
+    tipoPartido: original.tipoPartido === "torneo" ? "torneo" : "partido",
+    rivales: normalizarListaRivales(original.rivales, original.rival || ""),
+    rival: normalizarListaRivales(original.rivales, original.rival || "")[0] || original.rival || "",
     competicion: original.competicion || original.torneo || "",
     activa,
     extra: Boolean(original.extra)
@@ -3544,12 +3566,11 @@ function cargarAlmacen() {
   }
 }
 
-function obtenerRegistroSemana(numeroSemana, categoria) {
+function obtenerRegistroSemana(numeroSemana, categoria, ciclo = cicloMicrocicloActual) {
   const almacen = cargarAlmacen();
   const semanas = almacen[categoria];
-
   if (!semanas || typeof semanas !== "object") return null;
-  return semanas[String(numeroSemana)] || null;
+  return semanas[obtenerClaveSemana(numeroSemana, ciclo)] || null;
 }
 
 function migrarSesionesAntiguas(listaAntigua, categoria) {
@@ -3672,16 +3693,17 @@ function ajustarSesionesBaseCategoria(sesiones, categoria) {
   return [...sesionesBaseAjustadas, ...extrasAjustadas];
 }
 
-function obtenerSemana(numeroSemana, categoria) {
-  const guardada = obtenerRegistroSemana(numeroSemana, categoria);
-
-  let fechaInicio = obtenerFechaPredeterminada(numeroSemana);
+function obtenerSemana(numeroSemana, categoria, ciclo = cicloMicrocicloActual) {
+  const guardada = obtenerRegistroSemana(numeroSemana, categoria, ciclo);
+  let fechaInicio = obtenerFechaPredeterminada(numeroSemana, ciclo);
   let sesiones = null;
   let confirmada = false;
+  let sesionesPersonalizadas = false;
 
   if (guardada && !Array.isArray(guardada) && typeof guardada === "object") {
     fechaInicio = guardada.fechaInicio || fechaInicio;
     confirmada = guardada.guardada === true;
+    sesionesPersonalizadas = guardada.sesionesPersonalizadas === true;
 
     if (Array.isArray(guardada.sesiones)) {
       sesiones = guardada.sesiones.map((sesion, indice) =>
@@ -3705,18 +3727,15 @@ function obtenerSemana(numeroSemana, categoria) {
     normalizarSesion(sesion, indice)
   );
 
-  sesiones = ajustarSesionesBaseCategoria(sesiones, categoria);
-
-  while (sesiones.length < cantidadBase) {
-    sesiones.push(
-      crearSesionVacia(diasBase[sesiones.length] ?? 0)
-    );
+  if (!sesionesPersonalizadas) {
+    sesiones = ajustarSesionesBaseCategoria(sesiones, categoria);
+    while (sesiones.length < cantidadBase) sesiones.push(crearSesionVacia(diasBase[sesiones.length] ?? 0));
   }
-
   return {
     fechaInicio: normalizarALunes(fechaInicio),
     sesiones,
-    guardada: confirmada
+    guardada: confirmada,
+    sesionesPersonalizadas
   };
 }
 
@@ -3734,10 +3753,11 @@ function guardarDatosAutomaticamente(mostrarMensaje = false) {
 
     sesionesActuales.forEach(actualizarCamposLegado);
 
-    almacen[categoriaActual][String(semanaActual)] = {
+    almacen[categoriaActual][obtenerClaveSemana(semanaActual)] = {
       fechaInicio: fechaInicioActual,
       sesiones: sesionesActuales,
-      guardada: microcicloGuardado
+      guardada: microcicloGuardado,
+      sesionesPersonalizadas: true
     };
 
     localStorage.setItem(
@@ -3900,14 +3920,12 @@ function obtenerTextoParaCalendario(sesion, fecha) {
   }
 
   if (sesion.intensidad === "partido") {
-    const rival = sesion.rival || "Rival a confirmar";
+    const rivales = normalizarListaRivales(sesion.rivales, sesion.rival);
     const torneo = sesion.competicion || "Competición a confirmar";
-
-    return [
-      "Partido · " + categoriaActual,
-      torneo + " vs. " + rival,
-      "Fecha: " + formatearFecha(fecha, true)
-    ].join("\n");
+    const formato = sesion.tipoPartido === "torneo" ? "Torneo" : "Partido";
+    return ["Partido · " + categoriaActual, formato + " · " + torneo,
+      "Rivales: " + (rivales.length ? rivales.join(", ") : "A confirmar"),
+      "Fecha: " + formatearFecha(fecha, true)].join("\n");
   }
 
   const configuracion = obtenerConfiguracionIntensidad(sesion.intensidad);
@@ -3941,10 +3959,11 @@ function crearActividadCalendario(sesion, indice, fecha) {
   const configuracion = obtenerConfiguracionIntensidad(sesion.intensidad);
   const esPartido = sesion.intensidad === "partido";
   const esSuspendido = sesion.intensidad === "suspendido";
-  const club = esPartido ? obtenerClubPorNombre(sesion.rival) : null;
+  const rivales = esPartido ? normalizarListaRivales(sesion.rivales, sesion.rival) : [];
+  const club = esPartido ? obtenerClubPorNombre(rivales[0] || sesion.rival) : null;
 
   const idMicrociclo =
-    ORIGEN_PLANIFICACION + ":" + categoriaActual + ":S" + semanaActual;
+    ORIGEN_PLANIFICACION + ":" + categoriaActual + ":" + obtenerClaveSemana(semanaActual);
 
   let titulo;
   let color;
@@ -3955,7 +3974,7 @@ function crearActividadCalendario(sesion, indice, fecha) {
     color = "gris";
     estado = "Suspendido";
   } else if (esPartido) {
-    titulo = "Partido · " + (sesion.rival || "Rival a confirmar");
+    titulo = (sesion.tipoPartido === "torneo" ? "Torneo · " : "Partido · ") + (rivales.length ? rivales.join(", ") : "Rival a confirmar");
     color = "azul";
     estado = "Partido";
   } else {
@@ -3988,8 +4007,10 @@ function crearActividadCalendario(sesion, indice, fecha) {
     text: textoActividad,
     descripcion: textoActividad,
     actividad: textoActividad,
-    rival: esPartido ? sesion.rival : "",
-    equipoRival: esPartido ? sesion.rival : "",
+    rival: esPartido ? (rivales[0] || sesion.rival || "") : "",
+    rivales: esPartido ? rivales : [],
+    equipoRival: esPartido ? (rivales[0] || sesion.rival || "") : "",
+    tipoPartido: esPartido ? (sesion.tipoPartido || "partido") : "",
     competicion: esPartido ? sesion.competicion : "",
     torneo: esPartido ? sesion.competicion : "",
     escudoRival: imagenRival,
@@ -4034,7 +4055,8 @@ function sincronizarCalendarioSemana() {
       actividad.origen === ORIGEN_PLANIFICACION &&
       actividad.microcicloId === idMicrociclo
     ) {
-      delete actividadesCategoria[fecha];
+      if (actividad.actividadCalendarioOriginal) actividadesCategoria[fecha] = clonarObjeto(actividad.actividadCalendarioOriginal);
+      else delete actividadesCategoria[fecha];
     }
   });
 
@@ -4107,41 +4129,50 @@ function actualizarSelectorSemana() {
     .map(Number)
     .filter(numero => Number.isInteger(numero));
 
-  const minSemana = Math.min(32, semanaActual, ...semanasGuardadas);
-  const maxSemana = Math.max(43, semanaActual, ...semanasGuardadas);
-
-  selector.innerHTML = "";
-
-  for (let numero = minSemana; numero <= maxSemana; numero++) {
-    const opcion = document.createElement("option");
-    const registro = semanasCategoria[String(numero)];
-
-    const fechaInicio = registro && registro.fechaInicio
-      ? normalizarALunes(registro.fechaInicio)
-      : obtenerFechaPredeterminada(numero);
-
-    const rango = formatearRangoMicrociclo(fechaInicio);
-    const estado = obtenerEstadoRegistroSemana(registro, categoriaActual, numero);
-
-    opcion.value = String(numero);
-    opcion.textContent = `Semana ${numero} · ${rango} · ${estado}`;
-
-    selector.appendChild(opcion);
+  const opciones = [];
+  const legadas = Object.keys(semanasCategoria).filter(k => /^\d+$/.test(k)).map(Number);
+  const maxLegada = Math.max(cicloMicrocicloActual === CICLO_ANTERIOR ? 43 : 51,
+    cicloMicrocicloActual === CICLO_ANTERIOR ? semanaActual : 51, ...legadas);
+  for (let numero = Math.min(32, ...legadas); numero <= maxLegada; numero++) {
+    const clave = String(numero), registro = semanasCategoria[clave];
+    const fechaInicio = registro?.fechaInicio ? normalizarALunes(registro.fechaInicio) : obtenerFechaPredeterminada(numero, CICLO_ANTERIOR);
+    opciones.push({ clave, numero, ciclo: CICLO_ANTERIOR, fechaInicio, registro });
   }
-
-  selector.value = String(semanaActual);
+  if (cicloMicrocicloActual === CICLO_NUEVO) {
+    const nuevas = Object.keys(semanasCategoria).map(k => k.match(/^2027-S(\d+)$/)).filter(Boolean).map(m => Number(m[1]));
+    const maxNuevo = Math.max(43, semanaActual, ...nuevas);
+    for (let numero = 1; numero <= maxNuevo; numero++) {
+      const clave = obtenerClaveSemana(numero, CICLO_NUEVO), registro = semanasCategoria[clave];
+      const fechaInicio = registro?.fechaInicio ? normalizarALunes(registro.fechaInicio) : obtenerFechaPredeterminada(numero, CICLO_NUEVO);
+      opciones.push({ clave, numero, ciclo: CICLO_NUEVO, fechaInicio, registro });
+    }
+  }
+  opciones.sort((a,b) => a.fechaInicio.localeCompare(b.fechaInicio));
+  selector.innerHTML = "";
+  opciones.forEach(item => {
+    const opcion = document.createElement("option");
+    const estado = obtenerEstadoRegistroSemana(item.registro, categoriaActual, item.numero);
+    opcion.value = item.clave;
+    opcion.textContent = `Semana ${item.numero} · ${item.ciclo} · ${formatearRangoMicrociclo(item.fechaInicio)} · ${estado}`;
+    selector.appendChild(opcion);
+  });
+  selector.value = obtenerClaveSemana(semanaActual);
 }
 
 function seleccionarSemana(valor) {
-  const numero = Number(valor);
-  if (!Number.isInteger(numero)) return;
-
-  // Guardar el microciclo que se está dejando sin cambiar su estado.
+  const clave = String(valor || "");
+  let numero, ciclo;
+  if (/^\d+$/.test(clave)) { numero = Number(clave); ciclo = CICLO_ANTERIOR; }
+  else {
+    const m = clave.match(/^2027-S(\d+)$/);
+    if (!m) return;
+    numero = Number(m[1]); ciclo = CICLO_NUEVO;
+  }
+  if (!Number.isInteger(numero) || numero < 1) return;
   guardarDatosAutomaticamente(false);
-
   semanaActual = numero;
-
-  const semana = obtenerSemana(semanaActual, categoriaActual);
+  cicloMicrocicloActual = ciclo;
+  const semana = obtenerSemana(semanaActual, categoriaActual, ciclo);
 
   fechaInicioActual = semana.fechaInicio;
   sesionesActuales = semana.sesiones;
@@ -4162,7 +4193,10 @@ function seleccionarSemana(valor) {
 }
 
 function cambiarSemana(desplazamiento) {
-  seleccionarSemana(semanaActual + desplazamiento);
+  let numero = semanaActual + desplazamiento, ciclo = cicloMicrocicloActual;
+  if (ciclo === CICLO_ANTERIOR && numero >= 52) { ciclo = CICLO_NUEVO; numero = 1; }
+  else if (ciclo === CICLO_NUEVO && numero <= 0) { ciclo = CICLO_ANTERIOR; numero = 51; }
+  seleccionarSemana(obtenerClaveSemana(numero, ciclo));
 }
 
 async function seleccionarCategoria(valor) {
@@ -4175,7 +4209,7 @@ async function seleccionarCategoria(valor) {
   guardarPreferenciaCategoria();
   await cargarCatalogoTesteos(categoriaActual);
 
-  const semana = obtenerSemana(semanaActual, categoriaActual);
+  const semana = obtenerSemana(semanaActual, categoriaActual, cicloMicrocicloActual);
 
   fechaInicioActual = semana.fechaInicio;
   sesionesActuales = semana.sesiones;
@@ -4228,18 +4262,25 @@ function crearOpcionesCompeticiones(valor) {
   `).join("");
 }
 
-function crearOpcionesRivales(valor) {
-  let html = '<option value="">Seleccioná un rival...</option>';
-
-  html += ESCUDOS_CLUBES.map(club => `
-    <option value="${escaparHTML(club.nombre)}" ${valor === club.nombre ? "selected" : ""}>${escaparHTML(club.nombre)}</option>
-  `).join("");
-
-  if (valor && !ESCUDOS_CLUBES.some(club => club.nombre === valor)) {
-    html += `<option value="${escaparHTML(valor)}" selected>${escaparHTML(valor)}</option>`;
-  }
-
-  return html;
+function normalizarListaRivales(valores, rivalLegado = "") {
+  const unicos = [...new Set((Array.isArray(valores) ? valores : []).map(v => String(v || "").trim()).filter(Boolean))];
+  if (!unicos.length && String(rivalLegado || "").trim()) unicos.push(String(rivalLegado).trim());
+  return unicos;
+}
+function crearOpcionesRivalesMultiples(valores, rivalLegado = "") {
+  const seleccionados = new Set(normalizarListaRivales(valores, rivalLegado));
+  const conocidos = new Set(ESCUDOS_CLUBES.map(club => club.nombre));
+  const extras = [...seleccionados].filter(nombre => !conocidos.has(nombre));
+  return [...ESCUDOS_CLUBES.map(club => club.nombre), ...extras]
+    .map(nombre => `<option value="${escaparHTML(nombre)}" ${seleccionados.has(nombre) ? "selected" : ""}>${escaparHTML(nombre)}</option>`).join("");
+}
+function crearHTMLPreviewRivales(valores, rivalLegado = "") {
+  const rivales = normalizarListaRivales(valores, rivalLegado);
+  if (!rivales.length) return crearHTMLPreviewRival("");
+  return `<div class="preview-rivales-lista">${rivales.map(nombre => {
+    const club = obtenerClubPorNombre(nombre);
+    return `<span class="preview-rival-chip">${club ? `<img src="${escaparHTML(club.ruta)}" alt="" onerror="this.hidden=true">` : "⚽"}<strong>${escaparHTML(nombre)}</strong></span>`;
+  }).join("")}</div><span class="nombre-preview-rival">${rivales.length} rival${rivales.length === 1 ? "" : "es"} seleccionado${rivales.length === 1 ? "" : "s"}</span>`;
 }
 
 function crearOpcionesTipoFisico(valor) {
@@ -4689,24 +4730,24 @@ function renderizarContenidoSesion(sesion, indice) {
   if (sesion.intensidad === "partido") {
     return `
       <div class="bloque-partido">
-        <h5 class="titulo-bloque">
-          <span class="numero-bloque">MD</span>
-          INFORMACIÓN DEL PARTIDO
-        </h5>
-
+        <h5 class="titulo-bloque"><span class="numero-bloque">MD</span> INFORMACIÓN DEL PARTIDO / TORNEO</h5>
         <div class="campo" style="margin-bottom:12px">
-          <label for="campo-${indice}-rival">NOMBRE DEL RIVAL</label>
-          <select id="campo-${indice}-rival" data-index="${indice}" data-field="rival" onchange="actualizarVistaRival(${indice})">
-            ${crearOpcionesRivales(sesion.rival)}
+          <label for="campo-${indice}-tipoPartido">FORMATO DE LA JORNADA</label>
+          <select id="campo-${indice}-tipoPartido" data-index="${indice}" data-field="tipoPartido">
+            <option value="partido" ${sesion.tipoPartido !== "torneo" ? "selected" : ""}>Partido</option>
+            <option value="torneo" ${sesion.tipoPartido === "torneo" ? "selected" : ""}>Torneo (varios rivales)</option>
           </select>
         </div>
-
-        <div class="preview-rival" id="previewRival-${indice}">
-          ${crearHTMLPreviewRival(sesion.rival)}
+        <div class="campo" style="margin-bottom:12px">
+          <label for="campo-${indice}-rivales">RIVALES DE LA JORNADA</label>
+          <select id="campo-${indice}-rivales" data-index="${indice}" data-field="rivales" multiple size="5" aria-describedby="ayudaRivales-${indice}">
+            ${crearOpcionesRivalesMultiples(sesion.rivales, sesion.rival)}
+          </select>
+          <small id="ayudaRivales-${indice}" class="ayuda-rivales">Podés seleccionar varios rivales. En computadora usá Ctrl/Cmd; en celular mantené presionada la opción.</small>
         </div>
-
+        <div class="preview-rival" id="previewRival-${indice}">${crearHTMLPreviewRivales(sesion.rivales, sesion.rival)}</div>
         <div class="campo" style="margin-top:12px">
-          <label for="campo-${indice}-competicion">TIPO DE TORNEO</label>
+          <label for="campo-${indice}-competicion">TORNEO / COMPETICIÓN</label>
           <select id="campo-${indice}-competicion" data-index="${indice}" data-field="competicion">
             ${crearOpcionesCompeticiones(sesion.competicion)}
           </select>
@@ -4978,9 +5019,7 @@ function crearTarjetaSesion(sesion, indice) {
   const fecha = obtenerFechaDeSesion(sesion);
   const md = obtenerEtiquetaMD(sesion, indice);
 
-  const puedeEliminar =
-    Boolean(sesion.extra) &&
-    sesionesActuales.length > (CANTIDAD_SESIONES_BASE[categoriaActual] || 4);
+  const puedeEliminar = sesionesActuales.length > 0;
 
   return `
     <article class="tarjeta-dia" id="sesion-${indice}" data-intensidad="${sesion.intensidad}">
@@ -5003,7 +5042,7 @@ function crearTarjetaSesion(sesion, indice) {
                 type="button"
                 class="boton-eliminar-sesion"
                 onclick="eliminarSesion(${indice})"
-                title="Eliminar esta sesión adicional"
+                title="Eliminar esta sesión"
                 aria-label="Eliminar sesión ${indice + 1}"
               >×</button>
             ` : ""}
@@ -5337,10 +5376,9 @@ function eliminarSesion(indice) {
   }
 
   const sesion = sesionesActuales[indice];
-  if (!sesion || !sesion.extra) return;
-
+  if (!sesion) return;
   const confirmado = confirm(
-    "¿Querés eliminar esta sesión adicional?\n\n" +
+    "¿Querés eliminar esta sesión del microciclo?\n\n" +
     "También se quitará del calendario si había sido publicada."
   );
 
@@ -5351,7 +5389,7 @@ function eliminarSesion(indice) {
   renderizarSemana();
   guardarDatosAutomaticamente(false);
 
-  mostrarNotificacion("La sesión adicional fue eliminada.");
+  mostrarNotificacion("La sesión fue eliminada del microciclo y del calendario.");
 }
 
 /* =====================================================
@@ -5576,6 +5614,16 @@ function procesarCambio(evento) {
     return;
   }
 
+  if (campo === "rivales") {
+    const rivales = Array.from(elemento.selectedOptions || []).map(o => String(o.value || "").trim()).filter(Boolean);
+    sesionesActuales[indice].rivales = normalizarListaRivales(rivales);
+    sesionesActuales[indice].rival = sesionesActuales[indice].rivales[0] || "";
+    sesionesActuales[indice].activa = true;
+    actualizarVistaRival(indice);
+    guardarDatosAutomaticamente(false);
+    return;
+  }
+
   if (campo === "diaSemana") {
     const nuevoDia = Number(elemento.value);
 
@@ -5639,7 +5687,7 @@ function actualizarVistaRival(indice) {
   const preview = document.getElementById("previewRival-" + indice);
   if (!preview) return;
 
-  preview.innerHTML = crearHTMLPreviewRival(sesion.rival);
+  preview.innerHTML = crearHTMLPreviewRivales(sesion.rivales, sesion.rival);
 }
 
 /* =====================================================
