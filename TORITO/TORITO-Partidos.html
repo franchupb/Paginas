@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Partidos | TORITO</title>
+<title>Partidos | TORITO FEMENINO</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 
 <style>
 :root {
@@ -410,7 +410,7 @@ main {
 }
 
 /* =====================================================
-   CABECERA ESTÁNDAR TORITO
+   CABECERA ESTÁNDAR TORITO FEMENINO
 ===================================================== */
 
 .page-heading {
@@ -1772,13 +1772,13 @@ body.eliminando .btn-puntos {
 
         <img
             class="logo-club"
-            src="TORITO%20-%20Logo.png"
+            src="TORITO-Logo TORITO.jpg"
             alt="Logo TORITO"
-            onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='TORITO%20-%20Logo.png'}else{this.style.display='none'}"
+            onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='TORITO-Logo TORITO.jpg'}else{this.style.display='none'}"
         >
 
         <div class="textos-club">
-            <h1>TORITO</h1>
+            <h1>TORITO FEMENINO</h1>
             <p>Partidos</p>
         </div>
 
@@ -1794,7 +1794,7 @@ body.eliminando .btn-puntos {
 
         <span class="informacion-perfil">
             <span class="nombre-perfil" id="nombreUsuario">Usuario</span>
-            <span class="rol-perfil" id="rolUsuario">Club Torito</span>
+            <span class="rol-perfil" id="rolUsuario">Club TORITO</span>
         </span>
     </button>
 
@@ -2157,10 +2157,10 @@ body.eliminando .btn-puntos {
                     </div>
 
                     <div class="field">
-                        <label for="golestorito">Goles TORITO</label>
+                        <label for="golesAdiur">Goles TORITO</label>
                         <input
                             type="number"
-                            id="golestorito"
+                            id="golesAdiur"
                             min="0"
                             max="99"
                             step="1"
@@ -2189,11 +2189,11 @@ body.eliminando .btn-puntos {
                         <label>Escudo de TORITO</label>
 
                         <img
-                            id="previewtorito"
+                            id="previewAdiur"
                             class="escudo-preview"
-                            src="TORITO%20-%20Logo.png"
+                            src="TORITO-Logo TORITO.jpg"
                             alt="Escudo de TORITO"
-                            onerror="this.onerror=null;this.src='TORITO%20-%20Logo.png';"
+                            onerror="this.onerror=null;this.src='TORITO-Logo TORITO.jpg';"
                         >
 
                         <p class="escudo-fijo-aviso">
@@ -2269,7 +2269,7 @@ body.eliminando .btn-puntos {
 
         <h2 id="nombrePerfil">Usuario</h2>
 
-        <p id="rolPerfil">Club Torito</p>
+        <p id="rolPerfil">Club TORITO</p>
 
         <button
             class="boton-cerrar-perfil"
@@ -2282,7 +2282,7 @@ body.eliminando .btn-puntos {
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
     getFirestore,
     collection,
@@ -2293,7 +2293,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
-   CONEXIÓN A FIREBASE CLOUD FIRESTORE (TORITO)
+   CONEXIÓN A FIREBASE CLOUD FIRESTORE (torito-b1913)
 ===================================================== */
 
 const firebaseConfig = {
@@ -2310,7 +2310,7 @@ let db = null;
 let nubeActiva = false;
 
 try {
-    const app = initializeApp(firebaseConfig);
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
     db = getFirestore(app);
     nubeActiva = true;
 } catch (error) {
@@ -2346,15 +2346,70 @@ function leerUsuario() {
     }
 }
 
-const usuarioGuardado = leerUsuario();
-const usuarioNormalizado = normalizarUsuario(usuarioGuardado);
+let usuarioGuardado = leerUsuario();
+let usuarioNormalizado = normalizarUsuario(usuarioGuardado);
 
-function esFran() { return (localStorage.getItem("rolTORITO") || "").trim().toLowerCase() === "admin"; }
-function esToto() { return ["editor", "cuerpo_tecnico", "coordinadora"].includes((localStorage.getItem("rolTORITO") || "").trim().toLowerCase()); }
-function esBianca() { return (localStorage.getItem("rolTORITO") || "").trim().toLowerCase() === "jugadora"; }
+let rolTORITO = localStorage.getItem("rolTORITO") || "";
+function esFran() { return rolTORITO === "admin"; }
+function esToto() { return rolTORITO === "cuerpo_tecnico"; }
+function esBianca() { return rolTORITO === "jugadora"; }
+let puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolTORITO);
+let puedeEliminar = ["admin", "coordinadora"].includes(rolTORITO);
 
-const puedeEditar = localStorage.getItem("puedeEditarTORITO") === "true";
-const puedeEliminar = localStorage.getItem("puedeEliminarTORITO") === "true";
+// Categorías visibles en Partidos: se toma primero la matriz central de permisos.
+function sincronizarPerfilPartidos(evento) {
+    const perfil = evento.detail || window.TORITO_PERMISOS;
+    if (!perfil) return;
+    usuarioGuardado = String(perfil.usuario || perfil.nombre || leerUsuario()).trim();
+    usuarioNormalizado = normalizarUsuario(usuarioGuardado);
+    rolTORITO = String(perfil.rol || "").toLowerCase();
+    puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolTORITO);
+    puedeEliminar = ["admin", "coordinadora"].includes(rolTORITO);
+
+    const nombre = perfil.nombre || usuarioGuardado || "Usuario";
+    const rolTexto = ({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rolTORITO] || "Club TORITO";
+    ["nombreUsuario","nombrePerfil"].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=nombre; });
+    ["avatarUsuario","avatarPerfil"].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=nombre.charAt(0).toUpperCase(); });
+    ["rolUsuario","rolPerfil"].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=rolTexto; });
+
+    const nuevo=document.getElementById("btnNuevo");
+    if(nuevo) nuevo.style.display=puedeEditar ? "" : "none";
+    const borrar=document.getElementById("btnEliminarModo");
+    if(borrar) borrar.style.display=puedeEliminar ? "inline-flex" : "none";
+    window.renderizarFixture?.();
+}
+window.addEventListener("torito-permisos-listos", sincronizarPerfilPartidos);
+if (window.TORITO_PERMISOS) sincronizarPerfilPartidos({ detail: window.TORITO_PERMISOS });
+
+function obtenerCategoriasVisiblesPartidos() {
+    const perfil = window.TORITO_PERMISOS;
+    let categorias = Array.isArray(perfil?.categorias) ? perfil.categorias : null;
+
+    if (!categorias) {
+        try {
+            const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "null");
+            if (Array.isArray(guardadas)) categorias = guardadas;
+        } catch (_) {}
+    }
+
+    // Admin y coordinadoras conservan la vista completa.
+    if (!categorias || !["cuerpo_tecnico", "jugadora"].includes(rolTORITO)) {
+        return [...DIVISIONES];
+    }
+
+    const permitidas = new Set(categorias.map(valor =>
+        String(valor || "").normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase().replace(/[^a-z0-9]/g, "")
+    ));
+
+    return DIVISIONES.filter(division => {
+        const clave = division.normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase().replace(/[^a-z0-9]/g, "");
+        return permitidas.has(clave);
+    });
+}
 
 /* Información del usuario */
 
@@ -2369,8 +2424,8 @@ document.getElementById("avatarUsuario").textContent =
 document.getElementById("rolUsuario").textContent =
     esFran() ? "Administrador" :
     esToto() ? "Cuerpo técnico" :
-    esBianca() ? "Jugadora · Sub 14" :
-    "Club Torito";
+    esBianca() ? "Jugadora" :
+    "Club TORITO";
 
 document.getElementById("nombrePerfil").textContent =
     usuarioGuardado || "Usuario";
@@ -2383,11 +2438,8 @@ document.getElementById("avatarPerfil").textContent =
 document.getElementById("rolPerfil").textContent =
     document.getElementById("rolUsuario").textContent;
 
-/* Redirigir si no hay sesión iniciada */
-
-if (!usuarioGuardado) {
-    window.location.href = "TORITO-Loing.html";
-}
+/* La sesión se valida en TORITO-permisos.js con Firebase Auth.
+   No redirigir por localStorage vacío: Firebase puede tardar en restaurarla. */
 
 /* Permisos */
 
@@ -2401,14 +2453,7 @@ if (puedeEliminar) {
 
 /* Permisos visuales de Bianca */
 
-if (esBianca()) {
-    document.getElementById("grupoPlantel")?.remove();
-    document.getElementById("grupoRendimientos")?.remove();
-
-    document.querySelectorAll("[data-ocultar-bianca]").forEach(enlace => {
-        enlace.style.display = "none";
-    });
-}
+// El menú y las restricciones de jugadoras se centralizan en TORITO-permisos.js.
 
 /* =====================================================
    BARRA LATERAL
@@ -2591,7 +2636,7 @@ const ORDEN_COMPETICIONES = [
 ];
 
 const CLAVE_FIXTURE = "fixtureTORITO";
-const LOGO_TORITO_FIJO = "TORITO - Logo.png";
+const LOGO_TORITO_FIJO = "TORITO-Logo TORITO.jpg";
 
 /* =====================================================
    CLUBES Y ESCUDOS
@@ -2639,23 +2684,19 @@ function obtenerClubPorNombre(nombre) {
 function rutaImagen(nombre) {
     if (!nombre) return "";
 
-    let archivo = String(nombre).trim();
+    const archivo = String(nombre).trim();
 
     if (/^data:image\//i.test(archivo)) {
         return archivo;
     }
 
-    try { archivo = decodeURIComponent(archivo); } catch (error) { /* conservar la ruta original */ }
-
     const minusculas = archivo.toLowerCase();
 
     if (
         minusculas === "torito" ||
-        minusculas === "clubes/torito.png" ||
+        minusculas === "TORITO-Logo TORITO.jpg" ||
         minusculas === "logo torito.png" ||
-        minusculas === "logo torito.jpeg" ||
-        minusculas === "torito-logo torito.png" ||
-        minusculas === "torito.png"
+        minusculas === "logo torito.jpeg"
     ) {
         return LOGO_TORITO_FIJO;
     }
@@ -2812,7 +2853,7 @@ function normalizarObjetoPartido(p, indice = 0) {
         escudoRival = rutaImagen(escudoRival);
     }
 
-    const golestorito = p.golestorito ?? p.marcadortorito ?? "";
+    const golesAdiur = p.golesAdiur ?? p.marcadorAdiur ?? "";
     const golesRival = p.golesRival ?? p.marcadorRival ?? "";
 
     return {
@@ -2825,11 +2866,11 @@ function normalizarObjetoPartido(p, indice = 0) {
         fecha: p.fechaPartido || p.fecha || "",
         lugarPartido: p.lugarPartido || p.lugar || p.cancha || "",
         rival,
-        escudotorito: LOGO_TORITO_FIJO,
+        escudoAdiur: LOGO_TORITO_FIJO,
         escudoRival,
-        golestorito: golestorito === "" || golestorito === null
+        golesAdiur: golesAdiur === "" || golesAdiur === null
             ? ""
-            : String(golestorito),
+            : String(golesAdiur),
         golesRival: golesRival === "" || golesRival === null
             ? ""
             : String(golesRival)
@@ -2852,7 +2893,14 @@ function cargarPartidosLocales() {
 let partidos = cargarPartidosLocales();
 let idEditando = null;
 let modoEliminar = false;
-let migracionInicialRealizada = false;
+const CLAVE_MIGRACION_FIXTURE = "fixtureTORITO_migracion_v2";
+let migracionInicialRealizada = (() => {
+    try {
+        return localStorage.getItem(CLAVE_MIGRACION_FIXTURE) === "1";
+    } catch (_) {
+        return false;
+    }
+})();
 
 function respaldarEnLocalStorage() {
     try {
@@ -2872,7 +2920,7 @@ async function guardarPartidoEnNube(partido) {
 
     actualizarIndicadorGuardado("guardando", "⏳ Guardando en la nube...");
     try {
-        await setDoc(doc(db,"torito_partidos", String(partido.id)), {
+        await setDoc(doc(db, "torito_partidos", String(partido.id)), {
             ...partido,
             actualizadoPor: usuarioGuardado,
             actualizadoEl: new Date().toISOString()
@@ -2881,8 +2929,8 @@ async function guardarPartidoEnNube(partido) {
         return true;
     } catch (error) {
         console.error("Error guardando partido en Firestore:", error);
-        actualizarIndicadorGuardado("offline", "💾 Guardado local (sin red)");
-        return true;
+        actualizarIndicadorGuardado("offline", "⚠️ Guardado local; no se pudo sincronizar");
+        return false;
     }
 }
 
@@ -2896,13 +2944,13 @@ async function eliminarPartidoEnNube(id) {
 
     actualizarIndicadorGuardado("guardando", "⏳ Eliminando en la nube...");
     try {
-        await deleteDoc(doc(db,"torito_partidos", String(id)));
+        await deleteDoc(doc(db, "torito_partidos", String(id)));
         actualizarIndicadorGuardado("", "☁️ Guardado en la nube");
         return true;
     } catch (error) {
         console.error("Error eliminando partido en Firestore:", error);
-        actualizarIndicadorGuardado("offline", "💾 Guardado local (sin red)");
-        return true;
+        actualizarIndicadorGuardado("offline", "⚠️ No se pudo eliminar en la nube");
+        return false;
     }
 }
 
@@ -2913,35 +2961,82 @@ function iniciarSincronizacionNube() {
     }
 
     onSnapshot(
-        collection(db,"torito_partidos"),
+        collection(db, "torito_partidos"),
         async snapshot => {
             const listaNube = [];
             snapshot.forEach(docSnap => {
                 listaNube.push(normalizarObjetoPartido({ id: docSnap.id, ...docSnap.data() }));
             });
 
-            if (listaNube.length === 0 && partidos.length > 0 && !migracionInicialRealizada) {
-                migracionInicialRealizada = true;
-                for (const pLocal of partidos) {
-                    await setDoc(doc(db,"torito_partidos", String(pLocal.id)), {
-                        ...pLocal,
-                        actualizadoPor: usuarioGuardado,
-                        actualizadoEl: new Date().toISOString()
-                    });
+            // El respaldo local se combina una sola vez, al iniciar la sesión.
+            // Después, Firestore es la fuente de verdad. Esto evita que un
+            // registro borrado desde otro dispositivo reaparezca desde un
+            // localStorage antiguo en cada actualización del listener.
+            const primeraSincronizacion = !migracionInicialRealizada;
+            migracionInicialRealizada = true;
+            try {
+                localStorage.setItem(CLAVE_MIGRACION_FIXTURE, "1");
+            } catch (_) {}
+            let partidosFinales = listaNube;
+
+            if (primeraSincronizacion && listaNube.length === 0 && partidos.length > 0) {
+                partidosFinales = [...partidos];
+                partidos = partidosFinales;
+                respaldarEnLocalStorage();
+
+                for (const pLocal of partidosFinales) {
+                    try {
+                        await setDoc(doc(db, "torito_partidos", String(pLocal.id)), {
+                            ...pLocal,
+                            actualizadoPor: usuarioGuardado,
+                            actualizadoEl: new Date().toISOString()
+                        });
+                    } catch (error) {
+                        console.error("No se pudo migrar un partido local:", pLocal.id, error);
+                        actualizarIndicadorGuardado("offline", "⚠️ Hay partidos pendientes de sincronizar");
+                    }
                 }
-                actualizarIndicadorGuardado("", "☁️ Guardado en la nube");
                 return;
             }
 
-            migracionInicialRealizada = true;
-            partidos = listaNube;
+            if (primeraSincronizacion && listaNube.length > 0) {
+                // Recupera registros locales que aún no estaban en Firestore,
+                // pero únicamente durante la migración inicial.
+                const mapa = new Map(listaNube.map(p => [String(p.id), p]));
+                const pendientesDeSubir = [];
+
+                partidos.forEach(local => {
+                    const id = String(local.id);
+                    if (!mapa.has(id)) {
+                        mapa.set(id, local);
+                        pendientesDeSubir.push(local);
+                    }
+                });
+                partidosFinales = [...mapa.values()];
+
+                for (const pendiente of pendientesDeSubir) {
+                    try {
+                        await setDoc(doc(db, "torito_partidos", String(pendiente.id)), {
+                            ...pendiente,
+                            actualizadoPor: usuarioGuardado,
+                            actualizadoEl: new Date().toISOString()
+                        });
+                    } catch (error) {
+                        console.error("No se pudo recuperar un partido local:", pendiente.id, error);
+                        actualizarIndicadorGuardado("offline", "⚠️ Hay partidos pendientes de sincronizar");
+                    }
+                }
+            }
+
+            partidos = partidosFinales;
             respaldarEnLocalStorage();
             renderizarFixture();
-            actualizarIndicadorGuardado("", "☁️ Guardado en la nube");
+            actualizarIndicadorGuardado("", "☁️ Fixture sincronizado");
         },
         error => {
-            console.warn("No se pudo suscribir a Firestore:", error);
-            actualizarIndicadorGuardado("offline", "💾 Guardado local (sin red)");
+            console.error("No se pudo cargar el fixture desde Firestore:", error);
+            const codigo = error?.code ? " (" + error.code + ")" : "";
+            actualizarIndicadorGuardado("offline", "⚠️ No se pudo cargar la nube" + codigo);
         }
     );
 }
@@ -2958,11 +3053,15 @@ function actualizarContadoresCategorias() {
         "Sub 16": "contadorSub16",
         "Primera": "contadorPrimera"
     };
+    const visibles = new Set(obtenerCategoriasVisiblesPartidos());
 
     Object.entries(contadores).forEach(([division, id]) => {
         const elemento = document.getElementById(id);
-
-        if (elemento) {
+        if (!elemento) return;
+        const tarjeta = elemento.closest(".stat");
+        const permitido = visibles.has(division);
+        if (tarjeta) { tarjeta.hidden = !permitido; tarjeta.style.display = permitido ? "" : "none"; }
+        if (permitido) {
             elemento.textContent = partidos.filter(
                 partido => partido.division === division
             ).length;
@@ -3100,16 +3199,16 @@ function abrirModal(id = null) {
     document.getElementById("jornada").value = 1;
     actualizarRequisitoFecha();
 
-    const previewtorito = document.getElementById("previewtorito");
+    const previewAdiur = document.getElementById("previewAdiur");
 
-    previewtorito.style.display = "block";
+    previewAdiur.style.display = "block";
 
-    previewtorito.onerror = function() {
+    previewAdiur.onerror = function() {
         this.onerror = null;
-        this.src = "TORITO%20-%20Logo.png";
+        this.src = "TORITO-Logo TORITO.jpg";
     };
 
-    previewtorito.src = LOGO_TORITO_FIJO;
+    previewAdiur.src = LOGO_TORITO_FIJO;
 
     mostrarEscudoRival("");
 
@@ -3152,8 +3251,8 @@ function abrirModal(id = null) {
         document.getElementById("lugarPartido").value =
             partido.lugarPartido || "";
 
-        document.getElementById("golestorito").value =
-            partido.golestorito ?? "";
+        document.getElementById("golesAdiur").value =
+            partido.golesAdiur ?? "";
 
         document.getElementById("golesRival").value =
             partido.golesRival ?? "";
@@ -3237,15 +3336,15 @@ async function guardarPartido(event) {
     const rival = selectorRival.value.trim();
     const fechaPartido = document.getElementById("fechaPartido").value;
     const lugarPartido = document.getElementById("lugarPartido").value.trim();
-    const golestoritoIngresados = document.getElementById("golestorito").value;
+    const golesAdiurIngresados = document.getElementById("golesAdiur").value;
     const golesRivalIngresados = document.getElementById("golesRival").value;
 
     if (
-        golestoritoIngresados !== "" &&
+        golesAdiurIngresados !== "" &&
         (
-            !Number.isInteger(Number(golestoritoIngresados)) ||
-            Number(golestoritoIngresados) < 0 ||
-            Number(golestoritoIngresados) > 99
+            !Number.isInteger(Number(golesAdiurIngresados)) ||
+            Number(golesAdiurIngresados) < 0 ||
+            Number(golesAdiurIngresados) > 99
         )
     ) {
         alert("Ingresá una cantidad válida de goles para TORITO (0 a 99).");
@@ -3314,9 +3413,9 @@ async function guardarPartido(event) {
         fecha: fechaPartido,
         lugarPartido,
         rival,
-        escudotorito: LOGO_TORITO_FIJO,
+        escudoAdiur: LOGO_TORITO_FIJO,
         escudoRival: escudoRival || (anterior?.escudoRival || ""),
-        golestorito: golestoritoIngresados,
+        golesAdiur: golesAdiurIngresados,
         golesRival: golesRivalIngresados
     };
 
@@ -3397,8 +3496,8 @@ function escaparHTML(valor) {
     })[caracter]);
 }
 
-function construirEscudo(src, nombre, estorito = false) {
-    const ruta = estorito
+function construirEscudo(src, nombre, esAdiur = false) {
+    const ruta = esAdiur
         ? LOGO_TORITO_FIJO
         : rutaImagen(src || "");
 
@@ -3409,13 +3508,13 @@ function construirEscudo(src, nombre, estorito = false) {
     const rutaSegura = escaparHTML(encodeURI(ruta));
     const altSeguro = escaparHTML(nombre || "Escudo del equipo");
 
-    if (estorito) {
+    if (esAdiur) {
         return `
             <img
                 class="escudo-mini"
                 src="${rutaSegura}"
                 alt="${altSeguro}"
-                onerror="this.onerror=null;this.src='TORITO%20-%20Logo.png';"
+                onerror="this.onerror=null;this.src='TORITO-Logo TORITO.jpg';"
             >
         `;
     }
@@ -3451,12 +3550,23 @@ function renderizarFixture() {
     const busqueda = document.getElementById("busqueda")
         .value.trim().toLowerCase();
 
-    const divisionFiltro = document.getElementById("filtroDivision").value;
-    const competicionFiltro = document.getElementById("filtroCompeticion").value;
+    const categoriasVisibles = obtenerCategoriasVisiblesPartidos();
+    const permitidas = new Set(categoriasVisibles);
+    const filtroCategoria = document.getElementById("filtroDivision");
+    let divisionFiltro = filtroCategoria.value;
 
+    // Nunca permitir que el fixture muestre una división ajena al perfil,
+    // incluso si quedó seleccionada en una sesión anterior.
+    if (!permitidas.has(divisionFiltro)) {
+        divisionFiltro = "";
+        filtroCategoria.value = divisionFiltro;
+    }
+
+    const competicionFiltro = document.getElementById("filtroCompeticion").value;
     actualizarContadoresCategorias();
 
     const filtrados = partidos.filter(p => {
+        if (!permitidas.has(p.division)) return false;
         const coincideDivision = !divisionFiltro || p.division === divisionFiltro;
         const coincideCompeticion =
             !competicionFiltro || p.competicion === competicionFiltro;
@@ -3468,7 +3578,7 @@ function renderizarFixture() {
             p.jornada,
             p.fechaPartido,
             p.lugarPartido,
-            p.golestorito,
+            p.golesAdiur,
             p.golesRival
         ].join(" ").toLowerCase();
 
@@ -3577,7 +3687,7 @@ function renderizarFixture() {
                             false
                         );
 
-                        const escudotorito = construirEscudo(
+                        const escudoAdiur = construirEscudo(
                             LOGO_TORITO_FIJO,
                             "TORITO",
                             true
@@ -3585,9 +3695,9 @@ function renderizarFixture() {
 
                         html += `
                             <article class="partido ${modoEliminar ? "modo-eliminar" : ""}">
-                                ${escudotorito}
+                                ${escudoAdiur}
                                 <span class="equipo-nombre">TORITO</span>
-                                <span class="marcador-gol">${mostrarGol(p.golestorito)}</span>
+                                <span class="marcador-gol">${mostrarGol(p.golesAdiur)}</span>
                                 <span class="vs">VS</span>
                                 <span class="marcador-gol">${mostrarGol(p.golesRival)}</span>
                                 <span class="equipo-nombre">${nombreRival}</span>
@@ -3708,11 +3818,45 @@ window.addEventListener("storage", event => {
    INICIALIZACIÓN
 ===================================================== */
 
-actualizarCompeticionesFormulario();
-actualizarFiltroCompeticion();
-actualizarContadoresCategorias();
-renderizarFixture();
-iniciarSincronizacionNube();
+// El permiso se confirma primero: así Firestore no consulta antes de restaurar
+// la sesión y el fixture se vuelve a dibujar con las categorías reales del perfil.
+window.renderizarFixture = () => renderizarFixture();
+function iniciarPartidosConSesion() {
+    if (window.TORITO_PERMISOS) {
+        iniciarSincronizacionNube();
+        renderizarFixture();
+        return;
+    }
+    window.addEventListener("torito-permisos-listos", () => {
+        renderizarFixture();
+        iniciarSincronizacionNube();
+    }, { once: true });
+}
+
+function iniciarInterfazPartidos() {
+    try {
+        actualizarCompeticionesFormulario();
+        actualizarFiltroCompeticion();
+        actualizarContadoresCategorias();
+        renderizarFixture();
+    } catch (error) {
+        console.error("Error al iniciar la interfaz de Partidos:", error);
+        const principal = document.querySelector("main");
+        if (principal) {
+            const aviso = document.createElement("div");
+            aviso.className = "empty";
+            aviso.innerHTML = '<div class="empty-icon">⚠️</div><h3>No se pudo iniciar Partidos</h3><p>La sesión está activa, pero ocurrió un error al preparar el fixture. Revisá la consola para identificar el módulo afectado.</p>';
+            principal.prepend(aviso);
+        }
+    }
+    iniciarPartidosConSesion();
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", iniciarInterfazPartidos, { once: true });
+} else {
+    iniciarInterfazPartidos();
+}
 </script>
 
 
