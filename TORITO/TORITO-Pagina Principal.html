@@ -1358,13 +1358,10 @@ if (!usuarioGuardado) {
 
 const usuarioNormalizado = (usuarioGuardado || "").trim().toLowerCase();
 
-const esFran = ["fran", "francisco", "francisco perez basla"].includes(usuarioNormalizado);
-const esToto = usuarioNormalizado === "toto";
-
-const esBianca = [
-  "biancadominguez",
-  "bianca"
-].includes(usuarioNormalizado);
+const rolPerfilTORITO = (localStorage.getItem("rolTORITO") || "").trim().toLowerCase();
+const esFran = rolPerfilTORITO === "admin";
+const esToto = ["editor", "cuerpo_tecnico", "coordinadora"].includes(rolPerfilTORITO);
+const esBianca = rolPerfilTORITO === "jugadora";
 
 const nombreMostrar = usuarioGuardado || "Usuario";
 
