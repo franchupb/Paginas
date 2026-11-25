@@ -2385,24 +2385,9 @@ function normalizarUsuario(valor) {
 
 const usuarioNormalizado = normalizarUsuario(usuarioGuardado);
 
-function esFran() {
-    return [
-        "fran",
-        "francisco",
-        "franciscoperezbasla"
-    ].includes(usuarioNormalizado);
-}
-
-function esToto() {
-    return usuarioNormalizado === "toto";
-}
-
-function esBianca() {
-    return [
-        "bianca",
-        "biancadominguez"
-    ].includes(usuarioNormalizado);
-}
+function esFran() { return (localStorage.getItem("rolTORITO") || "").trim().toLowerCase() === "admin"; }
+function esToto() { return ["editor", "cuerpo_tecnico", "coordinadora"].includes((localStorage.getItem("rolTORITO") || "").trim().toLowerCase()); }
+function esBianca() { return (localStorage.getItem("rolTORITO") || "").trim().toLowerCase() === "jugadora"; }
 
 document.getElementById("nombreUsuario").textContent =
     usuarioGuardado || "Usuario";
