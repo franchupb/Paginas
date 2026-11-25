@@ -880,7 +880,7 @@ tbody tr:hover td.fija-izquierda {
   }
 }
 </style>
-<script src="TORITO-permisos.js?v=20261118-s16c"></script>
+<script src="TORITO-permisos.js?v=20261124-auth1"></script>
 </head>
 
 <body>
@@ -1397,9 +1397,10 @@ if (!usuarioGuardado) {
 
 const usuarioNormalizado = (usuarioGuardado || "").trim().toLowerCase();
 
-const esFran = ["fran", "francisco", "francisco perez basla"].includes(usuarioNormalizado);
-const esToto = usuarioNormalizado === "toto";
-const esBianca = ["biancadominguez", "bianca"].includes(usuarioNormalizado);
+const rolPerfilTORITO = (localStorage.getItem("rolTORITO") || "").trim().toLowerCase();
+const esFran = rolPerfilTORITO === "admin";
+const esToto = ["editor", "cuerpo_tecnico", "coordinadora"].includes(rolPerfilTORITO);
+const esBianca = rolPerfilTORITO === "jugadora";
 
 const nombreMostrar = usuarioGuardado || "Usuario";
 
@@ -2739,5 +2740,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 
 
+<script type="module" src="TORITO-layout.js?v=20261124-layout1"></script>
 </body>
 </html>
