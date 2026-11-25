@@ -3169,10 +3169,15 @@ function actualizarVistaPreviaCalendario() {
 
     vistaPreviaContenido.replaceChildren();
 
+    const actividadExistente = fechaSeleccionada
+        ? obtenerActividad(categoria.value, fechaSeleccionada)
+        : null;
     const datos = {
         texto,
         imagen,
         estado,
+        tipoPartido: actividadExistente?.tipoPartido || "",
+        rivales: Array.isArray(actividadExistente?.rivales) ? actividadExistente.rivales : [],
         tamanoTexto: Number(tamanoTexto.value) || 12,
         alineacionTexto: alineacionTexto.value || "izquierda",
         posicionImagen: posicionImagen.value || "centro",
@@ -3542,7 +3547,11 @@ document.getElementById("guardarActividad").addEventListener("click", () => {
             fisico: actividadAnterior.fisico || "",
             fisicoBloques: Array.isArray(actividadAnterior.fisicoBloques) ? actividadAnterior.fisicoBloques : [],
             tipoPartido: actividadAnterior.tipoPartido === "torneo" ? "torneo" : "",
-            rivales: Array.isArray(actividadAnterior.rivales) ? actividadAnterior.rivales : (actividadAnterior.rival ? [actividadAnterior.rival] : [])
+            rival: actividadAnterior.rival || "",
+            rivales: Array.isArray(actividadAnterior.rivales) ? actividadAnterior.rivales : (actividadAnterior.rival ? [actividadAnterior.rival] : []),
+            competicion: actividadAnterior.competicion || "",
+            torneo: actividadAnterior.torneo || actividadAnterior.competicion || "",
+            equipoRival: actividadAnterior.equipoRival || actividadAnterior.rival || ""
         };
     }
 
