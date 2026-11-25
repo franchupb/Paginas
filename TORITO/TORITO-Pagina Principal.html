@@ -939,7 +939,7 @@ a {
 }
 </style>
 
-<script src="TORITO-permisos.js?v=20261118-s16c"></script>
+<script src="TORITO-permisos.js?v=20261124-auth1"></script>
 </head>
 
 <body>
@@ -1358,13 +1358,10 @@ if (!usuarioGuardado) {
 
 const usuarioNormalizado = (usuarioGuardado || "").trim().toLowerCase();
 
-const esFran = ["fran", "francisco", "francisco perez basla"].includes(usuarioNormalizado);
-const esToto = usuarioNormalizado === "toto";
-
-const esBianca = [
-  "biancadominguez",
-  "bianca"
-].includes(usuarioNormalizado);
+const rolPerfilTORITO = (localStorage.getItem("rolTORITO") || "").trim().toLowerCase();
+const esFran = rolPerfilTORITO === "admin";
+const esToto = ["editor", "cuerpo_tecnico", "coordinadora"].includes(rolPerfilTORITO);
+const esBianca = rolPerfilTORITO === "jugadora";
 
 const nombreMostrar = usuarioGuardado || "Usuario";
 
@@ -1393,7 +1390,8 @@ const clavePreferencia =
   "divisionPreferidaTORITO_" + usuarioNormalizado;
 
 function divisionPredeterminada() {
-  if (esBianca) return "Sub 14";
+  const categoriasPerfil = (() => { try { return JSON.parse(localStorage.getItem("categoriasTORITO") || "[]"); } catch (_) { return []; } })();
+  if (categoriasPerfil.length) return categoriasPerfil[0];
 
   const guardada = localStorage.getItem(clavePreferencia);
 
@@ -1688,7 +1686,7 @@ function listaDesdeDatosFixture(datos, divisionPadre = "") {
 }
 
 function leerTodosLosPartidos() {
-  // TORITO y ADIUR comparten el mismo origen de GitHub Pages y, por lo tanto,
+  // Las secciones del club comparten el mismo origen de GitHub Pages y, por lo tanto,
   // también comparten localStorage. Leer claves genéricas como "fixture" o
   // recorrer todas las claves del navegador mezcla accidentalmente los clubes.
   // Por eso acá solo se consultan claves identificadas explícitamente como TORITO.
@@ -2620,5 +2618,6 @@ function obtenerClubPorNombre(nombre) {
 })();
 </script>
 
+<script type="module" src="TORITO-layout.js?v=20261124-layout1"></script>
 </body>
 </html>
