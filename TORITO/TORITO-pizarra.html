@@ -1924,7 +1924,6 @@ if(!usuario){
 const usuarioNormalizado = usuario.toLowerCase().replace(/\s+/g," ").trim();
 const usuarioCompacto = usuarioNormalizado.replace(/\s+/g,"");
 const rolPerfilTORITO = (localStorage.getItem("rolTORITO") || "").trim().toLowerCase();
-const rolPerfilTORITO = (localStorage.getItem("rolTORITO") || "").trim().toLowerCase();
 const esFran = rolPerfilTORITO === "admin";
 const esToto = ["editor", "cuerpo_tecnico", "coordinadora"].includes(rolPerfilTORITO);
 const esBianca = rolPerfilTORITO === "jugadora";
