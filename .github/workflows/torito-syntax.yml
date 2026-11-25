@@ -1,0 +1,28 @@
+name: TORITO JavaScript syntax validation
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "TORITO/**"
+      - "scripts/check-torito-html.mjs"
+      - ".github/workflows/torito-syntax.yml"
+  push:
+    branches:
+      - master
+    paths:
+      - "TORITO/**"
+      - "scripts/check-torito-html.mjs"
+      - ".github/workflows/torito-syntax.yml"
+
+jobs:
+  check-torito-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check JavaScript in TORITO pages
+        run: node scripts/check-torito-html.mjs
