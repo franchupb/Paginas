@@ -2354,7 +2354,7 @@ function esFran() { return rolTORITO === "admin"; }
 function esToto() { return rolTORITO === "cuerpo_tecnico"; }
 function esBianca() { return rolTORITO === "jugadora"; }
 let puedeEditar = ["admin", "editor", "coordinadora", "cuerpo_tecnico"].includes(rolTORITO);
-let puedeEliminar = ["admin", "editor", "coordinadora"].includes(rolTORITO);
+let puedeEliminar = ["admin", "coordinadora"].includes(rolTORITO);
 
 // Categorías visibles en Partidos: se toma primero la matriz central de permisos.
 function sincronizarPerfilPartidos(evento) {
@@ -2364,7 +2364,7 @@ function sincronizarPerfilPartidos(evento) {
     usuarioNormalizado = normalizarUsuario(usuarioGuardado);
     rolTORITO = String(perfil.rol || "").toLowerCase();
     puedeEditar = ["admin", "editor", "coordinadora", "cuerpo_tecnico"].includes(rolTORITO);
-    puedeEliminar = ["admin", "editor", "coordinadora"].includes(rolTORITO);
+    puedeEliminar = ["admin", "coordinadora"].includes(rolTORITO);
 
     const nombre = perfil.nombre || usuarioGuardado || "Usuario";
     const rolOriginal = String(perfil.rol || perfil.tipo || "").trim().toLowerCase();
