@@ -1769,6 +1769,8 @@ main {
         transition-duration: .01ms !important;
     }
 }
+
+.partido-rivales{margin-top:5px;color:#46546a;font-size:10px;font-weight:700;line-height:1.35;overflow-wrap:anywhere}
 </style>
 <script src="TORITO-permisos.js?v=20261125-categorias1"></script>
 </head>
@@ -3082,8 +3084,17 @@ function crearVistaActividad(datos, fecha, esVistaPrevia = false) {
         torneo.title = analisis.descripcion || "Torneo a definir";
 
         informacion.appendChild(torneo);
-        tarjeta.appendChild(informacion);
 
+        const rivales = Array.isArray(datos.rivales) ? datos.rivales.filter(Boolean) : (datos.rival ? [datos.rival] : []);
+        if (rivales.length) {
+            const etiquetaRivales = document.createElement("div");
+            etiquetaRivales.className = "partido-rivales";
+            etiquetaRivales.textContent = "Rivales: " + rivales.join(", ");
+            etiquetaRivales.title = etiquetaRivales.textContent;
+            informacion.appendChild(etiquetaRivales);
+        }
+
+        tarjeta.appendChild(informacion);
         return tarjeta;
     }
 
@@ -3389,7 +3400,11 @@ function obtenerActividad(cat, fecha) {
         altoImagen: Number(actividad.altoImagen) || 35,
         pruebasTTT: actividad.pruebasTTT === true,
         tttBloques: Array.isArray(actividad.tttBloques) ? actividad.tttBloques : [],
-        fisicoBloques: Array.isArray(actividad.fisicoBloques) ? actividad.fisicoBloques : []
+        fisicoBloques: Array.isArray(actividad.fisicoBloques) ? actividad.fisicoBloques : [],
+        tipoPartido: actividad.tipoPartido === "torneo" ? "torneo" : "partido",
+        rivales: Array.isArray(actividad.rivales) && actividad.rivales.length
+            ? [...new Set(actividad.rivales.map(nombre => String(nombre || "").trim()).filter(Boolean))]
+            : (actividad.rival ? [String(actividad.rival)] : [])
     };
 }
 
@@ -3525,7 +3540,9 @@ document.getElementById("guardarActividad").addEventListener("click", () => {
             tttBloques: Array.isArray(actividadAnterior.tttBloques) ? actividadAnterior.tttBloques : [],
             pruebasTTT: actividadAnterior.pruebasTTT === true,
             fisico: actividadAnterior.fisico || "",
-            fisicoBloques: Array.isArray(actividadAnterior.fisicoBloques) ? actividadAnterior.fisicoBloques : []
+            fisicoBloques: Array.isArray(actividadAnterior.fisicoBloques) ? actividadAnterior.fisicoBloques : [],
+            tipoPartido: actividadAnterior.tipoPartido === "torneo" ? "torneo" : "",
+            rivales: Array.isArray(actividadAnterior.rivales) ? actividadAnterior.rivales : (actividadAnterior.rival ? [actividadAnterior.rival] : [])
         };
     }
 
