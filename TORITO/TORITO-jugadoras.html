@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jugadoras - TORITO</title>
+  <title>Jugadoras - TORITO FEM</title>
   <style>
     :root {
       --naranja: #f47721;
@@ -1273,20 +1273,20 @@
     >☰</button>
     <img
       class="logo-superior"
-      id="logotorito"
-      src="TORITO%20-%20Logo.png"
+      id="logoAdiur"
+      src="TORITO-Logo TORITO.jpg"
       alt="Logo TORITO"
-      onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='TORITO%20-%20Logo.png'}else{this.style.display='none'}"
+      onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='TORITO-Logo TORITO.jpg'}else{this.style.display='none'}"
     >
     <div class="titulo-superior">
-      <h1>TORITO</h1>
+      <h1>TORITO FEMENINO</h1>
       <p>Plantel de jugadoras</p>
     </div>
     <div class="perfil">
       <div class="avatar" id="avatarUsuario">U</div>
       <div class="informacion-perfil">
         <div class="nombre-perfil" id="nombreUsuario">Usuario</div>
-        <div class="rol-perfil" id="rolUsuario">Club Torito</div>
+        <div class="rol-perfil" id="rolUsuario">Club TORITO</div>
       </div>
     </div>
   </header>
@@ -1449,7 +1449,7 @@
           <span class="eyebrow-pagina">PLANTEL · EQUIPO</span>
           <h2>Plantel de jugadoras</h2>
           <p>
-            Administrá la información personal y deportiva de TORITO.
+            Administrá la información personal y deportiva de TORITO FEMENINO.
           </p>
         </div>
         <button
@@ -1604,7 +1604,7 @@
     <div class="modal-contenido">
       <div class="modal-encabezado">
         <div class="modal-titulos">
-          <span class="modal-eyebrow">PLANTEL TORITO</span>
+          <span class="modal-eyebrow">PLANTEL TORITO FEMENINO</span>
           <h3 id="tituloModal">Agregar jugadora</h3>
           <p>Completá los datos personales y deportivos.</p>
         </div>
@@ -1698,28 +1698,28 @@
 
   <!-- SCRIPT DE FIREBASE Y LÓGICA CONECTADA A LA NUBE -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
-    apiKey: "AIzaSyCsOaJVo8P5reZvfp7vjBkhkP79C_mEO94",
-    authDomain: "torito-56078.firebaseapp.com",
-    projectId: "torito-56078",
-    storageBucket: "torito-56078.firebasestorage.app",
-    messagingSenderId: "497702302753",
-    appId: "1:497702302753:web:04d419e13ded4b59371f60",
-    measurementId: "G-32VFQHWP5Y"
-  };
+      apiKey: "AIzaSyCsOaJVo8P5reZvfp7vjBkhkP79C_mEO94",
+      authDomain: "torito-56078.firebaseapp.com",
+      projectId: "torito-56078",
+      storageBucket: "torito-56078.firebasestorage.app",
+      messagingSenderId: "497702302753",
+      appId: "1:497702302753:web:04d419e13ded4b59371f60",
+      measurementId: "G-32VFQHWP5Y"
+    };
 
-    const app = initializeApp(firebaseConfig);
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const db = getFirestore(app);
 
     // =====================================================
     // USUARIO Y PERMISOS
     // =====================================================
-    const usuarioGuardado = (
+    let usuarioGuardado = (
       localStorage.getItem("usuarioTORITO") || ""
     ).trim();
     function normalizarUsuario(nombre) {
@@ -1729,68 +1729,45 @@
         .trim()
         .toLowerCase();
     }
-    const usuarioActual = normalizarUsuario(usuarioGuardado);
-    function esToto() { return ["editor", "cuerpo_tecnico", "coordinadora"].includes((localStorage.getItem("rolTORITO") || "").trim().toLowerCase()); }
-    function esBianca() { return (localStorage.getItem("rolTORITO") || "").trim().toLowerCase() === "jugadora"; }
-    function esFran() { return (localStorage.getItem("rolTORITO") || "").trim().toLowerCase() === "admin"; }
-    // Si no existe una sesión, regresar al inicio de sesión.
-    if (!usuarioGuardado) {
-      window.location.href = "TORITO-Loing.html";
-    }
-    // Información del usuario en la barra superior.
-    document.getElementById("nombreUsuario").textContent =
-      usuarioGuardado || "Usuario";
-    document.getElementById("avatarUsuario").textContent =
-      usuarioGuardado
-        ? usuarioGuardado.charAt(0).toUpperCase()
-        : "U";
-    document.getElementById("rolUsuario").textContent =
-      esFran() ? "Administrador" :
-      esToto() ? "Cuerpo técnico" :
-      esBianca() ? "Jugadora · Sub 14" :
-      "Club Torito";
-    // Permisos de visualización del menú.
-    if (esBianca()) {
-      document.getElementById("grupoPlantel")?.remove();
-      document.getElementById("grupoRendimientos")?.remove();
-      document.querySelectorAll("[data-ocultar-bianca]").forEach(enlace => {
-        enlace.style.display = "none";
-      });
-    }
-    // Cerrar sesión.
-    window.cerrarSesion = function(event) {
-      event.preventDefault();
-      localStorage.removeItem("usuarioTORITO");
-      window.location.href = "TORITO-Loing.html";
-    }
-    // Mantener los permisos originales de la página de jugadoras.
-    if (
-      !usuarioGuardado ||
-      esBianca() ||
-      (!esToto() && !esFran())
-    ) {
-      document.body.innerHTML = `
-        <div style="
-          font-family:Arial,sans-serif;
-          text-align:center;
-          padding:70px 20px;
-          color:#222;
-        ">
-          <h1>Acceso restringido</h1>
-          <p>No tenés permisos para acceder a la página de jugadoras.</p>
-          <br>
-          <a href="TORITO-Pagina Principal.html" style="
-            display:inline-block;
-            padding:10px 16px;
-            border-radius:8px;
-            background:#fff0e6;
-            color:#dc5e0b;
-            font-weight:bold;
-          ">Volver al inicio</a>
-        </div>
-      `;
-    } else {
+    let usuarioActual = normalizarUsuario(usuarioGuardado);
+    let rolTORITO = localStorage.getItem("rolTORITO") || "";
+    function esToto() { return ["editor", "cuerpo_tecnico"].includes(rolTORITO); }
+    function esBianca() { return rolTORITO === "jugadora"; }
+    function esFran() { return rolTORITO === "admin"; }
+    function puedeEditarPlantel() { return ["admin", "editor", "coordinadora", "cuerpo_tecnico"].includes(rolTORITO); }
+    // La autenticación y los permisos se resuelven en el módulo central.
+    // No se bloquea la página por un localStorage vacío mientras Firebase restaura la sesión.
+    window.cerrarSesion = async function(event) {
+      event?.preventDefault();
+      try {
+        const modulo = await import("./TORITO-auth.js?v=20261123-authpersist1");
+        await modulo.cerrarSesionTORITO();
+        window.location.href = "TORITO-Loing.html";
+      } catch (error) {
+        console.error("No se pudo cerrar la sesión:", error);
+        alert("No se pudo cerrar la sesión. Intentá nuevamente.");
+      }
+    };
+
+    function iniciarConPerfilCentral(perfil) {
+      usuarioGuardado = String(perfil?.usuario || perfil?.nombre || localStorage.getItem("usuarioTORITO") || "").trim();
+      usuarioActual = normalizarUsuario(usuarioGuardado);
+      rolTORITO = String(perfil?.rol || localStorage.getItem("rolTORITO") || "").trim().toLowerCase();
+
+      if (!["admin", "editor", "coordinadora", "cuerpo_tecnico", "jugadora"].includes(rolTORITO)) {
+        document.body.innerHTML = '<main style="font-family:Arial,sans-serif;text-align:center;padding:70px 20px;color:#222"><h1>Acceso restringido</h1><p>No se pudo validar un perfil autorizado para esta página.</p><a href="TORITO-Pagina Principal.html">Volver al inicio</a></main>';
+        return;
+      }
+
       iniciarPaginaJugadoras();
+    }
+
+    if (window.TORITO_PERMISOS) {
+      iniciarConPerfilCentral(window.TORITO_PERMISOS);
+    } else {
+      window.addEventListener("torito-permisos-listos", event => {
+        iniciarConPerfilCentral(event.detail || window.TORITO_PERMISOS);
+      }, { once: true });
     }
 
     // =====================================================
@@ -1865,26 +1842,45 @@
       let jugadoras = [];
       let idEnEdicion = null;
 
+      function normalizarCategoriaPlantel(valor) {
+        const texto = String(valor || "").normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "").toLowerCase()
+          .replace(/[^a-z0-9]/g, "");
+        const numero = texto.match(/(?:sub|s|u)(10|12|14|16)/);
+        if (numero) return "sub" + numero[1];
+        if (texto.includes("primera")) return "primera";
+        return texto;
+      }
+
       function puedeAccederCategoria(categoria) {
-        return (esFran() || esToto()) && categoriasPermitidas.includes(categoria);
+        const permitidasPerfil = window.TORITO_PERMISOS?.categorias;
+        const lista = Array.isArray(permitidasPerfil) && permitidasPerfil.length
+          ? permitidasPerfil
+          : categoriasPermitidas;
+        return lista.some(permitida =>
+          normalizarCategoriaPlantel(permitida) === normalizarCategoriaPlantel(categoria)
+        );
       }
       function puedeEliminar() {
-        return esFran();
+        return ["admin", "coordinadora"].includes(rolTORITO);
       }
 
       // --- ESCUCHAR CAMBIOS EN TIEMPO REAL DESDE FIREBASE ---
-      onSnapshot(collection(db,"torito_jugadoras"), (snapshot) => {
+      onSnapshot(collection(db, "torito_jugadoras"), (snapshot) => {
         jugadoras = [];
         snapshot.forEach((docSnap) => {
           const data = docSnap.data();
           jugadoras.push({
+            ...data,
             id: docSnap.id,
-            nombre: data.nombre || "",
-            categoria: data.categoria || "",
-            nacimiento: data.nacimiento || "",
-            pierna: data.pierna || "",
-            posicion: data.posicion || "",
-            estado: data.estado || "Activo"
+            nombre: data.nombre || data.nombreCompleto || data.nombre_completo ||
+              [data.nombres, data.apellido || data.apellidos].filter(Boolean).join(" "),
+            categoria: data.categoria || data.division || data.categoría ||
+              data.category || data.divisionNombre || "",
+            nacimiento: data.nacimiento || data.fechaNacimiento || "",
+            pierna: data.pierna || data.piernaHabil || "",
+            posicion: data.posicion || data.puesto || "",
+            estado: data.estado || data.status || data.estadoJugadora || "Activo"
           });
         });
         renderizarJugadoras();
@@ -1967,7 +1963,7 @@
         tarjetaPlantel.hidden = false;
         const plantelCategoria = jugadoras.filter(j =>
           puedeAccederCategoria(j.categoria) &&
-          j.categoria === categoriaSeleccionada
+          normalizarCategoriaPlantel(j.categoria) === normalizarCategoriaPlantel(categoriaSeleccionada)
         );
 
         Object.entries(idsContadoresPuesto).forEach(([puesto, id]) => {
@@ -2140,10 +2136,10 @@
 
         try {
           if (idEnEdicion !== null) {
-            const docRef = doc(db,"torito_jugadoras", idEnEdicion);
+            const docRef = doc(db, "jugadoras", idEnEdicion);
             await updateDoc(docRef, datos);
           } else {
-            await addDoc(collection(db,"torito_jugadoras"), datos);
+            await addDoc(collection(db, "torito_jugadoras"), datos);
           }
           cerrarModal();
         } catch (error) {
@@ -2184,7 +2180,7 @@
         }
         if (confirm("¿Querés eliminar a " + jugadora.nombre + " del plantel?")) {
           try {
-            await deleteDoc(doc(db,"torito_jugadoras", id));
+            await deleteDoc(doc(db, "jugadoras", id));
           } catch (error) {
             console.error("Error al eliminar de la nube:", error);
             alert("No se pudo eliminar a la jugadora.");
@@ -2192,6 +2188,8 @@
         }
       }
 
+      window.renderizarJugadorasTORITO = renderizarJugadoras;
+      window.addEventListener("torito-permisos-listos", () => renderizarJugadoras());
       document.getElementById("buscador").addEventListener("input", renderizarJugadoras);
       document.getElementById("categoriaPrincipal").addEventListener("change", () => {
         document.getElementById("buscador").value = "";
@@ -2214,7 +2212,7 @@
         renderizarJugadoras();
       });
 
-      document.getElementById("botonAgregar").style.display = (esToto() || esFran()) ? "inline-block" : "none";
+      document.getElementById("botonAgregar").style.display = puedeEditarPlantel() ? "inline-block" : "none";
     }
   </script>
 
