@@ -1045,216 +1045,71 @@
 
     </main>
 
-    <script>
-        "use strict";
+    <script type="module">
+import { iniciarSesionTORITO } from "./TORITO-auth.js?v=20261124-auth1";
 
-        /* =====================================================
-           USUARIOS AUTORIZADOS
+const loginForm = document.getElementById("loginForm");
+const campoUsuario = document.getElementById("campoUsuario");
+const campoContrasena = document.getElementById("campoContrasena");
+const mensajeError = document.getElementById("mensajeError");
+const botonLogin = document.getElementById("botonLogin");
+const textoBoton = botonLogin?.querySelector("[data-texto-boton]") || botonLogin;
 
-           Se conservan los usuarios y las contraseñas
-           definidos en el código original.
-        ===================================================== */
+function mostrarErrorTORITO(mensaje, campo = null) {
+  if (mensajeError) {
+    mensajeError.textContent = mensaje;
+    mensajeError.classList.add("visible");
+  }
+  if (campo) {
+    campo.setAttribute("aria-invalid", "true");
+    campo.focus();
+  }
+}
+function ocultarErrorTORITO() {
+  mensajeError?.classList.remove("visible");
+  campoUsuario?.removeAttribute("aria-invalid");
+  campoContrasena?.removeAttribute("aria-invalid");
+}
+campoUsuario?.addEventListener("input", ocultarErrorTORITO);
+campoContrasena?.addEventListener("input", ocultarErrorTORITO);
 
-        const usuarios = {
-            "fran": {
-                contrasena: "TORITO",
-                nombre: "Fran"
-            },
+if (loginForm && campoUsuario && campoContrasena && botonLogin) {
+  loginForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    ocultarErrorTORITO();
+    const usuario = campoUsuario.value.trim();
+    const contrasena = campoContrasena.value;
+    if (!usuario) return mostrarErrorTORITO("Ingresá tu nombre de usuario.", campoUsuario);
+    if (!contrasena) return mostrarErrorTORITO("Ingresá tu contraseña para continuar.", campoContrasena);
+    if (botonLogin.disabled) return;
+    botonLogin.disabled = true;
+    if (textoBoton) textoBoton.textContent = "Ingresando…";
+    try {
+      await iniciarSesionTORITO(usuario, contrasena);
+      window.location.replace("TORITO-Pagina Principal.html");
+    } catch (error) {
+      console.error("TORITO: error al iniciar sesión.", error);
+      const codigo = String(error?.code || "");
+      const mensaje = error?.message || "";
+      if (codigo.includes("auth/invalid-credential") || codigo.includes("auth/wrong-password") || codigo.includes("auth/user-not-found")) {
+        mostrarErrorTORITO("Usuario o contraseña incorrectos. Revisá los datos e intentá nuevamente.", campoContrasena);
+      } else if (codigo.includes("auth/too-many-requests")) {
+        mostrarErrorTORITO("Se realizaron demasiados intentos. Esperá un momento y volvé a probar.");
+      } else if (codigo.includes("auth/network-request-failed")) {
+        mostrarErrorTORITO("No se pudo conectar con Firebase. Revisá tu conexión e intentá nuevamente.");
+      } else {
+        mostrarErrorTORITO(mensaje || "No se pudo iniciar sesión. Revisá la configuración de tu cuenta.");
+      }
+      campoContrasena.value = "";
+    } finally {
+      botonLogin.disabled = false;
+      if (textoBoton) textoBoton.textContent = "Ingresar";
+    }
+  });
+}
+document.addEventListener("DOMContentLoaded", () => campoUsuario?.focus({ preventScroll: true }));
 
-            "liana": {
-                contrasena: "TORITO",
-                nombre: "Liana"
-            }
-        };
-
-        /* =====================================================
-           ELEMENTOS DEL FORMULARIO
-        ===================================================== */
-
-        const loginForm = document.getElementById("loginForm");
-        const campoUsuario = document.getElementById("usuario");
-
-        /* Apertura del formulario al seleccionar el escudo */
-        const botonAcceso = document.getElementById("botonAcceso");
-        botonAcceso.addEventListener("click", function() {
-            document.body.classList.add("login-activo");
-            window.setTimeout(function() {
-                campoUsuario.focus({ preventScroll: true });
-            }, 500);
-        });
-
-        const campoContrasena = document.getElementById("contrasena");
-        const mensajeError = document.getElementById("mensajeError");
-
-        const botonLogin = document.getElementById("botonLogin");
-        const textoBoton = document.getElementById("textoBoton");
-
-        const botonVerContrasena = document.getElementById(
-            "botonVerContrasena"
-        );
-
-        /* =====================================================
-           MOSTRAR U OCULTAR CONTRASEÑA
-        ===================================================== */
-
-        botonVerContrasena.addEventListener("click", function() {
-
-            const estaOculta = campoContrasena.type === "password";
-
-            campoContrasena.type = estaOculta ? "text" : "password";
-
-            botonVerContrasena.textContent = estaOculta
-                ? "Ocultar"
-                : "Mostrar";
-
-            botonVerContrasena.setAttribute(
-                "aria-label",
-                estaOculta ? "Ocultar contraseña" : "Mostrar contraseña"
-            );
-
-            botonVerContrasena.setAttribute(
-                "aria-pressed",
-                String(estaOculta)
-            );
-        });
-
-        /* =====================================================
-           MENSAJES DE VALIDACIÓN
-        ===================================================== */
-
-        function ocultarError() {
-
-            mensajeError.classList.remove("visible");
-
-            campoUsuario.removeAttribute("aria-invalid");
-            campoContrasena.removeAttribute("aria-invalid");
-        }
-
-        function mostrarError(mensaje, campoAEnfocar = null) {
-
-            mensajeError.textContent = mensaje;
-            mensajeError.classList.add("visible");
-
-            if (campoAEnfocar) {
-
-                campoAEnfocar.setAttribute("aria-invalid", "true");
-                campoAEnfocar.focus();
-            }
-        }
-
-        campoUsuario.addEventListener("input", ocultarError);
-        campoContrasena.addEventListener("input", ocultarError);
-
-        /* =====================================================
-           INICIO DE SESIÓN
-        ===================================================== */
-
-        loginForm.addEventListener("submit", function(event) {
-
-            event.preventDefault();
-
-            ocultarError();
-
-            const usuario = campoUsuario.value
-                .trim()
-                .toLowerCase();
-
-            const contrasena = campoContrasena.value;
-
-            /* VALIDAR CAMPOS VACÍOS */
-
-            if (!usuario) {
-
-                mostrarError(
-                    "Ingresá tu nombre de usuario.",
-                    campoUsuario
-                );
-
-                return;
-            }
-
-            if (!contrasena) {
-
-                mostrarError(
-                    "Ingresá tu contraseña para continuar.",
-                    campoContrasena
-                );
-
-                return;
-            }
-
-            /* COMPROBAR USUARIO Y CONTRASEÑA */
-
-            const cuenta = Object.prototype.hasOwnProperty.call(
-                usuarios,
-                usuario
-            )
-                ? usuarios[usuario]
-                : null;
-
-            if (
-                cuenta &&
-                cuenta.contrasena === contrasena
-            ) {
-
-                /*
-                 * GUARDAR LA SESIÓN
-
-                 * Se utiliza la clave propia de TORITO
-                 * para mantener la sesión separada de ADIUR.
-                 */
-
-                try {
-
-                    localStorage.setItem(
-                        "usuarioTORITO",
-                        cuenta.nombre
-                    );
-
-                } catch (error) {
-
-                    console.error(
-                        "No se pudo guardar la sesión:",
-                        error
-                    );
-
-                    mostrarError(
-                        "No se pudo guardar la sesión. Revisá la configuración del navegador."
-                    );
-
-                    return;
-                }
-
-                /*
-                 * REDIRECCIÓN ORIGINAL
-                 */
-
-                window.location.href = "TORITO-Pagina Principal.html";
-
-            } else {
-
-                /* CREDENCIALES INCORRECTAS */
-
-                campoContrasena.value = "";
-
-                mostrarError(
-                    "Usuario o contraseña incorrectos. Revisá los datos e intentá nuevamente.",
-                    campoContrasena
-                );
-            }
-        });
-
-        /* =====================================================
-           INICIALIZACIÓN
-        ===================================================== */
-
-        document.addEventListener("DOMContentLoaded", function() {
-
-            campoUsuario.focus({ preventScroll: true });
-
-        });
-
-    </script>
+</script>
 
 </body>
 </html>
