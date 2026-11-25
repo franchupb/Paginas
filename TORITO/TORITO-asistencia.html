@@ -2821,12 +2821,15 @@ function guardarCategoriaSeleccionada() {
 function renderizarSelectorCategorias() {
   const selector = document.getElementById("filtroCategoria");
   const permisos = window.TORITO_PERMISOS;
-  const categoriasVisibles = permisos && ["jugadora", "cuerpo_tecnico"].includes(permisos.rol)
-    ? categoriasDisponibles.filter(categoria =>
-        (permisos.categorias || []).some(permitida =>
-          normalizarCategoria(permitida) === normalizarCategoria(categoria)
-        )
-      )
+  const categoriasVisibles = permisos && permisos.rol !== "admin"
+    ? (() => {
+        const permitidas = (permisos.categorias || []).map(normalizarCategoria);
+        const disponibles = categoriasDisponibles.filter(categoria =>
+          permitidas.includes(normalizarCategoria(categoria))
+        );
+        // Mostrar la categoría asignada aunque todavía no tenga jugadoras cargadas.
+        return disponibles.length ? disponibles : (permisos.categorias || []);
+      })()
     : categoriasDisponibles;
 
   if (!categoriasVisibles.length) {
@@ -4205,7 +4208,7 @@ function actualizarCategoriasYReRenderizar() {
   categoriasDisponibles = obtenerCategoriasDisponibles();
 
   const permisos = window.TORITO_PERMISOS;
-  const perfilRestringido = permisos && ["jugadora", "cuerpo_tecnico"].includes(permisos.rol);
+  const perfilRestringido = permisos && permisos.rol !== "admin";
 
   if (perfilRestringido) {
     const permitidas = (permisos.categorias || []).map(normalizarCategoria);
