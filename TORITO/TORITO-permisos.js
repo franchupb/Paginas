@@ -300,6 +300,15 @@
       mostrarErrorInicializacion(new Error("El perfil no tiene acceso a esta sección."), "Acceso restringido", "Tu perfil de TORITO no tiene permiso para entrar en esta página.", { href: INICIO_URL, texto: "Volver al inicio" });
       return false;
     }
+    if (Array.isArray(configActiva.paginasPermitidas)) {
+      const permitidas = new Set(configActiva.paginasPermitidas.map(x =>
+        String(x).split(/[?#]/)[0].split("/").pop().toLowerCase()
+      ));
+      document.querySelectorAll('a[href]').forEach(a => {
+        const file = (a.getAttribute("href") || "").split(/[?#]/)[0].split("/").pop().toLowerCase();
+        if (file.endsWith(".html") && !permitidas.has(file)) a.remove();
+      });
+    }
     if (configActiva.rol === "jugadora" && !PAGINAS_JUGADORAS.has(pagina)) {
       accesoPaginaDenegado = true;
       mostrarErrorInicializacion(
