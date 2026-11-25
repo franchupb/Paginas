@@ -1853,16 +1853,19 @@
       }
 
       function puedeAccederCategoria(categoria) {
-        const permitidasPerfil = window.TORITO_PERMISOS?.categorias;
-        const lista = Array.isArray(permitidasPerfil) && permitidasPerfil.length
-          ? permitidasPerfil
-          : categoriasPermitidas;
+        const permisos = window.TORITO_PERMISOS;
+        // Sin perfil validado no se habilita ninguna categoría.
+        if (!permisos) return false;
+        if (permisos.rol === "admin") return categoriasPermitidas.some(permitida =>
+          normalizarCategoriaPlantel(permitida) === normalizarCategoriaPlantel(categoria)
+        );
+        const lista = Array.isArray(permisos.categorias) ? permisos.categorias : [];
         return lista.some(permitida =>
           normalizarCategoriaPlantel(permitida) === normalizarCategoriaPlantel(categoria)
         );
       }
       function puedeEliminar() {
-        return ["admin", "coordinadora"].includes(rolTORITO);
+        return ["admin", "editor", "coordinadora"].includes(rolTORITO);
       }
 
       // --- ESCUCHAR CAMBIOS EN TIEMPO REAL DESDE FIREBASE ---
