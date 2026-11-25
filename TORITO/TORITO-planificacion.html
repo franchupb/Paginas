@@ -5875,21 +5875,17 @@ async function inicializarPlanificacion() {
   categoriaActual = obtenerCategoriaPredeterminada();
   await cargarCatalogoTesteos(categoriaActual);
 
-// Calcular automáticamente el microciclo según la fecha actual
+// Calcular el microciclo por semanas calendario (lunes a domingo).
+// El lunes 18/01/2027 inicia un ciclo nuevo y vuelve a Semana 1.
 const hoy = new Date();
 const hoyISO = objetoAFechaISO(hoy);
 const lunesActual = normalizarALunes(hoyISO);
+const referenciaSemana = obtenerSemanaDesdeFecha(lunesActual);
 
-const fechaActual = fechaISOaObjeto(lunesActual);
-const fechaReferencia = fechaISOaObjeto(FECHA_REFERENCIA);
+cicloMicrocicloActual = referenciaSemana.ciclo;
+semanaActual = referenciaSemana.numero;
 
-const diferenciaSemanas = Math.floor(
-  (fechaActual - fechaReferencia) / (7 * 24 * 60 * 60 * 1000)
-);
-
-semanaActual = SEMANA_REFERENCIA + diferenciaSemanas;
-
-  const semana = obtenerSemana(semanaActual, categoriaActual);
+const semana = obtenerSemana(semanaActual, categoriaActual, cicloMicrocicloActual);
 
   fechaInicioActual = semana.fechaInicio;
   sesionesActuales = semana.sesiones;
