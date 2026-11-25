@@ -604,6 +604,9 @@
               }, 120);
             });
             observerDOM.observe(document.body, { childList: true, subtree: true });
+            // Los módulos de cada página pueden reconstruir selectores al recibir
+            // torito-permisos-listos, antes de crear el observador. Revalidarlos aquí.
+            aplicarCategorias(document);
           }
           if (window.TORITO_LAYOUT_LISTO) mostrarPaginaAutorizada();
         } catch (error) {
