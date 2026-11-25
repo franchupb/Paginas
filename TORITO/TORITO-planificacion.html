@@ -4290,7 +4290,7 @@ function agregarRivalesPersonalizados(indice) {
   if (!sesion || sesion.intensidad !== "partido" || sesion.tipoPartido !== "torneo") return;
 
   const campo = document.getElementById("nuevoRival-" + indice);
-  const nombres = String(campo?.value || "").split(/[;,\\n]+/).map(nombre => nombre.trim()).filter(Boolean);
+  const nombres = String(campo?.value || "").split(/[;,\n]+/).map(nombre => nombre.trim()).filter(Boolean);
   if (!nombres.length) {
     mostrarNotificacion("Escribí al menos un equipo para agregar.");
     campo?.focus();
