@@ -1053,7 +1053,20 @@ const campoUsuario = document.getElementById("usuario");
 const campoContrasena = document.getElementById("contrasena");
 const mensajeError = document.getElementById("mensajeError");
 const botonLogin = document.getElementById("botonLogin");
-const textoBoton = botonLogin?.querySelector("[data-texto-boton]") || botonLogin;
+const textoBoton = document.getElementById("textoBoton") || botonLogin;
+const botonVerContrasena = document.getElementById("botonVerContrasena");
+const botonAcceso = document.getElementById("botonAcceso");
+botonAcceso?.addEventListener("click", () => {
+  document.body.classList.add("login-activo");
+  window.setTimeout(() => campoUsuario?.focus({ preventScroll: true }), 500);
+});
+botonVerContrasena?.addEventListener("click", () => {
+  const mostrar = campoContrasena.type === "password";
+  campoContrasena.type = mostrar ? "text" : "password";
+  botonVerContrasena.textContent = mostrar ? "Ocultar" : "Mostrar";
+  botonVerContrasena.setAttribute("aria-label", mostrar ? "Ocultar contraseña" : "Mostrar contraseña");
+  botonVerContrasena.setAttribute("aria-pressed", String(mostrar));
+});
 
 function mostrarErrorTORITO(mensaje, campo = null) {
   if (mensajeError) {
@@ -1083,7 +1096,7 @@ if (loginForm && campoUsuario && campoContrasena && botonLogin) {
     if (!contrasena) return mostrarErrorTORITO("Ingresá tu contraseña para continuar.", campoContrasena);
     if (botonLogin.disabled) return;
     botonLogin.disabled = true;
-    if (textoBoton) textoBoton.textContent = "Ingresando…";
+    if (textoBoton) textoBoton.textContent = "INGRESANDO…";
     try {
       await iniciarSesionTORITO(usuario, contrasena);
       window.location.replace("TORITO-Pagina Principal.html");
@@ -1103,7 +1116,7 @@ if (loginForm && campoUsuario && campoContrasena && botonLogin) {
       campoContrasena.value = "";
     } finally {
       botonLogin.disabled = false;
-      if (textoBoton) textoBoton.textContent = "Ingresar";
+      if (textoBoton) textoBoton.textContent = "INICIAR SESIÓN";
     }
   });
 }
