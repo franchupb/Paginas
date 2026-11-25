@@ -474,7 +474,7 @@
           // La matriz central es la fuente de verdad también para las páginas
           // que aún conservan controles de compatibilidad locales.
           try {
-            localStorage.setItem("usuarioTORITO", String(base.usuario || perfil.usuario || base.nombre));
+            localStorage.setItem("usuarioTORITO", String(base.rol === "jugadora" ? (base.jugadora || base.nombre) : (base.usuario || perfil.usuario || base.nombre)));
             localStorage.setItem("nombreTORITO", base.nombre);
             localStorage.setItem("rolTORITO", base.rol);
             localStorage.setItem("categoriasTORITO", JSON.stringify(base.categorias));
