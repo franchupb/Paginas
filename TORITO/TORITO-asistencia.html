@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Asistencia - TORITO</title>
+<title>Asistencia - TORITO FEM</title>
 
 <style>
 :root {
@@ -1939,7 +1939,7 @@ a {
 }
 
 </style>
-<script src="TORITO-permisos.js?v=20261118-s16c"></script>
+<script src="TORITO-permisos.js?v=20261124-auth1"></script>
 </head>
 
 <body>
@@ -1957,13 +1957,13 @@ a {
 
   <img
     class="logo-superior"
-    src="TORITO%20-%20Logo.png"
+    src="TORITO-Logo TORITO.jpg"
     alt="Logo TORITO"
-    onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='TORITO%20-%20Logo.png'}else{this.style.display='none'}"
+    onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='TORITO-Logo TORITO.jpg'}else{this.style.display='none'}"
   >
 
   <div class="titulo-superior">
-    <h1>TORITO</h1>
+    <h1>TORITO FEMENINO</h1>
     <p>Asistencia del plantel</p>
   </div>
 
@@ -1971,7 +1971,7 @@ a {
     <div class="avatar" id="avatarUsuario">U</div>
     <div class="informacion-perfil">
       <div class="nombre-perfil" id="nombreUsuario">Usuario</div>
-      <div class="rol-perfil" id="rolUsuario">Club Torito</div>
+      <div class="rol-perfil" id="rolUsuario">Club TORITO</div>
     </div>
   </div>
 
@@ -2352,7 +2352,7 @@ a {
     </section>
 
     <footer class="pie-pagina">
-      TORITO · Más que un club, una familia.
+      TORITO FEMENINO · Más que un club, una familia.
     </footer>
 
   </main>
@@ -2360,9 +2360,9 @@ a {
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js";
-  import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCsOaJVo8P5reZvfp7vjBkhkP79C_mEO94",
@@ -2372,9 +2372,9 @@ a {
     messagingSenderId: "497702302753",
     appId: "1:497702302753:web:04d419e13ded4b59371f60",
     measurementId: "G-32VFQHWP5Y"
-  };
+};
 
-  const app = initializeApp(firebaseConfig);
+  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
   const db = getFirestore(app);
 
@@ -2384,9 +2384,8 @@ a {
 
 const usuarioGuardado = localStorage.getItem("usuarioTORITO");
 
-if (!usuarioGuardado) {
-  window.location.href = "TORITO-Loing.html";
-}
+// La sesión y el rol se validan en TORITO-permisos.js con Firebase Auth.
+ // No se redirige por la ausencia temporal de datos de compatibilidad en localStorage.
 
 function normalizarTexto(valor) {
   return String(valor ?? "")
@@ -2405,18 +2404,10 @@ function normalizarCategoria(valor) {
 const usuarioNormalizado = normalizarTexto(usuarioGuardado)
   .replace(/[^a-z0-9]/g, "");
 
-const esFran = [
-  "fran",
-  "francisco",
-  "franciscoperezbasla"
-].includes(usuarioNormalizado);
-
-const esToto = usuarioNormalizado === "toto";
-
-const esBianca = [
-  "bianca",
-  "biancadominguez"
-].includes(usuarioNormalizado);
+const rolTORITO = localStorage.getItem("rolTORITO") || "";
+const esFran = rolTORITO === "admin";
+const esToto = ["editor", "cuerpo_tecnico"].includes(rolTORITO);
+const esBianca = rolTORITO === "jugadora";
 
 const nombreMostrar = usuarioGuardado || "Usuario";
 
@@ -2428,21 +2419,13 @@ document.getElementById("avatarUsuario").textContent =
 document.getElementById("rolUsuario").textContent =
   esFran ? "Administrador" :
   esToto ? "Cuerpo técnico" :
-  esBianca ? "Jugadora · Sub 14" :
-  "Club Torito";
+  esBianca ? "Jugadora" :
+  "Club TORITO";
 
-if (!esFran && !esToto && usuarioGuardado) {
-  window.location.href = "TORITO-Pagina Principal.html";
-}
+// TORITO-permisos.js aplica el rol y las categorías reales del perfil.
 
-if (esBianca) {
-  document.getElementById("grupoPlantel")?.remove();
-  document.getElementById("grupoRendimientos")?.remove();
-
-  document.querySelectorAll("[data-ocultar-bianca]").forEach(enlace => {
-    enlace.style.display = "none";
-  });
-}
+// El menú y la visualización de datos propios de cada jugadora se aplican
+// desde TORITO-permisos.js para todos los perfiles de jugadora.
 
 /* =====================================================
    MENÚ Y SESIÓN
@@ -2587,6 +2570,8 @@ function obtenerCategoriaJugadora(jugadora) {
     jugadora.categoria ||
     jugadora.division ||
     jugadora.categoría ||
+    jugadora.category ||
+    jugadora.divisionNombre ||
     "Sin categoría"
   ).trim().replace(/\s+/g, " ");
 }
@@ -2599,7 +2584,8 @@ function procesarListaJugadoras(listaCruda) {
     .map(j => ({
       ...j,
       nombre: obtenerNombreJugadora(j),
-      categoria: obtenerCategoriaJugadora(j)
+      categoria: obtenerCategoriaJugadora(j),
+      estado: j.estado || j.status || j.estadoJugadora || "Activo"
     }))
     .filter(j => j.nombre.trim() !== "")
     .sort((a, b) =>
@@ -2623,7 +2609,7 @@ function cargarJugadorasLocales() {
 
 jugadoras = cargarJugadorasLocales();
 
-onSnapshot(collection(db,"torito_jugadoras"), (snapshot) => {
+onSnapshot(collection(db, "torito_jugadoras"), (snapshot) => {
   let listaNube = [];
   snapshot.forEach((docSnap) => {
     listaNube.push({ id: docSnap.id, ...docSnap.data() });
@@ -2698,12 +2684,19 @@ function obtenerCategoriasDisponibles() {
 let categoriasDisponibles = obtenerCategoriasDisponibles();
 
 function obtenerCategoriaInicial() {
-  const guardada = localStorage.getItem(CLAVE_CATEGORIA);
+  const permisos = window.TORITO_PERMISOS;
+  if (permisos?.rol === "jugadora" || permisos?.rol === "cuerpo_tecnico" || permisos?.rol === "editor") {
+    const permitida = (permisos.categorias || [])[0];
+    const coincidePermitida = categoriasDisponibles.find(c =>
+      normalizarCategoria(c) === normalizarCategoria(permitida)
+    );
+    if (coincidePermitida || permitida) return coincidePermitida || permitida;
+  }
 
+  const guardada = localStorage.getItem(CLAVE_CATEGORIA);
   const coincide = categoriasDisponibles.find(c =>
     normalizarCategoria(c) === normalizarCategoria(guardada)
   );
-
   return coincide || categoriasDisponibles[0] || "";
 }
 
@@ -2777,11 +2770,22 @@ function compararJugadorasPorApellido(a, b) {
 function jugadorasCategoriaActual() {
   if (!categoriaSeleccionada) return [];
 
-  const activas = jugadoras.filter(j =>
+  let activas = jugadoras.filter(j =>
     esJugadoraActiva(j) &&
     normalizarCategoria(j.categoria) ===
     normalizarCategoria(categoriaSeleccionada)
   );
+
+  const permisos = window.TORITO_PERMISOS;
+  if (permisos?.rol === "jugadora" && permisos.jugadora) {
+    const normalizarIdentidad = valor => normalizarTexto(valor).replace(/[^a-z0-9]/g, "");
+    const nombrePropio = normalizarIdentidad(permisos.jugadora);
+    activas = activas.filter(j =>
+      normalizarIdentidad(j.nombre) === nombrePropio ||
+      normalizarIdentidad(j.nombreCompleto) === nombrePropio ||
+      normalizarIdentidad(j.usuario) === normalizarIdentidad(permisos.usuario)
+    );
+  }
 
   return activas.sort((a, b) => {
     if (ordenLista === "puesto") {
@@ -2816,17 +2820,25 @@ function guardarCategoriaSeleccionada() {
 
 function renderizarSelectorCategorias() {
   const selector = document.getElementById("filtroCategoria");
+  const permisos = window.TORITO_PERMISOS;
+  const categoriasVisibles = permisos && ["jugadora", "cuerpo_tecnico"].includes(permisos.rol)
+    ? categoriasDisponibles.filter(categoria =>
+        (permisos.categorias || []).some(permitida =>
+          normalizarCategoria(permitida) === normalizarCategoria(categoria)
+        )
+      )
+    : categoriasDisponibles;
 
-  if (!categoriasDisponibles.length) {
+  if (!categoriasVisibles.length) {
     selector.innerHTML =
       '<option value="">No hay categorías cargadas</option>';
     selector.disabled = true;
     return;
   }
 
-  selector.disabled = false;
+  selector.disabled = categoriasVisibles.length === 1;
 
-  selector.innerHTML = categoriasDisponibles.map(categoria => `
+  selector.innerHTML = categoriasVisibles.map(categoria => `
     <option value="${escaparHTML(categoria)}">
       ${escaparHTML(categoria)}
     </option>
@@ -2877,6 +2889,10 @@ async function guardarDiasEntrenamiento() {
       claveDiasEntrenamiento(categoria),
       JSON.stringify(dias)
     );
+    localStorage.setItem(
+      claveDiasEntrenamiento(categoria) + "_actualizadoEn",
+      new Date().toISOString()
+    );
   } catch (error) {
     console.error("Error al guardar localmente:", error);
   }
@@ -2884,7 +2900,9 @@ async function guardarDiasEntrenamiento() {
   // Guardado en Firestore
   try {
     await setDoc(
-      doc(db,"torito_configuracionAsistenciaTORITO",
+      doc(
+        db,
+        "torito_configuracionAsistenciaTORITO",
         claveDiasEntrenamiento(categoria)
       ),
       {
@@ -2919,7 +2937,9 @@ function escucharDiasEntrenamientoNube(categoria) {
 
   categoriaEscuchadaDiasNube = categoria;
 
-  const referencia = doc(db,"torito_configuracionAsistenciaTORITO",
+  const referencia = doc(
+    db,
+    "torito_configuracionAsistenciaTORITO",
     claveDiasEntrenamiento(categoria)
   );
 
@@ -2930,16 +2950,22 @@ function escucharDiasEntrenamientoNube(categoria) {
         const datos = snapshot.data();
 
         if (Array.isArray(datos.dias)) {
-          diasEntrenamiento = [...new Set(
-            datos.dias
-              .map(Number)
-              .filter(d => Number.isInteger(d) && d >= 0 && d <= 6)
-          )];
+          const claveLocal = claveDiasEntrenamiento(categoria);
+          const fechaLocal = Date.parse(localStorage.getItem(claveLocal + "_actualizadoEn") || "") || 0;
+          const fechaNube = Date.parse(datos.actualizadoEn || "") || 0;
 
-          localStorage.setItem(
-            claveDiasEntrenamiento(categoria),
-            JSON.stringify(diasEntrenamiento)
-          );
+          if (fechaLocal > fechaNube) {
+            diasEntrenamiento = cargarDiasEntrenamiento(categoria);
+            await guardarDiasEntrenamiento();
+          } else {
+            diasEntrenamiento = [...new Set(
+              datos.dias
+                .map(Number)
+                .filter(d => Number.isInteger(d) && d >= 0 && d <= 6)
+            )];
+            localStorage.setItem(claveLocal, JSON.stringify(diasEntrenamiento));
+            localStorage.setItem(claveLocal + "_actualizadoEn", datos.actualizadoEn || new Date().toISOString());
+          }
 
           renderizarDiasSemana();
           renderizarMatriz();
@@ -3001,14 +3027,71 @@ function renderizarDiasSemana() {
    SESIONES DE ASISTENCIA (SINCRONIZADAS EN FIRESTORE)
 ===================================================== */
 
-let sesiones = {};
+const CLAVE_SESIONES_LOCAL = "asistenciaTORITO_sesiones_v1";
 
-onSnapshot(collection(db,"torito_asistenciaTORITO"), (snapshot) => {
-  snapshot.forEach((docSnap) => {
-    sesiones[docSnap.id] = docSnap.data();
+function cargarSesionesLocales() {
+  try {
+    const datos = JSON.parse(localStorage.getItem(CLAVE_SESIONES_LOCAL) || "{}");
+    return datos && typeof datos === "object" ? datos : {};
+  } catch (error) {
+    console.warn("No se pudo leer el respaldo local de asistencias:", error);
+    return {};
+  }
+}
+
+function guardarSesionesLocales() {
+  try {
+    localStorage.setItem(CLAVE_SESIONES_LOCAL, JSON.stringify(sesiones));
+  } catch (error) {
+    console.warn("No se pudo guardar el respaldo local de asistencias:", error);
+  }
+}
+
+let sesiones = cargarSesionesLocales();
+
+onSnapshot(collection(db, "torito_asistenciaTORITO"), async (snapshot) => {
+  const remotas = {};
+  snapshot.forEach(docSnap => { remotas[docSnap.id] = docSnap.data(); });
+  const combinadas = { ...remotas };
+  const pendientes = [];
+
+  Object.entries(sesiones).forEach(([id, local]) => {
+    const nube = remotas[id];
+    if (!nube) {
+      combinadas[id] = local;
+      pendientes.push([id, local]);
+      return;
+    }
+
+    const tLocal = Date.parse(local.actualizadoEn || "") || 0;
+    const tNube = Date.parse(nube.actualizadoEn || "") || 0;
+    const localEsMasNuevo = tLocal > tNube;
+    combinadas[id] = {
+      ...local,
+      ...nube,
+      asistencias: {
+        ...(localEsMasNuevo ? nube.asistencias : local.asistencias || {}),
+        ...(localEsMasNuevo ? local.asistencias || {} : nube.asistencias || {})
+      },
+      actualizadoEn: localEsMasNuevo ? local.actualizadoEn : nube.actualizadoEn
+    };
+    if (localEsMasNuevo) pendientes.push([id, combinadas[id]]);
   });
+
+  sesiones = combinadas;
+  guardarSesionesLocales();
   renderizarMatriz();
   renderizarSeguimientoIndividual();
+
+  for (const [id, sesion] of pendientes) {
+    try {
+      await setDoc(doc(db, "torito_asistenciaTORITO", id), sesion);
+    } catch (error) {
+      console.error("No se pudo recuperar una sesión local de asistencia:", id, error);
+    }
+  }
+}, error => {
+  console.error("Error al sincronizar las asistencias desde Firestore:", error);
 });
 
 function claveSesion(categoria, fecha) {
@@ -3063,12 +3146,17 @@ window.guardarTodoManual = async function() {
   boton.innerHTML = "⏳ Guardando todas las categorías...";
 
   try {
+    Object.values(sesiones).forEach(sesion => {
+      if (sesion) sesion.actualizadoEn = new Date().toISOString();
+    });
+    guardarSesionesLocales();
+
     const promesas = Object.keys(sesiones).map(clave => {
       const sesion = sesiones[clave];
       if (!sesion) return Promise.resolve();
       // Aseguramos que el ID del documento Firestore sea limpio y seguro para cualquier categoría
       const docId = clave.replace(/[\s\/]+/g, "_");
-      return setDoc(doc(db,"torito_asistenciaTORITO", docId), sesion);
+      return setDoc(doc(db, "torito_asistenciaTORITO", docId), sesion);
     });
 
     await Promise.all(promesas);
@@ -3535,6 +3623,8 @@ function guardarEstadoJugadora(jugadora, fecha, nuevoEstado) {
   } else {
     delete sesion.asistencias[clave];
   }
+  sesion.actualizadoEn = new Date().toISOString();
+  guardarSesionesLocales();
 }
 
 const ESTADOS_CICLICOS = [
@@ -3824,7 +3914,7 @@ function renderizarSelectorJugadoras() {
     return;
   }
 
-  select.disabled = false;
+  select.disabled = window.TORITO_PERMISOS?.rol === "jugadora";
 
   select.innerHTML = jugadorasVisibles.map(jugadora => `
     <option value="${escaparHTML(claveJugadora(jugadora))}">
@@ -3836,9 +3926,11 @@ function renderizarSelectorJugadoras() {
     jugadora => claveJugadora(jugadora) === claveGuardada
   );
 
-  const claveSeleccionada = existeGuardada
-    ? claveGuardada
-    : claveJugadora(jugadorasVisibles[0]);
+  const esJugadora = window.TORITO_PERMISOS?.rol === "jugadora";
+  const clavePropia = esJugadora ? claveJugadora(jugadorasVisibles[0]) : null;
+  const claveSeleccionada = esJugadora
+    ? clavePropia
+    : existeGuardada ? claveGuardada : claveJugadora(jugadorasVisibles[0]);
 
   select.value = claveSeleccionada;
 
@@ -3993,6 +4085,7 @@ function renderizarSeguimientoIndividual() {
 
     </div>
 
+${window.TORITO_PERMISOS?.rol === "jugadora" ? "" : `
     <!-- PROMEDIO DE TODA LA DIVISIÓN -->
 
     <div class="metrica-periodo-titulo">
@@ -4034,6 +4127,9 @@ function renderizarSeguimientoIndividual() {
       </div>
 
     </div>
+
+
+    `}
 
     <div class="individual-aclaracion">
 
@@ -4108,19 +4204,29 @@ function renderizarMatriz() {
 function actualizarCategoriasYReRenderizar() {
   categoriasDisponibles = obtenerCategoriasDisponibles();
 
-  if (
-    !categoriasDisponibles.some(
-      categoria =>
-        normalizarCategoria(categoria) ===
-        normalizarCategoria(categoriaSeleccionada)
+  const permisos = window.TORITO_PERMISOS;
+  const perfilRestringido = permisos && ["jugadora", "cuerpo_tecnico"].includes(permisos.rol);
+
+  if (perfilRestringido) {
+    const permitidas = (permisos.categorias || []).map(normalizarCategoria);
+    const disponiblesPermitidas = categoriasDisponibles.filter(categoria =>
+      permitidas.includes(normalizarCategoria(categoria))
+    );
+    const actualPermitida = disponiblesPermitidas.find(categoria =>
+      normalizarCategoria(categoria) === normalizarCategoria(categoriaSeleccionada)
+    );
+    // Nunca caer en una categoría ajena si la permitida aún no tiene jugadoras cargadas.
+    categoriaSeleccionada = actualPermitida || disponiblesPermitidas[0] ||
+      (permisos.categorias || [])[0] || "";
+  } else if (
+    !categoriasDisponibles.some(categoria =>
+      normalizarCategoria(categoria) === normalizarCategoria(categoriaSeleccionada)
     )
   ) {
     categoriaSeleccionada = categoriasDisponibles[0] || "";
   } else {
-    categoriaSeleccionada = categoriasDisponibles.find(
-      categoria =>
-        normalizarCategoria(categoria) ===
-        normalizarCategoria(categoriaSeleccionada)
+    categoriaSeleccionada = categoriasDisponibles.find(categoria =>
+      normalizarCategoria(categoria) === normalizarCategoria(categoriaSeleccionada)
     ) || categoriaSeleccionada;
   }
 
@@ -4216,10 +4322,20 @@ function iniciarAsistencia() {
   actualizarCategoriasYReRenderizar();
 }
 
+window.addEventListener("torito-permisos-listos", () => {
+  actualizarCategoriasYReRenderizar();
+  window.renderizarMatriz?.();
+  window.renderizarSeguimientoIndividual?.();
+});
+if (window.TORITO_PERMISOS) {
+  actualizarCategoriasYReRenderizar();
+}
+
 iniciarAsistencia();
 </script>
 
 
 
+<script type="module" src="TORITO-layout.js?v=20261124-layout1"></script>
 </body>
 </html>
