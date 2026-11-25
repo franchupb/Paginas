@@ -2662,7 +2662,7 @@ async function cargarCatalogoTesteos(categoria) {
   } catch (error) { console.warn("No se pudo leer la biblioteca local de testeos.", error); }
   try {
     Object.keys(localStorage).forEach(clave => {
-      if (!clave.startsWith("testeos_torito_") || clave.startsWith("testeos_torito___biblioteca__")) return;
+      if (!clave.startsWith("torito_testeos_torito_")) return;
       try { incorporarColumnasTesteos(mapa, JSON.parse(localStorage.getItem(clave) || "null"), categoria); }
       catch (error) { console.warn("No se pudo leer una planilla local de testeos.", error); }
     });
