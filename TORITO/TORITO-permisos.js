@@ -1,354 +1,619 @@
 /* ==========================================================
-   TORITO — CONTROL CENTRALIZADO DE PERMISOS
-   Inicio de sesión local. Esto restringe la interfaz, pero NO
-   sustituye reglas de seguridad de Firestore.
+   TORITO FEMENINO · CONFIGURACIÓN CENTRAL DE USUARIOS Y PERMISOS
+   La autenticación y los perfiles se validan con Firebase.
+   Esta matriz central define roles, categorías y restricciones
+   de interfaz. La seguridad de datos requiere además reglas
+   equivalentes en Firestore.
 ========================================================== */
 (function () {
   "use strict";
 
-  const SESSION_KEY = "usuarioTORITO";
   const LOGIN_URL = "TORITO-Loing.html";
-  const DIVISION_FIJA = { ct_s16: "Sub 16", jugadora_s14: "Sub 14" };
-  const PAGINAS_BIANCA = new Set([
-    "pagina principal.html",
-    "partidos.html",
-    "TORITO-calendario.html",
-    "TORITO-gimnasio.html",
-    "TORITO-testeos.html"
-  ]);
+  const INICIO_URL = "TORITO-Pagina Principal.html";
   const normalizar = value => String(value ?? "")
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase().replace(/[\s._-]+/g, "").trim();
 
-  let usuario = "";
-  try { usuario = String(localStorage.getItem(SESSION_KEY) || "").trim(); }
-  catch (_) { usuario = ""; }
+  // ÚNICO LUGAR PARA CONFIGURAR USUARIOS Y SUS PERMISOS.
+  // Las contraseñas nunca se guardan aquí: las administra Firebase Authentication.
+  // Los perfiles de TORITO se administran en Firestore (usuarios/{uid}).
+  // No se almacenan contraseñas ni hace falta editar este archivo para sumar usuarios.
+  const USUARIOS = Object.freeze({});;
 
-  if (!usuario) {
-    if (!/^(index|loing)\.html$/i.test(location.pathname.split("/").pop() || "")) {
-      location.replace(LOGIN_URL);
+  const PAGINAS_JUGADORAS = new Set([
+    "torito-pagina principal.html",
+    "torito-jugadoras.html",
+    "torito-asistencia.html",
+    "torito-calendario.html",
+    "torito-gimnasio.html",
+    "torito-partidos.html",
+    "torito-testeos.html",
+    "torito-pruebas.html",
+    "torito-encuestas.html",
+    "torito-estadisticas.html"
+  ]);
+
+  const DIVISIONES = {
+    sub10: "Sub 10", s10: "Sub 10", u10: "Sub 10",
+    sub12: "Sub 12", s12: "Sub 12", u12: "Sub 12",
+    sub14: "Sub 14", s14: "Sub 14", u14: "Sub 14",
+    sub16: "Sub 16", s16: "Sub 16", u16: "Sub 16",
+    primera: "Primera"
+  };
+  function normalizarDivision(value) {
+    const key = String(value || "").normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    return DIVISIONES[key] || null;
+  }
+  function categoriaDeTexto(value) {
+    const direct = normalizarDivision(value);
+    if (direct) return direct;
+    const match = String(value || "").match(/(?:^|[^a-z0-9])(sub\s*10|sub\s*12|sub\s*14|sub\s*16|s10|s12|s14|s16|primera)(?:$|[^a-z0-9])/i);
+    return match ? normalizarDivision(match[1]) : null;
+  }
+  function paginaActual() {
+    return decodeURIComponent(location.pathname.split("/").pop() || "").toLowerCase();
+  }
+
+  function mostrarErrorInicializacion(error, tituloMensaje, detalleMensaje, enlaceAccion = null) {
+    console.error("TORITO: no se pudo completar la validación de permisos.", error);
+    document.documentElement.classList.remove("torito-permisos-pendientes");
+    const pantalla = document.createElement("main");
+    pantalla.setAttribute("role", "alert");
+    pantalla.style.cssText = "min-height:100vh;display:grid;place-items:center;padding:24px;background:#f4f5f7;font-family:Arial,sans-serif;color:#171717";
+    const tarjeta = document.createElement("section");
+    tarjeta.style.cssText = "width:min(100%,520px);padding:28px;border:1px solid #e8e8e8;border-radius:16px;background:#fff;box-shadow:0 8px 30px #0000000d";
+    const titulo = document.createElement("h1");
+    titulo.textContent = tituloMensaje || "No se pudieron verificar tus permisos";
+    titulo.style.cssText = "margin:0 0 10px;font-size:21px";
+    const detalle = document.createElement("p");
+    detalle.textContent = detalleMensaje || "Tu sesión no se cerró. Por seguridad, esta página no se mostró porque no se pudo completar su inicialización. Revisá tu conexión y volvé a intentar.";
+    detalle.style.cssText = "margin:0 0 20px;color:#747474;line-height:1.55;font-size:14px";
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.textContent = "Reintentar";
+    boton.style.cssText = "border:0;border-radius:9px;padding:11px 17px;background:#f47721;color:#fff;font-weight:700;cursor:pointer";
+    boton.addEventListener("click", () => location.reload());
+    tarjeta.append(titulo, detalle, boton);
+    if (enlaceAccion?.href) {
+      const enlace = document.createElement("a");
+      enlace.href = enlaceAccion.href;
+      enlace.textContent = enlaceAccion.texto || "Continuar";
+      enlace.style.cssText = "display:inline-flex;align-items:center;margin:12px 0 0 12px;color:#b94f0b;font-weight:700;font-size:14px;text-decoration:none";
+      tarjeta.appendChild(enlace);
     }
-    return;
+    pantalla.appendChild(tarjeta);
+    if (document.body) {
+      document.body.replaceChildren(pantalla);
+    } else {
+      document.addEventListener("DOMContentLoaded", () => {
+        if (document.body) document.body.replaceChildren(pantalla);
+      }, { once: true });
+    }
+    document.getElementById("torito-espera-permisos")?.remove();
   }
 
-  const u = normalizar(usuario);
-  const rol = ["fran", "francisco", "franciscoperezbasla"].includes(u)
-    ? "admin"
-    : u === "toto" ? "ct_s16"
-    : ["bianca", "biancadominguez"].includes(u) ? "jugadora_s14"
-    : "desconocido";
+  let perfilActivo = null;
+  let configActiva = null;
+  let observerDOM = null;
+  let temporizadorObserverDOM = null;
+  let refrescoInicialRealizado = false;
+  let permisosAplicadosTrasLayout = false;
+  let accesoPaginaDenegado = false;
 
-  if (rol === "desconocido") {
-    try { localStorage.removeItem(SESSION_KEY); } catch (_) {}
-    location.replace(LOGIN_URL);
-    return;
-  }
-
-  const pagina = decodeURIComponent(location.pathname.split("/").pop() || "")
-    .toLowerCase();
-  if (rol === "jugadora_s14" && !PAGINAS_BIANCA.has(pagina)) {
-    location.replace("TORITO-Pagina Principal.html");
-    return;
-  }
-
-  const divisionPermitida = DIVISION_FIJA[rol] || null;
-  const nombreRol = rol === "admin" ? "Administrador"
-    : rol === "ct_s16" ? "CT S16" : "Jugadora S14";
-
-  function actualizarPerfil() {
-    const nombre = rol === "jugadora_s14" ? "Bianca Domínguez" : usuario;
+  function mostrarPerfil() {
+    if (!perfilActivo || !configActiva) return;
+    const nombre = configActiva.nombre;
+    const rolTexto = ({
+      admin: "Administrador",
+      editor: "Editor",
+      coordinadora: "Coordinador",
+      cuerpo_tecnico: "Cuerpo técnico",
+      jugadora: "Jugadora"
+    })[configActiva.rol] || configActiva.rol;
     ["nombreUsuario", "nombrePerfil", "saludoUsuario"].forEach(id => {
       const el = document.getElementById(id);
-      if (el && el.textContent !== nombre) el.textContent = nombre;
+      if (el) el.textContent = nombre;
     });
     ["avatarUsuario", "avatarPerfil"].forEach(id => {
       const el = document.getElementById(id);
-      const inicial = (nombre.trim()[0] || "U").toUpperCase();
-      if (el && el.textContent !== inicial) el.textContent = inicial;
+      if (el) el.textContent = (nombre.trim()[0] || "U").toUpperCase();
     });
     ["rolUsuario", "rolPerfil"].forEach(id => {
       const el = document.getElementById(id);
-      if (el && el.textContent !== nombreRol) el.textContent = nombreRol;
+      if (el) el.textContent = rolTexto;
     });
   }
 
-  function normalizarDivision(value) {
-    const s = String(value || "").normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "").toLowerCase()
-      .replace(/[^a-z0-9]/g, "");
-    const mapa = {
-      sub10: "Sub 10", s10: "Sub 10", u10: "Sub 10",
-      sub12: "Sub 12", s12: "Sub 12", u12: "Sub 12",
-      sub14: "Sub 14", s14: "Sub 14", u14: "Sub 14",
-      sub16: "Sub 16", s16: "Sub 16", u16: "Sub 16",
-      primera: "Primera"
-    };
-    return mapa[s] || null;
+  function esSelectorCategoria(select) {
+    return select && select.tagName === "SELECT" &&
+      Array.from(select.options || []).some(o => categoriaDeTexto(o.value) || categoriaDeTexto(o.textContent));
   }
-
-  function categoriaDeTexto(value) {
-    const texto = String(value || "").trim();
-    const exacta = normalizarDivision(texto);
-    if (exacta) return exacta;
-    const coincidencia = texto.match(/(?:^|[^a-z0-9])(sub\s*10|sub\s*12|sub\s*14|sub\s*16|s10|s12|s14|s16|primera)(?:$|[^a-z0-9])/i);
-    return coincidencia ? normalizarDivision(coincidencia[1]) : null;
-  }
-
-  function esSelectorDeDivision(select) {
-    if (!select || select.tagName !== "SELECT") return false;
-    return Array.from(select.options || []).some(option =>
-      categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent)
+  function aplicarCategorias(root = document) {
+    if (!configActiva || configActiva.rol === "admin") return;
+    const categoriasPermitidas = new Set(
+      (configActiva.categorias || []).map(normalizarDivision).filter(Boolean)
     );
-  }
+    if (!categoriasPermitidas.size) return;
 
-  function opcionDeDivision(select, division) {
-    return Array.from(select.options || []).find(option =>
-      categoriaDeTexto(option.value) === division ||
-      categoriaDeTexto(option.textContent) === division
-    ) || null;
-  }
-
-  function fijarSelectoresDivision(root = document) {
-    if (!divisionPermitida) return;
-    root.querySelectorAll("select").forEach(select => {
-      if (!esSelectorDeDivision(select)) return;
-      const opcionPermitida = opcionDeDivision(select, divisionPermitida);
-      if (!opcionPermitida) {
-        select.disabled = true;
-        select.dataset.toritoDivisionBloqueada = "1";
-        select.setAttribute("aria-label", "No hay una opción autorizada para " + divisionPermitida);
-        return;
-      }
+    const selectores = root.querySelectorAll ? [ ...(root.matches?.("select") ? [root] : []), ...root.querySelectorAll("select") ] : [];
+    selectores.forEach(select => {
+      if (!esSelectorCategoria(select)) return;
       Array.from(select.options || []).forEach(option => {
-        const division = categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent);
-        const esOpcionTodas = /^(todas?|todas las divisiones|todas las categorias|todas las categorías)$/i.test(String(option.textContent || "").trim());
-        if ((division && division !== divisionPermitida) || esOpcionTodas) option.remove();
+        const categoria = categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent);
+        const texto = String(option.textContent || "").trim();
+        if (categoria && !categoriasPermitidas.has(categoria)) option.remove();
+        else if (!categoria && /^(todas|todas las categorías|todas las divisiones|seleccioná una categoría|seleccionar categoría|elegir categoría)$/i.test(texto)) option.remove();
       });
-      const opcionFinal = opcionDeDivision(select, divisionPermitida);
-      if (!opcionFinal) {
-        select.disabled = true;
-        select.dataset.toritoDivisionBloqueada = "1";
-        return;
+
+      const opcionesPermitidas = Array.from(select.options || []).filter(option => {
+        const categoria = categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent);
+        return categoria && categoriasPermitidas.has(categoria);
+      });
+      if (!opcionesPermitidas.length) return;
+      if (!opcionesPermitidas.some(option => option.value === select.value)) {
+        select.value = opcionesPermitidas[0].value;
+        select.dispatchEvent(new Event("change", { bubbles: true }));
       }
-      const indicePermitido = Array.from(select.options || []).indexOf(opcionFinal);
-      const cambioNecesario = select.selectedIndex !== indicePermitido;
-      select.selectedIndex = indicePermitido;
-      select.disabled = true;
-      select.dataset.toritoDivisionProcesada = "1";
-      select.dataset.toritoDivisionBloqueada = "0";
-      select.setAttribute("aria-label", "División fijada por permisos: " + divisionPermitida);
-      if (cambioNecesario) select.dispatchEvent(new Event("change", { bubbles: true }));
+      // Un perfil con una sola categoría no puede cambiarla; el CT
+      // con varias puede alternar únicamente entre las divisiones asignadas.
+      select.disabled = opcionesPermitidas.length === 1;
     });
   }
-
-  function divisionDelElemento(elemento) {
-    if (!elemento || elemento.nodeType !== 1) return null;
-    for (const atributo of ["data-division", "data-categoria", "data-category"]) {
-      const division = categoriaDeTexto(elemento.getAttribute(atributo));
-      if (division) return division;
-    }
-    return null;
+  function esSelectorJugadora(select) {
+    return /jugadora|jugador|atleta|plantel/i.test([
+      select.id, select.name, select.getAttribute("aria-label"), select.getAttribute("data-field")
+    ].join(" "));
   }
-
-  function ocultarBloquesDeOtrasDivisiones(root = document) {
-    if (!divisionPermitida) return;
-    const selectores = [
-      "[data-division]", "[data-categoria]", "[data-category]",
-      ".division-section", ".categoria-card", ".division-card",
-      ".category-card", ".stats > .stat"
-    ].join(",");
-    root.querySelectorAll(selectores).forEach(elemento => {
-      let division = divisionDelElemento(elemento);
-      if (!division && elemento.matches(".division-section")) {
-        const encabezado = elemento.querySelector(".division-heading h1, .division-heading h2, .division-heading h3, h1, h2, h3");
-        division = categoriaDeTexto(encabezado?.textContent);
-      }
-      if (!division && elemento.matches(".stats > .stat")) {
-        const texto = String(elemento.innerText || elemento.textContent || "").trim();
-        const coincidencias = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"]
-          .filter(nombre => new RegExp("(^|[^a-z0-9])" + nombre.replace(" ", "\\s*") + "([^a-z0-9]|$)", "i").test(texto));
-        if (coincidencias.length === 1) division = coincidencias[0];
-      }
-      if (division && division !== divisionPermitida) {
-        elemento.hidden = true;
-        elemento.setAttribute("aria-hidden", "true");
-        elemento.dataset.toritoDivisionOculta = "1";
-      } else if (elemento.dataset.toritoDivisionOculta === "1") {
-        elemento.hidden = false;
-        elemento.removeAttribute("aria-hidden");
-        delete elemento.dataset.toritoDivisionOculta;
-      }
-    });
+  const PALABRAS_BORRADO = /eliminar|borrar|suprimir|quitar|dar de baja/i;
+  const PALABRAS_EDICION = /guardar|agregar|añadir|nuevo|crear|editar|modificar|actualizar|importar|cargar|registrar|duplicar|publicar|aplicar|restaurar|reset|save|submit|enviar|confirmar/i;
+  const PALABRAS_LECTURA = /cerrar|cancelar|volver|abrir|ver|filtrar|buscar|siguiente|anterior|mes|semana|dia|día|imprimir|descargar|mostrar|ocultar|menu|menú|perfil|sesion|sesión|inicio|pizarra|calendario|estadisticas|estadísticas/i;
+  function textoControl(el) {
+    return [el.textContent, el.value, el.getAttribute("aria-label"), el.title, el.id, el.name,
+      el.className, el.getAttribute("data-accion"), el.getAttribute("data-action"), el.getAttribute("onclick")]
+      .filter(Boolean).join(" ").toLowerCase();
   }
-
-  function controlarCambioDeDivision(event) {
-    if (!divisionPermitida || !event.target?.matches?.("select")) return;
-    const select = event.target;
-    if (!esSelectorDeDivision(select)) return;
-    const seleccion = categoriaDeTexto(select.value) || categoriaDeTexto(select.selectedOptions?.[0]?.textContent);
-    if (seleccion === divisionPermitida) return;
-    const permitida = opcionDeDivision(select, divisionPermitida);
-    if (!permitida) {
-      select.disabled = true;
-      return;
-    }
+  function bloquearAccion(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
-    select.selectedIndex = Array.from(select.options || []).indexOf(permitida);
-    select.disabled = true;
-    select.dispatchEvent(new Event("change", { bubbles: true }));
-  }
-  const nombresAjeno = new Set();
-  function esSelectorJugadora(select) {
-    const id = (select.id + " " + select.name + " " + select.getAttribute("aria-label")).toLowerCase();
-    return /jugadora|jugador|atleta|plantel/.test(id);
-  }
-  function filtrarSelectoresBianca(root = document) {
-    if (rol !== "jugadora_s14") return;
-    root.querySelectorAll("select").forEach(select => {
-      if (!esSelectorJugadora(select)) return;
-      Array.from(select.options || []).forEach(option => {
-        const t = option.textContent.trim();
-        if (!t || /seleccion|todas|ninguna|bianca/i.test(t)) return;
-        nombresAjeno.add(t.toLocaleLowerCase("es-AR"));
-        option.remove();
-      });
-      const bianca = Array.from(select.options || []).find(o => /bianca/i.test(o.textContent));
-      if (bianca) select.value = bianca.value;
-      select.disabled = true;
-    });
-  }
-
-  const PALABRAS_BORRADO = /eliminar|borrar|suprimir|quitar|dar de baja/i;
-  const PALABRAS_CAMBIO = /guardar|agregar|añadir|nuevo|crear|editar|modificar|actualizar|importar|cargar|registrar|duplicar|publicar|aplicar|restaurar|reset|save|submit|enviar|confirmar/i;
-  const PALABRAS_NAVEGACION = /cerrar|cancelar|volver|abrir|ver|filtrar|buscar|siguiente|anterior|mes|semana|dia|día|imprimir|descargar|mostrar|ocultar|menu|menú|perfil|sesion|sesión|inicio|pizarra|calendario/i;
-
-  function textoControl(el) {
-    return [
-      el.textContent, el.value, el.getAttribute("aria-label"),
-      el.title, el.id, el.name, el.className, el.getAttribute("data-accion"),
-      el.getAttribute("data-action"), el.getAttribute("data-operacion"), el.getAttribute("onclick")
-    ].filter(Boolean).join(" ").toLowerCase();
-  }
-  function esControlSoloLecturaPermitido(el) {
-    const t = textoControl(el);
-    if (el.matches("a, [role=tab]")) return true;
-    if (el.matches("button")) {
-      return !PALABRAS_CAMBIO.test(t) && !PALABRAS_BORRADO.test(t);
-    }
-    if (el.matches("select")) {
-      return !esSelectorJugadora(el) && !Array.from(el.options || []).some(o => categoriaDeTexto(o.value) || categoriaDeTexto(o.textContent));
-    }
-    if (el.matches("input")) {
-      return el.type === "search" || /buscar|filtro|fecha|mes|semana|orden|busqueda|búsqueda/i.test(t);
-    }
     return false;
   }
 
   function aplicarSoloLectura(root = document) {
-    if (rol !== "jugadora_s14") return;
-    root.querySelectorAll("button, input, select, textarea, [contenteditable=true]").forEach(el => {
-      if (esControlSoloLecturaPermitido(el)) return;
-      if (el.matches("input, textarea, select")) {
-        el.disabled = true;
-        el.readOnly = true;
-      } else if (el.matches("[contenteditable=true]")) {
-        el.setAttribute("contenteditable", "false");
-      } else {
-        el.disabled = true;
-        el.setAttribute("aria-disabled", "true");
-      }
-      el.classList.add("torito-solo-lectura");
-    });
-    root.querySelectorAll("form").forEach(form => {
-      form.addEventListener("submit", bloquearAccion, true);
-    });
-  }
-
-  function bloquearAccion(event) {
-    if (rol === "admin") return;
-    if (rol === "jugadora_s14" && event.type === "submit") {
-      event.preventDefault();
-      event.stopImmediatePropagation();
+    if (!configActiva || (configActiva.rol !== "jugadora" && configActiva.puedeEditar !== false)) return;
+    const pagina = paginaActual();
+    if (configActiva.rol !== "jugadora") {
+      const controles = [...(root.matches?.("button, input, select, textarea, [contenteditable=true]") ? [root] : []), ...root.querySelectorAll("button, input, select, textarea, [contenteditable=true]")];
+      controles.forEach(el => {
+        const texto = textoControl(el);
+        const id = String(el.id || el.name || el.getAttribute("aria-label") || "").toLowerCase();
+        const filtro = el.matches("input, select") && (
+          el.type === "search" || el.type === "date" || el.type === "month" ||
+          /buscar|busqueda|filtro|categoria|division|fecha|mes|semana|orden|jugadora/i.test(id + " " + texto)
+        );
+        if (filtro || el.matches("a, [role=tab]")) return;
+        if (el.matches("button")) {
+          if (!PALABRAS_EDICION.test(texto) && !PALABRAS_BORRADO.test(texto)) return;
+          el.disabled = true;
+          el.setAttribute("aria-disabled", "true");
+        } else if (el.matches("[contenteditable=true]")) {
+          el.setAttribute("contenteditable", "false");
+        } else if (el.matches("input, textarea, select")) {
+          el.disabled = true;
+          el.readOnly = true;
+        }
+        el.classList.add("torito-solo-lectura");
+      });
+      root.querySelectorAll("form").forEach(form => form.addEventListener("submit", bloquearAccion, true));
       return;
     }
-    const target = event.target;
-    const control = target.closest?.("button, input[type=submit], input[type=button]");
-    if (!control) return;
-    const t = textoControl(control);
-    if (rol === "jugadora_s14" && !esControlSoloLecturaPermitido(control)) {
-      event.preventDefault(); event.stopImmediatePropagation();
-    } else if (rol === "ct_s16" && PALABRAS_BORRADO.test(t)) {
-      event.preventDefault(); event.stopImmediatePropagation();
+    if (pagina === "torito-asistencia.html") {
+      [...(root.matches?.("button[data-fecha][data-jugadora]") ? [root] : []), ...root.querySelectorAll("button[data-fecha][data-jugadora]")].forEach(el => {
+        el.disabled = true;
+        el.setAttribute("aria-disabled", "true");
+        el.title = "Solo consulta: cada jugadora puede ver sus propias asistencias";
+      });
+      return;
+    }
+    if (pagina === "torito-jugadoras.html") {
+      ["botonAgregar", "modalJugadora"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.hidden = true;
+      });
+      return;
+    }
+    if (!["torito-calendario.html", "torito-partidos.html", "torito-gimnasio.html"].includes(pagina)) return;
+
+    const permitidos = new Set([
+      "mesAnterior", "mesSiguiente", "categoria", "division", "buscarRutina",
+      "busqueda", "filtroDivision", "filtroCompeticion",
+      "modalPDF", "modalAgregarPersona", "modalQuitarPersona", "modalCerrarInferior",
+      "cerrarModal", "cerrarPerfil"
+    ]);
+
+    [...(root.matches?.("button, input, select, textarea, [contenteditable=true]") ? [root] : []), ...root.querySelectorAll("button, input, select, textarea, [contenteditable=true]")].forEach(el => {
+      if (permitidos.has(el.id) || el.closest("#controlPersonasRutina")) return;
+      const texto = textoControl(el);
+      const lectura = el.matches("a, [role=tab]") ||
+        (el.matches("button") && (/pdf|imprimir|descargar|abrir|ver/i.test(texto) ||
+          (!PALABRAS_EDICION.test(texto) && !PALABRAS_BORRADO.test(texto)))) ||
+        (el.matches("input") && (el.type === "search" || /buscar|filtro|fecha|mes|semana|orden/i.test(texto)));
+      if (lectura) return;
+      if (el.matches("input, textarea, select")) { el.disabled = true; el.readOnly = true; }
+      else if (el.matches("[contenteditable=true]")) el.setAttribute("contenteditable", "false");
+      else { el.disabled = true; el.setAttribute("aria-disabled", "true"); }
+      el.classList.add("torito-solo-lectura");
+    });
+
+    if (pagina === "torito-calendario.html") {
+      document.body.classList.add("torito-vista-calendario-jugadora");
+      const modal = document.getElementById("fondoModal");
+      if (modal) {
+        modal.classList.remove("visible");
+        modal.hidden = true;
+      }
+    }
+    if (pagina === "torito-asistencia.html") {
+      [...(root.matches?.("button[data-fecha][data-jugadora]") ? [root] : []), ...root.querySelectorAll("button[data-fecha][data-jugadora]")].forEach(el => {
+        el.disabled = true;
+        el.setAttribute("aria-disabled", "true");
+        el.title = "Solo consulta: cada jugadora puede ver sus propias asistencias";
+      });
+    }
+
+    if (pagina === "torito-partidos.html") {
+      ["contadorSub10", "contadorSub12", "contadorSub14", "contadorPrimera"].forEach(id => {
+        const contador = document.getElementById(id);
+        const tarjeta = contador?.closest(".stat");
+        if (tarjeta) tarjeta.hidden = true;
+      });
+      ["btnNuevo", "btnEliminarModo"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.hidden = true;
+      });
+      [...(root.matches?.("[data-accion]") ? [root] : []), ...root.querySelectorAll("[data-accion]")].forEach(el => el.remove());
+    }
+
+    if (pagina === "torito-gimnasio.html") {
+      ["panelControlesRutina", "panelEditorRutina", "botonesGestion"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.hidden = true;
+      });
+      const biblioteca = document.getElementById("panelBiblioteca");
+      if (biblioteca) biblioteca.hidden = false;
+      [...(root.matches?.("[data-editar-rutina], [data-eliminar-rutina]") ? [root] : []), ...root.querySelectorAll("[data-editar-rutina], [data-eliminar-rutina]")].forEach(el => el.hidden = true);
+      ["modalEditar", "modalEliminar"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.hidden = true;
+      });
+      ["modalPDF", "modalAgregarPersona", "modalQuitarPersona", "controlPersonasRutina"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.hidden = false;
+      });
     }
   }
-
-  function ocultarRegistrosDeOtrasJugadoras() {
-    if (rol !== "jugadora_s14" || !["partidos.html", "TORITO-gimnasio.html", "TORITO-testeos.html"].includes(pagina)) return;
-    const nombres = Array.from(nombresAjeno).filter(n => n.length >= 4);
-    if (!nombres.length) return;
-    document.querySelectorAll("tr, [data-jugadora], .rutina-card, .jugadora-card, .registro-card, .tarjeta-jugadora").forEach(item => {
-      const texto = (item.innerText || item.textContent || "").toLocaleLowerCase("es-AR");
-      if (nombres.some(nombre => texto.includes(nombre))) item.hidden = true;
-    });
+  function aplicarAccesosPagina() {
+    if (!configActiva) return;
+    const pagina = paginaActual();
+    if (Array.isArray(configActiva.paginasPermitidas) && !configActiva.paginasPermitidas.some(x => String(x).split(/[?#]/)[0].split("/").pop().toLowerCase() === pagina)) {
+      accesoPaginaDenegado = true;
+      mostrarErrorInicializacion(new Error("El perfil no tiene acceso a esta sección."), "Acceso restringido", "Tu perfil de TORITO no tiene permiso para entrar en esta página.", { href: INICIO_URL, texto: "Volver al inicio" });
+      return false;
+    }
+    if (Array.isArray(configActiva.paginasPermitidas)) {
+      const permitidas = new Set(configActiva.paginasPermitidas.map(x =>
+        String(x).split(/[?#]/)[0].split("/").pop().toLowerCase()
+      ));
+      document.querySelectorAll('a[href]').forEach(a => {
+        const file = (a.getAttribute("href") || "").split(/[?#]/)[0].split("/").pop().toLowerCase();
+        if (file.endsWith(".html") && !permitidas.has(file)) a.remove();
+      });
+    }
+    if (configActiva.rol === "jugadora" && !PAGINAS_JUGADORAS.has(pagina)) {
+      accesoPaginaDenegado = true;
+      mostrarErrorInicializacion(
+        new Error("El rol jugadora no tiene acceso a esta sección."),
+        "Acceso restringido",
+        "Tu perfil de jugadora no tiene permiso para entrar en esta página. No te redirigimos automáticamente; podés volver al inicio o revisar el acceso con el administrador.",
+        { href: INICIO_URL, texto: "Volver al inicio" }
+      );
+      return false;
+    }
+    if (configActiva.rol === "jugadora") {
+      document.querySelectorAll('a[href]').forEach(a => {
+        const file = (a.getAttribute("href") || "").split(/[?#]/)[0].split("/").pop().toLowerCase();
+        if (file.endsWith(".html") && !PAGINAS_JUGADORAS.has(file)) a.remove();
+      });
+      document.querySelectorAll("#sidebar .grupo-menu").forEach(grupo => {
+        const submenu = grupo.querySelector(".submenu");
+        const enlaces = submenu ? submenu.querySelectorAll('a[href]') : [];
+        if (!enlaces.length) grupo.hidden = true;
+      });
+      // Gimnasio: mostrar solo biblioteca; se conservan PDF y cantidad de personas al imprimir.
+      if (pagina === "torito-gimnasio.html") {
+        ["panelControlesRutina", "panelEditorRutina", "botonesGestion"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.hidden = true;
+        });
+        const biblioteca = document.getElementById("panelBiblioteca");
+        if (biblioteca) biblioteca.hidden = false;
+        ["modalEditar", "modalEliminar"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.hidden = true;
+        });
+      }
+      // Testeos: para las jugadoras se muestra exclusivamente la pestaña Estadísticas.
+      if (pagina === "torito-testeos.html") {
+        ["btnTabCarga", "btnTabBiblioteca"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.hidden = true;
+        });
+        const carga = document.getElementById("vistaCarga");
+        const biblioteca = document.getElementById("vistaBiblioteca");
+        const estadisticas = document.getElementById("vistaStats");
+        if (carga) { carga.classList.remove("activa"); carga.hidden = true; }
+        if (biblioteca) { biblioteca.classList.remove("activa"); biblioteca.hidden = true; }
+        if (estadisticas) { estadisticas.classList.add("activa"); estadisticas.hidden = false; }
+        document.getElementById("btnTabStats")?.classList.add("activa");
+        document.querySelectorAll("button, a, [role=tab]").forEach(el => {
+          if (/cargar|nuevo|registrar|agregar|editar|eliminar|testeo|registro/i.test(textoControl(el)) &&
+              !/pdf|imprimir|abrir|cerrar/i.test(textoControl(el))) el.hidden = true;
+        });
+      }
+    }
+    if (!configActiva.puedeEliminar) {
+      document.querySelectorAll("button, a, [role=button]").forEach(el => {
+        if (PALABRAS_BORRADO.test(textoControl(el))) el.hidden = true;
+      });
+    }
+    return true;
   }
 
   function aplicarPermisos() {
-    document.querySelectorAll('a[href]').forEach(a => {
-      const destino = (a.getAttribute('href') || '').split(/[?#]/)[0].toLowerCase();
-      if (/^(biblioteca|biblioteca de ejercicios|multimedia|lesiones)\.html$/.test(destino)) {
-        a.hidden = true;
-        a.removeAttribute('href');
-        a.setAttribute('aria-disabled', 'true');
-      }
-    });
-    actualizarPerfil();
-    fijarSelectoresDivision();
-    ocultarBloquesDeOtrasDivisiones();
-    filtrarSelectoresBianca();
-    ocultarRegistrosDeOtrasJugadoras();
+    if (!configActiva) return false;
+    mostrarPerfil();
+    aplicarCategorias();
     aplicarSoloLectura();
-    if (rol === "ct_s16") {
-      document.querySelectorAll("button, a, [role=button]").forEach(el => {
-        if (PALABRAS_BORRADO.test(textoControl(el))) {
-          el.hidden = true;
-          el.setAttribute("aria-hidden", "true");
+    return aplicarAccesosPagina();
+  }
+
+  async function iniciarControlFirebase() {
+    try {
+      const modulo = await import("./TORITO-auth.js?v=20261124-auth1");
+      await modulo.observarSesionTORITO(async user => {
+        // Firebase puede entregar un estado inicial vacío en algunos entornos.
+        // Antes de considerar la sesión cerrada, consultamos la instancia ya restaurada.
+        const usuarioAutenticado = user || modulo.auth.currentUser;
+        if (!usuarioAutenticado) {
+          mostrarErrorInicializacion(
+            new Error("Firebase no devolvió un usuario autenticado."),
+            "No se pudo confirmar tu sesión",
+            "No te redirigimos automáticamente ni modificamos tu sesión. Si acabás de ingresar, probá Reintentar. Si cerraste sesión, podés volver al acceso de TORITO.",
+            { href: LOGIN_URL, texto: "Ir al inicio de sesión" }
+          );
+          return;
+        }
+        user = usuarioAutenticado;
+        try {
+          let perfil;
+          try {
+            perfil = await modulo.obtenerPerfilTORITO(user);
+          } catch (errorPerfil) {
+            mostrarErrorInicializacion(
+              errorPerfil,
+              "No se pudo leer tu perfil",
+              "La sesión está iniciada, pero no se pudo consultar el perfil de esta cuenta. No cerramos tu sesión ni te enviamos al Login. Revisá la conexión e intentá nuevamente."
+            );
+            return;
+          }
+          if (!perfil) {
+            mostrarErrorInicializacion(
+              new Error("No existe un perfil activo para el usuario autenticado."),
+              "Tu cuenta no tiene un perfil habilitado",
+              "La sesión está iniciada, pero no encontramos un perfil activo asociado a esta cuenta. No se cerró tu sesión. Contactá al administrador para revisar el perfil."
+            );
+            return;
+          }
+          const identidad = String(
+            perfil.usuario || String(user.email || "").split("@")[0] ||
+            perfil.nombreUsuario || perfil.nombre || "usuario"
+          ).trim();
+          const rolCrudo = normalizar(perfil.rol || perfil.tipo || "");
+          const roles = {
+            admin: "admin", administrador: "admin", superadmin: "admin",
+            editor: "editor", editora: "editor",
+            coordinador: "editor", coordinadora: "editor",
+            cuerpotecnico: "cuerpo_tecnico", tecnico: "cuerpo_tecnico",
+            tecnica: "cuerpo_tecnico", entrenador: "cuerpo_tecnico",
+            entrenadora: "cuerpo_tecnico", preparadorfisico: "cuerpo_tecnico",
+            preparador: "cuerpo_tecnico",
+            jugadora: "jugadora", jugador: "jugadora"
+          };
+          const rol = roles[rolCrudo] || null;
+          let categorias = perfil.categorias ?? perfil.categoria ?? [];
+          if (!Array.isArray(categorias)) categorias = categorias ? [categorias] : [];
+          categorias = categorias.map(normalizarDivision).filter(Boolean);
+          const todasLasCategorias = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
+          const permisosAnidados = perfil.permisos && typeof perfil.permisos === "object" ? perfil.permisos : {};
+          const permiso = (clave, valorPredeterminado) => {
+            if (typeof perfil[clave] === "boolean") return perfil[clave];
+            if (typeof permisosAnidados[clave] === "boolean") return permisosAnidados[clave];
+            return valorPredeterminado;
+          };
+          let base = null;
+          if (rol && (rol === "admin" || categorias.length > 0)) {
+            const nombre = String(perfil.nombre || perfil.nombreCompleto || identidad).trim();
+            const paginas = Array.isArray(perfil.paginasPermitidas)
+              ? perfil.paginasPermitidas
+              : (Array.isArray(perfil.paginas) ? perfil.paginas : null);
+            base = {
+              usuario: identidad,
+              nombre,
+              rol,
+              categorias: rol === "admin" ? todasLasCategorias : categorias,
+              jugadora: String(perfil.jugadora || (rol === "jugadora" ? nombre : "")).trim() || null,
+              puedeGestionarUsuarios: permiso("puedeGestionarUsuarios", rol === "admin"),
+              puedeEditar: permiso("puedeEditar", ["admin", "editor", "cuerpo_tecnico"].includes(rol)),
+              puedeEliminar: permiso("puedeEliminar", rol === "admin"),
+              paginasPermitidas: paginas ? paginas.map(String).map(x => x.trim()).filter(Boolean) : null
+            };
+          }
+
+          if (!base || perfil.activo !== true) {
+            mostrarErrorInicializacion(
+              new Error("Perfil sin rol reconocido o cuenta inactiva."),
+              "No tenés acceso habilitado a esta página",
+              "La sesión está iniciada, pero el perfil no tiene un rol reconocido o la cuenta figura inactiva. No te enviamos al Login para evitar un ciclo de redirecciones. Revisá el rol y el estado de tu cuenta."
+            );
+            return;
+          }
+          // Este script se carga en el <head>. Firebase puede restaurar la sesión
+          // antes de que exista <body>; esperar al DOM evita que un acceso válido
+          // termine enviado al Login por un error de inicialización de la interfaz.
+          if (document.readyState === "loading") {
+            await new Promise(resolve => {
+              document.addEventListener("DOMContentLoaded", resolve, { once: true });
+            });
+          }
+
+          // La matriz de este archivo manda sobre rol y categorías. Firestore solo identifica y habilita la cuenta.
+          perfilActivo = perfil;
+          configActiva = base;
+          document.body?.classList.toggle("torito-perfil-jugadora", base.rol === "jugadora");
+          // La matriz central es la fuente de verdad también para las páginas
+          // que aún conservan controles de compatibilidad locales.
+          try {
+            localStorage.setItem("usuarioTORITO", String(base.rol === "jugadora" ? (base.jugadora || base.nombre) : (base.usuario || perfil.usuario || base.nombre)));
+            localStorage.setItem("nombreTORITO", base.nombre);
+            localStorage.setItem("rolTORITO", base.rol);
+            localStorage.setItem("categoriasTORITO", JSON.stringify(base.categorias));
+            localStorage.setItem("jugadoraTORITO", base.jugadora || "");
+            localStorage.setItem("puedeEditarTORITO", String(base.puedeEditar));
+            localStorage.setItem("puedeEliminarTORITO", String(base.puedeEliminar));
+            localStorage.setItem("puedeGestionarUsuariosTORITO", String(base.puedeGestionarUsuarios));
+            if (base.paginasPermitidas) localStorage.setItem("paginasPermitidasTORITO", JSON.stringify(base.paginasPermitidas));
+            else localStorage.removeItem("paginasPermitidasTORITO");
+          } catch (error) {
+            console.warn("No se pudieron sincronizar los permisos locales TORITO:", error);
+          }
+          window.TORITO_PERMISOS = Object.freeze({
+            usuario: base.usuario || perfil.usuario,
+            nombre: base.nombre,
+            rol: base.rol,
+            categorias: [...base.categorias],
+            jugadora: base.jugadora || null,
+            puedeEditar: base.puedeEditar,
+            puedeEliminar: base.puedeEliminar,
+            puedeGestionarUsuarios: base.puedeGestionarUsuarios,
+            paginasPermitidas: base.paginasPermitidas ? [...base.paginasPermitidas] : null,
+            puedeGestionarPruebas: base.puedeEditar && base.rol !== "jugadora"
+          });
+          if (!aplicarPermisos()) {
+            window.TORITO_PERMISOS = null;
+            return;
+          }
+          // Si el layout ya existe, esta aplicación también cubre el menú.
+          // Si todavía no existe, se volverá a aplicar una sola vez al terminar.
+          permisosAplicadosTrasLayout = !!window.TORITO_LAYOUT_LISTO;
+          window.dispatchEvent(new CustomEvent("torito-permisos-listos", {
+            detail: window.TORITO_PERMISOS
+          }));
+          if (!refrescoInicialRealizado) {
+            refrescoInicialRealizado = true;
+            if (paginaActual() === "torito-asistencia.html") {
+              window.renderizarMatriz?.();
+              window.renderizarSeguimientoIndividual?.();
+            } else if (paginaActual() === "torito-partidos.html") {
+              window.renderizarFixture?.();
+            } else if (paginaActual() === "torito-testeos.html") {
+              window.cambiarPestana?.("stats");
+            } else if (paginaActual() === "torito-calendario.html") {
+              window.renderizarCalendario?.();
+            }
+          }
+          // Solo los perfiles con restricciones necesitan vigilar controles que
+          // se creen dinámicamente. Se agrupan las mutaciones para no recorrer
+          // todo el documento decenas de veces durante un render.
+          const necesitaVigilanciaDOM =
+            base.rol !== "admin" || base.puedeEliminar === false;
+
+          if (necesitaVigilanciaDOM && !observerDOM) {
+            const nodosPendientes = new Set();
+            observerDOM = new MutationObserver(mutaciones => {
+              mutaciones.forEach(mutacion => {
+                mutacion.addedNodes.forEach(nodo => {
+                  if (nodo.nodeType === 1) nodosPendientes.add(nodo);
+                });
+              });
+              if (!nodosPendientes.size) return;
+              if (temporizadorObserverDOM) clearTimeout(temporizadorObserverDOM);
+              temporizadorObserverDOM = setTimeout(() => {
+                temporizadorObserverDOM = null;
+                const nodos = [...nodosPendientes];
+                nodosPendientes.clear();
+                nodos.forEach(nodo => {
+                  if (!nodo.isConnected) return;
+                  aplicarCategorias(nodo);
+                  aplicarSoloLectura(nodo);
+                  if (!base.puedeEliminar) {
+                    const controles = [
+                      ...(nodo.matches?.("button, a, [role=button]") ? [nodo] : []),
+                      ...nodo.querySelectorAll("button, a, [role=button]")
+                    ];
+                    controles.forEach(el => {
+                      if (PALABRAS_BORRADO.test(textoControl(el))) el.hidden = true;
+                    });
+                  }
+                });
+              }, 120);
+            });
+            observerDOM.observe(document.body, { childList: true, subtree: true });
+          }
+          if (window.TORITO_LAYOUT_LISTO) mostrarPaginaAutorizada();
+        } catch (error) {
+          mostrarErrorInicializacion(error);
         }
       });
-    }
-    if (rol === "jugadora_s14") {
-      document.querySelectorAll("a[href]").forEach(a => {
-        const href = (a.getAttribute("href") || "").split("?")[0].toLowerCase();
-        if (/^(jugadoras|asistencia|planificacion|calculadora|informes|estadisticas|pizarra|pruebas|tiempos|encuestas)\.html$/.test(href)) a.remove();
-      });
-      document.querySelectorAll("[data-ocultar-bianca]").forEach(el => el.remove());
+    } catch (error) {
+      mostrarErrorInicializacion(error);
     }
   }
 
-  document.addEventListener("change", controlarCambioDeDivision, true);
-  document.addEventListener("click", bloquearAccion, true);
-  document.addEventListener("submit", bloquearAccion, true);
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", aplicarPermisos, { once: true });
-  } else {
-    aplicarPermisos();
+  if (/^(TORITO-index|TORITO-loing)\.html$/i.test(paginaActual())) return;
+
+  // En Partidos no ocultamos todo el documento mientras se resuelve la sesión:
+  // la pantalla en blanco impedía ver incluso el error real de inicialización.
+  // Los permisos de edición/categoría siguen aplicándose al confirmar Firebase.
+  const esPaginaPartidos = paginaActual() === "torito-partidos.html";
+  if (!esPaginaPartidos) {
+    document.documentElement.classList.add("torito-permisos-pendientes");
+    const estiloEspera = document.createElement("style");
+    estiloEspera.id = "torito-espera-permisos";
+    estiloEspera.textContent = "html.torito-permisos-pendientes body{visibility:hidden!important}";
+    (document.head || document.documentElement).appendChild(estiloEspera);
   }
 
-  const observer = new MutationObserver(records => {
-    let changed = false;
-    for (const record of records) {
-      if (record.type === "childList" && (record.addedNodes.length || record.removedNodes.length)) changed = true;
+  function mostrarPaginaAutorizada() {
+    if (!configActiva || accesoPaginaDenegado) return;
+    if (!permisosAplicadosTrasLayout) {
+      if (!aplicarPermisos()) return;
+      permisosAplicadosTrasLayout = true;
     }
-    if (changed) aplicarPermisos();
-  });
-  observer.observe(document.documentElement, { childList: true, subtree: true });
+    document.documentElement.classList.remove("torito-permisos-pendientes");
+    document.getElementById("torito-espera-permisos")?.remove();
+  }
 
-  window.TORITO_PERMISOS = Object.freeze({
-    usuario: rol === "jugadora_s14" ? "Bianca Domínguez" : usuario,
-    rol,
-    division: divisionPermitida,
-    puedeEditar: rol !== "jugadora_s14",
-    puedeEliminar: rol === "admin",
-    paginasBianca: Array.from(PAGINAS_BIANCA)
-  });
+  window.addEventListener("torito-layout-listo", mostrarPaginaAutorizada, { once: true });
+  iniciarControlFirebase();
+  if (window.TORITO_LAYOUT_LISTO) mostrarPaginaAutorizada();
+
+  // Respaldo visual: si el layout compartido falla en una página puntual,
+  // una cuenta ya autenticada y autorizada no debe quedar con toda la pantalla
+  // invisible indefinidamente.
+  setTimeout(() => {
+    if (configActiva && document.documentElement.classList.contains("torito-permisos-pendientes")) {
+      console.error("TORITO: el layout no confirmó su inicialización; se habilita la vista autorizada como respaldo.");
+      mostrarPaginaAutorizada();
+    }
+  }, 3500);
 })();
