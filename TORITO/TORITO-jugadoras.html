@@ -1730,22 +1730,9 @@
         .toLowerCase();
     }
     const usuarioActual = normalizarUsuario(usuarioGuardado);
-    function esToto() {
-      return usuarioActual === "toto";
-    }
-    function esBianca() {
-      return [
-        "biancadominguez",
-        "bianca"
-      ].includes(usuarioActual);
-    }
-    function esFran() {
-      return [
-        "fran",
-        "francisco",
-        "francisco perez basla"
-      ].includes(usuarioActual);
-    }
+    function esToto() { return ["editor", "cuerpo_tecnico", "coordinadora"].includes((localStorage.getItem("rolTORITO") || "").trim().toLowerCase()); }
+    function esBianca() { return (localStorage.getItem("rolTORITO") || "").trim().toLowerCase() === "jugadora"; }
+    function esFran() { return (localStorage.getItem("rolTORITO") || "").trim().toLowerCase() === "admin"; }
     // Si no existe una sesión, regresar al inicio de sesión.
     if (!usuarioGuardado) {
       window.location.href = "TORITO-Loing.html";
