@@ -3757,12 +3757,15 @@ function guardarDatosAutomaticamente(mostrarMensaje = false) {
 
     sesionesActuales.forEach(actualizarCamposLegado);
 
-    almacen[categoriaActual][obtenerClaveSemana(semanaActual)] = {
+    const claveSemanaActual = obtenerClaveSemana(semanaActual);
+    const registroAnterior = almacen[categoriaActual][claveSemanaActual];
+    const actualizadoEn = Math.max(Date.now(), Number(registroAnterior?.actualizadoEn || 0) + 1);
+    almacen[categoriaActual][claveSemanaActual] = {
       fechaInicio: fechaInicioActual,
       sesiones: sesionesActuales,
       guardada: microcicloGuardado,
       sesionesPersonalizadas: true,
-      actualizadoEn: Date.now()
+      actualizadoEn
     };
 
     localStorage.setItem(
@@ -5825,7 +5828,7 @@ async function inicializarPlanificacion() {
         // Las listas de sesiones personalizadas se reemplazan completas: unirlas
         // por índice volvería a recuperar sesiones que el usuario eliminó.
         const sesionesPersonalizadas = local?.sesionesPersonalizadas === true || nube?.sesionesPersonalizadas === true;
-        const fuenteSesiones = Number(local?.actualizadoEn || 0) > Number(nube?.actualizadoEn || 0) ? local : nube;
+        const fuenteSesiones = Number(local?.actualizadoEn || 0) >= Number(nube?.actualizadoEn || 0) ? local : nube;
         claves.forEach(clave => {
           const tieneLocal = esObjeto(local) && Object.prototype.hasOwnProperty.call(local, clave);
           const tieneNube = esObjeto(nube) && Object.prototype.hasOwnProperty.call(nube, clave);
@@ -5837,7 +5840,10 @@ async function inicializarPlanificacion() {
               : tieneNube ? nube[clave] : local[clave];
           }
         });
-        if (sesionesPersonalizadas) resultado.sesionesPersonalizadas = true;
+        if (sesionesPersonalizadas) {
+          resultado.sesionesPersonalizadas = true;
+          resultado.actualizadoEn = Number(fuenteSesiones?.actualizadoEn || 0);
+        }
         return resultado;
       }
 
