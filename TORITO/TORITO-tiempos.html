@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tiempos | TORITO</title>
+<title>Tiempos | TORITO FEMENINO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 :root{--naranja:#f47721;--naranja-oscuro:#dc5e0b;--naranja-claro:#fff0e6;--negro:#171717;--fondo:#f7f8fa;--texto:#242424;--gris:#f4f5f7;--gris-texto:#747474;--borde:#e8e8e8;--blanco:#fff;--verde:#18864b;--verde-fondo:#e3f7eb;--rojo:#c62828;--rojo-fondo:#fde9e9;--morado:#6447bd;--morado-fondo:#f0ecff;--radio:13px;--sombra:0 4px 18px rgba(0,0,0,.045)}
 *{box-sizing:border-box}
@@ -288,10 +288,10 @@ main{padding:20px 10px 28px}
 <header class="barra-superior">
     <button class="boton-menu" id="botonMenu" type="button" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="true">☰</button>
     <div class="identidad-club">
-        <img class="logo-club" src="TORITO%20-%20Logo.png" alt="Logo TORITO" onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='TORITO%20-%20Logo.png'}else{this.style.display='none'}">
-        <div class="textos-club"><h1>TORITO</h1><p>Tiempos y rendimiento físico</p></div>
+        <img class="logo-club" src="TORITO-Logo TORITO.jpg" alt="Logo TORITO" onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='TORITO-Logo TORITO.jpg'}else{this.style.display='none'}">
+        <div class="textos-club"><h1>TORITO FEMENINO</h1><p>Tiempos y rendimiento físico</p></div>
     </div>
-    <button class="perfil" id="botonPerfil" type="button" aria-label="Ver perfil de usuario"><span class="avatar" id="avatarUsuario">U</span><span class="informacion-perfil"><span class="nombre-perfil" id="nombreUsuario">Usuario</span><span class="rol-perfil" id="rolUsuario">Club Torito</span></span></button>
+    <button class="perfil" id="botonPerfil" type="button" aria-label="Ver perfil de usuario"><span class="avatar" id="avatarUsuario">U</span><span class="informacion-perfil"><span class="nombre-perfil" id="nombreUsuario">Usuario</span><span class="rol-perfil" id="rolUsuario">Club TORITO</span></span></button>
 </header>
 <div class="fondo-sidebar" id="fondoSidebar"></div>
 <div class="contenedor">
@@ -431,7 +431,8 @@ function normalizarRegistro(r,i=0){
         pasadas:pares.map(p=>p.tiempo),
         fc10Pasadas:pares.map(p=>Number.isInteger(p.fc10)&&p.fc10>=0?p.fc10:null),
         observaciones:String(r.observaciones||""),
-        creadoEn:r.creadoEn||""
+        creadoEn:r.creadoEn||"",
+        actualizadoEn:r.actualizadoEn||""
     };
 }
 function cargarRegistros(){
@@ -454,15 +455,51 @@ function guardarRegistros(){
 }
 
 // Puente entre la página de tiempos y Firebase.
-window.aplicarRegistrosTiemposNube = function(lista){
-    datasetRendimiento = Array.isArray(lista)
+window.aplicarRegistrosTiemposNube = async function(lista){
+    // La nube y el navegador se combinan por ID. Nunca se reemplaza la copia
+    // local completa por una respuesta vacía o parcial de Firestore.
+    const locales = cargarRegistros();
+    const remotos = Array.isArray(lista)
         ? lista.map(normalizarRegistro).filter(r => r && r.jugadora && r.pasadas.length)
         : [];
+
+    const porId = new Map();
+    remotos.forEach(registro => porId.set(String(registro.id), registro));
+
+    const pendientesDeSubir = [];
+    locales.forEach(local => {
+        const id = String(local.id);
+        const remoto = porId.get(id);
+        if (!remoto) {
+            porId.set(id, local);
+            pendientesDeSubir.push(local);
+            return;
+        }
+
+        const fechaLocal = Date.parse(local.actualizadoEn || local.creadoEn || "") || 0;
+        const fechaRemota = Date.parse(remoto.actualizadoEn || remoto.creadoEn || "") || 0;
+        if (fechaLocal > fechaRemota) {
+            porId.set(id, local);
+            pendientesDeSubir.push(local);
+        }
+    });
+
+    datasetRendimiento = [...porId.values()];
 
     try{
         localStorage.setItem(STORAGE_KEY, JSON.stringify(datasetRendimiento));
     }catch(e){
-        console.warn("No se pudo guardar la copia local de los tiempos.", e);
+        console.warn("No se pudo guardar la copia local combinada de los tiempos.", e);
+    }
+
+    // Recupera en Firestore los registros que solo existían en este navegador
+    // o que tenían una versión local más reciente.
+    for (const registro of pendientesDeSubir) {
+        try {
+            await setDoc(doc(db, "torito_tiemposRendimiento", String(registro.id)), registro);
+        } catch (error) {
+            console.error("No se pudo recuperar un registro local de tiempos:", registro.id, error);
+        }
     }
 
     if(typeof actualizarTodo === "function"){
@@ -508,7 +545,7 @@ window.aplicarJugadorasTiemposNube = function(lista){
     
 /* Obtiene las jugadoras guardadas por Jugadoras.html sin inventar nombres ni registros. */
 function leerBaseJugadoras(){
-    const claves=["jugadorasTORITO","torito_jugadoras","jugadorasTORITO_v1","plantelTORITO","baseJugadorasTORITO","torito_toritoJugadoras"];
+    const claves=["jugadorasTORITO","jugadoras","jugadorasTORITO_v1","plantelTORITO","baseJugadorasTORITO","toritoJugadoras"];
     const encontrados=[];
     const visitar=(v,catHeredada="")=>{
         if(Array.isArray(v)){
@@ -1008,7 +1045,7 @@ $("tbodyRendimientos").addEventListener("click",e=>{
 
 /* Perfil, navegación, sesión y sincronización */
 function obtenerUsuario(){try{const raw=localStorage.getItem("usuarioTORITO");if(!raw)return"Usuario";try{const d=JSON.parse(raw);if(typeof d==="string")return d;return d.nombreCompleto||d.nombre||d.usuario||d.username||"Usuario";}catch(_){return raw;}}catch(_){return"Usuario";}}
-function actualizarPerfil(){const nombre=obtenerUsuario(),ini=nombre.trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase()||"U";$("nombreUsuario").textContent=nombre;$("avatarUsuario").textContent=ini;$("rolUsuario").textContent="Club Torito";$("nombrePerfilDetalle").textContent=nombre;$("avatarPerfilModal").textContent=ini;$("rolPerfilDetalle").textContent="Club Torito";}
+function actualizarPerfil(){const nombre=obtenerUsuario(),ini=nombre.trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase()||"U";$("nombreUsuario").textContent=nombre;$("avatarUsuario").textContent=ini;$("rolUsuario").textContent="Club TORITO";$("nombrePerfilDetalle").textContent=nombre;$("avatarPerfilModal").textContent=ini;$("rolPerfilDetalle").textContent="Club TORITO";}
 function abrirPerfil(){$("modalPerfil").classList.add("visible");}
 function cerrarPerfil(){$("modalPerfil").classList.remove("visible");}
 $("botonPerfil").addEventListener("click",abrirPerfil);
@@ -1058,7 +1095,7 @@ actualizarTodo();
 
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
     getFirestore,
@@ -1067,7 +1104,7 @@ import {
     doc,
     setDoc,
     deleteDoc
-} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCsOaJVo8P5reZvfp7vjBkhkP79C_mEO94",
@@ -1077,9 +1114,9 @@ const firebaseConfig = {
     messagingSenderId: "497702302753",
     appId: "1:497702302753:web:04d419e13ded4b59371f60",
     measurementId: "G-32VFQHWP5Y"
-  };
+};
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ======================================
@@ -1087,7 +1124,7 @@ const db = getFirestore(app);
 // ======================================
 
 onSnapshot(
-    collection(db,"torito_jugadoras"),
+    collection(db, "torito_jugadoras"),
     (snapshot) => {
         const lista = snapshot.docs.map(documento => ({
             id: documento.id,
@@ -1109,7 +1146,7 @@ onSnapshot(
 // ======================================
 
 onSnapshot(
-    collection(db,"torito_tiemposRendimiento"),
+    collection(db, "torito_tiemposRendimiento"),
     (snapshot) => {
         const lista = snapshot.docs.map(documento => ({
             ...documento.data(),
@@ -1138,7 +1175,7 @@ onSnapshot(
 
 window.guardarRegistroTiemposNube = async function(registro) {
     await setDoc(
-        doc(db,"torito_tiemposRendimiento", String(registro.id)),
+        doc(db, "torito_tiemposRendimiento", String(registro.id)),
         registro
     );
 };
@@ -1149,7 +1186,7 @@ window.guardarRegistroTiemposNube = async function(registro) {
 
 window.eliminarRegistroTiemposNube = async function(id) {
     await deleteDoc(
-        doc(db,"torito_tiemposRendimiento", String(id))
+        doc(db, "torito_tiemposRendimiento", String(id))
     );
 };
 
