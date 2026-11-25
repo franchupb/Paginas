@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Planilla de Testeos - TORITO</title>
+<title>Planilla de Testeos - TORITO FEM</title>
 
 <style>
 :root {
@@ -736,9 +736,9 @@ thead .col-fija-nombre {
 <!-- BARRA SUPERIOR -->
 <header class="barra-superior">
   <button class="boton-menu" id="botonMenu" aria-label="Abrir menú" onclick="alternarSidebar()">☰</button>
-  <img class="logo-superior" src="TORITO%20-%20Logo.png" alt="Logo TORITO" onerror="this.style.display='none'">
+  <img class="logo-superior" src="TORITO-Logo TORITO.jpg" alt="Logo TORITO" onerror="this.style.display='none'">
   <div class="titulo-superior">
-    <h1>TORITO</h1>
+    <h1>TORITO FEMENINO</h1>
     <p>Planilla de Testeos y Evaluaciones Físicas</p>
   </div>
   <div id="badgeNube" class="estado-nube">☁️ Conectando...</div>
@@ -746,7 +746,7 @@ thead .col-fija-nombre {
     <div class="avatar" id="avatarUsuario">U</div>
     <div>
       <div class="nombre-perfil" id="nombreUsuario">Usuario</div>
-      <div class="rol-perfil" id="rolUsuario">Club Torito</div>
+      <div class="rol-perfil" id="rolUsuario">Club TORITO</div>
     </div>
   </div>
 </header>
@@ -858,7 +858,7 @@ thead .col-fija-nombre {
 
       <!-- ENCABEZADO VISUAL DE LA PLANILLA -->
       <div class="titulo-hoja-planilla">
-        <h3 id="tituloPlanillaDivision">TORITO SUB 14</h3>
+        <h3 id="tituloPlanillaDivision">TORITO FEMENINO SUB 14</h3>
         <span>Test - Pruebas</span>
       </div>
 
@@ -925,27 +925,27 @@ thead .col-fija-nombre {
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
-   CONFIGURACIÓN DE FIREBASE CLOUD FIRESTORE (TORITO)
+   CONFIGURACIÓN DE FIREBASE CLOUD FIRESTORE (torito-b1913)
 ===================================================== */
 const firebaseConfig = {
-    apiKey: "AIzaSyCsOaJVo8P5reZvfp7vjBkhkP79C_mEO94",
-    authDomain: "torito-56078.firebaseapp.com",
-    projectId: "torito-56078",
-    storageBucket: "torito-56078.firebasestorage.app",
-    messagingSenderId: "497702302753",
-    appId: "1:497702302753:web:04d419e13ded4b59371f60",
-    measurementId: "G-32VFQHWP5Y"
-  };
+  apiKey: "AIzaSyCsOaJVo8P5reZvfp7vjBkhkP79C_mEO94",
+  authDomain: "torito-56078.firebaseapp.com",
+  projectId: "torito-56078",
+  storageBucket: "torito-56078.firebasestorage.app",
+  messagingSenderId: "497702302753",
+  appId: "1:497702302753:web:04d419e13ded4b59371f60",
+  measurementId: "G-32VFQHWP5Y"
+};
 
 let db = null;
 let nubeActiva = false;
 
 try {
-  const app = initializeApp(firebaseConfig);
+  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   db = getFirestore(app);
   nubeActiva = true;
 } catch (e) {
@@ -955,25 +955,45 @@ try {
 /* =====================================================
    USUARIO Y PERMISOS
 ===================================================== */
-const usuarioGuardado = (localStorage.getItem("usuarioTORITO") || "").trim();
-if (!usuarioGuardado) {
-  window.location.href = "TORITO-Loing.html";
+let usuarioGuardado = (localStorage.getItem("usuarioTORITO") || "").trim();
+let usuarioNormalizado = usuarioGuardado.toLowerCase();
+let rolTORITO = localStorage.getItem("rolTORITO") || "";
+let esFran = rolTORITO === "admin";
+let esToto = ["editor", "cuerpo_tecnico"].includes(rolTORITO);
+let esBianca = rolTORITO === "jugadora";
+let puedeEditar = ["admin", "editor", "coordinadora", "cuerpo_tecnico"].includes(rolTORITO);
+
+function normalizarCategoriaPruebas(valor) {
+  const clave = String(valor || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const alias = clave.match(/^(?:sub|s|u)?(10|12|14|16)$/);
+  return alias ? "sub" + alias[1] : clave;
 }
 
-const usuarioNormalizado = usuarioGuardado.toLowerCase();
-const rolPerfilTORITO = (localStorage.getItem("rolTORITO") || "").trim().toLowerCase();
-const esFran = rolPerfilTORITO === "admin";
-const esToto = ["editor", "cuerpo_tecnico", "coordinadora"].includes(rolPerfilTORITO);
-const esBianca = rolPerfilTORITO === "jugadora";
-const puedeEditar = localStorage.getItem("puedeEditarTORITO") === "true";
-
-document.getElementById("nombreUsuario").textContent = usuarioGuardado;
-document.getElementById("avatarUsuario").textContent = usuarioGuardado.charAt(0).toUpperCase();
-document.getElementById("rolUsuario").textContent = esFran ? "Administrador" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora · Sub 14" : "Club Torito";
-
-if (!puedeEditar) {
-  document.getElementById("accionesTecnico").style.display = "none";
+function aplicarPerfilCentralPruebas(perfil) {
+  if (!perfil) return;
+  usuarioGuardado = String(perfil.usuario || perfil.nombre || localStorage.getItem("usuarioTORITO") || "").trim();
+  usuarioNormalizado = usuarioGuardado.toLowerCase();
+  rolTORITO = String(perfil.rol || "").toLowerCase();
+  esFran = rolTORITO === "admin";
+  esToto = rolTORITO === "cuerpo_tecnico";
+  esBianca = rolTORITO === "jugadora";
+  puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolTORITO);
+  document.getElementById("nombreUsuario").textContent = perfil.nombre || usuarioGuardado || "Usuario";
+  document.getElementById("avatarUsuario").textContent = (perfil.nombre || usuarioGuardado || "U").trim().charAt(0).toUpperCase();
+  document.getElementById("rolUsuario").textContent = esFran ? "Administrador" : rolTORITO === "coordinadora" ? "Coordinadora" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora" : "Club TORITO";
+  const acciones = document.getElementById("accionesTecnico");
+  if (acciones) acciones.style.display = puedeEditar ? "" : "none";
+  if (esBianca && Array.isArray(perfil.categorias) && perfil.categorias.length) {
+    const selector = document.getElementById("selectDivision");
+    if (selector) {
+      const opcion = Array.from(selector.options).find(o => normalizarCategoriaPruebas(o.value || o.textContent) === normalizarCategoriaPruebas(perfil.categorias[0]));
+      if (opcion) { selector.value = opcion.value; selector.dispatchEvent(new Event("change", { bubbles: true })); }
+    }
+  }
+  if (typeof renderizarTablaPlanilla === "function") renderizarTablaPlanilla();
 }
+if (window.TORITO_PERMISOS) aplicarPerfilCentralPruebas(window.TORITO_PERMISOS);
+else window.addEventListener("torito-permisos-listos", event => aplicarPerfilCentralPruebas(event.detail || window.TORITO_PERMISOS), { once: true });
 
 window.cerrarSesion = function(event) {
   event.preventDefault();
@@ -1038,13 +1058,13 @@ async function cargarJugadorasPorDivision(division) {
   // 1. Intentar leer desde Firestore (colección "jugadoras" o documento "plantel/jugadoras")
   if (nubeActiva && db) {
     try {
-      const snapCol = await getDocs(collection(db,"torito_jugadoras"));
+      const snapCol = await getDocs(collection(db, "torito_jugadoras"));
       snapCol.forEach(docSnap => {
         listaTotal.push({ id: docSnap.id, ...docSnap.data() });
       });
 
       if (listaTotal.length === 0) {
-        const docPlantel = await getDoc(doc(db,"torito_plantel", "jugadoras"));
+        const docPlantel = await getDoc(doc(db, "torito_plantel", "jugadoras"));
         if (docPlantel.exists() && Array.isArray(docPlantel.data().lista)) {
           listaTotal = docPlantel.data().lista;
         }
@@ -1093,7 +1113,7 @@ async function cargarDatosPlanilla(division, mes) {
   let cargadoDeNube = false;
   if (nubeActiva && db) {
     try {
-      const refDoc = doc(db,"torito_testeos_torito", clave);
+      const refDoc = doc(db, "torito_testeos_torito", clave);
       const snap = await getDoc(refDoc);
       if (snap.exists()) {
         const data = snap.data();
@@ -1149,7 +1169,7 @@ function programarGuardadoNube() {
   timeoutGuardado = setTimeout(async () => {
     if (nubeActiva && db) {
       try {
-        await setDoc(doc(db,"torito_testeos_torito", clave), payload);
+        await setDoc(doc(db, "torito_testeos_torito", clave), payload);
         actualizarEstadoNube("", "☁️ Guardado en la nube");
       } catch (err) {
         console.error("Error guardando en Firestore:", err);
@@ -1207,7 +1227,7 @@ function renderizarTablaPlanilla() {
   const division = document.getElementById("selectDivision").value;
   const mes = document.getElementById("selectMes").value;
 
-  document.getElementById("tituloPlanillaDivision").textContent = `TORITO ${division.toUpperCase()}`;
+  document.getElementById("tituloPlanillaDivision").textContent = `TORITO FEMENINO ${division.toUpperCase()}`;
 
   const thead = document.getElementById("theadTesteos");
   const tbody = document.getElementById("tbodyTesteos");
@@ -1432,7 +1452,9 @@ window.eliminarColumna = function(indice) {
 // Inicialización
 window.addEventListener("DOMContentLoaded", () => {
   if (esBianca) {
-    document.getElementById("selectDivision").value = "Sub 14";
+    let categorias = [];
+    try { categorias = JSON.parse(localStorage.getItem("categoriasTORITO") || "[]"); } catch (_) {}
+    if (categorias.length) document.getElementById("selectDivision").value = categorias[0];
   }
   cambiarFiltroPlanilla();
 });
