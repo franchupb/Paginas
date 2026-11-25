@@ -66,7 +66,8 @@ export function guardarPerfilLocalTORITO(perfil, usuarioAlternativo = "") {
   const categorias = Array.isArray(perfil?.categorias)
     ? perfil.categorias
     : (perfil?.categoria ? [perfil.categoria] : []);
-  const usuario = String(perfil?.usuario || usuarioAlternativo || perfil?.nombre || "").trim();
+  const rol = String(perfil?.rol || perfil?.tipo || "").trim().toLowerCase();
+  const usuario = String((rol === "jugadora" ? (perfil?.jugadora || perfil?.nombre) : perfil?.usuario) || usuarioAlternativo || perfil?.nombre || "").trim();
   try {
     localStorage.setItem("usuarioTORITO", usuario);
     localStorage.setItem("nombreTORITO", String(perfil?.nombre || usuario).trim());
