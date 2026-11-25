@@ -104,13 +104,16 @@
   function mostrarPerfil() {
     if (!perfilActivo || !configActiva) return;
     const nombre = configActiva.nombre;
-    const rolTexto = ({
-      admin: "Administrador",
-      editor: "Editor",
-      coordinadora: "Coordinador",
-      cuerpo_tecnico: "Cuerpo técnico",
-      jugadora: "Jugadora"
-    })[configActiva.rol] || configActiva.rol;
+    const rolOriginal = normalizar(perfilActivo?.rol || perfilActivo?.tipo || "");
+    const rolTexto = (rolOriginal === "coordinadora" || rolOriginal === "coordinador")
+      ? "Coordinadora"
+      : ({
+          admin: "Administrador",
+          editor: "Editor",
+          coordinadora: "Coordinadora",
+          cuerpo_tecnico: "Cuerpo técnico",
+          jugadora: "Jugadora"
+        })[configActiva.rol] || configActiva.rol;
     ["nombreUsuario", "nombrePerfil", "saludoUsuario"].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.textContent = nombre;
@@ -134,9 +137,10 @@
     const categoriasPermitidas = new Set(
       (configActiva.categorias || []).map(normalizarDivision).filter(Boolean)
     );
-    if (!categoriasPermitidas.size) return;
+    const selectores = root.querySelectorAll
+      ? [...(root.matches?.("select") ? [root] : []), ...root.querySelectorAll("select")]
+      : [];
 
-    const selectores = root.querySelectorAll ? [ ...(root.matches?.("select") ? [root] : []), ...root.querySelectorAll("select") ] : [];
     selectores.forEach(select => {
       if (!esSelectorCategoria(select)) return;
       Array.from(select.options || []).forEach(option => {
@@ -150,16 +154,40 @@
         const categoria = categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent);
         return categoria && categoriasPermitidas.has(categoria);
       });
-      if (!opcionesPermitidas.length) return;
+      if (!opcionesPermitidas.length) {
+        select.value = "";
+        select.disabled = true;
+        select.setAttribute("aria-disabled", "true");
+        select.title = "Tu perfil no tiene categorías habilitadas para esta sección.";
+        return;
+      }
+
+      select.removeAttribute("aria-disabled");
+      select.removeAttribute("title");
       if (!opcionesPermitidas.some(option => option.value === select.value)) {
         select.value = opcionesPermitidas[0].value;
         select.dispatchEvent(new Event("change", { bubbles: true }));
       }
-      // Un perfil con una sola categoría no puede cambiarla; el CT
-      // con varias puede alternar únicamente entre las divisiones asignadas.
       select.disabled = opcionesPermitidas.length === 1;
     });
   }
+
+  document.addEventListener("change", event => {
+    const select = event.target;
+    if (!configActiva || configActiva.rol === "admin" || !esSelectorCategoria(select)) return;
+    const categoria = categoriaDeTexto(select.value) ||
+      categoriaDeTexto(select.selectedOptions?.[0]?.textContent);
+    const permitidas = new Set((configActiva.categorias || []).map(normalizarDivision).filter(Boolean));
+    if (categoria && !permitidas.has(categoria)) {
+      const alternativa = Array.from(select.options || []).find(option => {
+        const valor = categoriaDeTexto(option.value) || categoriaDeTexto(option.textContent);
+        return valor && permitidas.has(valor);
+      });
+      select.value = alternativa?.value || "";
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }, true);
   function esSelectorJugadora(select) {
     return /jugadora|jugador|atleta|plantel/i.test([
       select.id, select.name, select.getAttribute("aria-label"), select.getAttribute("data-field")
@@ -551,8 +579,13 @@
                 temporizadorObserverDOM = null;
                 const nodos = [...nodosPendientes];
                 nodosPendientes.clear();
+                const selectoresCategorias = new Set();
                 nodos.forEach(nodo => {
                   if (!nodo.isConnected) return;
+                  if (nodo.matches?.("select")) selectoresCategorias.add(nodo);
+                  const selectorPadre = nodo.closest?.("select");
+                  if (selectorPadre) selectoresCategorias.add(selectorPadre);
+                  nodo.querySelectorAll?.("select").forEach(select => selectoresCategorias.add(select));
                   aplicarCategorias(nodo);
                   aplicarSoloLectura(nodo);
                   if (!base.puedeEliminar) {
@@ -565,9 +598,15 @@
                     });
                   }
                 });
+                selectoresCategorias.forEach(select => {
+                  if (select.isConnected) aplicarCategorias(select);
+                });
               }, 120);
             });
             observerDOM.observe(document.body, { childList: true, subtree: true });
+            // Los módulos de cada página pueden reconstruir selectores al recibir
+            // torito-permisos-listos, antes de crear el observador. Revalidarlos aquí.
+            aplicarCategorias(document);
           }
           if (window.TORITO_LAYOUT_LISTO) mostrarPaginaAutorizada();
         } catch (error) {

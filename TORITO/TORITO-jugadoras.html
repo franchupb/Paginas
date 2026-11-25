@@ -1259,7 +1259,7 @@
       .puesto-mini { min-height: 58px; }
     }
   </style>
-<script src="TORITO-permisos.js?v=20261124-auth1"></script>
+<script src="TORITO-permisos.js?v=20261125-categorias1"></script>
 </head>
 <body>
   <header class="barra-superior">
@@ -1853,10 +1853,13 @@
       }
 
       function puedeAccederCategoria(categoria) {
-        const permitidasPerfil = window.TORITO_PERMISOS?.categorias;
-        const lista = Array.isArray(permitidasPerfil) && permitidasPerfil.length
-          ? permitidasPerfil
-          : categoriasPermitidas;
+        const permisos = window.TORITO_PERMISOS;
+        // Sin perfil validado no se habilita ninguna categoría.
+        if (!permisos) return false;
+        if (permisos.rol === "admin") return categoriasPermitidas.some(permitida =>
+          normalizarCategoriaPlantel(permitida) === normalizarCategoriaPlantel(categoria)
+        );
+        const lista = Array.isArray(permisos.categorias) ? permisos.categorias : [];
         return lista.some(permitida =>
           normalizarCategoriaPlantel(permitida) === normalizarCategoriaPlantel(categoria)
         );
