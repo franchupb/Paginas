@@ -219,6 +219,7 @@
       min-height: calc(100vh - 84px) !important;
       align-items: stretch !important;
     }
+    .contenedor > main.main { margin-left: 0 !important; flex: 1 1 auto !important; min-width: 0 !important; }
     #sidebar.sidebar,
     #sidebar.barra-lateral {
       position: relative !important;
@@ -639,6 +640,20 @@
   if (!barra || !sidebar) {
     console.error("TORITO: no se encontró la barra superior o el contenedor lateral.");
     return;
+  }
+
+  // Algunas páginas antiguas (como la pizarra) no tenían un contenedor flex.
+  // Se crea solo cuando la barra lateral y el contenido principal son hermanos.
+  if (!document.querySelector(".contenedor")) {
+    const principal = document.querySelector("main");
+    const padre = sidebar.parentElement;
+    if (principal && padre && principal.parentElement === padre) {
+      const contenedor = document.createElement("div");
+      contenedor.className = "contenedor";
+      padre.insertBefore(contenedor, sidebar);
+      contenedor.appendChild(sidebar);
+      contenedor.appendChild(principal);
+    }
   }
 
   // Elimina los controladores antiguos de cada página. Todas las páginas
