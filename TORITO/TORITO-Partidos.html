@@ -2353,8 +2353,8 @@ let rolTORITO = localStorage.getItem("rolTORITO") || "";
 function esFran() { return rolTORITO === "admin"; }
 function esToto() { return rolTORITO === "cuerpo_tecnico"; }
 function esBianca() { return rolTORITO === "jugadora"; }
-let puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolTORITO);
-let puedeEliminar = ["admin", "coordinadora"].includes(rolTORITO);
+let puedeEditar = ["admin", "editor", "coordinadora", "cuerpo_tecnico"].includes(rolTORITO);
+let puedeEliminar = ["admin", "editor", "coordinadora"].includes(rolTORITO);
 
 // Categorías visibles en Partidos: se toma primero la matriz central de permisos.
 function sincronizarPerfilPartidos(evento) {
@@ -2363,11 +2363,12 @@ function sincronizarPerfilPartidos(evento) {
     usuarioGuardado = String(perfil.usuario || perfil.nombre || leerUsuario()).trim();
     usuarioNormalizado = normalizarUsuario(usuarioGuardado);
     rolTORITO = String(perfil.rol || "").toLowerCase();
-    puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolTORITO);
-    puedeEliminar = ["admin", "coordinadora"].includes(rolTORITO);
+    puedeEditar = ["admin", "editor", "coordinadora", "cuerpo_tecnico"].includes(rolTORITO);
+    puedeEliminar = ["admin", "editor", "coordinadora"].includes(rolTORITO);
 
     const nombre = perfil.nombre || usuarioGuardado || "Usuario";
-    const rolTexto = ({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rolTORITO] || "Club TORITO";
+    const rolOriginal = String(perfil.rol || perfil.tipo || "").trim().toLowerCase();
+    const rolTexto = ({admin:"Administrador",editor:"Coordinadora",coordinadora:"Coordinadora",coordinador:"Coordinador",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rolOriginal] || ({admin:"Administrador",editor:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rolTORITO] || "Club TORITO";
     ["nombreUsuario","nombrePerfil"].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=nombre; });
     ["avatarUsuario","avatarPerfil"].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=nombre.charAt(0).toUpperCase(); });
     ["rolUsuario","rolPerfil"].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=rolTexto; });
@@ -2383,19 +2384,17 @@ if (window.TORITO_PERMISOS) sincronizarPerfilPartidos({ detail: window.TORITO_PE
 
 function obtenerCategoriasVisiblesPartidos() {
     const perfil = window.TORITO_PERMISOS;
-    let categorias = Array.isArray(perfil?.categorias) ? perfil.categorias : null;
+    // El rol Admin es el único que obtiene la vista completa.
+    if (perfil?.rol === "admin" || rolTORITO === "admin") return [...DIVISIONES];
 
+    let categorias = Array.isArray(perfil?.categorias) ? perfil.categorias : null;
     if (!categorias) {
         try {
             const guardadas = JSON.parse(localStorage.getItem("categoriasTORITO") || "null");
             if (Array.isArray(guardadas)) categorias = guardadas;
         } catch (_) {}
     }
-
-    // Admin y coordinadoras conservan la vista completa.
-    if (!categorias || !["cuerpo_tecnico", "jugadora"].includes(rolTORITO)) {
-        return [...DIVISIONES];
-    }
+    if (!Array.isArray(categorias) || !categorias.length) return [];
 
     const permitidas = new Set(categorias.map(valor =>
         String(valor || "").normalize("NFD")
