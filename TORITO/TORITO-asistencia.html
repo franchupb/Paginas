@@ -2685,7 +2685,7 @@ let categoriasDisponibles = obtenerCategoriasDisponibles();
 
 function obtenerCategoriaInicial() {
   const permisos = window.TORITO_PERMISOS;
-  if (permisos?.rol === "jugadora" || permisos?.rol === "cuerpo_tecnico") {
+  if (permisos?.rol === "jugadora" || permisos?.rol === "cuerpo_tecnico" || permisos?.rol === "editor") {
     const permitida = (permisos.categorias || [])[0];
     const coincidePermitida = categoriasDisponibles.find(c =>
       normalizarCategoria(c) === normalizarCategoria(permitida)
