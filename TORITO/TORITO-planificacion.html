@@ -2300,7 +2300,7 @@ button:disabled {
 
 .opcion-pruebas-ttt,.opcion-test-fisico{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e5e8ec;border-radius:9px;background:#fff;color:#343840;font-size:12px;line-height:1.4}.opcion-pruebas-ttt{margin-top:12px;background:#fffaf6;border-color:#f3d7c4;font-weight:750}.opcion-pruebas-ttt input,.opcion-test-fisico input{width:17px;height:17px;flex:0 0 17px;accent-color:#f47721}.lista-testeos-fisicos{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}.opcion-test-fisico{align-items:flex-start}.opcion-test-fisico span{display:flex;flex-direction:column;gap:3px}.opcion-test-fisico small{color:#656b75;font-size:11px}.aviso-testeos-vacios{margin:0;padding:10px;border:1px dashed #e3c7b4;border-radius:8px;color:#7a6253;font-size:11px;line-height:1.5}
 
-.bloque-partido select[multiple]{min-height:132px;padding:9px 11px;line-height:1.5}.ayuda-rivales{display:block;margin-top:7px;color:#697386;font-size:11px;line-height:1.45}.preview-rivales-lista{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;width:100%}.preview-rival-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid #dce6f8;border-radius:999px;background:#fff;font-size:12px}.preview-rival-chip img{width:22px;height:22px;object-fit:contain}
+.ayuda-rivales{display:block;margin-top:7px;color:#697386;font-size:11px;line-height:1.45}.lista-rivales-torneo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 10px;max-height:230px;overflow:auto;padding:10px;border:1px solid #e1e5eb;border-radius:10px;background:#fff}.opcion-rival-torneo{display:flex;align-items:center;gap:8px;min-width:0;padding:5px 6px;border-radius:7px;font-size:12px;font-weight:650;cursor:pointer}.opcion-rival-torneo:hover{background:#f5f7fa}.opcion-rival-torneo input{width:16px;height:16px;flex:0 0 16px;accent-color:var(--azul)}.opcion-rival-torneo span{overflow-wrap:anywhere}.agregar-rival-personalizado{margin-top:12px}.agregar-rival-personalizado>label{display:block;margin-bottom:6px;font-size:11px;font-weight:850;letter-spacing:.35px}.fila-agregar-rival{display:flex;gap:8px;align-items:stretch}.fila-agregar-rival input{flex:1;min-width:0}.boton-agregar-rival{flex:0 0 auto;padding:0 14px;border:0;border-radius:8px;background:var(--azul);color:#fff;font-size:12px;font-weight:800;cursor:pointer}.boton-agregar-rival:hover{filter:brightness(.94)}.preview-rivales-lista{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;width:100%}.preview-rival-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid #dce6f8;border-radius:999px;background:#fff;font-size:12px}.preview-rival-chip img{width:22px;height:22px;object-fit:contain}@media(max-width:520px){.lista-rivales-torneo{grid-template-columns:1fr}.fila-agregar-rival{flex-direction:column}.boton-agregar-rival{min-height:40px}}
 </style>
 <script src="TORITO-permisos.js?v=20261125-categorias1"></script>
 </head>
@@ -4262,12 +4262,62 @@ function normalizarListaRivales(valores, rivalLegado = "") {
   if (!unicos.length && String(rivalLegado || "").trim()) unicos.push(String(rivalLegado).trim());
   return unicos;
 }
-function crearOpcionesRivalesMultiples(valores, rivalLegado = "") {
+function crearOpcionesRivalUnico(valor = "") {
+  const seleccionado = String(valor || "").trim();
+  const conocidos = new Set(ESCUDOS_CLUBES.map(club => club.nombre));
+  const extras = seleccionado && !conocidos.has(seleccionado) ? [seleccionado] : [];
+  return `<option value="">Seleccionar club...</option>` +
+    [...ESCUDOS_CLUBES.map(club => club.nombre), ...extras]
+      .map(nombre => `<option value="${escaparHTML(nombre)}" ${seleccionado === nombre ? "selected" : ""}>${escaparHTML(nombre)}</option>`)
+      .join("");
+}
+
+function crearOpcionesRivalesTorneo(valores, rivalLegado = "", indice = 0) {
   const seleccionados = new Set(normalizarListaRivales(valores, rivalLegado));
   const conocidos = new Set(ESCUDOS_CLUBES.map(club => club.nombre));
   const extras = [...seleccionados].filter(nombre => !conocidos.has(nombre));
-  return [...ESCUDOS_CLUBES.map(club => club.nombre), ...extras]
-    .map(nombre => `<option value="${escaparHTML(nombre)}" ${seleccionados.has(nombre) ? "selected" : ""}>${escaparHTML(nombre)}</option>`).join("");
+  return [...ESCUDOS_CLUBES.map(club => club.nombre), ...extras].map(nombre => `
+    <label class="opcion-rival-torneo">
+      <input type="checkbox" data-index="${indice}" data-field="rivalTorneoCheckbox" value="${escaparHTML(nombre)}" ${seleccionados.has(nombre) ? "checked" : ""}>
+      <span>${escaparHTML(nombre)}</span>
+    </label>
+  `).join("");
+}
+
+function agregarRivalesPersonalizados(indice) {
+  if (!modoEdicion || !Number.isInteger(indice)) return;
+  const sesion = sesionesActuales[indice];
+  if (!sesion || sesion.intensidad !== "partido" || sesion.tipoPartido !== "torneo") return;
+
+  const campo = document.getElementById("nuevoRival-" + indice);
+  const nombres = String(campo?.value || "").split(/[;,\n]+/).map(nombre => nombre.trim()).filter(Boolean);
+  if (!nombres.length) {
+    mostrarNotificacion("Escribí al menos un equipo para agregar.");
+    campo?.focus();
+    return;
+  }
+
+  const actuales = normalizarListaRivales(sesion.rivales, sesion.rival);
+  const vistos = new Set(actuales.map(nombre => nombre.toLocaleLowerCase("es")));
+  const agregados = nombres.filter(nombre => {
+    const clave = nombre.toLocaleLowerCase("es");
+    if (vistos.has(clave)) return false;
+    vistos.add(clave);
+    return true;
+  });
+
+  if (!agregados.length) {
+    mostrarNotificacion("Ese equipo ya está seleccionado.");
+    campo.value = "";
+    return;
+  }
+
+  sesion.rivales = [...actuales, ...agregados];
+  sesion.rival = sesion.rivales[0] || "";
+  sesion.activa = true;
+  renderizarSemana();
+  guardarDatosAutomaticamente(false);
+  mostrarNotificacion(agregados.length === 1 ? "Equipo agregado al torneo." : agregados.length + " equipos agregados al torneo.");
 }
 function crearHTMLPreviewRivales(valores, rivalLegado = "") {
   const rivales = normalizarListaRivales(valores, rivalLegado);
@@ -4733,12 +4783,27 @@ function renderizarContenidoSesion(sesion, indice) {
             <option value="torneo" ${sesion.tipoPartido === "torneo" ? "selected" : ""}>Torneo (varios rivales)</option>
           </select>
         </div>
-        <div class="campo" style="margin-bottom:12px">
-          <label for="campo-${indice}-rivales">RIVALES DE LA JORNADA</label>
-          <select id="campo-${indice}-rivales" data-index="${indice}" data-field="rivales" multiple size="5" aria-describedby="ayudaRivales-${indice}">
-            ${crearOpcionesRivalesMultiples(sesion.rivales, sesion.rival)}
+        <div class="campo campo-rival-unico" style="margin-bottom:12px;${sesion.tipoPartido === "torneo" ? "display:none" : ""}">
+          <label for="campo-${indice}-rival">CLUB RIVAL</label>
+          <select id="campo-${indice}-rival" data-index="${indice}" data-field="rival" aria-describedby="ayudaRival-${indice}">
+            ${crearOpcionesRivalUnico(normalizarListaRivales(sesion.rivales, sesion.rival)[0] || "")}
           </select>
-          <small id="ayudaRivales-${indice}" class="ayuda-rivales">En Partido elegí un rival; en Torneo podés seleccionar varios. En computadora usá Ctrl/Cmd para marcar más de uno.</small>
+          <small id="ayudaRival-${indice}" class="ayuda-rivales">Elegí un solo club rival para este partido.</small>
+        </div>
+        <div class="campo campo-rivales-torneo" style="margin-bottom:12px;${sesion.tipoPartido === "torneo" ? "" : "display:none"}">
+          <label>EQUIPOS DEL TORNEO</label>
+          <div class="lista-rivales-torneo" id="listaRivalesTorneo-${indice}" aria-label="Equipos participantes del torneo">
+            ${crearOpcionesRivalesTorneo(sesion.rivales, sesion.rival, indice)}
+          </div>
+          <small class="ayuda-rivales">Tildá todos los equipos contra los que jugaron durante la jornada.</small>
+          <div class="agregar-rival-personalizado">
+            <label for="nuevoRival-${indice}">AGREGAR OTRO/S</label>
+            <div class="fila-agregar-rival">
+              <input id="nuevoRival-${indice}" type="text" placeholder="Nombre de uno o varios equipos" autocomplete="off" aria-label="Nombre de otro equipo">
+              <button type="button" class="boton-agregar-rival" onclick="agregarRivalesPersonalizados(${indice})">Agregar</button>
+            </div>
+            <small class="ayuda-rivales">Podés escribir varios nombres separados por coma.</small>
+          </div>
         </div>
         <div class="preview-rival" id="previewRival-${indice}">${crearHTMLPreviewRivales(sesion.rivales, sesion.rival)}</div>
         <div class="campo" style="margin-top:12px">
@@ -5593,18 +5658,25 @@ function procesarCambio(evento) {
     return;
   }
 
-  if (campo === "rivales") {
-    let rivales = normalizarListaRivales(
-      Array.from(elemento.selectedOptions || []).map(o => String(o.value || "").trim())
-    );
-    if (sesionesActuales[indice].tipoPartido !== "torneo" && rivales.length > 1) {
-      rivales = rivales.slice(0, 1);
-      mostrarNotificacion("Para cargar varios rivales, cambiá el formato de la jornada a Torneo.");
-    }
-    sesionesActuales[indice].rivales = rivales;
-    sesionesActuales[indice].rival = rivales[0] || "";
+  if (campo === "rival") {
+    const rival = String(elemento.value || "").trim();
+    sesionesActuales[indice].rival = rival;
+    sesionesActuales[indice].rivales = rival ? [rival] : [];
     sesionesActuales[indice].activa = true;
-    renderizarSemana();
+    actualizarVistaRival(indice);
+    guardarDatosAutomaticamente(false);
+    return;
+  }
+
+  if (campo === "rivalTorneoCheckbox") {
+    const lista = document.getElementById("listaRivalesTorneo-" + indice);
+    const rivales = lista
+      ? Array.from(lista.querySelectorAll('input[data-field="rivalTorneoCheckbox"]:checked')).map(input => input.value.trim()).filter(Boolean)
+      : [];
+    sesionesActuales[indice].rivales = normalizarListaRivales(rivales);
+    sesionesActuales[indice].rival = sesionesActuales[indice].rivales[0] || "";
+    sesionesActuales[indice].activa = true;
+    actualizarVistaRival(indice);
     guardarDatosAutomaticamente(false);
     return;
   }
@@ -5655,13 +5727,21 @@ function procesarCambio(evento) {
   }
 
   sesionesActuales[indice][campo] = elemento.value;
-  if (campo === "tipoPartido" && !["partido", "torneo"].includes(elemento.value)) return;
-  if (campo === "tipoPartido" && elemento.value === "partido") {
-    sesionesActuales[indice].rivales = normalizarListaRivales(
-      sesionesActuales[indice].rivales,
-      sesionesActuales[indice].rival
-    ).slice(0, 1);
-    sesionesActuales[indice].rival = sesionesActuales[indice].rivales[0] || "";
+  if (campo === "tipoPartido") {
+    if (!["partido", "torneo"].includes(elemento.value)) return;
+    sesionesActuales[indice].tipoPartido = elemento.value;
+    const rivales = normalizarListaRivales(sesionesActuales[indice].rivales, sesionesActuales[indice].rival);
+    if (elemento.value === "partido") {
+      sesionesActuales[indice].rivales = rivales.slice(0, 1);
+      sesionesActuales[indice].rival = sesionesActuales[indice].rivales[0] || "";
+    } else {
+      sesionesActuales[indice].rivales = rivales;
+      sesionesActuales[indice].rival = rivales[0] || "";
+    }
+    sesionesActuales[indice].activa = true;
+    renderizarSemana();
+    guardarDatosAutomaticamente(false);
+    return;
   }
   sesionesActuales[indice].activa = true;
 
