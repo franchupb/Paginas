@@ -1390,7 +1390,8 @@ const clavePreferencia =
   "divisionPreferidaTORITO_" + usuarioNormalizado;
 
 function divisionPredeterminada() {
-  if (esBianca) return "Sub 14";
+  const categoriasPerfil = (() => { try { return JSON.parse(localStorage.getItem("categoriasTORITO") || "[]"); } catch (_) { return []; } })();
+  if (categoriasPerfil.length) return categoriasPerfil[0];
 
   const guardada = localStorage.getItem(clavePreferencia);
 
