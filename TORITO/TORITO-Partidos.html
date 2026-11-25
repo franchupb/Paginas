@@ -2349,27 +2349,12 @@ function leerUsuario() {
 const usuarioGuardado = leerUsuario();
 const usuarioNormalizado = normalizarUsuario(usuarioGuardado);
 
-function esFran() {
-    return [
-        "fran",
-        "francisco",
-        "franciscoperezbasla"
-    ].includes(usuarioNormalizado);
-}
+function esFran() { return (localStorage.getItem("rolTORITO") || "").trim().toLowerCase() === "admin"; }
+function esToto() { return ["editor", "cuerpo_tecnico", "coordinadora"].includes((localStorage.getItem("rolTORITO") || "").trim().toLowerCase()); }
+function esBianca() { return (localStorage.getItem("rolTORITO") || "").trim().toLowerCase() === "jugadora"; }
 
-function esToto() {
-    return usuarioNormalizado === "toto";
-}
-
-function esBianca() {
-    return [
-        "bianca",
-        "biancadominguez"
-    ].includes(usuarioNormalizado);
-}
-
-const puedeEditar = esFran() || esToto();
-const puedeEliminar = esFran();
+const puedeEditar = localStorage.getItem("puedeEditarTORITO") === "true";
+const puedeEliminar = localStorage.getItem("puedeEliminarTORITO") === "true";
 
 /* Información del usuario */
 
