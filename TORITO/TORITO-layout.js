@@ -723,7 +723,7 @@
     submenu.className = "submenu";
     grupo.paginas.forEach(([href, texto, restringido]) => {
       const link = document.createElement("a");
-      link.href = href === "TORITO-pizarra.html" ? "TORITO-pizarra.html?v=20261123pizarra4" : href;
+      link.href = href === "TORITO-pizarra.html" ? "TORITO-pizarra.html?v=20261124pizarra1" : href;
       link.innerHTML = '<span class="nav-punto" aria-hidden="true"></span>' + texto;
       if (restringido) link.setAttribute("data-ocultar-bianca", "");
       if (normalizarArchivo(href.toLowerCase()) === actual) {
