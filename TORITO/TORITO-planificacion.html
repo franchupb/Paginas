@@ -4319,13 +4319,16 @@ function agregarRivalesPersonalizados(indice) {
   guardarDatosAutomaticamente(false);
   mostrarNotificacion(agregados.length === 1 ? "Equipo agregado al torneo." : agregados.length + " equipos agregados al torneo.");
 }
-function crearHTMLPreviewRivales(valores, rivalLegado = "") {
+function crearHTMLPreviewRivales(valores, rivalLegado = "", tipoPartido = "partido") {
   const rivales = normalizarListaRivales(valores, rivalLegado);
   if (!rivales.length) return crearHTMLPreviewRival("");
-  return `<div class="preview-rivales-lista">${rivales.map(nombre => {
+  const lista = `<div class="preview-rivales-lista">${rivales.map(nombre => {
     const club = obtenerClubPorNombre(nombre);
     return `<span class="preview-rival-chip">${club ? `<img src="${escaparHTML(club.ruta)}" alt="" onerror="this.hidden=true">` : "⚽"}<strong>${escaparHTML(nombre)}</strong></span>`;
-  }).join("")}</div><span class="nombre-preview-rival">${rivales.length} rival${rivales.length === 1 ? "" : "es"} seleccionado${rivales.length === 1 ? "" : "s"}</span>`;
+  }).join("")}</div>`;
+  return tipoPartido === "torneo"
+    ? lista + `<span class="nombre-preview-rival">${rivales.length} rival${rivales.length === 1 ? "" : "es"} seleccionado${rivales.length === 1 ? "" : "s"}</span>`
+    : lista;
 }
 
 function crearOpcionesTipoFisico(valor) {
@@ -4805,7 +4808,7 @@ function renderizarContenidoSesion(sesion, indice) {
             <small class="ayuda-rivales">Podés escribir varios nombres separados por coma.</small>
           </div>
         </div>
-        <div class="preview-rival" id="previewRival-${indice}">${crearHTMLPreviewRivales(sesion.rivales, sesion.rival)}</div>
+        <div class="preview-rival" id="previewRival-${indice}">${crearHTMLPreviewRivales(sesion.rivales, sesion.rival, sesion.tipoPartido)}</div>
         <div class="campo" style="margin-top:12px">
           <label for="campo-${indice}-competicion">TORNEO / COMPETICIÓN</label>
           <select id="campo-${indice}-competicion" data-index="${indice}" data-field="competicion">
@@ -4985,7 +4988,7 @@ function renderizarContenidoSesionLectura(sesion, indice) {
           INFORMACIÓN DEL PARTIDO / TORNEO
         </h5>
         <div class="lectura-partido">
-          <div class="preview-rival">${crearHTMLPreviewRivales(rivales)}</div>
+          <div class="preview-rival">${crearHTMLPreviewRivales(rivales, "", sesion.tipoPartido)}</div>
           <div class="lectura-etiquetas">
             <span class="lectura-etiqueta"><strong>Formato:</strong> ${formato}</span>
             <span class="lectura-etiqueta"><strong>Competición:</strong> ${escaparHTML(competicion)}</span>
@@ -5760,7 +5763,7 @@ function actualizarVistaRival(indice) {
   const preview = document.getElementById("previewRival-" + indice);
   if (!preview) return;
 
-  preview.innerHTML = crearHTMLPreviewRivales(sesion.rivales, sesion.rival);
+  preview.innerHTML = crearHTMLPreviewRivales(sesion.rivales, sesion.rival, sesion.tipoPartido);
 }
 
 /* =====================================================
