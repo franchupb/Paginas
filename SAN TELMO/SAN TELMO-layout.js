@@ -96,9 +96,9 @@
     .barra-superior .logo-club,
     .barra-superior .identidad-club img {
       display: block !important;
-      width: 55px !important;
-      height: 55px !important;
-      flex: 0 0 55px !important;
+      width: 27.5px !important;
+      height: 27.5px !important;
+      flex: 0 0 27.5px !important;
       object-fit: contain !important;
       border-radius: 50% !important;
       padding: 2px !important;
