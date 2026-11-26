@@ -370,9 +370,9 @@
       .barra-superior .logo-superior,
       .barra-superior .logo-club,
       .barra-superior .identidad-club img {
-        width: 44px !important;
-        height: 44px !important;
-        flex-basis: 44px !important;
+        width: 25px !important;
+        height: 25px !important;
+        flex-basis: 25px !important;
       }
       .barra-superior .titulo-superior h1,
       .barra-superior .textos-club h1 { font-size: 16px !important; }
