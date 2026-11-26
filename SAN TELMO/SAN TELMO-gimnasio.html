@@ -2657,7 +2657,7 @@ a:focus-visible,
 
 window.firebaseGimnasioReady = (async () => {
   const { initializeApp } = await import(
-    "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js"
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
   );
 
   const {
@@ -2667,7 +2667,7 @@ window.firebaseGimnasioReady = (async () => {
     setDoc,
     serverTimestamp
   } = await import(
-    "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js"
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
   );
 
 const firebaseConfig = {
@@ -2680,7 +2680,7 @@ const firebaseConfig = {
   measurementId: "G-NTK2BFQQ0D"
 };
 
-  const app = initializeApp(firebaseConfig);
+  const app = getApps().find(item => item.options?.projectId === firebaseConfig.projectId) || initializeApp(firebaseConfig);
   const dbCloud = getFirestore(app);
   const referenciaCloud = doc(dbCloud,"santelmo_gimnasioSANTELMO", "principal");
 
