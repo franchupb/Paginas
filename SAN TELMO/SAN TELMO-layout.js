@@ -70,7 +70,7 @@
       display: flex !important;
       align-items: center !important;
       gap: 15px !important;
-      min-height: 84px !important;
+      min-height: 152px !important;
       padding: 12px 25px !important;
       background: #fff !important;
       border-bottom: 1px solid var(--borde, #e8e8e8) !important;
@@ -96,9 +96,9 @@
     .barra-superior .logo-club,
     .barra-superior .identidad-club img {
       display: block !important;
-      width: 64px !important;
-      height: 64px !important;
-      flex: 0 0 64px !important;
+      width: 128px !important;
+      height: 128px !important;
+      flex: 0 0 128px !important;
       object-fit: contain !important;
       border-radius: 0 !important;
       padding: 2px !important;
@@ -356,7 +356,7 @@
 
     @media (max-width: 760px) {
       .barra-superior {
-        min-height: 72px !important;
+        min-height: 152px !important;
         padding: 10px 13px !important;
         gap: 9px !important;
       }
@@ -370,9 +370,9 @@
       .barra-superior .logo-superior,
       .barra-superior .logo-club,
       .barra-superior .identidad-club img {
-        width: 64px !important;
-        height: 64px !important;
-        flex-basis: 64px !important;
+        width: 128px !important;
+        height: 128px !important;
+        flex-basis: 128px !important;
       }
       .barra-superior .titulo-superior h1,
       .barra-superior .textos-club h1 { font-size: 16px !important; }
