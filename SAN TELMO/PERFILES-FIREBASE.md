@@ -100,13 +100,13 @@ Este bloque debe integrarse dentro de las reglas generales de Firestore, no reem
 
 ## 5. Dos cuentas con el mismo nombre visible
 
-Si dos personas/perfiles comparten el nombre visible (por ejemplo, Kevin), cada cuenta de Firebase Authentication debe tener un **correo técnico y un usuario de acceso diferentes**. El campo `usuario` de Firestore debe coincidir con la parte anterior al dominio del correo técnico.
+Cuando dos cuentas comparten el nombre visible, pueden conservar el mismo campo `nombre` en Firestore, pero necesitan correos de Firebase Authentication distintos. El inicio de sesión de SAN TELMO contempla estos dos alias especiales:
 
-Ejemplo para dos cuentas de Kevin:
+- **Cuerpo Técnico:** se ingresa como `Kevin`; Firebase Authentication utiliza `kevin@santelmo-f2155.firebaseapp.com`.
+- **Coordinador:** se ingresa como `Kevin_`; Firebase Authentication utiliza `kevin_@santelmo-f2155.firebaseapp.com`.
 
-- Cuerpo Técnico: `usuario: "Kevin"` y correo técnico `kevin@san-telmo-f2155.firebaseapp.com`.
-- Coordinador: `usuario: "Kevin_Coordinador"` y correo técnico `kevin_coordinador@san-telmo-f2155.firebaseapp.com`.
+En ambos documentos de Firestore, el nombre visible puede seguir siendo `nombre: "Kevin"`. El perfil de Coordinador conserva `rol: "Coordinador"` y `categorias: ["Primera"]`; el perfil de Cuerpo Técnico mantiene las categorías que tenga asignadas.
 
-El perfil de Coordinador puede conservar `nombre: "Kevin"`, `rol: "Coordinador"` y `categorias: ["Primera"]`. El rol Coordinador se reconoce como editor: puede editar, pero no obtiene permisos de eliminación ni de gestión de usuarios por defecto.
+Para estos dos alias, el módulo de autenticación utiliza los correos completos indicados arriba. Para el resto de los usuarios continúa utilizando el formato habitual `usuario@san-telmo-f2155.firebaseapp.com`.
 
-Las contraseñas se configuran o restablecen exclusivamente en Firebase Authentication. Nunca deben incluirse en HTML, JavaScript, documentación pública ni commits de GitHub. Para usar la misma contraseña en ambas cuentas, configurala por separado en cada usuario desde Firebase Authentication.
+Las contraseñas se configuran o restablecen exclusivamente en Firebase Authentication. Nunca deben incluirse en HTML, JavaScript, documentación pública ni commits de GitHub. Si ambas cuentas usan la misma contraseña, debe configurarse por separado en cada usuario de Firebase Authentication.
