@@ -1,5 +1,5 @@
 /* =========================================================
-   SAN TELMO FEMENINO · NAVEGACIÓN COMPARTIDA
+   SAN TELMO · NAVEGACIÓN COMPARTIDA
    Barra superior y lateral unificadas desde la página principal.
    No modifica los módulos ni sus datos.
 ========================================================= */
@@ -429,7 +429,7 @@
         selector: ".encabezado-pagina",
         eyebrow: "PLANTEL · EQUIPO",
         titulo: "Plantel de jugadoras",
-        descripcion: "Administrá la información personal y deportiva de SAN TELMO FEMENINO."
+        descripcion: "Administrá la información personal y deportiva de SAN TELMO."
       },
       "santelmo-asistencia.html": {
         controlesCategoria: ["filtroCategoria"],
