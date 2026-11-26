@@ -71,6 +71,7 @@ La antigua pizarra de SAN TELMO utilizaba `santelmo_pizarraTacticaSANTELMO`. La 
 - Jugadoras ahora lee, actualiza y elimina en la misma colección `santelmo_jugadoras`; se corrigieron dos operaciones que apuntaban por error a la colección antigua `jugadoras`.
 - Página Principal reutiliza una instancia Firebase existente del mismo proyecto cuando está disponible.
 - Gimnasio quedó en el mismo SDK modular `10.12.2` y reutiliza la instancia del proyecto SAN TELMO.
+- Estadísticas ahora consulta el documento de respaldo `santelmo_plantel/jugadoras`, no la colección genérica `plantel` de ADIUR.
 - La pizarra se reemplazó por el mismo tablero funcional de ADIUR: cancha completa, formaciones propias y rival, fichas arrastrables, herramientas de dibujo, colores, deshacer/rehacer y modo inmersivo; se adaptaron identidad, perfil, navegación y paleta roja de SAN TELMO.
 
 ## 5. PROMPT PARA GEMINI
