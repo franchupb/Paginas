@@ -25,6 +25,24 @@
 .oculto{display:none!important}.solo-lectura{opacity:.72}.modal-backdrop{position:fixed;inset:0;z-index:600;display:none;place-items:center;padding:16px;background:#1119}.modal-backdrop.visible{display:grid}.modal{width:min(100%,580px);max-height:90vh;overflow:auto;padding:22px;background:#fff;border-radius:16px;box-shadow:0 18px 60px #0003}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.modal-head h3{margin:0;font-size:16px}
 @media(max-width:1050px){.grid-resumen{grid-template-columns:repeat(2,minmax(0,1fr))}.layout-analisis{grid-template-columns:1fr}}
 @media(max-width:760px){.barra-superior{min-height:72px;padding:6px 12px;gap:9px}.logo-club{width:48px;height:48px}.textos-club h1{font-size:16px}.textos-club p{font-size:10px}.nombre-perfil{max-width:70px;font-size:11px}.rol-perfil{display:none}.avatar{width:36px;height:36px}.contenedor{min-height:calc(100vh - 72px)}.sidebar{position:fixed;top:72px;bottom:0;left:0;z-index:300;transform:translateX(-110%);transition:transform .2s;max-width:86vw;overflow:auto;box-shadow:5px 0 25px #0002}.sidebar:not(.oculto){transform:translateX(0)}.sidebar.oculto{margin:0}.capa-sidebar.visible{display:block;position:fixed;inset:72px 0 0;z-index:290;background:#0005}.main{padding:18px 13px 35px}.grid-resumen{gap:8px}.stat{padding:13px}.stat strong{font-size:21px}.form-grid{grid-template-columns:1fr}.campo.full{grid-column:auto}.player-meta{flex-direction:column}.page-heading{margin-bottom:15px}}
+
+.subnav-analisis{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 18px;padding:6px;background:#fff;border:1px solid var(--borde);border-radius:12px}
+.subnav-analisis button{border:0;border-radius:8px;background:transparent;padding:10px 13px;color:#666;font-size:11px;font-weight:850}
+.subnav-analisis button.active{background:var(--rojo-claro);color:var(--rojo-oscuro)}
+.video-stage{position:relative;width:100%;height:100%;display:grid;place-items:center}
+.video-stage video{position:relative;z-index:1}
+#lienzoAnalisis{position:absolute;inset:0;z-index:3;width:100%;height:100%;touch-action:none;pointer-events:none}
+#lienzoAnalisis.dibujando{pointer-events:auto;cursor:crosshair}
+.drawing-tools{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:11px;padding:10px;background:#f7f7f8;border-radius:10px}
+.drawing-tools label{font-size:10px;font-weight:800;color:#555}
+.drawing-tools select{min-height:34px;padding:6px 8px;border:1px solid var(--borde);border-radius:7px;background:white;font-size:11px}
+.panel-mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.mini-kpi{padding:12px;border:1px solid var(--borde);border-radius:10px;background:#fff}
+.mini-kpi strong{display:block;font-size:18px;font-weight:900}
+.mini-kpi span{font-size:10px;color:var(--muted)}
+.filtros-eventos{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.filtros-eventos select{min-height:34px;border:1px solid var(--borde);border-radius:8px;padding:6px 8px;background:white;font-size:10px}
+@media print{.barra-superior,.sidebar,.capa-sidebar,.page-heading,.subnav-analisis,.acciones,.btn,.modal-backdrop,#estadoConexion{display:none!important}.main{padding:0!important}.panel{box-shadow:none!important;break-inside:avoid}.layout-analisis{display:block}.columna{margin-bottom:14px}}
 </style>
 </head>
 <body>
@@ -38,6 +56,7 @@
 <aside id="sidebar" class="sidebar"></aside>
 <main class="main contenido">
 <div class="page-heading"><div><h2>Vídeo análisis</h2><p class="subtexto">Estudiá partidos, organizá clips y registrá observaciones del cuerpo técnico.</p></div></div>
+<nav class="subnav-analisis" aria-label="Secciones de vídeo análisis"><button class="active" type="button" data-vista="resumen">Resumen</button><button type="button" data-vista="videos">Partidos y videos</button><button type="button" data-vista="clips">Clips y jugadas</button><button type="button" data-vista="informe">Informes técnicos</button></nav>
 <select id="selectorCategoria" aria-label="Categoría"><option value="Sub 10">Sub 10</option><option value="Sub 12">Sub 12</option><option value="Sub 14">Sub 14</option><option value="Sub 16">Sub 16</option><option value="Primera">Primera</option></select>
 <section class="grid-resumen" aria-label="Resumen">
 <div class="panel stat"><span class="label">Videos</span><strong id="statVideos">0</strong><small>En la biblioteca</small></div>
@@ -56,7 +75,7 @@
 <div class="tiempo"><span id="tiempoActual">00:00</span><span id="tiempoTotal">00:00</span></div>
 </div>
 <div class="player-meta"><div><h3 id="videoTitulo">Ningún video seleccionado</h3><p id="videoDetalle">Elegí un partido de la biblioteca o cargá un enlace de Veo.</p><a id="abrirVideoExterno" class="btn oculto" href="#" target="_blank" rel="noopener noreferrer" style="margin-top:9px">Abrir video original ↗</a></div></div>
-<div class="controles-video" id="accionesVideo"><button class="btn btn-primary" id="btnNuevoClip" disabled>＋ Crear clip desde el momento actual</button><button class="btn" id="btnNuevaNota" disabled>✎ Agregar observación</button></div>
+<div class="controles-video" id="accionesVideo"><button class="btn btn-primary" id="btnNuevoClip" disabled>＋ Crear clip desde el momento actual</button><button class="btn" id="btnNuevaNota" disabled>✎ Agregar observación</button><button class="btn" id="btnImprimirInforme">▤ Generar informe</button></div><div class="drawing-tools"><label>ANÁLISIS SOBRE VIDEO</label><button class="btn" id="btnDibujar" disabled>✎ Dibujar</button><label for="colorDibujo">Color</label><select id="colorDibujo"><option value="#e53935">Rojo</option><option value="#f47721">Naranja</option><option value="#ffffff">Blanco</option><option value="#171717">Negro</option><option value="#00a3ff">Azul</option></select><label for="grosorDibujo">Trazo</label><select id="grosorDibujo"><option value="2">Fino</option><option value="4" selected>Medio</option><option value="7">Grueso</option></select><button class="btn" id="btnDeshacerDibujo" disabled>↶ Deshacer</button><button class="btn" id="btnLimpiarDibujo" disabled>Limpiar</button><button class="btn btn-primary" id="btnGuardarDibujo" disabled>Guardar dibujo</button></div>
 </section>
 <section class="panel panel-pad">
 <div class="seccion-titulo"><div><h3>Biblioteca de videos</h3><p class="subtexto">Partidos completos, grabaciones propias y enlaces a Veo.</p></div><button class="btn btn-primary" id="btnAgregarVideo">＋ Agregar video</button></div>
@@ -67,7 +86,7 @@
 <div class="columna">
 <section class="panel panel-pad">
 <div class="seccion-titulo"><div><h3>Jugadas y clips</h3><p class="subtexto">Momentos destacados asociados al video seleccionado.</p></div><span class="etiqueta" id="cantidadClips">0 CLIPS</span></div>
-<div id="listaClips" class="lista-eventos"><div class="vacio">Seleccioná un video para consultar sus clips.</div></div>
+<div class="filtros-eventos"><select id="filtroEtiqueta"><option value="">Todas las jugadas</option><option>Ataque</option><option>Defensa</option><option>Transición</option><option>Pelota parada</option><option>Presión</option><option>Salida</option><option>Acción individual</option></select></div><div id="listaClips" class="lista-eventos"><div class="vacio">Seleccioná un video para consultar sus clips.</div></div>
 </section>
 <section class="panel panel-pad">
 <div class="seccion-titulo"><div><h3>Observaciones técnicas</h3><p class="subtexto">Notas del cuerpo técnico vinculadas a un instante del video.</p></div></div>
@@ -75,8 +94,7 @@
 </section>
 <section class="panel panel-pad">
 <div class="seccion-titulo"><div><h3>Herramientas de análisis</h3></div></div>
-<div class="acciones"><button class="btn" id="btnAtacar">⚽ Ataque</button><button class="btn" id="btnDefender">🛡 Defensa</button><button class="btn" id="btnTransicion">↔ Transición</button><button class="btn" id="btnABP">🎯 Pelota parada</button></div>
-<p class="subtexto" style="margin-top:11px">Las etiquetas se aplican al crear clips u observaciones. En una próxima evolución podremos sumar dibujo táctico directamente sobre el fotograma.</p>
+<div class="acciones"><button class="btn" id="btnAtacar">⚽ Ataque</button><button class="btn" id="btnDefender">🛡 Defensa</button><button class="btn" id="btnTransicion">↔ Transición</button><button class="btn" id="btnABP">🎯 Pelota parada</button><button class="btn" id="btnPresion">⤴ Presión</button><button class="btn" id="btnSalida">⇧ Salida</button></div><div class="panel-mini-grid" style="margin-top:13px"><div class="mini-kpi"><strong id="kpiAtaque">0</strong><span>Acciones ofensivas</span></div><div class="mini-kpi"><strong id="kpiDefensa">0</strong><span>Acciones defensivas</span></div></div><p class="subtexto" style="margin-top:11px">Los dibujos quedan asociados al video y al momento del análisis.</p>
 </section>
 <div id="estadoConexion" class="estado"><span class="punto"></span><span>Conectando con la biblioteca de SAN TELMO…</span></div>
 </div>
@@ -96,7 +114,7 @@
 <div class="campo"><label for="tituloVideoInput">TÍTULO</label><input id="tituloVideoInput" required maxlength="100" placeholder="Ej. San Telmo vs. Rival"></div>
 <div class="campo"><label for="tipoVideoInput">TIPO</label><select id="tipoVideoInput"><option value="partido">Partido</option><option value="entrenamiento">Entrenamiento</option><option value="veo">Veo</option><option value="otro">Otro</option></select></div>
 <div class="campo"><label for="fechaVideoInput">FECHA</label><input id="fechaVideoInput" type="date"></div>
-<div class="campo"><label for="rivalVideoInput">RIVAL / REFERENCIA</label><input id="rivalVideoInput" maxlength="80" placeholder="Nombre del rival (opcional)"></div>
+<div class="campo"><label for="rivalVideoInput">RIVAL / REFERENCIA</label><input id="rivalVideoInput" maxlength="80" placeholder="Nombre del rival (opcional)"></div><div class="campo"><label for="competicionVideoInput">COMPETICIÓN / TORNEO</label><input id="competicionVideoInput" maxlength="100" placeholder="Ej. Liga Rosarina"></div><div class="campo"><label for="resultadoVideoInput">RESULTADO</label><input id="resultadoVideoInput" maxlength="20" placeholder="Ej. 2 - 1"></div><div class="campo"><label for="estadoVideoInput">ESTADO DEL ANÁLISIS</label><select id="estadoVideoInput"><option value="pendiente">Pendiente</option><option value="en curso">En curso</option><option value="finalizado">Finalizado</option></select></div>
 <div class="campo full"><label for="descripcionVideoInput">DESCRIPCIÓN</label><textarea id="descripcionVideoInput" maxlength="500" placeholder="Competición, jornada, observaciones…"></textarea></div>
 </div><div id="progresoSubida" class="estado oculto" style="margin-top:13px">Preparando material…</div><div class="acciones" style="justify-content:flex-end;margin-top:16px"><button class="btn" type="button" data-cerrar="modalVideo">Cancelar</button><button class="btn btn-primary" id="guardarVideo" type="submit">Guardar material</button></div></form>
 </div></div>
@@ -109,7 +127,7 @@
 <div class="campo"><label for="eventoInicio">INICIO (SEGUNDOS)</label><input id="eventoInicio" type="number" min="0" step=".1" value="0"></div>
 <div class="campo" id="campoFin"><label for="eventoFin">FINAL (SEGUNDOS)</label><input id="eventoFin" type="number" min="0" step=".1" value="15"></div>
 <div class="campo full"><label for="eventoTitulo">TÍTULO</label><input id="eventoTitulo" required maxlength="90" placeholder="Ej. Presión tras pérdida"></div>
-<div class="campo full"><label for="eventoDescripcion">OBSERVACIÓN</label><textarea id="eventoDescripcion" maxlength="1000" placeholder="Describí qué ocurrió, qué funcionó y qué se puede mejorar…"></textarea></div>
+<div class="campo"><label for="eventoJugadora">JUGADORA / UNIDAD</label><input id="eventoJugadora" maxlength="100" placeholder="Nombre de jugadora o línea"></div><div class="campo"><label for="eventoFase">FASE DEL JUEGO</label><select id="eventoFase"><option>Organización ofensiva</option><option>Organización defensiva</option><option>Transición ofensiva</option><option>Transición defensiva</option><option>Balón parado</option><option>Acción individual</option></select></div><div class="campo full"><label for="eventoDescripcion">OBSERVACIÓN</label><textarea id="eventoDescripcion" maxlength="1000" placeholder="Describí qué ocurrió, qué funcionó y qué se puede mejorar…"></textarea></div>
 </div><div class="acciones" style="justify-content:flex-end;margin-top:16px"><button class="btn" type="button" data-cerrar="modalEvento">Cancelar</button><button class="btn btn-primary" type="submit">Guardar análisis</button></div></form>
 </div></div>
 
