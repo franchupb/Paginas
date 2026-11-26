@@ -2238,7 +2238,7 @@ a{text-decoration:none;color:inherit}
           <div class="filtro-stats">
             <label for="selectIntentoStats">Medición</label>
             <select id="selectIntentoStats" onchange="renderizarEstadisticas()" disabled>
-              <option value="1">Resultado</option>
+              <option value="mejor">Mejor intento</option>
             </select>
           </div>
         </div>
@@ -4352,20 +4352,25 @@ function actualizarOpcionesIntentosStats(){
 
   const prueba=obtenerPruebaStats();
   const historial=obtenerHistorialPlanillas();
-  const anterior=Number(select.value)||1;
+  const anterior=String(select.value||"mejor");
 
-  if(!prueba){
-    select.innerHTML='<option value="1">Resultado</option>';
-    select.disabled=true;
-    return;
+  const opciones=[
+    '<option value="mejor">Mejor intento</option>',
+    '<option value="todos">Todos los intentos</option>'
+  ];
+
+  if(prueba){
+    const maximo=obtenerMaximoIntentosPrueba(prueba,historial);
+    for(let i=1;i<=maximo;i++){
+      opciones.push('<option value="'+i+'">'+(maximo===1?"Resultado":"Intento "+i)+'</option>');
+    }
   }
 
-  const maximo=obtenerMaximoIntentosPrueba(prueba,historial);
-  select.innerHTML=Array.from({length:maximo},(_,i)=>
-    `<option value="${i+1}">${maximo===1?"Resultado":`Intento ${i+1}`}</option>`
-  ).join("");
-  select.disabled=maximo===1;
-  select.value=String(Math.min(anterior,maximo));
+  select.innerHTML=opciones.join("");
+  select.disabled=!prueba;
+
+  const existe=Array.from(select.options).some(opcion=>opcion.value===anterior);
+  select.value=existe?anterior:"mejor";
 }
 
 function obtenerHistorialPruebaJugadora(nombre,prueba){
@@ -4501,25 +4506,76 @@ function renderizarStatsResumen(){
    unidades ni mediciones diferentes.
 ===================================================== */
 
-function crearGraficoComparacionPlanillas(nombre,prueba,intento){
+function crearGraficoComparacionPlanillas(nombre,prueba,medicion){
   const historial=obtenerHistorialPlanillas();
-  const puntos=historial.map(item=>{
+  const puntos=[];
+
+  historial.forEach(item=>{
     const equivalente=encontrarPrueba(item,prueba);
-    if(!equivalente||intento>obtenerCantidadIntentos(equivalente))return null;
-    const valor=numero(obtenerValorIntento(item.valores||{},nombre,equivalente,intento));
-    if(valor===null)return null;
-    return{
-      periodo:item.mes||"Período sin nombre",
-      valor,
-      fecha:item.fechaGuardado||""
-    };
-  }).filter(Boolean);
+    if(!equivalente)return;
+
+    const cantidad=obtenerCantidadIntentos(equivalente);
+    const intentos=Array.from({length:cantidad},(_,i)=>({
+      intento:i+1,
+      valor:numero(obtenerValorIntento(item.valores||{},nombre,equivalente,i+1))
+    })).filter(p=>p.valor!==null);
+
+    if(!intentos.length)return;
+
+    const periodo=item.mes||"Período sin nombre";
+    const fecha=item.fechaGuardado||item.ultimaActualizacion||"";
+
+    if(medicion==="todos"){
+      intentos.forEach(p=>{
+        puntos.push({
+          periodo:periodo,
+          etiqueta:periodo+" · I"+p.intento,
+          detalle:"Intento "+p.intento,
+          intento:p.intento,
+          valor:p.valor,
+          fecha:fecha
+        });
+      });
+      return;
+    }
+
+    if(medicion==="mejor"){
+      const mejor=intentos.reduce((actual,candidato)=>{
+        if(!actual)return candidato;
+        if(prueba.criterio==="menor")return candidato.valor<actual.valor?candidato:actual;
+        return candidato.valor>actual.valor?candidato:actual;
+      },null);
+
+      puntos.push({
+        periodo:periodo,
+        etiqueta:periodo+" · Mejor",
+        detalle:"Mejor intento "+mejor.intento,
+        intento:mejor.intento,
+        valor:mejor.valor,
+        fecha:fecha
+      });
+      return;
+    }
+
+    const numeroIntento=Number(medicion);
+    const seleccionado=intentos.find(p=>p.intento===numeroIntento);
+    if(seleccionado){
+      puntos.push({
+        periodo:periodo,
+        etiqueta:periodo,
+        detalle:"Intento "+seleccionado.intento,
+        intento:seleccionado.intento,
+        valor:seleccionado.valor,
+        fecha:fecha
+      });
+    }
+  });
 
   if(!puntos.length){
-    return `<div class="grafico-sin-datos">No hay resultados numéricos de esta prueba en las planillas guardadas de la jugadora.</div>`;
+    return '<div class="grafico-sin-datos">No hay resultados numéricos de esta prueba para la medición seleccionada en las planillas guardadas de la jugadora.</div>';
   }
 
-  const ancho=900;
+  const ancho=Math.max(900,puntos.length>12?puntos.length*72+102:900);
   const alto=310;
   const margen={izq:72,der:30,arriba:32,abajo:75};
   const anchoGrafico=ancho-margen.izq-margen.der;
@@ -4542,10 +4598,8 @@ function crearGraficoComparacionPlanillas(nombre,prueba,intento){
   const guias=Array.from({length:5},(_,i)=>{
     const y=margen.arriba+(i/4)*altoGrafico;
     const valor=maximo-(i/4)*rango;
-    return `
-      <line x1="${margen.izq}" y1="${y}" x2="${ancho-margen.der}" y2="${y}" stroke="#e8ecef" stroke-width="1" />
-      <text x="${margen.izq-11}" y="${y+4}" text-anchor="end" fill="#858d96" font-size="11">${escapeHTML(formatear(valor))}</text>
-    `;
+    return '<line x1="'+margen.izq+'" y1="'+y+'" x2="'+(ancho-margen.der)+'" y2="'+y+'" stroke="#e8ecef" stroke-width="1" />'+
+      '<text x="'+(margen.izq-11)+'" y="'+(y+4)+'" text-anchor="end" fill="#858d96" font-size="11">'+escapeHTML(formatear(valor))+'</text>';
   }).join("");
 
   const colorSegmento=(anterior,actual)=>{
@@ -4557,49 +4611,48 @@ function crearGraficoComparacionPlanillas(nombre,prueba,intento){
   const segmentos=coordenadas.slice(1).map((p,i)=>{
     const anterior=coordenadas[i];
     const color=colorSegmento(anterior.valor,p.valor);
-    return `<line x1="${anterior.x}" y1="${anterior.y}" x2="${p.x}" y2="${p.y}" stroke="${color}" stroke-width="3.5" stroke-linecap="round" />`;
+    return '<line x1="'+anterior.x+'" y1="'+anterior.y+'" x2="'+p.x+'" y2="'+p.y+'" stroke="'+color+'" stroke-width="3.5" stroke-linecap="round" />';
   }).join("");
 
   const puntosSVG=coordenadas.map((p,i)=>{
     const color=i===0?"#f47721":colorSegmento(coordenadas[i-1].valor,p.valor);
-    const etiqueta=p.periodo.length>16?p.periodo.slice(0,15)+"…":p.periodo;
-    const diferencia=i===0?"Primera planilla":`${p.valor-coordenadas[i-1].valor>0?"+":""}${formatear(p.valor-coordenadas[i-1].valor)} respecto de la anterior`;
-    return `
-      <g>
-        <title>${escapeHTML(p.periodo)}: ${escapeHTML(formatear(p.valor))} · ${escapeHTML(diferencia)}</title>
-        <circle cx="${p.x}" cy="${p.y}" r="5.5" fill="${color}" stroke="#fff" stroke-width="2" />
-        <text x="${p.x}" y="${Math.max(15,p.y-13)}" text-anchor="middle" fill="#41464d" font-size="11" font-weight="700">${escapeHTML(formatear(p.valor))}</text>
-        <text x="${p.x}" y="${alto-margen.abajo+23}" text-anchor="end" transform="rotate(-27 ${p.x} ${alto-margen.abajo+23})" fill="#737b84" font-size="10">${escapeHTML(etiqueta)}</text>
-      </g>
-    `;
+    const textoEtiqueta=p.etiqueta||p.periodo;
+    const etiqueta=textoEtiqueta.length>18?textoEtiqueta.slice(0,17)+"…":textoEtiqueta;
+    const diferencia=i===0?"Primer registro":(p.valor-coordenadas[i-1].valor>0?"+":"")+formatear(p.valor-coordenadas[i-1].valor)+" respecto del anterior";
+    return '<g><title>'+escapeHTML(p.periodo)+': '+escapeHTML(formatear(p.valor))+' · '+escapeHTML(p.detalle)+' · '+escapeHTML(diferencia)+'</title>'+
+      '<circle cx="'+p.x+'" cy="'+p.y+'" r="5.5" fill="'+color+'" stroke="#fff" stroke-width="2" />'+
+      '<text x="'+p.x+'" y="'+Math.max(15,p.y-13)+'" text-anchor="middle" fill="#41464d" font-size="11" font-weight="700">'+escapeHTML(formatear(p.valor))+'</text>'+
+      '<text x="'+p.x+'" y="'+(alto-margen.abajo+23)+'" text-anchor="end" transform="rotate(-27 '+p.x+' '+(alto-margen.abajo+23)+')" fill="#737b84" font-size="10">'+escapeHTML(etiqueta)+'</text></g>';
   }).join("");
 
   let leyenda;
   if(prueba.criterio==="mayor"){
-    leyenda=`<span><i style="background:#239653"></i>Subida: mejora</span><span><i style="background:#d34b4b"></i>Bajada: descenso</span>`;
+    leyenda='<span><i style="background:#239653"></i>Subida: mejora</span><span><i style="background:#d34b4b"></i>Bajada: descenso</span>';
   }else if(prueba.criterio==="menor"){
-    leyenda=`<span><i style="background:#239653"></i>Bajada: mejora</span><span><i style="background:#d34b4b"></i>Subida: empeora</span>`;
+    leyenda='<span><i style="background:#239653"></i>Bajada: mejora</span><span><i style="background:#d34b4b"></i>Subida: empeora</span>';
   }else{
-    leyenda=`<span><i style="background:#d17a28"></i>Subida</span><span><i style="background:#5579ad"></i>Bajada</span>`;
+    leyenda='<span><i style="background:#d17a28"></i>Subida</span><span><i style="background:#5579ad"></i>Bajada</span>';
   }
 
-  const nota=puntos.length<2
-    ?"Hay una sola planilla con un resultado numérico. Se muestra el dato disponible, pero todavía no se puede comparar una evolución."
-    :`${puntos.length} planillas guardadas o sincronizadas comparadas en orden cronológico.`;
+  const planillas=new Set(puntos.map(p=>p.periodo)).size;
+  let nota;
+  if(medicion==="todos"){
+    nota=puntos.length+" intentos de "+planillas+" planillas. Cada punto representa un intento individual y se muestran en orden cronológico.";
+  }else if(medicion==="mejor"){
+    nota="Se muestra el mejor intento de cada planilla con datos, según el criterio configurado para la prueba ("+(prueba.criterio==="menor"?"menor resultado":"mayor resultado")+").";
+  }else{
+    nota=puntos.length<2
+      ?"Hay una sola planilla con un resultado numérico para este intento. Todavía no se puede comparar una evolución."
+      :puntos.length+" planillas guardadas o sincronizadas comparadas en orden cronológico.";
+  }
 
-  return `
-    <div class="grafico-svg-wrap">
-      <svg viewBox="0 0 ${ancho} ${alto}" role="img" aria-label="Comparación de planillas guardadas para ${escapeHTML(nombre)} en ${escapeHTML(prueba.label)}">
-        ${guias}
-        <line x1="${margen.izq}" y1="${margen.arriba}" x2="${margen.izq}" y2="${alto-margen.abajo}" stroke="#cfd5db" stroke-width="1" />
-        <line x1="${margen.izq}" y1="${alto-margen.abajo}" x2="${ancho-margen.der}" y2="${alto-margen.abajo}" stroke="#cfd5db" stroke-width="1" />
-        ${segmentos}
-        ${puntosSVG}
-      </svg>
-    </div>
-    <div class="grafico-leyenda">${leyenda}</div>
-    <div style="margin-top:8px;color:#858b93;font-size:8px;line-height:1.5">${nota}</div>
-  `;
+  return '<div class="grafico-svg-wrap"><svg viewBox="0 0 '+ancho+' '+alto+'" style="width:'+ancho+'px;max-width:none" role="img" aria-label="Comparación de resultados de '+escapeHTML(nombre)+' en '+escapeHTML(prueba.label)+'">'+
+    guias+
+    '<line x1="'+margen.izq+'" y1="'+margen.arriba+'" x2="'+margen.izq+'" y2="'+(alto-margen.abajo)+'" stroke="#cfd5db" stroke-width="1" />'+
+    '<line x1="'+margen.izq+'" y1="'+(alto-margen.abajo)+'" x2="'+(ancho-margen.der)+'" y2="'+(alto-margen.abajo)+'" stroke="#cfd5db" stroke-width="1" />'+
+    segmentos+puntosSVG+
+    '</svg></div><div class="grafico-leyenda">'+leyenda+'</div>'+
+    '<div style="margin-top:8px;color:#858b93;font-size:8px;line-height:1.5">'+escapeHTML(nota)+'</div>';
 }
 
 function renderizarGraficoComparacion(){
@@ -4607,22 +4660,27 @@ function renderizarGraficoComparacion(){
   const contador=document.getElementById("contadorPlanillasGrafico");
   const nombre=document.getElementById("selectJugadoraStats")?.value||"";
   const prueba=obtenerPruebaStats();
-  const intento=Number(document.getElementById("selectIntentoStats")?.value)||1;
+  const medicion=document.getElementById("selectIntentoStats")?.value||"mejor";
   const registros=nombre&&prueba?obtenerHistorialPruebaJugadora(nombre,prueba):[];
 
-  contador.textContent=`${registros.length} ${registros.length===1?"planilla":"planillas"}`;
+  if(medicion==="todos"){
+    const cantidadIntentos=registros.reduce((total,r)=>total+r.intentos.filter(valor=>numero(valor)!==null).length,0);
+    contador.textContent=cantidadIntentos+" "+(cantidadIntentos===1?"intento":"intentos");
+  }else{
+    contador.textContent=registros.length+" "+(registros.length===1?"planilla":"planillas");
+  }
 
   if(!nombre){
-    contenedor.innerHTML=`<div class="grafico-sin-datos">Seleccioná una jugadora para comparar sus evaluaciones guardadas.</div>`;
+    contenedor.innerHTML='<div class="grafico-sin-datos">Seleccioná una jugadora para comparar sus evaluaciones guardadas.</div>';
     return;
   }
 
   if(!prueba){
-    contenedor.innerHTML=`<div class="grafico-sin-datos">Seleccioná una prueba para comparar los resultados de esa jugadora entre las planillas guardadas.</div>`;
+    contenedor.innerHTML='<div class="grafico-sin-datos">Seleccioná una prueba para comparar los resultados de esa jugadora entre las planillas guardadas.</div>';
     return;
   }
 
-  contenedor.innerHTML=crearGraficoComparacionPlanillas(nombre,prueba,intento);
+  contenedor.innerHTML=crearGraficoComparacionPlanillas(nombre,prueba,medicion);
 }
 
 /* =====================================================
