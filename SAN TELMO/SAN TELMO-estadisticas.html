@@ -325,7 +325,7 @@ async function iniciar(){
    datos.informes=[...unificados.values()];
   }else if(informesAnteriores?.status==="rejected")fallos.push("informes anteriores");
  if(!datos.jugadoras.length){
-  try{const snap=await getDoc(doc(db,"plantel","jugadoras"));if(snap.exists()&&Array.isArray(snap.data().lista))datos.jugadoras=snap.data().lista.map((j,i)=>({...j,id:j.id||"plantel-"+i}));}catch(e){fallos.push("plantel");}
+  try{const snap=await getDoc(doc(db,"santelmo_plantel","jugadoras"));if(snap.exists()&&Array.isArray(snap.data().lista))datos.jugadoras=snap.data().lista.map((j,i)=>({...j,id:j.id||"plantel-"+i}));}catch(e){fallos.push("plantel");}
  }
  if(!permisos&&window.SANTELMO_PERMISOS)aplicarPerfil(window.SANTELMO_PERMISOS);
  renderSelectorCategorias();renderGeneral();
