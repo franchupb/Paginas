@@ -7,9 +7,9 @@
 
 <style>
 :root {
-  --naranja: #174a7e;
-  --naranja-oscuro: #a51e36;
-  --naranja-claro: #eaf1f8;
+  --naranja: #c62828;
+  --naranja-oscuro: #a00000;
+  --naranja-claro: #fde9e9;
   --negro: #171717;
   --gris: #f4f5f7;
   --gris-texto: #747474;
@@ -951,15 +951,15 @@ a {
 .pizarra-preview-info h3{font-size:17px}
 .pizarra-preview-visual{min-height:178px;padding:15px 14px;background:#fff7f1;color:#292929;border:1px solid #f1dfd2;border-radius:10px;margin-bottom:14px}
 .preview-top{display:flex;justify-content:space-between;gap:8px;font:800 9px/1.2 Arial,sans-serif;letter-spacing:1px;color:#5c5c5c}
-.preview-live{color:#a51e36}
+.preview-live{color:#a00000}
 .preview-field{height:130px;max-width:470px;margin:12px auto 0;position:relative;overflow:hidden;border:1px solid #d6e2d9;border-radius:5px;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 2px,transparent 2px 20px),linear-gradient(135deg,#328452,#236b49)}
 .preview-field:before{content:"";position:absolute;inset:8px;border:1px solid rgba(255,255,255,.65)}
 .field-mid{position:absolute;top:8px;bottom:8px;left:50%;border-left:1px solid rgba(255,255,255,.65)}
 .field-circle{position:absolute;width:56px;height:56px;left:calc(50% - 28px);top:calc(50% - 28px);border:1px solid rgba(255,255,255,.65);border-radius:50%}
-.field-player{position:absolute;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#174a7e;color:#fff;border:2px solid #fff;font:800 9px Arial;box-shadow:0 1px 4px #0004}
+.field-player{position:absolute;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#c62828;color:#fff;border:2px solid #fff;font:800 9px Arial;box-shadow:0 1px 4px #0004}
 .field-player.p1{left:23%;top:35%}.field-player.p2{left:40%;top:60%}.field-player.p3{left:70%;top:26%}
 .field-player.rival{background:#fff;color:#333}.field-player.r1{left:57%;top:28%}.field-player.r2{left:78%;top:65%}
-.field-arrow{position:absolute;left:44%;top:49%;width:20%;border-top:2px dashed #174a7e;transform:rotate(-18deg)}
+.field-arrow{position:absolute;left:44%;top:49%;width:20%;border-top:2px dashed #c62828;transform:rotate(-18deg)}
 .pizarra-preview-info{padding:0;align-items:flex-start;flex-direction:column}
 .panel-pizarra-acceso>.boton-secundario{white-space:nowrap}
 @media(max-width:560px){.panel-pizarra-acceso>.boton-secundario{width:100%;text-align:center}}
@@ -2301,7 +2301,7 @@ function obtenerActividadFecha(division, fecha) {
 
 function obtenerColorActividad(actividad) {
   if (!actividad || typeof actividad !== "object") {
-    return "#174a7e";
+    return "#c62828";
   }
 
   const valor = String(
@@ -2337,7 +2337,7 @@ function obtenerColorActividad(actividad) {
     "#e74c3c": "#e74c3c"
   };
 
-  return colores[valor] || "#174a7e";
+  return colores[valor] || "#c62828";
 }
 
 function obtenerNombreEstado(actividad) {
