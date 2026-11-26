@@ -2249,7 +2249,7 @@ a{text-decoration:none;color:inherit}
           <div class="stats-seccion-cabecera">
             <div>
               <h4>Comparación entre planillas</h4>
-              <p>La evolución se representa período por período, usando los resultados guardados de la jugadora.</p>
+              <p>Compará la evolución por período: elegí el mejor intento, uno específico o todos los intentos cargados en cada planilla.</p>
             </div>
             <span class="stats-contador-periodos" id="contadorPlanillasGrafico">0 planillas</span>
           </div>
@@ -4524,11 +4524,13 @@ function crearGraficoComparacionPlanillas(nombre,prueba,medicion){
 
     const periodo=item.mes||"Período sin nombre";
     const fecha=item.fechaGuardado||item.ultimaActualizacion||"";
+    const clavePlanilla=item.clave||fecha+"|"+periodo;
 
     if(medicion==="todos"){
       intentos.forEach(p=>{
         puntos.push({
           periodo:periodo,
+          clave:clavePlanilla,
           etiqueta:periodo+" · I"+p.intento,
           detalle:"Intento "+p.intento,
           intento:p.intento,
@@ -4548,6 +4550,7 @@ function crearGraficoComparacionPlanillas(nombre,prueba,medicion){
 
       puntos.push({
         periodo:periodo,
+        clave:clavePlanilla,
         etiqueta:periodo+" · Mejor",
         detalle:"Mejor intento "+mejor.intento,
         intento:mejor.intento,
@@ -4562,6 +4565,7 @@ function crearGraficoComparacionPlanillas(nombre,prueba,medicion){
     if(seleccionado){
       puntos.push({
         periodo:periodo,
+        clave:clavePlanilla,
         etiqueta:periodo,
         detalle:"Intento "+seleccionado.intento,
         intento:seleccionado.intento,
@@ -4634,7 +4638,7 @@ function crearGraficoComparacionPlanillas(nombre,prueba,medicion){
     leyenda='<span><i style="background:#d17a28"></i>Subida</span><span><i style="background:#5579ad"></i>Bajada</span>';
   }
 
-  const planillas=new Set(puntos.map(p=>p.periodo)).size;
+  const planillas=new Set(puntos.map(p=>p.clave)).size;
   let nota;
   if(medicion==="todos"){
     nota=puntos.length+" intentos de "+planillas+" planillas. Cada punto representa un intento individual y se muestran en orden cronológico.";
