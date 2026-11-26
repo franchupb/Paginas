@@ -21,7 +21,7 @@
   const USUARIOS = Object.freeze({});;
 
   const PAGINAS_JUGADORAS = new Set([
-    "santelmo-pagina principal.html",
+    "santelmo-paginaprincipal.html",
     "santelmo-jugadoras.html",
     "santelmo-asistencia.html",
     "santelmo-calendario.html",
@@ -51,8 +51,13 @@
     const match = String(value || "").match(/(?:^|[^a-z0-9])(sub\s*10|sub\s*12|sub\s*14|sub\s*16|s10|s12|s14|s16|primera)(?:$|[^a-z0-9])/i);
     return match ? normalizarDivision(match[1]) : null;
   }
+  function normalizarNombreArchivo(value) {
+    let archivo = String(value || "").split(/[?#]/)[0].split("/").pop() || "";
+    try { archivo = decodeURIComponent(archivo); } catch (_) {}
+    return archivo.toLowerCase().replace(/\s+/g, "");
+  }
   function paginaActual() {
-    return decodeURIComponent(location.pathname.split("/").pop() || "").toLowerCase();
+    return normalizarNombreArchivo(location.pathname);
   }
 
   function mostrarErrorInicializacion(error, tituloMensaje, detalleMensaje, enlaceAccion = null) {
@@ -325,17 +330,15 @@
   function aplicarAccesosPagina() {
     if (!configActiva) return;
     const pagina = paginaActual();
-    if (Array.isArray(configActiva.paginasPermitidas) && !configActiva.paginasPermitidas.some(x => String(x).split(/[?#]/)[0].split("/").pop().toLowerCase() === pagina)) {
+    if (Array.isArray(configActiva.paginasPermitidas) && !configActiva.paginasPermitidas.some(x => normalizarNombreArchivo(x) === pagina)) {
       accesoPaginaDenegado = true;
       mostrarErrorInicializacion(new Error("El perfil no tiene acceso a esta sección."), "Acceso restringido", "Tu perfil de SAN TELMO no tiene permiso para entrar en esta página.", { href: INICIO_URL, texto: "Volver al inicio" });
       return false;
     }
     if (Array.isArray(configActiva.paginasPermitidas)) {
-      const permitidas = new Set(configActiva.paginasPermitidas.map(x =>
-        String(x).split(/[?#]/)[0].split("/").pop().toLowerCase()
-      ));
+      const permitidas = new Set(configActiva.paginasPermitidas.map(normalizarNombreArchivo));
       document.querySelectorAll('a[href]').forEach(a => {
-        const file = (a.getAttribute("href") || "").split(/[?#]/)[0].split("/").pop().toLowerCase();
+        const file = normalizarNombreArchivo(a.getAttribute("href") || "");
         if (file.endsWith(".html") && !permitidas.has(file)) a.remove();
       });
     }
@@ -352,7 +355,7 @@
     if (configActiva.rol === "jugadora") {
       document.querySelectorAll('a[href]').forEach(a => {
         const file = (a.getAttribute("href") || "").split(/[?#]/)[0].split("/").pop().toLowerCase();
-        if (file.endsWith(".html") && !PAGINAS_JUGADORAS.has(file)) a.remove();
+        if (file.endsWith(".html") && !PAGINAS_JUGADORAS.has(normalizarNombreArchivo(file))) a.remove();
       });
       document.querySelectorAll("#sidebar .grupo-menu").forEach(grupo => {
         const submenu = grupo.querySelector(".submenu");
@@ -620,7 +623,7 @@
     }
   }
 
-  if (/^(SAN TELMO-index|SAN TELMO-loing)\.html$/i.test(paginaActual())) return;
+  if (/^(santelmo-index|santelmo-loing)\.html$/i.test(paginaActual())) return;
 
   // En Partidos no ocultamos todo el documento mientras se resuelve la sesión:
   // la pantalla en blanco impedía ver incluso el error real de inicialización.
