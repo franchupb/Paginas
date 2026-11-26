@@ -96,9 +96,9 @@
     .barra-superior .logo-club,
     .barra-superior .identidad-club img {
       display: block !important;
-      width: 128px !important;
-      height: 128px !important;
-      flex: 0 0 128px !important;
+      width: 80px !important;
+      height: 80px !important;
+      flex: 0 0 80px !important;
       object-fit: contain !important;
       border-radius: 0 !important;
       padding: 2px !important;
@@ -370,9 +370,9 @@
       .barra-superior .logo-superior,
       .barra-superior .logo-club,
       .barra-superior .identidad-club img {
-        width: 128px !important;
-        height: 128px !important;
-        flex-basis: 128px !important;
+        width: 80px !important;
+        height: 80px !important;
+        flex-basis: 80px !important;
       }
       .barra-superior .titulo-superior h1,
       .barra-superior .textos-club h1 { font-size: 16px !important; }
