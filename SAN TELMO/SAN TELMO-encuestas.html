@@ -47,7 +47,7 @@ if (!window.SAN_TELMO_MODO_ENCUESTA_PUBLICA) {
 body.modo-publico .barra-superior,body.modo-publico .capa-sidebar,body.modo-publico .sidebar,body.modo-publico #bloqueCategoria,body.modo-publico #estadoGeneral,body.modo-publico .cabecera-pagina{display:none!important}
 body.modo-publico .contenedor{min-height:100vh}
 body.modo-publico .contenido{max-width:850px;padding:28px 18px}
-.publico-encabezado{background:linear-gradient(120deg,#fff 0%,#fff7f1 100%);border:1px solid #f4e6dc;border-radius:18px;padding:22px;margin-bottom:16px}
+.publico-encabezado{background:linear-gradient(120deg,#fff 0%,#f4f7fb 100%);border:1px solid #dce7f0;border-radius:18px;padding:22px;margin-bottom:16px}
 .publico-encabezado h2{margin:4px 0 7px;font-size:25px}.publico-encabezado p{margin:0;color:#77808c;font-size:13px;line-height:1.5}
 .publico-mensaje{padding:14px;border-radius:11px;background:#f6f8fb;border:1px solid #e5e9ef;color:#596474;font-size:13px;margin-bottom:14px}
 .publico-mensaje.error{background:#fff2f1;border-color:#f2ceca;color:#a00000}.publico-mensaje.ok{background:#edf8f0;border-color:#cdebd5;color:#18743b}
@@ -67,7 +67,7 @@ button,input,select,textarea{font-family:inherit}
 .btn:active{transform:scale(.98)}
 .btn-principal{background:#174a7e;box-shadow:0 4px 10px #174a7e2b}
 .selector-categoria{border-radius:15px;box-shadow:0 3px 14px #202b3d06}
-.jugadora-bienvenida{display:flex;align-items:center;gap:18px;padding:23px;background:linear-gradient(120deg,#fff 0%,#fff7f1 100%);border:1px solid #f4e6dc;border-radius:20px;margin-bottom:18px}
+.jugadora-bienvenida{display:flex;align-items:center;gap:18px;padding:23px;background:linear-gradient(120deg,#fff 0%,#f4f7fb 100%);border:1px solid #dce7f0;border-radius:20px;margin-bottom:18px}
 .bienvenida-icono{width:54px;height:54px;display:grid;place-items:center;border-radius:17px;background:#f3dce2;color:#a51e36;font-size:25px;flex-shrink:0}
 .jugadora-bienvenida h3{font-size:22px;margin:2px 0 5px;letter-spacing:-.5px}.jugadora-bienvenida p{margin:0;color:#77808c;font-size:13px;line-height:1.5}
 .encuestas-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
@@ -106,7 +106,7 @@ button,input,select,textarea{font-family:inherit}
 .selector-periodo{display:flex;align-items:flex-end;gap:13px}.selector-periodo .campo{min-width:170px}
 .resultados-resumen{margin:0 0 15px}.estadisticas-respuesta{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:16px}
 .mini-stat{padding:15px;background:#fff;border:1px solid var(--linea);border-radius:14px}.mini-stat span{display:block;font-size:10px;color:#7d8793;font-weight:800;text-transform:uppercase}.mini-stat strong{display:block;font-size:22px;margin:6px 0 3px}.mini-stat small{font-size:10px;color:#929aa5}
-.faltantes-lista{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.faltante-chip{padding:7px 10px;border-radius:30px;background:#fff2ed;color:#a95a2e;font-size:11px;font-weight:700}
+.faltantes-lista{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.faltante-chip{padding:7px 10px;border-radius:30px;background:#fff2ed;color:#8b243b;font-size:11px;font-weight:700}
 .rpe-chip{display:inline-block;padding:5px 9px;border-radius:8px;background:#f2f4f7;font-weight:850}.rpe-0,.rpe-1,.rpe-2{background:#e9f8ee;color:#21824a}.rpe-3,.rpe-4{background:#edf7ee;color:#4d855b}.rpe-5,.rpe-6{background:#fff6dc;color:#9c761b}.rpe-7,.rpe-8{background:#fff0df;color:#b46a1e}.rpe-9,.rpe-10{background:#ffebe9;color:#b3443b}
 @media(max-width:950px){.ct-resumen{grid-template-columns:repeat(3,minmax(0,1fr))}.carpetas-periodos{grid-template-columns:1fr}}
 @media(max-width:760px){.contenido{padding:16px}.jugadora-bienvenida{align-items:flex-start;padding:17px;gap:12px}.bienvenida-icono{width:43px;height:43px;border-radius:13px}.jugadora-bienvenida h3{font-size:19px}.encuestas-grid{grid-template-columns:1fr}.ct-resumen{grid-template-columns:1fr 1fr}.ct-resumen .resumen-card:last-child{grid-column:1/-1}.ct-navegacion{grid-template-columns:1fr;gap:8px}.ct-tab{padding:11px}.selector-periodo{display:block}.selector-periodo .campo{margin-bottom:12px}.escala-rpe{grid-template-columns:repeat(6,minmax(0,1fr))}.periodo-acciones .btn{flex:1 1 100%}}
@@ -184,14 +184,14 @@ const fmtFecha=s=>{if(!s)return "—";const p=s.split("-");return p.length===3?p
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const TIPOS={post_partido:{nombre:"Post Partido",icono:"⚽",descripcion:"Contanos cómo terminaste el partido y cómo te sentís."},post_entrenamiento:{nombre:"Post Entrenamiento",icono:"⚡",descripcion:"Registrá el esfuerzo que te demandó la sesión."}};
 let perfil=null,auth=null,db=null,fb=null,rol="",uid="",nombre="",jugadoraNombre="",categorias=[],categoriaActiva="",plantel=[],periodos=[],respuestas=[],unsubs=[],periodoSeleccionado="",ctTab="publicaciones",rpeSeleccionado=null;
-function estado(msg,tipo){const el=$(modoPublico?"estadoPublico":"estadoGeneral")||$("estadoGeneral")||$("estadoPublico");if(!el){console.error("SANTELMO Encuestas · no se encontró un contenedor para mostrar el estado:",msg);return}el.textContent=msg;el.className=(modoPublico?"publico-mensaje":"mensaje")+(tipo?" "+tipo:"")}
+function estado(msg,tipo){const el=$(modoPublico?"estadoPublico":"estadoGeneral")||$("estadoGeneral")||$("estadoPublico");if(!el){console.error("SAN TELMO Encuestas · no se encontró un contenedor para mostrar el estado:",msg);return}el.textContent=msg;el.className=(modoPublico?"publico-mensaje":"mensaje")+(tipo?" "+tipo:"")}
 function esJugadora(){return rol==="jugadora"}
-function puedePublicar(){return ["admin","coordinadora","cuerpo_tecnico"].includes(rol)}
+function puedePublicar(){return perfil?.puedeEditar===true||["admin","editor","coordinador","coordinadora","cuerpo_tecnico"].includes(rol)}
 function fechaCorta(p){return fmtFecha(p.fecha)}
 function tipoNombre(t){return TIPOS[t]?.nombre||String(t||"Encuesta")}
 function tipoConfig(t){return TIPOS[t]||{nombre:tipoNombre(t),icono:"📋",descripcion:"Esta encuesta fue creada con un formato anterior y no tiene una descripción disponible."}}
 function categoriaPermitida(){return Array.isArray(perfil?.categorias)?perfil.categorias:[]}
-function mostrarPerfil(){const nombreEl=$("nombreUsuario"),avatarEl=$("avatarUsuario"),rolEl=$("rolUsuario");if(nombreEl)nombreEl.textContent=nombre;if(avatarEl)avatarEl.textContent=(nombre.trim()[0]||"U").toUpperCase();if(rolEl)rolEl.textContent=({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rol]||rol}
+function mostrarPerfil(){const nombreEl=$("nombreUsuario"),avatarEl=$("avatarUsuario"),rolEl=$("rolUsuario");if(nombreEl)nombreEl.textContent=nombre;if(avatarEl)avatarEl.textContent=(nombre.trim()[0]||"U").toUpperCase();if(rolEl)rolEl.textContent=({admin:"Administrador",editor:"Editor",coordinador:"Coordinador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rol]||rol}
  function actualizarDescripcionPagina(texto){const el=$("descripcionPagina")||document.querySelector(".santelmo-panel-descripcion");if(el)el.textContent=texto}
 function poblarCategorias(){
  categorias=categoriaPermitida();const selects=[$("filtroCategoria"),$("nuevaCategoria")];
@@ -217,17 +217,17 @@ function cargarPlantel(){
  const permitidas=Array.isArray(perfil?.categorias)?perfil.categorias:[];
  if(!permitidas.length){estado("Tu perfil no tiene categorías habilitadas para consultar el plantel.","error");return;}
  const consulta=fb.query(fb.collection(db,"santelmo_jugadoras"),fb.where("categoria","in",permitidas));
- const unsub=fb.onSnapshot(consulta,snap=>{plantel=snap.docs.map(d=>{const x=d.data();return{id:d.id,nombre:String(x.nombre||x.nombreCompleto||x.nombre_completo||[x.nombres,x.apellido||x.apellidos].filter(Boolean).join(" ")||"").trim(),categoria:x.categoria||x.division||x.categoría||x.category||"",estado:x.estado||x.status||"Activo"}}).filter(p=>p.nombre);renderTodo()},e=>{console.error("SANTELMO Encuestas · plantel:",e);estado("No se pudo cargar el plantel de tus categorías. Revisá los permisos de Firestore.","error")});unsubs.push(unsub)
+ const unsub=fb.onSnapshot(consulta,snap=>{plantel=snap.docs.map(d=>{const x=d.data();return{id:d.id,nombre:String(x.nombre||x.nombreCompleto||x.nombre_completo||[x.nombres,x.apellido||x.apellidos].filter(Boolean).join(" ")||"").trim(),categoria:x.categoria||x.division||x.categoría||x.category||"",estado:x.estado||x.status||"Activo"}}).filter(p=>p.nombre);renderTodo()},e=>{console.error("SAN TELMO Encuestas · plantel:",e);estado("No se pudo cargar el plantel de tus categorías. Revisá los permisos de Firestore.","error")});unsubs.push(unsub)
 }
 function escucharDatos(){
  const permitidas=Array.isArray(perfil?.categorias)?perfil.categorias:[];
  if(!permitidas.length){estado("Tu perfil no tiene categorías habilitadas para consultar encuestas.","error");return;}
  const periodosRef=fb.collection(db,"santelmo_encuestas_periodos");
  const consultaPeriodos=fb.query(periodosRef,fb.where("categoria","in",permitidas));
- const up=fb.onSnapshot(consultaPeriodos,s=>{periodos=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error("SANTELMO Encuestas · publicaciones:",e);estado("No se pudieron cargar las publicaciones de tus categorías. Revisá los permisos de Firestore.","error")});unsubs.push(up);
+ const up=fb.onSnapshot(consultaPeriodos,s=>{periodos=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error("SAN TELMO Encuestas · publicaciones:",e);estado("No se pudieron cargar las publicaciones de tus categorías. Revisá los permisos de Firestore.","error")});unsubs.push(up);
  const respuestasRef=fb.collection(db,"santelmo_encuestas_respuestas");
  const consultaRespuestas=esJugadora()?fb.query(respuestasRef,fb.where("uid","==",uid)):fb.query(respuestasRef,fb.where("categoria","in",permitidas));
- const ur=fb.onSnapshot(consultaRespuestas,s=>{respuestas=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error("SANTELMO Encuestas · respuestas:",e);estado("No se pudieron cargar las respuestas autorizadas. Revisá los permisos de Firestore.","error")});unsubs.push(ur)
+ const ur=fb.onSnapshot(consultaRespuestas,s=>{respuestas=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error("SAN TELMO Encuestas · respuestas:",e);estado("No se pudieron cargar las respuestas autorizadas. Revisá los permisos de Firestore.","error")});unsubs.push(ur)
 }
 function renderTodo(){if(!perfil)return;if(esJugadora())renderJugadora();else renderCT()}
 function renderJugadora(){
@@ -288,7 +288,7 @@ async function publicarPeriodo(e){
  if(!categorias.includes(categoria)||!TIPOS[tipo]||!fecha){estado("Revisá categoría, encuesta y fecha antes de publicar.","error");return}
  const b=$("btnPublicar");b.disabled=true;b.textContent="Creando...";
  try{await fb.addDoc(fb.collection(db,"santelmo_encuestas_periodos"),{categoria,tipo,fecha,estado:"abierta",creadoPor:uid,creadoPorNombre:nombre,creadoEn:fb.serverTimestamp(),actualizadoEn:fb.serverTimestamp()});$("filtroCategoria").value=categoria;categoriaActiva=categoria;estado("Período creado correctamente.","ok");$("formPublicacion").reset();$("nuevaCategoria").value=categoria;$("nuevaFecha").value=fechaLocal();renderCT()}
- catch(err){console.error("SANTELMO Encuestas · error al publicar:",err);const codigo=err?.code?(" ["+err.code+"]"):"";const detalle=err?.message||"Error desconocido";estado("No se pudo crear el período"+codigo+": "+detalle,"error")}finally{b.disabled=false;b.textContent="Crear período"}
+ catch(err){console.error("SAN TELMO Encuestas · error al publicar:",err);const codigo=err?.code?(" ["+err.code+"]"):"";const detalle=err?.message||"Error desconocido";estado("No se pudo crear el período"+codigo+": "+detalle,"error")}finally{b.disabled=false;b.textContent="Crear período"}
 }
 async function cambiarEstadoPeriodo(id,nuevo){
  const p=periodos.find(x=>x.id===id);if(!p)return;
@@ -354,8 +354,8 @@ function exportarPeriodo(p,rs){
 }
 function renderCT(){renderPublicaciones();if(ctTab==="resultados"){poblarSelectorResultados();renderResultadoSeleccionado()}}
 function validarPerfil(){
- if(!perfil)throw new Error("No se pudo identificar el perfil SANTELMO.");rol=perfil.rol||"";
- if(!["admin","coordinadora","cuerpo_tecnico","jugadora"].includes(rol))throw new Error("Tu perfil no tiene acceso a Encuestas.");
+ if(!perfil)throw new Error("No se pudo identificar el perfil de SAN TELMO.");rol=perfil.rol||"";
+ if(!["admin","editor","coordinador","coordinadora","cuerpo_tecnico","jugadora"].includes(rol))throw new Error("Tu perfil no tiene acceso a Encuestas.");
  uid=auth.currentUser?.uid||"";nombre=perfil.nombre||perfil.usuario||"Usuario";jugadoraNombre=perfil.jugadora||perfil.nombre||"";
  mostrarPerfil();poblarCategorias();
  if(esJugadora()){$("vistaJugadora").classList.remove("oculto");$("vistaTecnico").classList.add("oculto");$("bloqueCategoria").classList.add("oculto");actualizarDescripcionPagina("Completá las encuestas que el cuerpo técnico habilite para tu categoría. Cada respuesta se guarda de forma individual.")}
@@ -377,16 +377,16 @@ async function cargarEncuestaPublica(){
  }catch(err){console.error(err);$("estadoPublico").textContent=err.message||"No se pudo abrir la encuesta.";$("estadoPublico").className="publico-mensaje error"}
 }
 async function iniciar(){
- if(!modoPublico){try{iniciarMenu()}catch(error){console.error("SANTELMO Encuestas · menú:",error);estado("El menú no pudo inicializarse correctamente: "+(error?.message||"error desconocido"),"error")}}
+ if(!modoPublico){try{iniciarMenu()}catch(error){console.error("SAN TELMO Encuestas · menú:",error);estado("El menú no pudo inicializarse correctamente: "+(error?.message||"error desconocido"),"error")}}
  try{
   const authMod=await import("./SAN TELMO-auth.js?v=20261126-modelo1");fb=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
   auth=authMod.auth;db=authMod.db;
   if(modoPublico){document.body.classList.add("modo-publico");await cargarEncuestaPublica();return}
-  const esperarPerfil=()=>new Promise((resolve,reject)=>{if(window.SAN_TELMO_PERMISOS){resolve(window.SAN_TELMO_PERMISOS);return}const timer=setTimeout(()=>reject(new Error("La validación de permisos está tardando. Recargá la página.")),12000);window.addEventListener("santelmo-permisos-listos",e=>{clearTimeout(timer);resolve(e.detail||window.SAN_TELMO_PERMISOS)},{once:true})});
+  const esperarPerfil=()=>new Promise((resolve,reject)=>{if(window.SANTELMO_PERMISOS){resolve(window.SANTELMO_PERMISOS);return}const timer=setTimeout(()=>reject(new Error("La validación de permisos está tardando. Recargá la página.")),12000);window.addEventListener("santelmo-permisos-listos",e=>{clearTimeout(timer);resolve(e.detail||window.SANTELMO_PERMISOS)},{once:true})});
   perfil=await esperarPerfil();validarPerfil();if(!esJugadora())cargarPlantel();escucharDatos();
   estado("Conectado con SAN TELMO · Publicaciones y respuestas sincronizadas.","ok");
   window.addEventListener("beforeunload",()=>unsubs.forEach(fn=>fn()));
- }catch(err){console.error("SANTELMO Encuestas · inicialización:",err);const mensaje="No se pudo iniciar Encuestas: "+(err?.code?("["+err.code+"] "):"")+(err?.message||"Error desconocido");if(modoPublico){const aviso=$("estadoPublico");if(aviso){aviso.textContent=mensaje;aviso.className="publico-mensaje error"}}else estado(mensaje,"error");document.getElementById("vistaTecnico")?.classList.add("oculto");document.getElementById("vistaJugadora")?.classList.add("oculto")}
+ }catch(err){console.error("SAN TELMO Encuestas · inicialización:",err);const mensaje="No se pudo iniciar Encuestas: "+(err?.code?("["+err.code+"] "):"")+(err?.message||"Error desconocido");if(modoPublico){const aviso=$("estadoPublico");if(aviso){aviso.textContent=mensaje;aviso.className="publico-mensaje error"}}else estado(mensaje,"error");document.getElementById("vistaTecnico")?.classList.add("oculto");document.getElementById("vistaJugadora")?.classList.add("oculto")}
 }
 iniciar();
 })();
