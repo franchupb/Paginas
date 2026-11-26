@@ -28,7 +28,16 @@ export function normalizarUsuarioSANTELMO(usuario) {
 export function correoTecnicoSANTELMO(usuario) {
   const limpio = normalizarUsuarioSANTELMO(usuario);
   if (!limpio) throw new Error("Ingresá un nombre de usuario válido.");
-  return limpio + "@san-telmo-f2155.firebaseapp.com";
+
+  // Alias diferenciados para las dos cuentas cuyo nombre visible es Kevin.
+  // Los correos se escriben completos porque el dominio indicado en Firebase
+  // Authentication para estas cuentas no lleva el guion de "san-telmo".
+  const correosEspeciales = {
+    "kevin": "kevin@santelmo-f2155.firebaseapp.com",
+    "kevin_": "kevin_@santelmo-f2155.firebaseapp.com"
+  };
+
+  return correosEspeciales[limpio] || (limpio + "@san-telmo-f2155.firebaseapp.com");
 }
 
 export async function obtenerPerfilSANTELMO(user) {
