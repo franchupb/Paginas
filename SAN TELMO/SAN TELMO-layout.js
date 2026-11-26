@@ -44,7 +44,8 @@
         ["SAN TELMO-Partidos.html", "Partidos", false],
         ["SAN TELMO-informes.html", "Informes", true],
         ["SAN TELMO-estadisticas.html", "Estadísticas", true],
-        ["SAN TELMO-pizarra.html", "Pizarra táctica", true]
+        ["SAN TELMO-pizarra.html", "Pizarra táctica", true],
+        ["SAN TELMO-video-analisis.html", "Vídeo análisis", true]
       ]
     },
     {
@@ -514,6 +515,14 @@
         eyebrow: "COMPETENCIA · ANÁLISIS",
         titulo: "Estadísticas del club",
         descripcion: "Consultá el rendimiento general y la evolución de cada jugadora a partir de los registros de competencia, asistencia, testeos, tiempos y lesiones."
+      },
+      "san telmo-video-analisis.html": {
+        controlesCategoria: ["selectorCategoria"],
+        ocultarSelectores: ["#selectorCategoria"],
+        selector: ".page-heading",
+        eyebrow: "COMPETENCIA · VIDEO ANÁLISIS",
+        titulo: "Vídeo análisis",
+        descripcion: "Analizá partidos, organizá clips y compartí observaciones técnicas para acompañar la evolución del equipo."
       },
       "san telmo-testeos.html": {
         controlesCategoria: ["selectDivision"],
