@@ -4440,13 +4440,9 @@ function construirPlanillaHTML(rutina, division, cantidadPersonas = 1) {
 
     let celdas = "";
 
-    let indiceDiaPeriodizacion = 0;
-    periodizacion.forEach(sem => {
-      sem.dias.forEach(dia => {
-        const semanaIdx = plantillaPrin[periodizacion.indexOf(sem)].numero - 1;
-        const indiceDia = semanaIdx * DIAS_POR_SEMANA +
-          Math.min(DIAS_POR_SEMANA - 1, sem.dias.indexOf(dia));
-        indiceDiaPeriodizacion++;
+    periodizacion.forEach((sem, semanaIdx) => {
+      sem.dias.forEach((dia, diaIdx) => {
+        const indiceDia = semanaIdx * DIAS_POR_SEMANA + diaIdx;
         const series = ejercicio.dias?.[indiceDia]?.series ?? "";
         celdas += `
           <td class="celda-repeticiones">
