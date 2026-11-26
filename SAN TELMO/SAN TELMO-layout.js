@@ -533,7 +533,7 @@
         titulo: "Encuestas del plantel",
         descripcion: "Publicá encuestas, consultá respuestas y hacé el seguimiento del bienestar y la carga de entrenamiento."
       },
-      "SAN TELMO-lesiones.html": {
+      "san telmo-lesiones.html": {
         controlesCategoria: ["selectorCategoriaGlobal"],
         ocultarSelectores: [".selector-categoria-principal"],
         selector: ".page-heading",
