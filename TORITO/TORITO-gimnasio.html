@@ -2166,6 +2166,92 @@ a:focus-visible,
   }
 }
 
+.series-editor {
+  padding: 13px 14px;
+  border: 1px solid #eceef1;
+  border-radius: 10px;
+  background: #fafbfc;
+}
+.series-editor-cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 11px;
+}
+.series-editor-cabecera strong {
+  color: #343840;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .6px;
+}
+.series-editor-cabecera span {
+  color: #777d86;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.series-semanas-editor {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 8px;
+}
+.series-semana-editor {
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid #e7e9ed;
+  border-radius: 8px;
+  background: #fff;
+}
+.series-semana-editor > strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #777d86;
+  font-size: 9px;
+  letter-spacing: .5px;
+}
+.series-dias-editor {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.serie-dia-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  color: #686e78;
+  font-size: 9px;
+  font-weight: 800;
+}
+.serie-dia-campo input {
+  width: 100%;
+  min-width: 0;
+  height: 35px;
+  padding: 6px 7px;
+  border: 1px solid #dfe3e8;
+  border-radius: 7px;
+  color: #222;
+  font-size: 12px;
+}
+.serie-dia-campo input:focus {
+  outline: none;
+  border-color: var(--naranja);
+  box-shadow: 0 0 0 3px #f4772114;
+}
+.valor-series-planilla {
+  display: block;
+  margin-top: 3px;
+  color: #555;
+  font-size: 7px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.series-complementarias-planilla {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 3px;
+}
+
 /* IMPRESIÓN / PDF */
 
 @media print {
@@ -2260,6 +2346,20 @@ a:focus-visible,
     width: 100%;
     height: 15px;
     margin: 3px 0 0;
+  }
+
+  #printRoutine .valor-series-planilla {
+    display: block;
+    margin-top: 2px;
+    color: #333 !important;
+    font-size: 6px;
+    line-height: 1.25;
+    white-space: normal;
+  }
+
+  #printRoutine .series-complementarias-planilla {
+    gap: 1px;
+    margin-top: 2px;
   }
 
   #printRoutine .planilla-nombre {
@@ -3123,7 +3223,7 @@ function claveIndividual(division, id) {
 }
 
 function crearDiaVacio() {
-  return { repeticiones: "", peso: "", tiempo: "" };
+  return { repeticiones: "", peso: "", tiempo: "", series: "" };
 }
 
 function crearEjercicio(nombre = "") {
@@ -3240,7 +3340,8 @@ function normalizarSeccion(lista, cantidadPorDefecto = 1) {
           ...dia,
           peso: String(dia.peso ?? ""),
           tiempo: String(dia.tiempo ?? ""),
-          repeticiones: String(dia.repeticiones ?? "")
+          repeticiones: String(dia.repeticiones ?? ""),
+          series: String(dia.series ?? "")
         };
       }
     );
@@ -3929,6 +4030,43 @@ function renderizarEditor() {
         `;
       }
 
+      const seriesHTML = Array.from(
+        { length: rutinaActual.semanas },
+        (_, semanaIdx) => {
+          const semana = semanaIdx + 1;
+          const campos = Array.from({ length: DIAS_POR_SEMANA }, (_, diaIdx) => {
+            const indiceDia = semanaIdx * DIAS_POR_SEMANA + diaIdx;
+            const valor = ejercicio.dias?.[indiceDia]?.series ?? "";
+            return `
+              <label class="serie-dia-campo">
+                <span>DÍA ${diaIdx + 1}</span>
+                <input
+                  type="number"
+                  min="1"
+                  max="30"
+                  step="1"
+                  inputmode="numeric"
+                  placeholder="—"
+                  value="${escaparHTML(String(valor))}"
+                  data-series-seccion="${seccionNombre}"
+                  data-series-indice="${indice}"
+                  data-series-dia="${indiceDia}"
+                  aria-label="Series, semana ${semana}, día ${diaIdx + 1}"
+                  ${puedeEditarValores() ? "" : "disabled"}
+                >
+              </label>
+            `;
+          }).join("");
+
+          return `
+            <div class="series-semana-editor">
+              <strong>SEMANA ${semana}</strong>
+              <div class="series-dias-editor">${campos}</div>
+            </div>
+          `;
+        }
+      ).join("");
+
       tarjeta.innerHTML = `
         <div class="ejercicio-card-cabecera">
           <div class="ejercicio-numero">${String(indice + 1).padStart(2, "0")}</div>
@@ -3959,6 +4097,13 @@ function renderizarEditor() {
 
         <div class="ejercicio-cuerpo">
           ${cuerpoHTML}
+          <div class="series-editor">
+            <div class="series-editor-cabecera">
+              <strong>SERIES POR DÍA</strong>
+              <span>Completá la cantidad o dejá el casillero vacío para imprimirlo y completarlo a mano.</span>
+            </div>
+            <div class="series-semanas-editor">${seriesHTML}</div>
+          </div>
         </div>
       `;
 
@@ -3996,6 +4141,33 @@ function renderizarEditor() {
 
       rutinaActual[seccion][indice].repeticionesBase = Math.round(valor);
       input.value = String(rutinaActual[seccion][indice].repeticionesBase);
+
+      guardarBorradorActual();
+    });
+  });
+
+  contenedor.querySelectorAll("[data-series-seccion]").forEach(input => {
+    input.addEventListener("change", () => {
+      const seccion = input.dataset.seriesSeccion;
+      const indice = Number(input.dataset.seriesIndice);
+      const indiceDia = Number(input.dataset.seriesDia);
+      const ejercicio = rutinaActual?.[seccion]?.[indice];
+
+      if (!ejercicio || !Number.isInteger(indiceDia) || indiceDia < 0) return;
+
+      const valor = input.value.trim();
+      if (valor !== "") {
+        const numero = Number(valor);
+        if (!Number.isFinite(numero) || numero < 1) {
+          input.value = "";
+          ejercicio.dias[indiceDia].series = "";
+        } else {
+          ejercicio.dias[indiceDia].series = String(Math.min(30, Math.round(numero)));
+          input.value = ejercicio.dias[indiceDia].series;
+        }
+      } else {
+        ejercicio.dias[indiceDia].series = "";
+      }
 
       guardarBorradorActual();
     });
@@ -4224,9 +4396,13 @@ function construirPlanillaHTML(rutina, division, cantidadPersonas = 1) {
 
     estructuraPotencia.forEach(sem => {
       [sem.d1, sem.d2, sem.d3].forEach(pct => {
+        const indiceDia = (sem.numero - 1) * DIAS_POR_SEMANA +
+          (pct === sem.d1 ? 0 : pct === sem.d2 ? 1 : 2);
+        const series = ejercicio.dias?.[indiceDia]?.series ?? "";
         celdas += `
           <td class="celda-repeticiones">
             <span class="valor-porcentaje">${pct}%</span>
+            <span class="valor-series-planilla">${series ? escaparHTML(series) + " series" : "Series: ____"}</span>
           </td>
         `;
       });
@@ -4266,9 +4442,14 @@ function construirPlanillaHTML(rutina, division, cantidadPersonas = 1) {
 
     periodizacion.forEach(sem => {
       sem.dias.forEach(dia => {
+        const indiceDia = periodizacion.flatMap((sem, semanaIdx) =>
+          sem.dias.map((_, diaIdx) => semanaIdx * DIAS_POR_SEMANA + diaIdx)
+        )[periodizacion.slice(0, periodizacion.indexOf(sem)).reduce((n, anterior) => n + anterior.dias.length, 0) + sem.dias.indexOf(dia)];
+        const series = ejercicio.dias?.[indiceDia]?.series ?? "";
         celdas += `
           <td class="celda-repeticiones">
             <span class="valor-repeticiones">${escaparHTML(dia.repeticiones)}</span>
+            <span class="valor-series-planilla">${series ? escaparHTML(series) + " series" : "Series: ____"}</span>
             <span class="casillero-peso" title="Peso utilizado"></span>
           </td>
         `;
@@ -4296,8 +4477,13 @@ function construirPlanillaHTML(rutina, division, cantidadPersonas = 1) {
     const celdas = estructuraPotencia.map(sem => {
       const tiempo = calcularTiempoSemana(baseTiempo, sem.numero);
       const valor = tiempo !== null ? `${tiempo}″` : "—";
+      const indiceSemana = sem.numero - 1;
+      const seriesDias = Array.from({ length: DIAS_POR_SEMANA }, (_, diaIdx) => {
+        const series = ejercicio.dias?.[indiceSemana * DIAS_POR_SEMANA + diaIdx]?.series ?? "";
+        return `<span class="valor-series-planilla">D${diaIdx + 1}: ${series ? escaparHTML(series) + " series" : "____ series"}</span>`;
+      }).join("");
 
-      return `<td>${escaparHTML(valor)}</td>`;
+      return `<td><span>${escaparHTML(valor)}</span><div class="series-complementarias-planilla">${seriesDias}</div></td>`;
     }).join("");
 
     filasComplementarias += `
