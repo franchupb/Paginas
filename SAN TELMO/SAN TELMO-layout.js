@@ -383,11 +383,15 @@
         flex-basis: 48px !important;
       }
       .barra-superior .titulo-superior h1,
-      .barra-superior .textos-club h1 { font-size: 16px !important; }
+      .barra-superior .textos-club h1,
+      .barra-superior .marca h1 { font-size: 16px !important; }
       .barra-superior .titulo-superior p,
-      .barra-superior .textos-club p { font-size: 11px !important; }
-      .barra-superior .nombre-perfil { max-width: 70px !important; font-size: 12px !important; }
-      .barra-superior .rol-perfil { display: none !important; }
+      .barra-superior .textos-club p,
+      .barra-superior .marca p { font-size: 11px !important; }
+      .barra-superior .nombre-perfil,
+      .barra-superior #nombrePerfil { max-width: 70px !important; font-size: 12px !important; }
+      .barra-superior .rol-perfil,
+      .barra-superior #rolPerfil { display: none !important; }
       .barra-superior .avatar { width: 36px !important; height: 36px !important; flex-basis: 36px !important; }
       .contenedor { min-height: calc(100vh - 72px) !important; }
       #sidebar.sidebar, #sidebar.barra-lateral {
@@ -421,8 +425,10 @@
     }
     @media (max-width: 370px) {
       .barra-superior .titulo-superior h1,
-      .barra-superior .textos-club h1 { font-size: 14px !important; }
-      .barra-superior .nombre-perfil { max-width: 60px !important; }
+      .barra-superior .textos-club h1,
+      .barra-superior .marca h1 { font-size: 14px !important; }
+      .barra-superior .nombre-perfil,
+      .barra-superior #nombrePerfil { max-width: 60px !important; }
     }
   `;
   document.head.appendChild(estilo);
