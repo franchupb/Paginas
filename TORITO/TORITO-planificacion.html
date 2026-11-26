@@ -4252,8 +4252,8 @@ function actualizarSelectorSemana() {
     .map(Number)
     .filter(numero => Number.isInteger(numero) && numero >= 1 && numero <= 51);
 
-  // La vuelta anterior conserva su numeración completa (1 a 51).
-  // La segunda vuelta comienza nuevamente en Semana 1 el 18/01/2027.
+  // La temporada 2026 conserva su numeración completa (1 a 51).
+  // La temporada 2027 comienza en Semana 1 el 18/01/2027.
   const maxLegada = Math.max(51, ...legadas);
   for (let numero = 1; numero <= maxLegada; numero++) {
     const clave = String(numero), registro = semanasCategoria[clave];
@@ -4275,8 +4275,8 @@ function actualizarSelectorSemana() {
     const opcion = document.createElement("option");
     const estado = obtenerEstadoRegistroSemana(item.registro, categoriaActual, item.numero, item.ciclo);
     opcion.value = item.clave;
-    const etiquetaVuelta = item.ciclo === CICLO_NUEVO ? "Vuelta 2 · 2027" : "Vuelta 1 · 2026";
-    opcion.textContent = `Semana ${item.numero} · ${etiquetaVuelta} · ${formatearRangoMicrociclo(item.fechaInicio)} · ${estado}`;
+    const etiquetaTemporada = item.ciclo === CICLO_NUEVO ? "Temporada 2027" : "Temporada 2026";
+    opcion.textContent = `Semana ${item.numero} - ${etiquetaTemporada} · ${formatearRangoMicrociclo(item.fechaInicio)} · ${estado}`;
     selector.appendChild(opcion);
   });
   selector.value = obtenerClaveSemana(semanaActual);
