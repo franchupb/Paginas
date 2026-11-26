@@ -84,14 +84,13 @@ const ordenCategorias=["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
 function normalizarCategoria(v){const n=normalizar(v);return ({sub10:"Sub 10",s10:"Sub 10",sub12:"Sub 12",s12:"Sub 12",sub14:"Sub 14",s14:"Sub 14",sub16:"Sub 16",s16:"Sub 16",primera:"Primera"})[n]||texto(v)}
 function categoriasPermitidas(){
  if(!permisos)return [];
- if(permisos.rol==="jugadora")return (permisos.categorias||[]).map(normalizarCategoria);
- if(permisos.rol==="cuerpo_tecnico")return (permisos.categorias||[]).map(normalizarCategoria);
- return ordenCategorias;
+ if(permisos.rol==="admin")return ordenCategorias;
+ return (Array.isArray(permisos.categorias)?permisos.categorias:[]).map(normalizarCategoria);
 }
 function jugadorasVisibles(){
  let lista=datos.jugadoras.filter(activoJ);
  const permitidas=categoriasPermitidas();
- if(permitidas.length)lista=lista.filter(j=>permitidas.some(c=>normalizar(c)===normalizar(categoriaJ(j))));
+ if(permisos?.rol!=="admin")lista=lista.filter(j=>permitidas.some(c=>normalizar(c)===normalizar(categoriaJ(j))));
  if(categoriaActiva)lista=lista.filter(j=>normalizar(categoriaJ(j))===normalizar(categoriaActiva));
  if(permisos?.rol==="jugadora"){
   const propia=normalizar(permisos.jugadora||permisos.nombre||permisos.usuario);
@@ -295,7 +294,7 @@ function aplicarPerfil(p){
  if(!p)return;permisos=p;
  const nombre=p.nombre||p.usuario||"Usuario";
  $("nombreUsuario").textContent=nombre;$("avatarUsuario").textContent=nombre.charAt(0).toUpperCase();
- $("rolUsuario").textContent=({admin:"Administrador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[p.rol]||"Club San Telmo";
+ $("rolUsuario").textContent=({admin:"Administrador",editor:"Editor",coordinador:"Coordinador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[p.rol]||"Club San Telmo";
  if(datos.jugadoras.length){renderSelectorCategorias();renderGeneral();}
 }
 window.addEventListener("santelmo-permisos-listos",e=>aplicarPerfil(e.detail||window.SANTELMO_PERMISOS));
