@@ -9,7 +9,7 @@
   if (window.SANTELMO_LAYOUT_INICIALIZADO) return;
   window.SANTELMO_LAYOUT_INICIALIZADO = true;
 
-  const ARCHIVO_ACTUAL = (location.pathname.split("/").pop() || "").toLowerCase();
+  // pathname conserva los espacios como %20 en muchos navegadores.\n  // Decodificar antes de comparar evita que fallen el banner y el selector global.\n  const ARCHIVO_ACTUAL = (() => {\n    const archivo = location.pathname.split("/").pop() || "";\n    try { return decodeURIComponent(archivo).toLowerCase(); }\n    catch (_) { return archivo.toLowerCase(); }\n  })();
   const PRINCIPAL = "SAN TELMO-Pagina Principal.html";
 
   const grupos = [
