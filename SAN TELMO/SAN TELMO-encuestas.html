@@ -186,7 +186,7 @@ const TIPOS={post_partido:{nombre:"Post Partido",icono:"⚽",descripcion:"Contan
 let perfil=null,auth=null,db=null,fb=null,rol="",uid="",nombre="",jugadoraNombre="",categorias=[],categoriaActiva="",plantel=[],periodos=[],respuestas=[],unsubs=[],periodoSeleccionado="",ctTab="publicaciones",rpeSeleccionado=null;
 function estado(msg,tipo){const el=$(modoPublico?"estadoPublico":"estadoGeneral")||$("estadoGeneral")||$("estadoPublico");if(!el){console.error("SAN TELMO Encuestas · no se encontró un contenedor para mostrar el estado:",msg);return}el.textContent=msg;el.className=(modoPublico?"publico-mensaje":"mensaje")+(tipo?" "+tipo:"")}
 function esJugadora(){return rol==="jugadora"}
-function puedePublicar(){return perfil?.puedeEditar===true||["admin","editor","coordinador","coordinadora","cuerpo_tecnico"].includes(rol)}
+function puedePublicar(){return typeof perfil?.puedeEditar==="boolean"?perfil.puedeEditar:["admin","editor","coordinador","coordinadora","cuerpo_tecnico"].includes(rol)}
 function fechaCorta(p){return fmtFecha(p.fecha)}
 function tipoNombre(t){return TIPOS[t]?.nombre||String(t||"Encuesta")}
 function tipoConfig(t){return TIPOS[t]||{nombre:tipoNombre(t),icono:"📋",descripcion:"Esta encuesta fue creada con un formato anterior y no tiene una descripción disponible."}}
