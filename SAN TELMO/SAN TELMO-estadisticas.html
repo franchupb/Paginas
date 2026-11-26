@@ -302,7 +302,7 @@ function esperarPermisosSANTELMO(){
  if(window.SANTELMO_PERMISOS)return Promise.resolve(window.SANTELMO_PERMISOS);
  return new Promise(resolve=>window.addEventListener("santelmo-permisos-listos",e=>resolve(e.detail||window.SANTELMO_PERMISOS||null),{once:true}));
 }
-const COLECCIONES={jugadoras:"santelmo_jugadoras",informes:"santelmo_informes_partidos",asistenciaSANTELMO:"santelmo_asistenciaSANTELMO",testeos_santelmo:"santelmo_testeos_santelmo",tiemposRendimiento:"santelmo_tiemposRendimiento",lesiones:"santelmo_lesiones"};
+const COLECCIONES={jugadoras:"santelmo_jugadoras",informes:"santelmo_informes_partidos",informesLegacy:"informes_partidos",asistenciaSANTELMO:"santelmo_asistenciaSANTELMO",testeos_santelmo:"santelmo_testeos_santelmo",tiemposRendimiento:"santelmo_tiemposRendimiento",lesiones:"santelmo_lesiones"};
 async function leerColeccion(nombre){
  const nombreReal=COLECCIONES[nombre]||nombre;
  const snap=await getDocs(collection(db,nombreReal));
@@ -312,11 +312,18 @@ async function iniciar(){
  const perfilConfirmado=await esperarPermisosSANTELMO();
  if(perfilConfirmado)aplicarPerfil(perfilConfirmado);
  $("estadoCarga").textContent="Leyendo Informes, Asistencia, Testeos, Tiempos y Lesiones…";
- const resultados=await Promise.allSettled([leerColeccion("jugadoras"),...FUENTES.map(leerColeccion)]);
+ const resultados=await Promise.allSettled([leerColeccion("jugadoras"),...FUENTES.map(leerColeccion),leerColeccion("informesLegacy")]);
  const fallos=[];
  if(resultados[0].status==="fulfilled")datos.jugadoras=resultados[0].value;
  else fallos.push("jugadoras");
- resultados.slice(1).forEach((r,i)=>{if(r.status==="fulfilled")datos[FUENTES[i]]=r.value;else fallos.push(FUENTES[i]);});
+ resultados.slice(1,1+FUENTES.length).forEach((r,i)=>{if(r.status==="fulfilled")datos[FUENTES[i]]=r.value;else fallos.push(FUENTES[i]);});
+  const informesAnteriores=resultados[1+FUENTES.length];
+  if(informesAnteriores?.status==="fulfilled"){
+   const unificados=new Map();
+   informesAnteriores.value.forEach(p=>unificados.set(String(p.id),p));
+   (datos.informes||[]).forEach(p=>unificados.set(String(p.id),p));
+   datos.informes=[...unificados.values()];
+  }else if(informesAnteriores?.status==="rejected")fallos.push("informes anteriores");
  if(!datos.jugadoras.length){
   try{const snap=await getDoc(doc(db,"plantel","jugadoras"));if(snap.exists()&&Array.isArray(snap.data().lista))datos.jugadoras=snap.data().lista.map((j,i)=>({...j,id:j.id||"plantel-"+i}));}catch(e){fallos.push("plantel");}
  }
