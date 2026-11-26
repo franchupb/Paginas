@@ -3876,7 +3876,8 @@ function guardarDatosAutomaticamente(mostrarMensaje = false) {
         );
       });
 
-    sincronizarCalendarioSemana();
+    // El calendario NO se modifica al guardar borradores automáticamente.
+    // La publicación se realiza únicamente desde guardarSemana().
 
     const hora = new Date().toLocaleTimeString("es-AR", {
       hour: "2-digit",
@@ -3894,7 +3895,7 @@ function guardarDatosAutomaticamente(mostrarMensaje = false) {
 
     if (mostrarMensaje) {
       mostrarNotificacion(
-        "Semana " + semanaActual + " guardada. Calendario actualizado."
+        "Borrador de la semana " + semanaActual + " guardado."
       );
     }
 
@@ -3929,6 +3930,15 @@ function guardarSemana() {
     return;
   }
 
+  // Este botón es el único punto que publica las sesiones en el calendario.
+  try {
+    sincronizarCalendarioSemana();
+  } catch (error) {
+    console.error("No se pudo actualizar el calendario:", error);
+    mostrarNotificacion("El microciclo se guardó, pero no se pudo actualizar el calendario.");
+    return;
+  }
+
   modoEdicion = false;
   renderizarSemana();
 
@@ -3938,7 +3948,7 @@ function guardarSemana() {
   );
 
   mostrarNotificacion(
-    "Microciclo guardado. Ahora podés consultar los días sin modificar los contenidos."
+    "Microciclo guardado y calendario actualizado. Ahora podés consultar los días sin modificar los contenidos."
   );
 }
 
@@ -4203,15 +4213,16 @@ function actualizarSelectorSemana() {
   const almacen = cargarAlmacen();
   const semanasCategoria = almacen[categoriaActual] || {};
 
-  const semanasGuardadas = Object.keys(semanasCategoria)
-    .map(Number)
-    .filter(numero => Number.isInteger(numero));
-
   const opciones = [];
-  const legadas = Object.keys(semanasCategoria).filter(k => /^\d+$/.test(k)).map(Number);
-  const maxLegada = Math.max(cicloMicrocicloActual === CICLO_ANTERIOR ? 43 : 51,
-    cicloMicrocicloActual === CICLO_ANTERIOR ? semanaActual : 51, ...legadas);
-  for (let numero = Math.min(32, ...legadas); numero <= maxLegada; numero++) {
+  const legadas = Object.keys(semanasCategoria)
+    .filter(k => /^\d+$/.test(k))
+    .map(Number)
+    .filter(numero => Number.isInteger(numero) && numero >= 1 && numero <= 51);
+
+  // La vuelta anterior conserva su numeración completa (1 a 51).
+  // La segunda vuelta comienza nuevamente en Semana 1 el 18/01/2027.
+  const maxLegada = Math.max(51, ...legadas);
+  for (let numero = 1; numero <= maxLegada; numero++) {
     const clave = String(numero), registro = semanasCategoria[clave];
     const fechaInicio = registro?.fechaInicio ? normalizarALunes(registro.fechaInicio) : obtenerFechaPredeterminada(numero, CICLO_ANTERIOR);
     opciones.push({ clave, numero, ciclo: CICLO_ANTERIOR, fechaInicio, registro });
@@ -4231,7 +4242,8 @@ function actualizarSelectorSemana() {
     const opcion = document.createElement("option");
     const estado = obtenerEstadoRegistroSemana(item.registro, categoriaActual, item.numero, item.ciclo);
     opcion.value = item.clave;
-    opcion.textContent = `Semana ${item.numero} · ${item.ciclo} · ${formatearRangoMicrociclo(item.fechaInicio)} · ${estado}`;
+    const etiquetaVuelta = item.ciclo === CICLO_NUEVO ? "Vuelta 2 · 2027" : "Vuelta 1 · 2026";
+    opcion.textContent = `Semana ${item.numero} · ${etiquetaVuelta} · ${formatearRangoMicrociclo(item.fechaInicio)} · ${estado}`;
     selector.appendChild(opcion);
   });
   selector.value = obtenerClaveSemana(semanaActual);
@@ -4266,8 +4278,7 @@ function seleccionarSemana(valor) {
     false
   );
 
-  // Se actualiza el calendario con el microciclo que ahora está seleccionado.
-  guardarDatosAutomaticamente(false);
+  // Cambiar de semana solo carga/guarda el borrador; no publica en calendario.
 }
 
 function cambiarSemana(desplazamiento) {
