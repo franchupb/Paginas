@@ -21,7 +21,7 @@ Los nombres de los campos distinguen mayúsculas y minúsculas. Usá estos nombr
 | `activo` | boolean | Debe ser `true` para permitir el ingreso |
 | `usuario` | string | Nombre de usuario del Login |
 | `nombre` | string | Nombre que se muestra en el perfil |
-| `rol` | string | `admin`, `editor`, `cuerpo_tecnico` o `jugadora` |
+| `rol` | string | `admin`, `editor`, `coordinador`, `coordinadora`, `cuerpo_tecnico` o `jugadora` |
 | `categorias` | array de strings | Divisiones a las que puede acceder |
 | `jugadora` | string | Nombre exacto del plantel, solo para perfiles de jugadora |
 | `puedeEditar` | boolean | Permite cargar o modificar información |
@@ -96,3 +96,17 @@ match /usuarios/{uid} {
 ```
 
 Este bloque debe integrarse dentro de las reglas generales de Firestore, no reemplazarlas sin revisar el resto de las colecciones. Las reglas de datos de jugadoras, asistencia, planificación, testeos, partidos e informes necesitan sus propias validaciones por rol y categoría. Este archivo no cambia ni publica reglas de Firebase.
+
+
+## 5. Dos cuentas con el mismo nombre visible
+
+Si dos personas/perfiles comparten el nombre visible (por ejemplo, Kevin), cada cuenta de Firebase Authentication debe tener un **correo técnico y un usuario de acceso diferentes**. El campo `usuario` de Firestore debe coincidir con la parte anterior al dominio del correo técnico.
+
+Ejemplo para dos cuentas de Kevin:
+
+- Cuerpo Técnico: `usuario: "Kevin"` y correo técnico `kevin@san-telmo-f2155.firebaseapp.com`.
+- Coordinador: `usuario: "Kevin_Coordinador"` y correo técnico `kevin_coordinador@san-telmo-f2155.firebaseapp.com`.
+
+El perfil de Coordinador puede conservar `nombre: "Kevin"`, `rol: "Coordinador"` y `categorias: ["Primera"]`. El rol Coordinador se reconoce como editor: puede editar, pero no obtiene permisos de eliminación ni de gestión de usuarios por defecto.
+
+Las contraseñas se configuran o restablecen exclusivamente en Firebase Authentication. Nunca deben incluirse en HTML, JavaScript, documentación pública ni commits de GitHub. Para usar la misma contraseña en ambas cuentas, configurala por separado en cada usuario desde Firebase Authentication.
