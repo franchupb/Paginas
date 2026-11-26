@@ -6579,7 +6579,7 @@ window.addEventListener("storage",evento=>{
     const actuales = Array.isArray(lista) ? lista : [];
     for (const partido of actuales) {
       await setDoc(
-        doc(dbInformes, "informes_partidos", String(partido.id)),
+        doc(dbInformes, "santelmo_informes_partidos", String(partido.id)),
         { ...partido, actualizadoEn: partido.actualizadoEn || new Date().toISOString() },
         { merge: true }
       );
@@ -6589,7 +6589,8 @@ window.addEventListener("storage",evento=>{
   // Solo se elimina de la nube cuando el usuario borra explícitamente ese informe.
   window.eliminarInformeFirebase = async function(id) {
     if (!id) return;
-    await deleteDoc(doc(dbInformes, "informes_partidos", String(id)));
+    await deleteDoc(doc(dbInformes, "santelmo_informes_partidos", String(id)));
+    try{await deleteDoc(doc(dbInformes, "informes_partidos", String(id)));}catch(error){console.warn("No se pudo limpiar el registro histórico de informes_partidos:",error);}
   };
 
   onSnapshot(coleccionInformes, async snapshot => {
@@ -6600,7 +6601,7 @@ window.addEventListener("storage",evento=>{
     if (pendientes.length) {
       try {
         for (const partido of pendientes) {
-          await setDoc(doc(dbInformes, "informes_partidos", String(partido.id)), partido);
+          await setDoc(doc(dbInformes, "santelmo_informes_partidos", String(partido.id)), partido);
           idsInformesNube.add(String(partido.id));
         }
         console.info("SANTELMO: informes locales recuperados en Firestore:", pendientes.length);
