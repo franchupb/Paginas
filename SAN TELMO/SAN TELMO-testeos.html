@@ -7,9 +7,9 @@
 
 <style>
 :root{
-  --naranja:#174a7e;
-  --naranja-oscuro:#a51e36;
-  --naranja-claro:#eaf1f8;
+  --naranja:#c62828;
+  --naranja-oscuro:#a00000;
+  --naranja-claro:#fde9e9;
   --negro:#171717;
   --gris:#f4f5f7;
   --gris-texto:#747474;
@@ -923,7 +923,7 @@ a{text-decoration:none;color:inherit}
   font-weight:900;
 }
 
-.prueba-configurar:hover{background:#eaf1f8;color:var(--naranja-oscuro)}
+.prueba-configurar:hover{background:#fde9e9;color:var(--naranja-oscuro)}
 
 .fila-jugadora{
   display:grid;
@@ -4561,7 +4561,7 @@ function crearGraficoComparacionPlanillas(nombre,prueba,intento){
   }).join("");
 
   const puntosSVG=coordenadas.map((p,i)=>{
-    const color=i===0?"#174a7e":colorSegmento(coordenadas[i-1].valor,p.valor);
+    const color=i===0?"#c62828":colorSegmento(coordenadas[i-1].valor,p.valor);
     const etiqueta=p.periodo.length>16?p.periodo.slice(0,15)+"…":p.periodo;
     const diferencia=i===0?"Primera planilla":`${p.valor-coordenadas[i-1].valor>0?"+":""}${formatear(p.valor-coordenadas[i-1].valor)} respecto de la anterior`;
     return `
