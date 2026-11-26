@@ -156,8 +156,8 @@
       height: 42px !important;
       flex: 0 0 42px !important;
       border-radius: 50% !important;
-      background: var(--negro, #171717) !important;
-      color: #fff !important;
+      background: #c62828 !important;
+      color: #ffffff !important;
       font-size: 14px !important;
       font-weight: 900 !important;
     }
@@ -171,7 +171,7 @@
       display: block !important;
       max-width: 150px !important;
       overflow: hidden !important;
-      color: var(--negro, #171717) !important;
+      color: #c62828 !important;
       font-size: 13px !important;
       font-weight: 800 !important;
       text-overflow: ellipsis !important;
