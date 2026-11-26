@@ -38,14 +38,10 @@ export async function obtenerPerfilSANTELMO(user) {
   const perfil = snapshot.data();
   if (perfil?.activo !== true) return null;
 
-  // SAN TELMO admite ambos nombres para la lista de divisiones.
-  // Kevin ya fue cargado en Firestore con el campo "divisiones";
-  // el sistema de permisos trabaja internamente con "categorias".
+  // Firestore utiliza exclusivamente el campo "categorias".
   const categorias = Array.isArray(perfil.categorias)
     ? perfil.categorias
-    : (Array.isArray(perfil.divisiones)
-      ? perfil.divisiones
-      : (perfil.categoria ? [perfil.categoria] : []));
+    : (perfil.categoria ? [perfil.categoria] : []);
 
   return { ...perfil, categorias };
 }
