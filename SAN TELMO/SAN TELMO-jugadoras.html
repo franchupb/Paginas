@@ -2139,7 +2139,7 @@
 
         try {
           if (idEnEdicion !== null) {
-            const docRef = doc(db, "jugadoras", idEnEdicion);
+            const docRef = doc(db, "santelmo_jugadoras", idEnEdicion);
             await updateDoc(docRef, datos);
           } else {
             await addDoc(collection(db, "santelmo_jugadoras"), datos);
@@ -2183,7 +2183,7 @@
         }
         if (confirm("¿Querés eliminar a " + jugadora.nombre + " del plantel?")) {
           try {
-            await deleteDoc(doc(db, "jugadoras", id));
+            await deleteDoc(doc(db, "santelmo_jugadoras", id));
           } catch (error) {
             console.error("Error al eliminar de la nube:", error);
             alert("No se pudo eliminar a la jugadora.");
