@@ -105,9 +105,11 @@
     if (!perfilActivo || !configActiva) return;
     const nombre = configActiva.nombre;
     const rolOriginal = normalizar(perfilActivo?.rol || perfilActivo?.tipo || "");
-    const rolTexto = (rolOriginal === "coordinadora" || rolOriginal === "coordinador")
-      ? "Coordinadora"
-      : ({
+    const rolTexto = rolOriginal === "coordinador"
+      ? "Coordinador"
+      : rolOriginal === "coordinadora"
+        ? "Coordinadora"
+        : ({
           admin: "Administrador",
           editor: "Editor",
           coordinadora: "Coordinadora",
