@@ -994,6 +994,74 @@ button:disabled {
    CAMPOS GENERALES
 ===================================================== */
 
+.campo-volumen-dia {
+  padding: 12px;
+  border: 1px solid #f2d8c7;
+  border-radius: 11px;
+  background: #fffaf6;
+}
+
+.campo-volumen-control {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.campo-volumen-control input {
+  flex: 1;
+  min-width: 0;
+  font-weight: 800;
+}
+
+.campo-volumen-control span {
+  color: var(--naranja-oscuro);
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.ayuda-volumen {
+  color: #858994;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.campo-descripcion-fisica textarea {
+  min-height: 100px;
+  padding: 11px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.lectura-volumen-dia {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #f2d8c7;
+  border-radius: 10px;
+  background: #fffaf6;
+}
+
+.lectura-volumen-dia span {
+  color: #777d86;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .5px;
+}
+
+.lectura-volumen-dia strong {
+  color: var(--naranja-oscuro);
+  font-size: 19px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.lectura-volumen-dia small {
+  font-size: 11px;
+}
+
+
 .cuerpo-dia {
   display: flex;
   flex-direction: column;
@@ -3096,9 +3164,9 @@ function crearBloqueFisicoVacio() {
     cantidadPasadas: "",
     metrosPasada: "",
     cantidadSaltos: "",
-    notaAnterior: ""
+    notaAnterior: "",
+    descripcion: ""
   };
-}
 
 function crearBloquesFisicosVacios() {
   return [
@@ -3149,7 +3217,8 @@ function normalizarBloquesFisicos(bloquesGuardados, contenidoAntiguo = "") {
         Object.prototype.hasOwnProperty.call(bloque, "semanaRutina") ||
         Object.prototype.hasOwnProperty.call(bloque, "areaPasadas") ||
         Object.prototype.hasOwnProperty.call(bloque, "cantidadSaltos") ||
-        Object.prototype.hasOwnProperty.call(bloque, "notaAnterior")
+        Object.prototype.hasOwnProperty.call(bloque, "notaAnterior") ||
+        Object.prototype.hasOwnProperty.call(bloque, "descripcion")
       )
     );
 
@@ -3182,7 +3251,8 @@ function normalizarBloquesFisicos(bloquesGuardados, contenidoAntiguo = "") {
           cantidadPasadas: String(bloque?.cantidadPasadas ?? ""),
           metrosPasada: String(bloque?.metrosPasada ?? ""),
           cantidadSaltos: String(bloque?.cantidadSaltos ?? ""),
-          notaAnterior: String(bloque?.notaAnterior ?? "")
+          notaAnterior: String(bloque?.notaAnterior ?? ""),
+          descripcion: String(bloque?.descripcion ?? "")
         };
       });
 
@@ -3284,6 +3354,10 @@ function actualizarCamposLegado(sesion) {
       lineasFisicas.push(describirBloqueFisico(bloque));
     }
 
+    if (String(bloque.descripcion || "").trim()) {
+      lineasFisicas.push("Descripción física: " + String(bloque.descripcion).trim());
+    }
+
     if (String(bloque.notaAnterior || "").trim()) {
       lineasFisicas.push(String(bloque.notaAnterior).trim());
     }
@@ -3323,12 +3397,17 @@ function obtenerLineasDeBloquesFisicos(bloques) {
     const descripcion = describirBloqueFisico(bloque);
     const duracion = String(bloque?.duracion ?? "").trim();
     const notaAnterior = String(bloque?.notaAnterior ?? "").trim();
+    const explicacion = String(bloque?.descripcion ?? "").trim();
 
     if (descripcion) {
       lineas.push(
         "Físico · Bloque " + (indice + 1) +
         obtenerDuracionParaTexto(duracion) + ": " + descripcion
       );
+    }
+
+    if (explicacion) {
+      lineas.push("Descripción física · Bloque " + (indice + 1) + ": " + explicacion);
     }
 
     if (notaAnterior) {
@@ -3355,6 +3434,7 @@ function crearSesionVacia(diaSemana = 0, intensidad = "media") {
     tttBloques: crearBloquesTTTVacios(),
     fisico: "",
     fisicoBloques: crearBloquesFisicosVacios(),
+    volumenMetros: "",
     pruebasTTT: false,
     rival: "",
     rivales: [],
@@ -3432,6 +3512,7 @@ function normalizarSesion(registro, indicePredeterminado) {
   const tieneDatos =
     Boolean(ec.trim()) ||
     Boolean(ecDuracion.trim()) ||
+    Boolean(String(original.volumenMetros ?? original.volumenTotal ?? "").trim()) ||
     Boolean(ttt.trim()) ||
     original.pruebasTTT === true ||
     fisicoBloques.some(bloque =>
@@ -3461,6 +3542,7 @@ function normalizarSesion(registro, indicePredeterminado) {
     ttt,
     tttBloques,
     fisicoBloques,
+    volumenMetros: String(original.volumenMetros ?? original.volumenTotal ?? ""),
     pruebasTTT: original.pruebasTTT === true,
     tipoPartido: original.tipoPartido === "torneo" ? "torneo" : "partido",
     rivales: normalizarListaRivales(original.rivales, original.rival || ""),
@@ -4703,6 +4785,15 @@ function renderizarBloquesFisicos(sesion, indice) {
 
             ${renderizarDetallesFisicos(bloque, indice, indiceBloque)}
 
+            <div class="campo campo-descripcion-fisica">
+              <label for="campo-${indice}-fisico-${indiceBloque}-descripcion">¿QUÉ VAS A HACER?</label>
+              <textarea id="campo-${indice}-fisico-${indiceBloque}-descripcion" rows="4"
+                data-index="${indice}" data-block-group="fisicoBloques"
+                data-block-index="${indiceBloque}" data-block-field="descripcion"
+                placeholder="Explicá los ejercicios, la organización, las series, las pausas o el objetivo del trabajo...">${escaparHTML(bloque.descripcion || "")}</textarea>
+              <small class="ayuda-volumen">Opcional · Podés detallar cómo se va a desarrollar el trabajo físico.</small>
+            </div>
+
             ${notaAnterior ? `
               <div class="aviso-contenido-antiguo">
                 <strong>Contenido anterior conservado</strong>
@@ -4910,8 +5001,9 @@ function crearHTMLLecturaFisica(bloque, indiceBloque) {
   const descripcion = describirBloqueFisico(bloque);
   const duracion = String(bloque?.duracion ?? "").trim();
   const notaAnterior = String(bloque?.notaAnterior ?? "").trim();
+  const explicacion = String(bloque?.descripcion ?? "").trim();
 
-  if (!descripcion && !duracion && !notaAnterior) {
+  if (!descripcion && !duracion && !notaAnterior && !explicacion) {
     return "";
   }
 
@@ -4947,6 +5039,17 @@ function crearHTMLLecturaFisica(bloque, indiceBloque) {
           ${duracion ? `<span class="lectura-duracion">${escaparHTML(duracion)} min</span>` : ""}
         </div>
         <p class="lectura-contenido">${escaparHTML(contenido || descripcion)}</p>
+      </div>
+    `;
+  }
+
+  if (explicacion) {
+    html += `
+      <div class="lectura-bloque">
+        <div class="lectura-bloque-cabecera">
+          <strong>DESCRIPCIÓN DEL TRABAJO · BLOQUE ${indiceBloque + 1}</strong>
+        </div>
+        <p class="lectura-contenido">${escaparHTML(explicacion)}</p>
       </div>
     `;
   }
@@ -5116,10 +5219,22 @@ function crearTarjetaSesion(sesion, indice) {
         </div>
 
         <div class="campo">
-          <label for="campo-${indice}-intensidad">INTENSIDAD</label>
+          <label for="campo-${indice}-intensidad">COLOR DEL DÍA</label>
           <select id="campo-${indice}-intensidad" data-index="${indice}" data-field="intensidad">
             ${crearOpcionesIntensidad(sesion.intensidad)}
           </select>
+        </div>
+
+        <div class="campo campo-volumen-dia">
+          <label for="campo-${indice}-volumenMetros">VOLUMEN TOTAL DEL DÍA</label>
+          <div class="campo-volumen-control">
+            <input id="campo-${indice}-volumenMetros" type="number" min="0" step="1" inputmode="numeric"
+              data-index="${indice}" data-field="volumenMetros"
+              value="${escaparHTML(sesion.volumenMetros || "")}" placeholder="Ej.: 2400"
+              aria-label="Volumen total del día en metros">
+            <span>metros</span>
+          </div>
+          <small class="ayuda-volumen">Dato opcional · Sumá los metros totales de la sesión.</small>
         </div>
 
         ${renderizarContenidoSesion(sesion, indice)}
@@ -5179,6 +5294,7 @@ function crearTarjetaSesionSoloLectura(sesion, indice) {
       </header>
 
       <div class="cuerpo-dia">
+        ${sesion.volumenMetros !== "" && sesion.volumenMetros != null ? `<div class="lectura-volumen-dia"><span>VOLUMEN TOTAL DEL DÍA</span><strong>${escaparHTML(sesion.volumenMetros)} <small>m</small></strong></div>` : ""}
         ${renderizarContenidoSesionLectura(sesion, indice)}
       </div>
 
@@ -5489,7 +5605,8 @@ function procesarEntrada(evento) {
           "areaPasadas",
           "cantidadPasadas",
           "metrosPasada",
-          "cantidadSaltos"
+          "cantidadSaltos",
+          "descripcion"
         ];
 
     if (!camposPermitidos.includes(campoBloque)) return;
@@ -5591,12 +5708,14 @@ function procesarCambio(evento) {
 
       const duracionConservada = bloque.duracion;
       const notaConservada = bloque.notaAnterior;
+      const descripcionConservada = bloque.descripcion || "";
 
       Object.assign(bloque, crearBloqueFisicoVacio());
 
       bloque.tipo = tipoNuevo;
       bloque.duracion = duracionConservada;
       bloque.notaAnterior = notaConservada;
+      bloque.descripcion = descripcionConservada;
 
       actualizarCamposLegado(sesion);
       sesion.activa = true;
@@ -5618,7 +5737,8 @@ function procesarCambio(evento) {
         "cantidadPasadas",
         "metrosPasada",
         "cantidadSaltos",
-        "duracion"
+        "duracion",
+        "descripcion"
       ];
 
       if (!camposFisicosPermitidos.includes(campoBloque)) return;
