@@ -3294,7 +3294,8 @@ function rutinaTieneDatos(rutina) {
         dia && (
           String(dia.peso ?? "").trim() ||
           String(dia.tiempo ?? "").trim() ||
-          String(dia.repeticiones ?? "").trim()
+          String(dia.repeticiones ?? "").trim() ||
+          String(dia.series ?? "").trim()
         )
       );
   });
@@ -4395,9 +4396,8 @@ function construirPlanillaHTML(rutina, division, cantidadPersonas = 1) {
     let celdas = "";
 
     estructuraPotencia.forEach(sem => {
-      [sem.d1, sem.d2, sem.d3].forEach(pct => {
-        const indiceDia = (sem.numero - 1) * DIAS_POR_SEMANA +
-          (pct === sem.d1 ? 0 : pct === sem.d2 ? 1 : 2);
+      [sem.d1, sem.d2, sem.d3].forEach((pct, diaIdx) => {
+        const indiceDia = (sem.numero - 1) * DIAS_POR_SEMANA + diaIdx;
         const series = ejercicio.dias?.[indiceDia]?.series ?? "";
         celdas += `
           <td class="celda-repeticiones">
@@ -4440,11 +4440,13 @@ function construirPlanillaHTML(rutina, division, cantidadPersonas = 1) {
 
     let celdas = "";
 
+    let indiceDiaPeriodizacion = 0;
     periodizacion.forEach(sem => {
       sem.dias.forEach(dia => {
-        const indiceDia = periodizacion.flatMap((sem, semanaIdx) =>
-          sem.dias.map((_, diaIdx) => semanaIdx * DIAS_POR_SEMANA + diaIdx)
-        )[periodizacion.slice(0, periodizacion.indexOf(sem)).reduce((n, anterior) => n + anterior.dias.length, 0) + sem.dias.indexOf(dia)];
+        const semanaIdx = plantillaPrin[periodizacion.indexOf(sem)].numero - 1;
+        const indiceDia = semanaIdx * DIAS_POR_SEMANA +
+          Math.min(DIAS_POR_SEMANA - 1, sem.dias.indexOf(dia));
+        indiceDiaPeriodizacion++;
         const series = ejercicio.dias?.[indiceDia]?.series ?? "";
         celdas += `
           <td class="celda-repeticiones">
