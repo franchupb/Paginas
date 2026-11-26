@@ -4011,6 +4011,39 @@ function leerActividadesCalendario() {
   }
 }
 
+function limpiarEventosDeBorradoresCalendario() {
+  const actividades = leerActividadesCalendario();
+  const almacen = cargarAlmacen();
+  let huboCambios = false;
+
+  Object.entries(actividades).forEach(([categoria, dias]) => {
+    if (!dias || typeof dias !== "object" || Array.isArray(dias)) return;
+
+    Object.entries(dias).forEach(([fecha, actividad]) => {
+      if (!actividad || typeof actividad !== "object" ||
+          actividad.origen !== ORIGEN_PLANIFICACION) return;
+
+      const claveSemana = String(actividad.microcicloSemana || "");
+      const registro = almacen[categoria]?.[claveSemana];
+
+      // Limpia publicaciones antiguas creadas automáticamente desde borradores.
+      // Los eventos de microciclos guardados explícitamente se conservan.
+      if (registro && typeof registro === "object" && registro.guardada !== true) {
+        if (actividad.actividadCalendarioOriginal) {
+          dias[fecha] = clonarObjeto(actividad.actividadCalendarioOriginal);
+        } else {
+          delete dias[fecha];
+        }
+        huboCambios = true;
+      }
+    });
+  });
+
+  if (huboCambios) {
+    localStorage.setItem(CLAVE_CALENDARIO, JSON.stringify(actividades));
+  }
+}
+
 function obtenerConfiguracionIntensidad(intensidad) {
   return CONFIGURACION_INTENSIDAD[intensidad] || CONFIGURACION_INTENSIDAD.media;
 }
@@ -6094,6 +6127,10 @@ async function inicializarPlanificacion() {
 
   categoriaActual = obtenerCategoriaPredeterminada();
   await cargarCatalogoTesteos(categoriaActual);
+
+  // Retirar del calendario los borradores que una versión anterior publicaba
+  // automáticamente. Los microciclos guardados explícitamente permanecen.
+  limpiarEventosDeBorradoresCalendario();
 
 // Calcular el microciclo por semanas calendario (lunes a domingo).
 // El lunes 18/01/2027 inicia un ciclo nuevo y vuelve a Semana 1.
