@@ -54,7 +54,7 @@
   ];
 
   const equivalencias = {
-    "santelmo-pruebas.html": "santelmo-testeos.html"
+    "san telmo-pruebas.html": "san telmo-testeos.html"
   };
 
   const normalizarArchivo = nombre =>
@@ -437,7 +437,7 @@
   // la selección de categoría. La página principal queda expresamente excluida.
   if (ARCHIVO_ACTUAL !== PRINCIPAL.toLowerCase()) {
     const paginas = {
-      "santelmo-jugadoras.html": {
+      "san telmo-jugadoras.html": {
         controlesCategoria: ["categoriaPrincipal"],
         ocultarSelectores: [".selector-categoria-principal"],
         selector: ".encabezado-pagina",
@@ -445,7 +445,7 @@
         titulo: "Plantel de jugadoras",
         descripcion: "Administrá la información personal y deportiva de SAN TELMO."
       },
-      "santelmo-asistencia.html": {
+      "san telmo-asistencia.html": {
         controlesCategoria: ["filtroCategoria"],
         ocultarSelectores: [".selector-categoria-panel"],
         selector: ".cabecera-pagina",
@@ -453,7 +453,7 @@
         titulo: "Asistencia mensual",
         descripcion: "Registrá la asistencia por categoría y consultá el seguimiento individual de cada jugadora al final de la página."
       },
-      "santelmo-calendario.html": {
+      "san telmo-calendario.html": {
         controlesCategoria: ["categoria"],
         ocultarSelectores: [".selector-categoria"],
         selector: ".encabezado-calendario",
@@ -461,7 +461,7 @@
         titulo: "Calendario de actividades",
         descripcion: "Organizá y consultá las actividades de cada categoría en un solo lugar."
       },
-      "santelmo-planificacion.html": {
+      "san telmo-planificacion.html": {
         controlesCategoria: ["selectCategoria"],
         ocultarSelectores: [".panel-semanal"],
         selector: ".cabecera-pagina",
@@ -469,7 +469,7 @@
         titulo: "Planificación de microciclos",
         descripcion: "Organizá las sesiones semanales y consultá los contenidos técnicos y físicos de cada categoría."
       },
-      "santelmo-gimnasio.html": {
+      "san telmo-gimnasio.html": {
         controlesCategoria: ["division"],
         ocultarSelectores: [".selector-categoria-superior"],
         selector: ".cabecera-pagina",
@@ -477,7 +477,7 @@
         titulo: "Gimnasio",
         descripcion: "Creá, organizá y consultá las rutinas de fuerza del plantel."
       },
-      "santelmo-calculadora.html": {
+      "san telmo-calculadora.html": {
         controlesCategoria: ["division"],
         ocultarSelectores: [".field.campo-categoria"],
         selector: ".cabecera-pagina",
@@ -485,7 +485,7 @@
         titulo: "Calculadora de cargas y volúmenes",
         descripcion: "Calculadora atemporal para registrar distancias, pasadas y tiempos de trabajo."
       },
-      "santelmo-partidos.html": {
+      "san telmo-partidos.html": {
         controlesCategoria: ["filtroDivision"],
         ocultarSelectores: [".filters .field:nth-child(2)"],
         selector: ".page-heading",
@@ -493,7 +493,7 @@
         titulo: "Fixture de competencia",
         descripcion: "Organizá los partidos por división, competición y fecha del torneo."
       },
-      "santelmo-informes.html": {
+      "san telmo-informes.html": {
         controlesCategoria: ["division","filtroDivisionPartidos","filtroDivisionEstadisticas"],
         ocultarSelectores: [".selector-categoria-general, #filtroDivisionPartidos, #filtroDivisionEstadisticas"],
         selector: ".page-heading",
@@ -501,7 +501,7 @@
         titulo: "Informes de partidos",
         descripcion: "Una planilla más simple para registrar cada encuentro, organizar la formación y mantener el seguimiento de minutos, goles y tarjetas de cada jugadora."
       },
-      "santelmo-estadisticas.html": {
+      "san telmo-estadisticas.html": {
         controlesCategoria: ["selectorCategoria"],
         ocultarSelectores: ["#selectorCategoria"],
         selector: ".encabezado-seccion",
@@ -509,7 +509,7 @@
         titulo: "Estadísticas del club",
         descripcion: "Consultá el rendimiento general y la evolución de cada jugadora a partir de los registros de competencia, asistencia, testeos, tiempos y lesiones."
       },
-      "santelmo-testeos.html": {
+      "san telmo-testeos.html": {
         controlesCategoria: ["selectDivision"],
         ocultarSelectores: [".selector-categoria"],
         selector: ".encabezado",
@@ -517,7 +517,7 @@
         titulo: "Testeos y evaluaciones físicas",
         descripcion: "Registrá los resultados y consultá la evolución física de cada jugadora."
       },
-      "santelmo-tiempos.html": {
+      "san telmo-tiempos.html": {
         controlesCategoria: ["selectorCategoriaGlobal"],
         ocultarSelectores: [".selector-categoria-principal"],
         selector: ".page-heading",
@@ -525,7 +525,7 @@
         titulo: "Tiempos y rendimiento físico",
         descripcion: "Consultá las pasadas, analizá los resultados y registrá la evolución física de cada jugadora en un solo lugar."
       },
-      "santelmo-encuestas.html": {
+      "san telmo-encuestas.html": {
         controlesCategoria: ["filtroCategoria"],
         ocultarSelectores: ["#bloqueCategoria"],
         selector: ".cabecera-pagina",
