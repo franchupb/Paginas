@@ -2029,10 +2029,14 @@ const pitchImage =
 let jugadorID = 0;
 
 let arrastrando = null;
-
 let offsetX = 0;
-
 let offsetY = 0;
+let rectCanchaArrastre = null;
+let mitadElementoX = 0;
+let mitadElementoY = 0;
+let ultimoPuntoArrastre = null;
+let frameArrastre = 0;
+let pointerArrastreId = null;
 
 
 
@@ -2084,141 +2088,74 @@ function limitar(
 
 
 
-function moverElemento(
-  elemento,
-  x,
-  y
-){
-
-  const rect =
-    pitch.getBoundingClientRect();
-
-  if(!rect.width || !rect.height || !Number.isFinite(x) || !Number.isFinite(y)) return;
-
-  const ancho =
-    elemento.offsetWidth;
-
-  const alto =
-    elemento.offsetHeight;
-
-
-  const mitadX =
-    ancho / 2;
-
-  const mitadY =
-    alto / 2;
-
-
-  x = limitar(
-    x,
-    mitadX,
-    rect.width - mitadX
-  );
-
-
-  y = limitar(
-    y,
-    mitadY,
-    rect.height - mitadY
-  );
-
-
-  elemento.style.left =
-    (x / rect.width * 100) + "%";
-
-
-  elemento.style.top =
-    (y / rect.height * 100) + "%";
-
+function moverElemento(elemento,x,y,rect,mitadX,mitadY){
+  if(!rect || !rect.width || !rect.height || !Number.isFinite(x) || !Number.isFinite(y)) return;
+  x = limitar(x,mitadX,rect.width-mitadX);
+  y = limitar(y,mitadY,rect.height-mitadY);
+  elemento.style.left = (x / rect.width * 100) + "%";
+  elemento.style.top = (y / rect.height * 100) + "%";
 }
 
-
-
 /* =========================
-   ARRASTRE
+   ARRASTRE FLUIDO
+   Se mide la cancha una sola vez al iniciar y se actualiza
+   como máximo una vez por frame para evitar saltos en móviles.
 ========================= */
+function aplicarPuntoArrastre(){
+  frameArrastre = 0;
+  if(!arrastrando || !ultimoPuntoArrastre || !rectCanchaArrastre) return;
+  const punto = ultimoPuntoArrastre;
+  ultimoPuntoArrastre = null;
+  moverElemento(
+    arrastrando,
+    punto.x - rectCanchaArrastre.left - offsetX,
+    punto.y - rectCanchaArrastre.top - offsetY,
+    rectCanchaArrastre,
+    mitadElementoX,
+    mitadElementoY
+  );
+}
 
 function iniciarArrastre(e){
-
   if(e.button !== undefined && e.button !== 0) return;
-  if(e.isPrimary === false) return;
+  if(e.isPrimary === false || arrastrando) return;
   e.preventDefault();
-
-  const rect =
-    pitch.getBoundingClientRect();
+  const rect = pitch.getBoundingClientRect();
   if(!rect.width || !rect.height) return;
 
   arrastrando = e.currentTarget;
+  pointerArrastreId = e.pointerId;
+  rectCanchaArrastre = rect;
+  const elementoRect = arrastrando.getBoundingClientRect();
+  mitadElementoX = elementoRect.width / 2;
+  mitadElementoY = elementoRect.height / 2;
+  offsetX = e.clientX - (elementoRect.left + mitadElementoX);
+  offsetY = e.clientY - (elementoRect.top + mitadElementoY);
+  ultimoPuntoArrastre = {x:e.clientX,y:e.clientY};
   try{ arrastrando.setPointerCapture(e.pointerId); }catch(error){}
-
-  const elementoRect =
-    arrastrando.getBoundingClientRect();
-
-
-  offsetX =
-    e.clientX -
-    (
-      elementoRect.left +
-      elementoRect.width / 2
-    );
-
-
-  offsetY =
-    e.clientY -
-    (
-      elementoRect.top +
-      elementoRect.height / 2
-    );
-
 }
 
+document.addEventListener("pointermove",function(e){
+  if(!arrastrando || e.pointerId !== pointerArrastreId) return;
+  ultimoPuntoArrastre = {x:e.clientX,y:e.clientY};
+  if(!frameArrastre) frameArrastre = requestAnimationFrame(aplicarPuntoArrastre);
+},{passive:false});
 
-
-document.addEventListener(
-  "pointermove",
-  function(e){
-
-    if(!arrastrando)
-      return;
-
-
-    const rect =
-      pitch.getBoundingClientRect();
-
-
-    let x =
-      e.clientX -
-      rect.left -
-      offsetX;
-
-
-    let y =
-      e.clientY -
-      rect.top -
-      offsetY;
-
-
-    moverElemento(
-      arrastrando,
-      x,
-      y
-    );
-
-  }
-);
-
-
-
-function finalizarArrastre(){
+function finalizarArrastre(e){
+  if(e && pointerArrastreId !== null && e.pointerId !== pointerArrastreId) return;
+  if(frameArrastre){cancelAnimationFrame(frameArrastre);frameArrastre=0;}
+  if(arrastrando && ultimoPuntoArrastre) aplicarPuntoArrastre();
   arrastrando = null;
+  ultimoPuntoArrastre = null;
+  rectCanchaArrastre = null;
+  pointerArrastreId = null;
 }
-
 document.addEventListener("pointerup",finalizarArrastre);
 document.addEventListener("pointercancel",finalizarArrastre);
 window.addEventListener("blur",finalizarArrastre);
 
 
-
+/* =========================
 /* =========================
    CREAR JUGADOR
 ========================= */
