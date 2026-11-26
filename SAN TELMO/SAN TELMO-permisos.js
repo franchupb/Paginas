@@ -16,7 +16,7 @@
 
   // ÚNICO LUGAR PARA CONFIGURAR USUARIOS Y SUS PERMISOS.
   // Las contraseñas nunca se guardan aquí: las administra Firebase Authentication.
-  // Los perfiles de SANTELMO se administran en Firestore (usuarios/{uid}).
+  // Los perfiles de SAN TELMO se administran en Firestore (usuarios/{uid}).
   // No se almacenan contraseñas ni hace falta editar este archivo para sumar usuarios.
   const USUARIOS = Object.freeze({});;
 
@@ -325,7 +325,7 @@
     const pagina = paginaActual();
     if (Array.isArray(configActiva.paginasPermitidas) && !configActiva.paginasPermitidas.some(x => String(x).split(/[?#]/)[0].split("/").pop().toLowerCase() === pagina)) {
       accesoPaginaDenegado = true;
-      mostrarErrorInicializacion(new Error("El perfil no tiene acceso a esta sección."), "Acceso restringido", "Tu perfil de SANTELMO no tiene permiso para entrar en esta página.", { href: INICIO_URL, texto: "Volver al inicio" });
+      mostrarErrorInicializacion(new Error("El perfil no tiene acceso a esta sección."), "Acceso restringido", "Tu perfil de SAN TELMO no tiene permiso para entrar en esta página.", { href: INICIO_URL, texto: "Volver al inicio" });
       return false;
     }
     if (Array.isArray(configActiva.paginasPermitidas)) {
@@ -416,7 +416,7 @@
           mostrarErrorInicializacion(
             new Error("Firebase no devolvió un usuario autenticado."),
             "No se pudo confirmar tu sesión",
-            "No te redirigimos automáticamente ni modificamos tu sesión. Si acabás de ingresar, probá Reintentar. Si cerraste sesión, podés volver al acceso de SANTELMO.",
+            "No te redirigimos automáticamente ni modificamos tu sesión. Si acabás de ingresar, probá Reintentar. Si cerraste sesión, podés volver al acceso de SAN TELMO.",
             { href: LOGIN_URL, texto: "Ir al inicio de sesión" }
           );
           return;

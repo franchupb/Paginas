@@ -1358,7 +1358,7 @@ body{background:#f2f4f6;color:var(--coach-ink)}
   <img
     class="logo-superior"
     src="SAN%20TELMO.png"
-    alt="Logo SANTELMO"
+    alt="Logo SAN TELMO"
     onerror="this.style.display='none'"
   >
 
@@ -1371,7 +1371,7 @@ body{background:#f2f4f6;color:var(--coach-ink)}
     <div class="avatar" id="avatarUsuario" aria-label="Usuario">U</div>
     <div>
       <div class="nombre-perfil" id="nombreUsuario">Usuario</div>
-      <div class="rol-perfil" id="rolUsuario">Club Torito</div>
+      <div class="rol-perfil" id="rolUsuario">Club San Telmo</div>
     </div>
   </div>
 </header>
@@ -1628,7 +1628,7 @@ body{background:#f2f4f6;color:var(--coach-ink)}
 
     <button
       class="btn btn-light"
-      onclick="agregarJugadorPropio()" title="Agregar una jugadora de SANTELMO">
+      onclick="agregarJugadorPropio()" title="Agregar una jugadora de SAN TELMO">
 
       ＋ SANTELMO
 
@@ -1927,7 +1927,7 @@ const rolPerfilSANTELMO = (localStorage.getItem("rolSANTELMO") || "").trim().toL
 const esFran = rolPerfilSANTELMO === "admin";
 const esToto = ["editor", "cuerpo_tecnico", "coordinadora"].includes(rolPerfilSANTELMO);
 const esBianca = rolPerfilSANTELMO === "jugadora";
-const rol = esFran ? "Administrador" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora · Sub 14" : "Club Torito";
+const rol = esFran ? "Administrador" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora · Sub 14" : "Club San Telmo";
 
 document.getElementById("nombreUsuario").textContent = usuario || "Usuario";
 document.getElementById("rolUsuario").textContent = rol;

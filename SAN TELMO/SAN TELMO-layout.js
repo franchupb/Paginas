@@ -804,7 +804,7 @@
     menuPerfil.addEventListener("click", event => event.stopPropagation());
     menuPerfil.querySelector("#cerrarSesionPerfil")?.addEventListener("click", event => {
       event.preventDefault();
-      if (window.confirm("¿Querés cerrar la sesión de SANTELMO?")) importarCerrarSesionSANTELMO();
+      if (window.confirm("¿Querés cerrar la sesión de SAN TELMO?")) importarCerrarSesionSANTELMO();
     });
     document.addEventListener("click", event => {
       if (!perfil.contains(event.target) && !menuPerfil.contains(event.target)) cerrarMenuPerfil();

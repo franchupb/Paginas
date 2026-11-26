@@ -957,8 +957,8 @@ a {
 
   <img
     class="logo-superior"
-    src="/Paginas/SANTELMO/SAN%20TELMO.png"
-    alt="Escudo oficial de SANTELMO"
+    src="/Paginas/SAN%20TELMO/SAN%20TELMO.png"
+    alt="Escudo oficial de SAN TELMO"
     onerror="this.onerror=null;this.style.visibility='hidden';"
   >
 
@@ -971,7 +971,7 @@ a {
     <div class="avatar" id="avatarUsuario">U</div>
     <div>
       <div class="nombre-perfil" id="nombreUsuario">Usuario</div>
-      <div class="rol-perfil" id="rolUsuario">Club Torito</div>
+      <div class="rol-perfil" id="rolUsuario">Club San Telmo</div>
     </div>
   </div>
 
@@ -1135,7 +1135,7 @@ a {
     <section class="bienvenida">
       <div>
         <h2>¡Bienvenido/a, <span id="saludoUsuario">jugador/a</span>!</h2>
-        <p>Todo lo importante de SANTELMO, en un solo lugar.</p>
+        <p>Todo lo importante de SAN TELMO, en un solo lugar.</p>
       </div>
       <div class="fecha-hoy" id="fechaHoy"></div>
     </section>
@@ -1374,7 +1374,7 @@ document.getElementById("rolUsuario").textContent =
   esFran ? "Administrador" :
   esToto ? "Cuerpo técnico" :
   esBianca ? "Jugadora · Sub 14" :
-  "Club Torito";
+  "Club San Telmo";
 
 document.getElementById("fechaHoy").textContent =
   new Intl.DateTimeFormat("es-AR", {
@@ -1709,7 +1709,7 @@ function leerTodosLosPartidos() {
       const partidos = listaDesdeDatosFixture(datos);
       if (partidos.length) combinados.push(...partidos);
     } catch (error) {
-      console.warn("No se pudo leer el registro propio de SANTELMO:", clave, error);
+      console.warn("No se pudo leer el registro propio de SAN TELMO:", clave, error);
     }
   }
 
@@ -1815,7 +1815,7 @@ function crearPartidoJugadoCard(partido) {
   const nombreLocal = "SAN TELMO";
 
   local.append(
-    construirEscudo("/Paginas/SANTELMO/SAN%20TELMO.png", nombreLocal)
+    construirEscudo("/Paginas/SAN%20TELMO/SAN%20TELMO.png", nombreLocal)
   );
 
   const textoLocal = document.createElement("div");
@@ -2579,7 +2579,7 @@ const ESCUDOS_CLUBES = [
   { nombre: "Sparta", ruta: "CLUBES/SPARTA.jpg" },
   { nombre: "Tiro Federal", ruta: "CLUBES/TIRO FEDERAL.jpg" },
   { nombre: "Tiro Suizo", ruta: "CLUBES/TIRO SUIZO.jpg" },
-  { nombre: "Torito", ruta: "/Paginas/SANTELMO/SAN%20TELMO.png" },
+  { nombre: "Torito", ruta: "/Paginas/SAN%20TELMO/SAN%20TELMO.png" },
   { nombre: "Unión Americana", ruta: "CLUBES/UNION AMERICANA.png" },
   { nombre: "Villa Gobernador Gálvez", ruta: "CLUBES/VG GALVEZ.png" }
 ];

@@ -2788,8 +2788,8 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   <button class="menu-boton" id="botonMenu" type="button"
     aria-label="Abrir o cerrar menú" aria-expanded="true">☰</button>
 
-  <img class="logo-superior" src="SAN TELMO-Logo SANTELMO.jpg" alt="Logo SANTELMO"
-    onerror="this.onerror=null;this.src='SAN TELMO-Logo SANTELMO.jpg';">
+  <img class="logo-superior" src="SAN TELMO.png" alt="Logo SAN TELMO"
+    onerror="this.onerror=null;this.src='SAN TELMO.png';">
 
   <div class="marca">
     <h1>SAN TELMO FEMENINO</h1>
@@ -3063,8 +3063,8 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 
           <div class="escudos-form">
             <div class="escudo-bloque">
-              <img class="escudo-preview" id="previewAdiur" src="SAN TELMO-Logo SANTELMO.jpg" alt="SAN TELMO"
-                onerror="this.onerror=null;this.src='SAN TELMO-Logo SANTELMO.jpg';">
+              <img class="escudo-preview" id="previewAdiur" src="SAN TELMO.png" alt="SAN TELMO"
+                onerror="this.onerror=null;this.src='SAN TELMO.png';">
               <div class="escudo-info">
                 <strong>SAN TELMO FEMENINO</strong>
                 <small>Escudo del club</small>
@@ -3091,7 +3091,7 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 
             <div class="numeros-goles">
               <input type="number" id="golesAdiur" min="0" max="99" placeholder="–"
-                aria-label="Goles de SANTELMO" required>
+                aria-label="Goles de SAN TELMO" required>
               <span>–</span>
               <input type="number" id="golesRival" min="0" max="99" placeholder="–"
                 aria-label="Goles del rival" required>
@@ -3128,8 +3128,8 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 
             <div class="marcador-compacto">
               <div class="equipo-compacto">
-                <img src="SAN TELMO-Logo SANTELMO.jpg" alt="SAN TELMO"
-                  onerror="this.onerror=null;this.src='SAN TELMO-Logo SANTELMO.jpg';">
+                <img src="SAN TELMO.png" alt="SAN TELMO"
+                  onerror="this.onerror=null;this.src='SAN TELMO.png';">
                 <span>SAN TELMO</span>
               </div>
               <span class="numero-marcador" id="marcadorMiniAdiur">–</span>
@@ -4079,7 +4079,7 @@ function cargarFixture() {
       competicion,
       jornada,
       rival,
-      escudoAdiur: p.escudoAdiur || "SAN TELMO-Logo SANTELMO.jpg",
+      escudoAdiur: p.escudoAdiur || "SAN TELMO.png",
       escudoRival: escudo,
       golesAdiur: golesAdiur === null ? "" : String(golesAdiur),
       golesRival: golesRival === null ? "" : String(golesRival),
@@ -5209,7 +5209,7 @@ function actualizarAvisoGoles() {
     texto.innerHTML=`El marcador indica <strong>${marcador} goles</strong>, pero hay <strong>${individuales} goles individuales</strong> detallados. Revisá si falta cargar algún gol.`;
   } else {
     aviso.className="aviso exito";
-    texto.innerHTML=`Los goles individuales coinciden con el marcador de SANTELMO: <strong>${marcador}</strong>.`;
+    texto.innerHTML=`Los goles individuales coinciden con el marcador de SAN TELMO: <strong>${marcador}</strong>.`;
   }
 }
 

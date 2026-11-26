@@ -1,7 +1,7 @@
 /* SAN TELMO · AUTENTICACIÓN CENTRALIZADA CON FIREBASE
    Las cuentas se administran en Firebase Authentication.
    El perfil se valida en Firestore: usuarios/{uid}.
-   Este módulo usa exclusivamente el proyecto Firebase de SANTELMO.
+   Este módulo usa exclusivamente el proyecto Firebase de SAN TELMO.
 */
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";

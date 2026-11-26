@@ -288,7 +288,7 @@ main{padding:20px 10px 28px}
 <header class="barra-superior">
     <button class="boton-menu" id="botonMenu" type="button" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="true">☰</button>
     <div class="identidad-club">
-        <img class="logo-club" src="SAN TELMO-Logo SANTELMO.jpg" alt="Logo SANTELMO" onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='SAN TELMO-Logo SANTELMO.jpg'}else{this.style.display='none'}">
+        <img class="logo-club" src="SAN TELMO.png" alt="Logo SAN TELMO" onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='SAN TELMO.png'}else{this.style.display='none'}">
         <div class="textos-club"><h1>SAN TELMO FEMENINO</h1><p>Tiempos y rendimiento físico</p></div>
     </div>
     <button class="perfil" id="botonPerfil" type="button" aria-label="Ver perfil de usuario"><span class="avatar" id="avatarUsuario">U</span><span class="informacion-perfil"><span class="nombre-perfil" id="nombreUsuario">Usuario</span><span class="rol-perfil" id="rolUsuario">Club San Telmo</span></span></button>
@@ -1062,7 +1062,7 @@ botonMenu.addEventListener("click",()=>{sidebar.classList.toggle("oculto");actua
 fondoSidebar.addEventListener("click",cerrarMenu);
 window.addEventListener("resize",ajustarMenu);
 document.querySelectorAll(".titulo-grupo[data-grupo]").forEach(b=>b.addEventListener("click",()=>{const g=$(b.dataset.grupo);if(!g)return;g.classList.toggle("cerrado");b.setAttribute("aria-expanded",String(!g.classList.contains("cerrado")));}));
-$("cerrarSesion").addEventListener("click",e=>{e.preventDefault();if(confirm("¿Querés cerrar la sesión de SANTELMO?"))window.location.href="SAN TELMO-Loing.html";});
+$("cerrarSesion").addEventListener("click",e=>{e.preventDefault();if(confirm("¿Querés cerrar la sesión de SAN TELMO?"))window.location.href="SAN TELMO-Loing.html";});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){cerrarModal();cerrarPerfil();if(esMovil())cerrarMenu();}});
 
 window.addEventListener("storage",e=>{

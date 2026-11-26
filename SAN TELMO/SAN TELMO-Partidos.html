@@ -1772,9 +1772,9 @@ body.eliminando .btn-puntos {
 
         <img
             class="logo-club"
-            src="SAN TELMO-Logo SANTELMO.jpg"
-            alt="Logo SANTELMO"
-            onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='SAN TELMO-Logo SANTELMO.jpg'}else{this.style.display='none'}"
+            src="SAN TELMO.png"
+            alt="Logo SAN TELMO"
+            onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='SAN TELMO.png'}else{this.style.display='none'}"
         >
 
         <div class="textos-club">
@@ -2145,7 +2145,7 @@ body.eliminando .btn-puntos {
                             type="text"
                             id="lugarPartido"
                             maxlength="120"
-                            placeholder="Ej.: Cancha de SANTELMO"
+                            placeholder="Ej.: Cancha de SAN TELMO"
                         >
                     </div>
 
@@ -2186,14 +2186,14 @@ body.eliminando .btn-puntos {
 
                     <div class="escudo-upload">
 
-                        <label>Escudo de SANTELMO</label>
+                        <label>Escudo de SAN TELMO</label>
 
                         <img
                             id="previewAdiur"
                             class="escudo-preview"
-                            src="SAN TELMO-Logo SANTELMO.jpg"
-                            alt="Escudo de SANTELMO"
-                            onerror="this.onerror=null;this.src='SAN TELMO-Logo SANTELMO.jpg';"
+                            src="SAN TELMO.png"
+                            alt="Escudo de SAN TELMO"
+                            onerror="this.onerror=null;this.src='SAN TELMO.png';"
                         >
 
                         <p class="escudo-fijo-aviso">
@@ -2635,7 +2635,7 @@ const ORDEN_COMPETICIONES = [
 ];
 
 const CLAVE_FIXTURE = "fixtureSANTELMO";
-const LOGO_SANTELMO_FIJO = "SAN TELMO-Logo SANTELMO.jpg";
+const LOGO_SANTELMO_FIJO = "SAN TELMO.png";
 
 /* =====================================================
    CLUBES Y ESCUDOS
@@ -2693,7 +2693,7 @@ function rutaImagen(nombre) {
 
     if (
         minusculas === "santelmo" ||
-        minusculas === "SAN TELMO-Logo SANTELMO.jpg" ||
+        minusculas === "SAN TELMO.png" ||
         minusculas === "logo santelmo.png" ||
         minusculas === "logo santelmo.jpeg"
     ) {
@@ -3204,7 +3204,7 @@ function abrirModal(id = null) {
 
     previewAdiur.onerror = function() {
         this.onerror = null;
-        this.src = "SAN TELMO-Logo SANTELMO.jpg";
+        this.src = "SAN TELMO.png";
     };
 
     previewAdiur.src = LOGO_SANTELMO_FIJO;
@@ -3346,7 +3346,7 @@ async function guardarPartido(event) {
             Number(golesAdiurIngresados) > 99
         )
     ) {
-        alert("Ingresá una cantidad válida de goles para SANTELMO (0 a 99).");
+        alert("Ingresá una cantidad válida de goles para SAN TELMO (0 a 99).");
         return;
     }
 
@@ -3513,7 +3513,7 @@ function construirEscudo(src, nombre, esAdiur = false) {
                 class="escudo-mini"
                 src="${rutaSegura}"
                 alt="${altSeguro}"
-                onerror="this.onerror=null;this.src='SAN TELMO-Logo SANTELMO.jpg';"
+                onerror="this.onerror=null;this.src='SAN TELMO.png';"
             >
         `;
     }

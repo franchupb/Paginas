@@ -773,7 +773,7 @@ a {
 <!-- BARRA SUPERIOR -->
 <header class="barra-superior">
   <button class="boton-menu" id="botonMenu" aria-label="Abrir menú" onclick="alternarSidebar()">☰</button>
-  <img class="logo-superior" src="SAN%20TELMO.png" alt="Logo SANTELMO" onerror="this.style.display='none'">
+  <img class="logo-superior" src="SAN%20TELMO.png" alt="Logo SAN TELMO" onerror="this.style.display='none'">
   <div class="titulo-superior">
     <h1>SAN TELMO</h1>
     <p>Gestión de Encuestas Semanales</p>
@@ -782,7 +782,7 @@ a {
     <div class="avatar" id="avatarUsuario">U</div>
     <div>
       <div class="nombre-perfil" id="nombreUsuario">Usuario</div>
-      <div class="rol-perfil" id="rolUsuario">Club Torito</div>
+      <div class="rol-perfil" id="rolUsuario">Club San Telmo</div>
     </div>
   </div>
 </header>
@@ -1320,7 +1320,7 @@ const esBianca = rolPerfilSANTELMO === "jugadora";
 
 document.getElementById("nombreUsuario").textContent = usuarioGuardado;
 document.getElementById("avatarUsuario").textContent = usuarioGuardado.charAt(0).toUpperCase();
-document.getElementById("rolUsuario").textContent = esFran ? "Administrador" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora · Sub 14" : "Club Torito";
+document.getElementById("rolUsuario").textContent = esFran ? "Administrador" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora · Sub 14" : "Club San Telmo";
 
 // Mostrar botón para agregar día a DT o Admin
 if (esFran || esToto) {

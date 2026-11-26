@@ -1,6 +1,6 @@
-# Perfiles de acceso de SANTELMO
+# Perfiles de acceso de SAN TELMO
 
-Los usuarios de SANTELMO se administran en el proyecto Firebase **san-telmo-f2155**. No se deben crear en el proyecto de ADIUR.
+Los usuarios de SAN TELMO se administran en el proyecto Firebase **san-telmo-f2155**. No se deben crear en el proyecto de ADIUR.
 
 ## 1. Crear la cuenta de acceso
 
