@@ -1364,7 +1364,7 @@ a {
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =====================================================
@@ -1383,7 +1383,7 @@ const firebaseConfig = {
 let db = null;
 let nubeActiva = false;
 try {
-  const app = initializeApp(firebaseConfig);
+  const app = getApps().find(item => item.options?.projectId === firebaseConfig.projectId) || initializeApp(firebaseConfig);
   db = getFirestore(app);
   nubeActiva = true;
 } catch (e) {
