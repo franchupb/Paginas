@@ -542,7 +542,7 @@
         descripcion: "Centralizá los incidentes, el estado de recuperación, los controles pendientes y la disponibilidad deportiva de cada jugadora."
       }
     };
-    const configPagina = paginas[ARCHIVO_ACTUAL];
+    const configPagina = paginas[normalizarArchivo(ARCHIVO_ACTUAL)];
     const panelEstilo = document.createElement("style");
     panelEstilo.id = "santelmo-panel-compartido-estilos";
     panelEstilo.textContent = `
