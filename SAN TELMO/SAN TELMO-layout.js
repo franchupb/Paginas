@@ -70,8 +70,8 @@
       display: flex !important;
       align-items: center !important;
       gap: 15px !important;
-      min-height: 152px !important;
-      padding: 12px 25px !important;
+      min-height: 84px !important;
+      padding: 7px 25px !important;
       background: #fff !important;
       border-bottom: 1px solid var(--borde, #e8e8e8) !important;
       box-sizing: border-box !important;
@@ -96,9 +96,9 @@
     .barra-superior .logo-club,
     .barra-superior .identidad-club img {
       display: block !important;
-      width: 80px !important;
-      height: 80px !important;
-      flex: 0 0 80px !important;
+      width: 70px !important;
+      height: 70px !important;
+      flex: 0 0 70px !important;
       object-fit: contain !important;
       border-radius: 0 !important;
       padding: 2px !important;
@@ -356,8 +356,8 @@
 
     @media (max-width: 760px) {
       .barra-superior {
-        min-height: 152px !important;
-        padding: 10px 13px !important;
+        min-height: 72px !important;
+        padding: 1px 13px !important;
         gap: 9px !important;
       }
       .barra-superior .boton-menu,
@@ -370,15 +370,15 @@
       .barra-superior .logo-superior,
       .barra-superior .logo-club,
       .barra-superior .identidad-club img {
-        width: 80px !important;
-        height: 80px !important;
-        flex-basis: 80px !important;
+        width: 70px !important;
+        height: 70px !important;
+        flex-basis: 70px !important;
       }
       .barra-superior .titulo-superior h1,
       .barra-superior .textos-club h1 { font-size: 16px !important; }
       .barra-superior .titulo-superior p,
       .barra-superior .textos-club p { font-size: 11px !important; }
-      .barra-superior .nombre-perfil { max-width: 80px !important; font-size: 12px !important; }
+      .barra-superior .nombre-perfil { max-width: 70px !important; font-size: 12px !important; }
       .barra-superior .rol-perfil { display: none !important; }
       .barra-superior .avatar { width: 36px !important; height: 36px !important; flex-basis: 36px !important; }
       .contenedor { min-height: calc(100vh - 72px) !important; }
@@ -411,7 +411,7 @@
         background: rgba(0,0,0,.32) !important;
       }
     }
-    @media (max-width: 380px) {
+    @media (max-width: 370px) {
       .barra-superior .titulo-superior h1,
       .barra-superior .textos-club h1 { font-size: 14px !important; }
       .barra-superior .nombre-perfil { max-width: 60px !important; }
