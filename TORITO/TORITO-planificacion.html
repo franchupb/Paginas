@@ -2630,7 +2630,8 @@ window.firebasePlanificacionReady = (async () => {
     setDoc,
     serverTimestamp,
     collection,
-    getDocs
+    getDocs,
+    runTransaction
   } = await import(
     "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
   );
@@ -2650,39 +2651,87 @@ window.firebasePlanificacionReady = (async () => {
     || initializeApp(firebaseConfig, "torito-planificacion");
   const db = getFirestore(app);
 
-  const referencia = doc(
-    db,
-    "torito_planificacionTORITO",
-    "principal"
-  );
+  const coleccionPlanificacion = collection(db, "torito_planificacionTORITO");
+  const referenciaLegada = doc(db, "torito_planificacionTORITO", "principal");
 
-  // Cargar planificación desde la nube
+  // Cada categoría y semana se guarda en su propio documento. Así dos
+  // dispositivos no se pisan al sincronizar copias completas y desactualizadas.
+  const idDocumentoSemana = (categoria, claveSemana) =>
+    "semana__" + encodeURIComponent(categoria) + "__" + encodeURIComponent(claveSemana);
+
+  // Recuperar el formato histórico y luego superponer las semanas sincronizadas
+  // individualmente. Esto mantiene compatibilidad con los datos ya existentes.
   window.cargarPlanificacionNube = async () => {
+    const [resultadoLegado, documentos] = await Promise.all([
+      getDoc(referenciaLegada),
+      getDocs(coleccionPlanificacion)
+    ]);
 
-    const resultado = await getDoc(referencia);
+    const datos = resultadoLegado.exists()
+      ? (resultadoLegado.data()?.datos || {})
+      : {};
 
-    if (resultado.exists()) {
-      return resultado.data().datos || {};
-    }
+    documentos.forEach(documento => {
+      if (!documento.id.startsWith("semana__")) return;
+      const registro = documento.data() || {};
+      if (!registro.categoria || !registro.claveSemana || !registro.registro) return;
+      if (!datos[registro.categoria] || typeof datos[registro.categoria] !== "object") {
+        datos[registro.categoria] = {};
+      }
+      datos[registro.categoria][registro.claveSemana] = registro.registro;
+    });
 
-    return null;
+    return datos;
   };
 
-  // Guardar planificación en la nube
+  // Guardar una sola semana mediante transacción. La versión más reciente
+  // prevalece y una pestaña incógnita no puede reemplazar semanas ajenas.
   let colaGuardado = Promise.resolve();
 
-  window.guardarPlanificacionEnNube = (datos) => {
+  window.guardarPlanificacionEnNube = (categoria, claveSemana, registro) => {
+    if (!categoria || !claveSemana || !registro || typeof registro !== "object") {
+      return Promise.reject(new Error("Faltan datos de categoría o semana para sincronizar."));
+    }
 
-    const copia = JSON.parse(JSON.stringify(datos));
+    const copia = JSON.parse(JSON.stringify(registro));
+    const referenciaSemana = doc(
+      db,
+      "torito_planificacionTORITO",
+      idDocumentoSemana(categoria, claveSemana)
+    );
 
     colaGuardado = colaGuardado.catch(() => {}).then(() =>
-      setDoc(referencia, {
-        datos: copia,
-        actualizado: serverTimestamp()
+      runTransaction(db, async transaccion => {
+        const actual = await transaccion.get(referenciaSemana);
+        const actualizadoRemoto = Number(actual.data()?.registro?.actualizadoEn || 0);
+        const actualizadoNuevo = Number(copia.actualizadoEn || 0);
+
+        if (!actual.exists() || actualizadoNuevo >= actualizadoRemoto) {
+          transaccion.set(referenciaSemana, {
+            categoria,
+            claveSemana,
+            registro: copia,
+            actualizado: serverTimestamp()
+          });
+        }
       })
     );
 
     return colaGuardado;
+  };
+
+  // Migrar/recuperar semanas existentes sin reemplazar una versión más nueva.
+  window.sincronizarPlanificacionCompleta = async datos => {
+    const tareas = [];
+    Object.entries(datos || {}).forEach(([categoria, semanas]) => {
+      if (!semanas || typeof semanas !== "object" || Array.isArray(semanas)) return;
+      Object.entries(semanas).forEach(([claveSemana, registro]) => {
+        if (registro && typeof registro === "object") {
+          tareas.push(window.guardarPlanificacionEnNube(categoria, claveSemana, registro));
+        }
+      });
+    });
+    for (const tarea of tareas) await tarea;
   };
 
   window.cargarCatalogoTesteosNube = async () => {
@@ -3866,7 +3915,11 @@ function guardarDatosAutomaticamente(mostrarMensaje = false) {
 
     // No sobrescribir Firestore hasta haber confirmado la lectura inicial.
     if (planificacionNubeLista && typeof window.guardarPlanificacionEnNube === "function") {
-      ultimaSincronizacionPlanificacion = window.guardarPlanificacionEnNube(almacen);
+      ultimaSincronizacionPlanificacion = window.guardarPlanificacionEnNube(
+        categoriaActual,
+        claveSemanaActual,
+        almacen[categoriaActual][claveSemanaActual]
+      );
       ultimaSincronizacionPlanificacion.then(() => {
           actualizarEstadoGuardado(
             "✓ Planificación sincronizada con la nube",
@@ -6134,7 +6187,17 @@ async function inicializarPlanificacion() {
     // Publicar la unión para recuperar en Firestore cualquier semana que
     // estuviera guardada únicamente en este navegador.
     if (Object.keys(datosCombinados).length > 0) {
-      await window.guardarPlanificacionEnNube(datosCombinados);
+      try {
+        await window.sincronizarPlanificacionCompleta(datosCombinados);
+      } catch (error) {
+        // La lectura de Firestore fue correcta; un error de migración no debe
+        // convertir la planificación recuperada en una pantalla vacía.
+        console.error("No se pudo completar la sincronización de semanas:", error);
+        actualizarEstadoGuardado(
+          "Planificación cargada; algunas semanas todavía no pudieron sincronizarse.",
+          true
+        );
+      }
     }
 
   } catch (error) {
