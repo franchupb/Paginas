@@ -2696,7 +2696,10 @@ window.firebasePlanificacionReady = (async () => {
         const marcaRemota = Number(registroRemoto?.actualizadoEn || 0);
         const marcaNueva = Number(copia.actualizadoEn || 0);
 
-        if (!registroRemoto || marcaNueva >= marcaRemota) {
+        const mismoContenidoSinVersion = marcaNueva === 0 &&
+          marcaRemota === 0 &&
+          JSON.stringify(copia) !== JSON.stringify(registroRemoto);
+        if (!registroRemoto || marcaNueva > marcaRemota || mismoContenidoSinVersion) {
           datosActualizados[categoria] = {
             ...semanasCategoria,
             [claveSemana]: copia
@@ -6178,17 +6181,15 @@ async function inicializarPlanificacion() {
     // Publicar la unión para recuperar en Firestore cualquier semana que
     // estuviera guardada únicamente en este navegador.
     if (Object.keys(datosCombinados).length > 0) {
-      try {
-        await window.sincronizarPlanificacionCompleta(datosCombinados);
-      } catch (error) {
-        // La lectura de Firestore fue correcta; un error de migración no debe
-        // convertir la planificación recuperada en una pantalla vacía.
+      // La migración corre en segundo plano para que la pantalla no quede
+      // esperando una transacción por cada semana histórica.
+      window.sincronizarPlanificacionCompleta(datosCombinados).catch(error => {
         console.error("No se pudo completar la sincronización de semanas:", error);
         actualizarEstadoGuardado(
           "Planificación cargada; algunas semanas todavía no pudieron sincronizarse.",
           true
         );
-      }
+      });
     }
 
   } catch (error) {
