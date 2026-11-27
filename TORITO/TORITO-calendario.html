@@ -3312,6 +3312,18 @@ function guardarDatos(datos) {
 function obtenerActividad(cat, fecha) {
     const datos = leerDatos();
     const original = datos[cat]?.[fecha];
+    const actividadNube = actividadesPlanificacionNube?.[cat]?.[fecha];
+
+    // La planificación publicada en Firestore es la fuente principal.
+    // Los eventos manuales siguen leyéndose del almacenamiento local.
+    if (actividadNube) return actividadNube;
+
+    // No mostrar copias locales antiguas de microciclos si ya no existen
+    // (o dejaron de estar guardados) en la fuente compartida de Firestore.
+    if (original && typeof original === "object" &&
+        original.origen === "planificacionMicrocicloTORITO") {
+        return null;
+    }
 
     if (original === undefined || original === null) {
         return null;
@@ -3757,6 +3769,165 @@ actualizarVistaPreviaCalendario();
 </script>
 
 
+
+
+<script type="module">
+"use strict";
+
+// Calendario lee la misma fuente Firestore que Planificación.
+// onSnapshot mantiene la vista actualizada en tiempo real entre dispositivos.
+window.actividadesPlanificacionNube = {};
+
+(async () => {
+  try {
+    const [{ initializeApp, getApps }, { getAuth }, { getFirestore, doc, onSnapshot }] =
+      await Promise.all([
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"),
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js")
+      ]);
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCsOaJVo8P5reZvfp7vjBkhkP79C_mEO94",
+      authDomain: "torito-56078.firebaseapp.com",
+      projectId: "torito-56078",
+      storageBucket: "torito-56078.firebasestorage.app",
+      messagingSenderId: "497702302753",
+      appId: "1:497702302753:web:04d419e13ded4b59371f60",
+      measurementId: "G-32VFQHWP5Y"
+    };
+
+    const app = getApps().find(item => item.options?.projectId === firebaseConfig.projectId)
+      || initializeApp(firebaseConfig, "torito-calendario");
+    const auth = getAuth(app);
+    if (typeof auth.authStateReady === "function") await auth.authStateReady();
+
+    const db = getFirestore(app);
+    const referencia = doc(db, "torito_planificacionTORITO", "principal");
+
+    const fechaDeSesion = (fechaInicio, diaSemana) => {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(String(fechaInicio || ""))) return "";
+      const fecha = new Date(fechaInicio + "T12:00:00");
+      const dia = Number(diaSemana);
+      if (!Number.isInteger(dia) || dia < 0 || dia > 6 || Number.isNaN(fecha.getTime())) return "";
+      fecha.setDate(fecha.getDate() + dia);
+      const anio = fecha.getFullYear();
+      const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+      const numero = String(fecha.getDate()).padStart(2, "0");
+      return anio + "-" + mes + "-" + numero;
+    };
+
+    const normalizarIntensidad = valor => {
+      const intensidad = String(valor || "").toLowerCase().trim();
+      if (["baja", "bajo", "verde"].includes(intensidad)) return "bajo";
+      if (["media", "medio", "amarillo"].includes(intensidad)) return "medio";
+      if (["alta", "alto", "rojo"].includes(intensidad)) return "alto";
+      if (["suspendido", "gris"].includes(intensidad)) return "suspendido";
+      if (intensidad === "partido") return "partido";
+      return "medio";
+    };
+
+    const rutaEscudo = nombre => {
+      const clave = Object.keys(window.ESCUDOS_CLUBES || {}).find(item =>
+        item.toLowerCase() === String(nombre || "").trim().toLowerCase()
+      );
+      return clave ? window.ESCUDOS_CLUBES[clave] : "";
+    };
+
+    const construirActividades = datos => {
+      const resultado = {};
+      Object.entries(datos || {}).forEach(([categoria, semanas]) => {
+        if (!semanas || typeof semanas !== "object" || Array.isArray(semanas)) return;
+        Object.values(semanas).forEach(registro => {
+          if (!registro || typeof registro !== "object" || registro.guardada !== true ||
+              !Array.isArray(registro.sesiones)) return;
+
+          registro.sesiones.forEach((sesion, indice) => {
+            if (!sesion || sesion.activa === false) return;
+            const fecha = fechaDeSesion(registro.fechaInicio, sesion.diaSemana);
+            if (!fecha) return;
+
+            const intensidad = normalizarIntensidad(sesion.intensidad);
+            const partido = intensidad === "partido";
+            const suspendido = intensidad === "suspendido";
+            const rivales = Array.isArray(sesion.rivales)
+              ? sesion.rivales.map(item => String(item || "").trim()).filter(Boolean)
+              : (sesion.rival ? [String(sesion.rival).trim()] : []);
+            const competicion = String(sesion.competicion || "Competición a confirmar");
+            const tipoPartido = sesion.tipoPartido === "torneo" ? "torneo" : "partido";
+
+            let texto = "";
+            let estado = intensidad;
+            if (partido) {
+              texto = "Partido · " + categoria + "\n" +
+                (tipoPartido === "torneo" ? "Torneo · " : "Partido · ") + competicion;
+              estado = "libre";
+            } else if (suspendido) {
+              texto = "Sesión suspendida · " + categoria;
+            } else {
+              const lineas = [
+                "Entrenamiento · " + categoria,
+                "Intensidad: " + (intensidad === "bajo" ? "Bajo" : intensidad === "alto" ? "Alto" : "Medio")
+              ];
+              if (sesion.ec) lineas.push("Entrada en calor: " + sesion.ec);
+              (Array.isArray(sesion.tttBloques) ? sesion.tttBloques : []).forEach(bloque => {
+                if (bloque?.contenido) lineas.push(String(bloque.contenido));
+              });
+              if (sesion.ttt && !sesion.tttBloques?.length) lineas.push(String(sesion.ttt));
+              texto = lineas.join("\n");
+            }
+
+            const rival = rivales[0] || String(sesion.rival || "");
+            const actividad = {
+              texto,
+              estado,
+              imagen: partido ? rutaEscudo(rival) : "",
+              tamanoTexto: 12,
+              alineacionTexto: "izquierda",
+              posicionImagen: "centro",
+              anchoImagen: 70,
+              altoImagen: 35,
+              pruebasTTT: sesion.pruebasTTT === true,
+              tttBloques: Array.isArray(sesion.tttBloques) ? sesion.tttBloques : [],
+              fisicoBloques: Array.isArray(sesion.fisicoBloques) ? sesion.fisicoBloques : [],
+              tipoPartido,
+              rival,
+              rivales,
+              competicion,
+              torneo: competicion,
+              origen: "planificacionMicrocicloTORITO",
+              microcicloSemana: registro.claveSemana || "",
+              indiceSesion: indice
+            };
+
+            if (!resultado[categoria]) resultado[categoria] = {};
+            // Si hubiera dos sesiones el mismo día, no ocultar silenciosamente
+            // una: la última sesión guardada ocupa la tarjeta de ese día.
+            resultado[categoria][fecha] = actividad;
+          });
+        });
+      });
+      return resultado;
+    };
+
+    onSnapshot(referencia, snapshot => {
+      const datos = snapshot.exists() ? (snapshot.data()?.datos || {}) : {};
+      window.actividadesPlanificacionNube = construirActividades(datos);
+      if (typeof window.renderizarCalendario === "function") {
+        window.renderizarCalendario();
+      }
+    }, error => {
+      console.error("No se pudo sincronizar el Calendario con Planificación:", error);
+      window.actividadesPlanificacionNube = window.actividadesPlanificacionNube || {};
+      if (typeof window.renderizarCalendario === "function") {
+        window.renderizarCalendario();
+      }
+    });
+  } catch (error) {
+    console.error("No se pudo iniciar la conexión de Calendario con Firebase:", error);
+  }
+})();
+</script>
 
 <script type="module" src="TORITO-layout.js?v=20261124-layout1"></script>
 </body>
