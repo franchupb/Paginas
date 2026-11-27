@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#ffffff">
-<title>Pizarra táctica | SAN TELMO</title>
+<title>Pizarra táctica | BANCO</title>
 <style>
 :root{--naranja:#c62828;--naranja2:#a00000;--negro:#171717;--gris:#f4f5f7;--texto:#747474;--borde:#e8e8e8;--verde:#dcebdc;--verde2:#cfe2d0}
 *{box-sizing:border-box}
@@ -354,7 +354,7 @@ body.immersive .workspace{position:relative}
 body.immersive .controlbar{top:12px}
 
 
-/* ===== AJUSTE FINAL: CANCHA A SANGRE + BARRA FLOTANTE SAN TELMO ===== */
+/* ===== AJUSTE FINAL: CANCHA A SANGRE + BARRA FLOTANTE BANCO ===== */
 html,body{height:100%;background:#347b43!important}
 body{overflow:hidden}
 .contenedor{display:flex!important;width:100%;height:calc(100dvh - 84px)!important;min-height:0!important;background:#347b43!important}
@@ -652,7 +652,7 @@ body.immersive .immersive-launch{min-height:32px}
 }
 
 
-/* ===== SAN TELMO TACTICAL · INTERFAZ 2026 ===== */
+/* ===== BANCO TACTICAL · INTERFAZ 2026 ===== */
 :root{--board-ink:#202329;--board-muted:#858b94;--board-line:#e8e9ec;--board-soft:#f7f8fa;--board-orange:#c62828}
 .intro{display:none!important}
 .main{height:calc(100dvh - 84px)!important;min-height:0!important;padding:0!important;background:#f3f4f6!important}
@@ -939,7 +939,7 @@ body.immersive .board-studio .pitch{display:block!important;flex:1 1 auto!import
 }
 
 
-/* FIX DEFINITIVO: mantener visibles SAN TELMO, herramientas y rival en la misma barra */
+/* FIX DEFINITIVO: mantener visibles BANCO, herramientas y rival en la misma barra */
 @media(max-width:760px){
  .board-studio>.controlbar{
   display:grid!important;
@@ -998,7 +998,7 @@ body.immersive .board-studio .pitch{display:block!important;flex:1 1 auto!import
 }
 
 
-/* ===== BARRA UNICA: SAN TELMO · DIBUJO · RIVAL · INMERSIVO ===== */
+/* ===== BARRA UNICA: BANCO · DIBUJO · RIVAL · INMERSIVO ===== */
 .board-studio>.board-topline,
 .board-studio>.show-controls{display:none!important}
 .board-studio>.controlbar{
@@ -1111,22 +1111,22 @@ body.immersive .board-studio>.controlbar>.immersive-launch{
 <body>
 <header class="barra-superior">
 <button class="boton-menu" id="botonMenu" type="button" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="true">☰</button>
-<img class="logo-superior" src="SAN TELMO.png" alt="Logo SAN TELMO" onerror="this.style.display='none'">
-<div class="titulo-superior"><h1>SAN TELMO</h1><p>Pizarra táctica</p></div>
-<button class="perfil" type="button" aria-label="Perfil de usuario"><span class="avatar" id="avatarUsuario">U</span><span class="informacion-perfil"><span class="nombre-perfil" id="nombreUsuario">Usuario</span><span class="rol-perfil" id="rolUsuario">Club SAN TELMO</span></span></button>
+<img class="logo-superior" src="BANCO.png" alt="Logo BANCO" onerror="this.style.display='none'">
+<div class="titulo-superior"><h1>BANCO</h1><p>Pizarra táctica</p></div>
+<button class="perfil" type="button" aria-label="Perfil de usuario"><span class="avatar" id="avatarUsuario">U</span><span class="informacion-perfil"><span class="nombre-perfil" id="nombreUsuario">Usuario</span><span class="rol-perfil" id="rolUsuario">Club BANCO</span></span></button>
 </header>
 <div class="capa-sidebar" id="capaSidebar" aria-hidden="true"></div>
 <div class="contenedor">
 <aside class="sidebar" id="sidebar" aria-label="Navegación principal"></aside>
 <main class="main">
 <div class="pizarra-shell">
-<section class="intro"><div><div class="kicker">SAN TELMO · COMPETENCIA</div><h2>Pizarra táctica</h2><p>Diseñá movimientos, organizá estructuras y visualizá cada fase del juego.</p></div><div class="intro-tag">● ESPACIO DE TRABAJO TÁCTICO</div></section>
+<section class="intro"><div><div class="kicker">BANCO · COMPETENCIA</div><h2>Pizarra táctica</h2><p>Diseñá movimientos, organizá estructuras y visualizá cada fase del juego.</p></div><div class="intro-tag">● ESPACIO DE TRABAJO TÁCTICO</div></section>
 <section class="studio" aria-label="Pizarra táctica">
 
 <section class="studio board-studio" aria-label="Pizarra táctica">
 
 <div class="controlbar" aria-label="Barra superior de herramientas">
-<div class="control-group formation-control own-formation"><span class="control-label">SAN TELMO</span><select id="formationOwn" aria-label="Formación SAN TELMO"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select></div>
+<div class="control-group formation-control own-formation"><span class="control-label">BANCO</span><select id="formationOwn" aria-label="Formación BANCO"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select></div>
 <div class="top-tools" aria-label="Herramientas de dibujo">
 <button class="tool active" data-tool="select" type="button" title="Mover fichas"><span>↖</span><small>Mover</small></button>
 <button class="tool" data-tool="line" type="button" title="Dibujar una línea"><span>／</span><small>Línea</small></button>
@@ -1158,12 +1158,12 @@ body.immersive .board-studio>.controlbar>.immersive-launch{
 var $=function(id){return document.getElementById(id);};
 var savedUser=localStorage.getItem("usuarioSANTELMO")||"Usuario";
 var role=(localStorage.getItem("rolSANTELMO")||"").toLowerCase();
-// El acceso real lo valida SAN TELMO-permisos.js; esta página no debe expulsar
+// El acceso real lo valida BANCO-permisos.js; esta página no debe expulsar
 // una sesión válida por faltar los datos locales de compatibilidad.
-var userName=localStorage.getItem("nombreUsuarioSAN TELMO")||savedUser;
+var userName=localStorage.getItem("nombreUsuarioBANCO")||savedUser;
 $("nombreUsuario").textContent=userName;
 $("avatarUsuario").textContent=(userName.trim().charAt(0)||"U").toUpperCase();
-$("rolUsuario").textContent=role==="admin"?"Administración":["coordinadora","coordinador","editor"].includes(role)?"Coordinación":role==="cuerpo_tecnico"?"Cuerpo técnico":role==="jugadora"?"Jugadora":"Club SAN TELMO";
+$("rolUsuario").textContent=role==="admin"?"Administración":["coordinadora","coordinador","editor"].includes(role)?"Coordinación":role==="cuerpo_tecnico"?"Cuerpo técnico":role==="jugadora"?"Jugadora":"Club BANCO";
 var pitch=$("pitch"),canvas=$("draw"),ctx=canvas.getContext("2d");
 var formations={
 "4-3-3":[[.10,.50],[.29,.17],[.29,.39],[.29,.61],[.29,.83],[.51,.28],[.51,.50],[.51,.72],[.76,.17],[.83,.50],[.76,.83]],
@@ -1183,10 +1183,10 @@ function setField(){$("fieldSvg").innerHTML='<g fill="none" stroke="#f7fff7" str
 function coords(e){var r=pitch.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};}
 function drawOne(d,g,w,h){var x=d.x*w,y=d.y*h,X=d.X*w,Y=d.Y*h;g.save();g.strokeStyle=d.color;g.fillStyle=d.color;g.lineWidth=4;g.lineCap="round";g.lineJoin="round";g.setLineDash(d.type==="dash"?[10,8]:[]);g.beginPath();if(d.type==="free"){(d.points||[]).forEach(function(p,i){if(i)g.lineTo(p.x*w,p.y*h);else g.moveTo(p.x*w,p.y*h);});}else if(d.type==="zone"){g.ellipse((x+X)/2,(y+Y)/2,Math.max(2,Math.abs(X-x)/2),Math.max(2,Math.abs(Y-y)/2),0,0,Math.PI*2);}else{g.moveTo(x,y);g.lineTo(X,Y);if(d.type==="arrow"){var a=Math.atan2(Y-y,X-x),len=20;g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a-.5),Y-len*Math.sin(a-.5));g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a+.5),Y-len*Math.sin(a+.5));}}g.stroke();g.restore();}
 function paint(){var r=pitch.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(!r.width||!r.height)return;ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.setTransform(dpr,0,0,dpr,0,0);drawings.forEach(function(d){drawOne(d,ctx,r.width,r.height);});if(drawing&&start&&points.length)drawOne({type:tool,x:start.x,y:start.y,X:points[points.length-1].x,Y:points[points.length-1].y,points:points,color:color},ctx,r.width,r.height);}
-function renderPlayers(){var host=$("players");host.replaceChildren();players.forEach(function(p){var el=document.createElement("button");el.type="button";el.className="player "+p.team+(p.id===selected?" selected":"");el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";el.setAttribute("aria-label",p.team==="own"?"Ficha de SAN TELMO":"Ficha del rival");el.title=p.team==="own"?"Ficha SAN TELMO":"Ficha rival";el.addEventListener("pointerdown",function(e){if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;host.querySelectorAll(".player.selected").forEach(function(x){x.classList.remove("selected");});el.classList.add("selected");var pointerId=e.pointerId;try{el.setPointerCapture(pointerId);}catch(err){}var move=function(v){if(v.pointerId!==pointerId)return;var q=coords(v);p.x=Math.max(.025,Math.min(.975,q.x));p.y=Math.max(.035,Math.min(.965,q.y));el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";};var end=function(v){if(v&&v.pointerId!==pointerId)return;window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);window.removeEventListener("pointercancel",end);renderPlayers();status("Posición actualizada");};window.addEventListener("pointermove",move);window.addEventListener("pointerup",end);window.addEventListener("pointercancel",end);});host.append(el);});syncCount();}
+function renderPlayers(){var host=$("players");host.replaceChildren();players.forEach(function(p){var el=document.createElement("button");el.type="button";el.className="player "+p.team+(p.id===selected?" selected":"");el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";el.setAttribute("aria-label",p.team==="own"?"Ficha de BANCO":"Ficha del rival");el.title=p.team==="own"?"Ficha BANCO":"Ficha rival";el.addEventListener("pointerdown",function(e){if(tool!=="select")return;e.preventDefault();e.stopPropagation();snapshot();selected=p.id;host.querySelectorAll(".player.selected").forEach(function(x){x.classList.remove("selected");});el.classList.add("selected");var pointerId=e.pointerId;try{el.setPointerCapture(pointerId);}catch(err){}var move=function(v){if(v.pointerId!==pointerId)return;var q=coords(v);p.x=Math.max(.025,Math.min(.975,q.x));p.y=Math.max(.035,Math.min(.965,q.y));el.style.left=(p.x*100)+"%";el.style.top=(p.y*100)+"%";};var end=function(v){if(v&&v.pointerId!==pointerId)return;window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",end);window.removeEventListener("pointercancel",end);renderPlayers();status("Posición actualizada");};window.addEventListener("pointermove",move);window.addEventListener("pointerup",end);window.addEventListener("pointercancel",end);});host.append(el);});syncCount();}
 function resize(){var r=pitch.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(!r.width||!r.height)return;canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);canvas.style.width=r.width+"px";canvas.style.height=r.height+"px";paint();}
 function setFormation(team,formation){var group=players.filter(function(p){return p.team===team;});formations[formation].forEach(function(q,i){if(group[i]){group[i].x=team==="rival"?1-q[0]:q[0];group[i].y=q[1];}});}
-function updateOwn(){snapshot();setFormation("own",$("formationOwn").value);renderPlayers();paint();status("Formación SAN TELMO "+$("formationOwn").value+" aplicada");}
+function updateOwn(){snapshot();setFormation("own",$("formationOwn").value);renderPlayers();paint();status("Formación BANCO "+$("formationOwn").value+" aplicada");}
 function addRival(){var active=players.some(function(p){return p.team==="rival";});snapshot();if(active){players=players.filter(function(p){return p.team!=="rival";});$("addRival").setAttribute("aria-pressed","false");$("addRival").title="Agregar formación rival";$("addRival").setAttribute("aria-label","Agregar formación rival");renderPlayers();paint();status("Formación rival quitada");return;}var formation=$("formationRival").value;formations[formation].forEach(function(q,i){players.push({id:"rival-"+(i+1),team:"rival",number:String(i+1),x:1-q[0],y:q[1]});});$("addRival").setAttribute("aria-pressed","true");$("addRival").title="Quitar formación rival";$("addRival").setAttribute("aria-label","Quitar formación rival");renderPlayers();paint();status("Equipo rival incorporado · 11 fichas");}
 $("formationOwn").addEventListener("change",updateOwn);
 $("addRival").addEventListener("click",addRival);
