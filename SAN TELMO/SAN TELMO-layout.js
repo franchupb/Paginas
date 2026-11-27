@@ -34,7 +34,8 @@
         ["SAN TELMO-calendario.html", "Calendario", false],
         ["SAN TELMO-planificacion.html", "Planificación", true],
         ["SAN TELMO-gimnasio.html", "Gimnasio", false],
-        ["SAN TELMO-calculadora.html", "Calculadora", true]
+        ["SAN TELMO-calculadora.html", "Calculadora", true],
+        ["SAN TELMO-biblioteca.html", "Biblioteca Ejercicios", true]
       ]
     },
     {
@@ -55,7 +56,8 @@
         ["SAN TELMO-testeos.html", "Planilla de testeos", false],
         ["SAN TELMO-tiempos.html", "Tiempos", false],
         ["SAN TELMO-encuestas.html", "Encuestas", false],
-        ["SAN TELMO-lesiones.html", "Lesiones", false]
+        ["SAN TELMO-lesiones.html", "Lesiones", false],
+        ["SAN TELMO-psicologia.html", "Psicología", true]
       ]
     }
   ];
@@ -547,6 +549,22 @@
         eyebrow: "RENDIMIENTOS · SEGUIMIENTO DIARIO",
         titulo: "Encuestas del plantel",
         descripcion: "Publicá encuestas, consultá respuestas y hacé el seguimiento del bienestar y la carga de entrenamiento."
+      },
+      "san telmo-biblioteca.html": {
+        controlesCategoria: ["categoria"],
+        ocultarSelectores: [],
+        selector: ".page-heading",
+        eyebrow: "ENTRENAMIENTO · PREPARACIÓN",
+        titulo: "Biblioteca de ejercicios",
+        descripcion: "Creá, clasificá y conservá ejercicios para la preparación física y el trabajo técnico del plantel."
+      },
+      "san telmo-psicologia.html": {
+        controlesCategoria: ["categoria"],
+        ocultarSelectores: [],
+        selector: ".page-heading",
+        eyebrow: "RENDIMIENTOS · PSICOLOGÍA",
+        titulo: "Psicología deportiva",
+        descripcion: "Registrá seguimientos individuales, informes grupales y actividades para acompañar el bienestar del plantel."
       },
       "san telmo-lesiones.html": {
         controlesCategoria: ["selectorCategoriaGlobal"],
