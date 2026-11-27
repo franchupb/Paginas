@@ -8,8 +8,8 @@
 (function () {
   "use strict";
 
-  const LOGIN_URL = "SAN TELMO-Loing.html";
-  const INICIO_URL = "SAN TELMO-Pagina Principal.html";
+  const LOGIN_URL = "BANCO-Loing.html";
+  const INICIO_URL = "BANCO-Pagina Principal.html";
   const normalizar = value => String(value ?? "")
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase().replace(/[\s._-]+/g, "").trim();
@@ -21,16 +21,16 @@
   const USUARIOS = Object.freeze({});;
 
   const PAGINAS_JUGADORAS = new Set([
-    "santelmo-paginaprincipal.html",
-    "santelmo-jugadoras.html",
-    "santelmo-asistencia.html",
-    "santelmo-calendario.html",
-    "santelmo-gimnasio.html",
-    "santelmo-partidos.html",
-    "santelmo-testeos.html",
-    "santelmo-pruebas.html",
-    "santelmo-encuestas.html",
-    "santelmo-estadisticas.html"
+    "banco-paginaprincipal.html",
+    "banco-jugadoras.html",
+    "banco-asistencia.html",
+    "banco-calendario.html",
+    "banco-gimnasio.html",
+    "banco-partidos.html",
+    "banco-testeos.html",
+    "banco-pruebas.html",
+    "banco-encuestas.html",
+    "banco-estadisticas.html"
   ]);
 
   const DIVISIONES = {
@@ -242,7 +242,7 @@
       root.querySelectorAll("form").forEach(form => form.addEventListener("submit", bloquearAccion, true));
       return;
     }
-    if (pagina === "santelmo-asistencia.html") {
+    if (pagina === "banco-asistencia.html") {
       [...(root.matches?.("button[data-fecha][data-jugadora]") ? [root] : []), ...root.querySelectorAll("button[data-fecha][data-jugadora]")].forEach(el => {
         el.disabled = true;
         el.setAttribute("aria-disabled", "true");
@@ -250,14 +250,14 @@
       });
       return;
     }
-    if (pagina === "santelmo-jugadoras.html") {
+    if (pagina === "banco-jugadoras.html") {
       ["botonAgregar", "modalJugadora"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.hidden = true;
       });
       return;
     }
-    if (!["santelmo-calendario.html", "santelmo-partidos.html", "santelmo-gimnasio.html"].includes(pagina)) return;
+    if (!["banco-calendario.html", "banco-partidos.html", "banco-gimnasio.html"].includes(pagina)) return;
 
     const permitidos = new Set([
       "mesAnterior", "mesSiguiente", "categoria", "division", "buscarRutina",
@@ -280,7 +280,7 @@
       el.classList.add("santelmo-solo-lectura");
     });
 
-    if (pagina === "santelmo-calendario.html") {
+    if (pagina === "banco-calendario.html") {
       document.body.classList.add("santelmo-vista-calendario-jugadora");
       const modal = document.getElementById("fondoModal");
       if (modal) {
@@ -288,7 +288,7 @@
         modal.hidden = true;
       }
     }
-    if (pagina === "santelmo-asistencia.html") {
+    if (pagina === "banco-asistencia.html") {
       [...(root.matches?.("button[data-fecha][data-jugadora]") ? [root] : []), ...root.querySelectorAll("button[data-fecha][data-jugadora]")].forEach(el => {
         el.disabled = true;
         el.setAttribute("aria-disabled", "true");
@@ -296,7 +296,7 @@
       });
     }
 
-    if (pagina === "santelmo-partidos.html") {
+    if (pagina === "banco-partidos.html") {
       ["contadorSub10", "contadorSub12", "contadorSub14", "contadorPrimera"].forEach(id => {
         const contador = document.getElementById(id);
         const tarjeta = contador?.closest(".stat");
@@ -309,7 +309,7 @@
       [...(root.matches?.("[data-accion]") ? [root] : []), ...root.querySelectorAll("[data-accion]")].forEach(el => el.remove());
     }
 
-    if (pagina === "santelmo-gimnasio.html") {
+    if (pagina === "banco-gimnasio.html") {
       ["panelControlesRutina", "panelEditorRutina", "botonesGestion"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.hidden = true;
@@ -363,7 +363,7 @@
         if (!enlaces.length) grupo.hidden = true;
       });
       // Gimnasio: mostrar solo biblioteca; se conservan PDF y cantidad de personas al imprimir.
-      if (pagina === "santelmo-gimnasio.html") {
+      if (pagina === "banco-gimnasio.html") {
         ["panelControlesRutina", "panelEditorRutina", "botonesGestion"].forEach(id => {
           const el = document.getElementById(id);
           if (el) el.hidden = true;
@@ -376,7 +376,7 @@
         });
       }
       // Testeos: para las jugadoras se muestra exclusivamente la pestaña Estadísticas.
-      if (pagina === "santelmo-testeos.html") {
+      if (pagina === "banco-testeos.html") {
         ["btnTabCarga", "btnTabBiblioteca"].forEach(id => {
           const el = document.getElementById(id);
           if (el) el.hidden = true;
@@ -412,7 +412,7 @@
 
   async function iniciarControlFirebase() {
     try {
-      const modulo = await import("./BANCO-auth.js?v=20261127-acceso-santelmo1");
+      const modulo = await import("./BANCO-auth.js?v=20261127-acceso-santelmo2");
       await modulo.observarSesionSANTELMO(async user => {
         // Firebase puede entregar un estado inicial vacío en algunos entornos.
         // Antes de considerar la sesión cerrada, consultamos la instancia ya restaurada.
@@ -553,14 +553,14 @@
           }));
           if (!refrescoInicialRealizado) {
             refrescoInicialRealizado = true;
-            if (paginaActual() === "santelmo-asistencia.html") {
+            if (paginaActual() === "banco-asistencia.html") {
               window.renderizarMatriz?.();
               window.renderizarSeguimientoIndividual?.();
-            } else if (paginaActual() === "santelmo-partidos.html") {
+            } else if (paginaActual() === "banco-partidos.html") {
               window.renderizarFixture?.();
-            } else if (paginaActual() === "santelmo-testeos.html") {
+            } else if (paginaActual() === "banco-testeos.html") {
               window.cambiarPestana?.("stats");
-            } else if (paginaActual() === "santelmo-calendario.html") {
+            } else if (paginaActual() === "banco-calendario.html") {
               window.renderizarCalendario?.();
             }
           }
@@ -623,12 +623,12 @@
     }
   }
 
-  if (/^(santelmo-index|santelmo-loing)\.html$/i.test(paginaActual())) return;
+  if (/^(banco-index|banco-loing)\.html$/i.test(paginaActual())) return;
 
   // En Partidos no ocultamos todo el documento mientras se resuelve la sesión:
   // la pantalla en blanco impedía ver incluso el error real de inicialización.
   // Los permisos de edición/categoría siguen aplicándose al confirmar Firebase.
-  const esPaginaPartidos = paginaActual() === "santelmo-partidos.html";
+  const esPaginaPartidos = paginaActual() === "banco-partidos.html";
   if (!esPaginaPartidos) {
     document.documentElement.classList.add("santelmo-permisos-pendientes");
     const estiloEspera = document.createElement("style");
