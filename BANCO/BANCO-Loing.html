@@ -819,8 +819,9 @@
         }
 
         .detalle-derecho {
-            right: clamp(22px, 5vw, 78px);
-            text-align: right;
+            left: clamp(22px, 5vw, 78px);
+            right: auto;
+            text-align: left;
         }
 
         .detalle-lateral .detalle-linea {
@@ -833,8 +834,8 @@
         }
 
         .detalle-derecho .detalle-linea {
-            margin-left: auto;
-            background: linear-gradient(90deg, rgba(255,255,255,0.25), #ffffff);
+            margin-left: 0;
+            background: linear-gradient(90deg, #ffffff, rgba(255,255,255,0.25));
         }
 
         .detalle-lateral strong {
