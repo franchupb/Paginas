@@ -1,5 +1,5 @@
 /* =========================================================
-   SAN TELMO · NAVEGACIÓN COMPARTIDA
+   BANCO · NAVEGACIÓN COMPARTIDA
    Barra superior y lateral unificadas desde la página principal.
    No modifica los módulos ni sus datos.
 ========================================================= */
@@ -23,45 +23,45 @@
       id: "grupoPlantel",
       nombre: "PLANTEL",
       paginas: [
-        ["SAN TELMO-jugadoras.html", "Jugadoras", false],
-        ["SAN TELMO-asistencia.html", "Asistencia", false]
+        ["BANCO-jugadoras.html", "Jugadoras", false],
+        ["BANCO-asistencia.html", "Asistencia", false]
       ]
     },
     {
       id: "grupoEntrenamiento",
       nombre: "ENTRENAMIENTO",
       paginas: [
-        ["SAN TELMO-calendario.html", "Calendario", false],
-        ["SAN TELMO-planificacion.html", "Planificación", true],
-        ["SAN TELMO-gimnasio.html", "Gimnasio", false],
-        ["SAN TELMO-calculadora.html", "Calculadora", true]
+        ["BANCO-calendario.html", "Calendario", false],
+        ["BANCO-planificacion.html", "Planificación", true],
+        ["BANCO-gimnasio.html", "Gimnasio", false],
+        ["BANCO-calculadora.html", "Calculadora", true]
       ]
     },
     {
       id: "grupoCompetencia",
       nombre: "COMPETENCIA",
       paginas: [
-        ["SAN TELMO-Partidos.html", "Partidos", false],
-        ["SAN TELMO-informes.html", "Informes", true],
-        ["SAN TELMO-estadisticas.html", "Estadísticas", true],
-        ["SAN TELMO-pizarra.html", "Pizarra táctica", true],
-        ["SAN TELMO-video-analisis.html", "Vídeo análisis", true]
+        ["BANCO-Partidos.html", "Partidos", false],
+        ["BANCO-informes.html", "Informes", true],
+        ["BANCO-estadisticas.html", "Estadísticas", true],
+        ["BANCO-pizarra.html", "Pizarra táctica", true],
+        ["BANCO-video-analisis.html", "Vídeo análisis", true]
       ]
     },
     {
       id: "grupoRendimientos",
       nombre: "RENDIMIENTOS",
       paginas: [
-        ["SAN TELMO-testeos.html", "Planilla de testeos", false],
-        ["SAN TELMO-tiempos.html", "Tiempos", false],
-        ["SAN TELMO-encuestas.html", "Encuestas", false],
-        ["SAN TELMO-lesiones.html", "Lesiones", false]
+        ["BANCO-testeos.html", "Planilla de testeos", false],
+        ["BANCO-tiempos.html", "Tiempos", false],
+        ["BANCO-encuestas.html", "Encuestas", false],
+        ["BANCO-lesiones.html", "Lesiones", false]
       ]
     }
   ];
 
   const equivalencias = {
-    "san telmo-pruebas.html": "san telmo-testeos.html"
+    "banco-pruebas.html": "banco-testeos.html"
   };
 
   const normalizarArchivo = nombre =>
@@ -444,15 +444,15 @@
   // la selección de categoría. La página principal queda expresamente excluida.
   if (ARCHIVO_ACTUAL !== PRINCIPAL.toLowerCase()) {
     const paginas = {
-      "san telmo-jugadoras.html": {
+      "banco-jugadoras.html": {
         controlesCategoria: ["categoriaPrincipal"],
         ocultarSelectores: [".selector-categoria-principal"],
         selector: ".encabezado-pagina",
         eyebrow: "PLANTEL · EQUIPO",
         titulo: "Plantel de jugadoras",
-        descripcion: "Administrá la información personal y deportiva de SAN TELMO."
+        descripcion: "Administrá la información personal y deportiva de BANCO."
       },
-      "san telmo-asistencia.html": {
+      "banco-asistencia.html": {
         controlesCategoria: ["filtroCategoria"],
         ocultarSelectores: [".selector-categoria-panel"],
         selector: ".cabecera-pagina",
@@ -460,7 +460,7 @@
         titulo: "Asistencia mensual",
         descripcion: "Registrá la asistencia por categoría y consultá el seguimiento individual de cada jugadora al final de la página."
       },
-      "san telmo-calendario.html": {
+      "banco-calendario.html": {
         controlesCategoria: ["categoria"],
         ocultarSelectores: [".selector-categoria"],
         selector: ".encabezado-calendario",
@@ -468,7 +468,7 @@
         titulo: "Calendario de actividades",
         descripcion: "Organizá y consultá las actividades de cada categoría en un solo lugar."
       },
-      "san telmo-planificacion.html": {
+      "banco-planificacion.html": {
         controlesCategoria: ["selectCategoria"],
         ocultarSelectores: [".panel-semanal"],
         selector: ".cabecera-pagina",
@@ -476,7 +476,7 @@
         titulo: "Planificación de microciclos",
         descripcion: "Organizá las sesiones semanales y consultá los contenidos técnicos y físicos de cada categoría."
       },
-      "san telmo-gimnasio.html": {
+      "banco-gimnasio.html": {
         controlesCategoria: ["division"],
         ocultarSelectores: [".selector-categoria-superior"],
         selector: ".cabecera-pagina",
@@ -484,7 +484,7 @@
         titulo: "Gimnasio",
         descripcion: "Creá, organizá y consultá las rutinas de fuerza del plantel."
       },
-      "san telmo-calculadora.html": {
+      "banco-calculadora.html": {
         controlesCategoria: ["division"],
         ocultarSelectores: [".field.campo-categoria"],
         selector: ".cabecera-pagina",
@@ -492,7 +492,7 @@
         titulo: "Calculadora de cargas y volúmenes",
         descripcion: "Calculadora atemporal para registrar distancias, pasadas y tiempos de trabajo."
       },
-      "san telmo-partidos.html": {
+      "banco-partidos.html": {
         controlesCategoria: ["filtroDivision"],
         ocultarSelectores: [".filters .field:nth-child(2)"],
         selector: ".page-heading",
@@ -500,7 +500,7 @@
         titulo: "Fixture de competencia",
         descripcion: "Organizá los partidos por división, competición y fecha del torneo."
       },
-      "san telmo-informes.html": {
+      "banco-informes.html": {
         controlesCategoria: ["division","filtroDivisionPartidos","filtroDivisionEstadisticas"],
         ocultarSelectores: [".selector-categoria-general, #filtroDivisionPartidos, #filtroDivisionEstadisticas"],
         selector: ".page-heading",
@@ -508,7 +508,7 @@
         titulo: "Informes de partidos",
         descripcion: "Una planilla más simple para registrar cada encuentro, organizar la formación y mantener el seguimiento de minutos, goles y tarjetas de cada jugadora."
       },
-      "san telmo-estadisticas.html": {
+      "banco-estadisticas.html": {
         controlesCategoria: ["selectorCategoria"],
         ocultarSelectores: ["#selectorCategoria"],
         selector: ".encabezado-seccion",
@@ -516,7 +516,7 @@
         titulo: "Estadísticas del club",
         descripcion: "Consultá el rendimiento general y la evolución de cada jugadora a partir de los registros de competencia, asistencia, testeos, tiempos y lesiones."
       },
-      "san telmo-video-analisis.html": {
+      "banco-video-analisis.html": {
         controlesCategoria: ["selectorCategoria"],
         ocultarSelectores: ["#selectorCategoria"],
         selector: ".page-heading",
@@ -524,7 +524,7 @@
         titulo: "Vídeo análisis",
         descripcion: "Analizá partidos, organizá clips y compartí observaciones técnicas para acompañar la evolución del equipo."
       },
-      "san telmo-testeos.html": {
+      "banco-testeos.html": {
         controlesCategoria: ["selectDivision"],
         ocultarSelectores: [".selector-categoria"],
         selector: ".encabezado",
@@ -532,7 +532,7 @@
         titulo: "Testeos y evaluaciones físicas",
         descripcion: "Registrá los resultados y consultá la evolución física de cada jugadora."
       },
-      "san telmo-tiempos.html": {
+      "banco-tiempos.html": {
         controlesCategoria: ["selectorCategoriaGlobal"],
         ocultarSelectores: [".selector-categoria-principal"],
         selector: ".page-heading",
@@ -540,7 +540,7 @@
         titulo: "Tiempos y rendimiento físico",
         descripcion: "Consultá las pasadas, analizá los resultados y registrá la evolución física de cada jugadora en un solo lugar."
       },
-      "san telmo-encuestas.html": {
+      "banco-encuestas.html": {
         controlesCategoria: ["filtroCategoria"],
         ocultarSelectores: ["#bloqueCategoria"],
         selector: ".cabecera-pagina",
@@ -548,7 +548,7 @@
         titulo: "Encuestas del plantel",
         descripcion: "Publicá encuestas, consultá respuestas y hacé el seguimiento del bienestar y la carga de entrenamiento."
       },
-      "san telmo-lesiones.html": {
+      "banco-lesiones.html": {
         controlesCategoria: ["selectorCategoriaGlobal"],
         ocultarSelectores: [".selector-categoria-principal"],
         selector: ".page-heading",
@@ -752,7 +752,7 @@
     submenu.className = "submenu";
     grupo.paginas.forEach(([href, texto, restringido]) => {
       const link = document.createElement("a");
-      link.href = href === "SAN TELMO-pizarra.html" ? "SAN TELMO-pizarra.html?v=20261124pizarra1" : href;
+      link.href = href === "BANCO-pizarra.html" ? "BANCO-pizarra.html?v=20261124pizarra1" : href;
       link.innerHTML = '<span class="nav-punto" aria-hidden="true"></span>' + texto;
       if (restringido) link.setAttribute("data-ocultar-bianca", "");
       if (normalizarArchivo(href.toLowerCase()) === actual) {
@@ -833,7 +833,7 @@
     menuPerfil.addEventListener("click", event => event.stopPropagation());
     menuPerfil.querySelector("#cerrarSesionPerfil")?.addEventListener("click", event => {
       event.preventDefault();
-      if (window.confirm("¿Querés cerrar la sesión de SAN TELMO?")) importarCerrarSesionSANTELMO();
+      if (window.confirm("¿Querés cerrar la sesión de BANCO?")) importarCerrarSesionSANTELMO();
     });
     document.addEventListener("click", event => {
       if (!perfil.contains(event.target) && !menuPerfil.contains(event.target)) cerrarMenuPerfil();
