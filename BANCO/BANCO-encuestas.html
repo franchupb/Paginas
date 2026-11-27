@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>Encuestas | SAN TELMO</title>
+<script>
+window.SAN_TELMO_MODO_ENCUESTA_PUBLICA = new URLSearchParams(location.search).has("encuesta");
+if (!window.SAN_TELMO_MODO_ENCUESTA_PUBLICA) {
+ const permisos = document.createElement("script");
+ permisos.src = "SAN TELMO-permisos.js?v=20261126-permisos3";
+ permisos.async = false;
+ document.head.appendChild(permisos);
+}
+</script>
+<style>
+:root{--naranja:#c62828;--naranja-oscuro:#a00000;--naranja-claro:#fde9e9;--negro:#171717;--gris:#f4f5f7;--gris-texto:#747474;--borde:#e8e8e8;--verde:#18743b;--rojo:#a00000}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--gris);color:var(--negro)}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+.barra-superior{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:15px;min-height:84px;padding:12px 25px;background:#fff;border-bottom:1px solid var(--borde)}
+.boton-menu{width:42px;height:42px;flex-shrink:0;border:0;background:#fff;border-radius:9px;font-size:27px}.logo-superior{width:55px;height:55px;object-fit:contain;border-radius:50%;padding:2px}.titulo-superior{flex:1;min-width:0}.titulo-superior h1{margin:0 0 5px;font-size:23px;font-weight:900;letter-spacing:.5px}.titulo-superior p{margin:0;color:var(--gris-texto);font-size:13px}
+.perfil{display:flex;align-items:center;gap:10px;min-width:0}.avatar{width:42px;height:42px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--negro);color:#fff;border-radius:50%;font-weight:bold}.nombre-perfil{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:bold}.rol-perfil{color:var(--gris-texto);font-size:11px;margin-top:4px}
+.contenedor{display:flex;min-height:calc(100vh - 84px)}.sidebar{width:258px;flex:0 0 258px;padding:20px 13px;background:#fff;border-right:1px solid var(--borde);transition:margin-left .25s;overflow-y:auto}.sidebar.oculto{margin-left:-258px}
+.menu-inicio{display:flex;gap:12px;align-items:center;padding:13px 14px;margin-bottom:16px;border-radius:11px;font-size:13px;font-weight:850}.grupo-menu{margin-bottom:8px}.titulo-grupo{display:flex;align-items:center;justify-content:space-between;padding:12px 13px;min-height:46px;border-radius:8px;font-size:11px;font-weight:850;letter-spacing:.8px;cursor:pointer}.flecha{font-size:16px;transition:transform .2s}.grupo-menu:not(.cerrado) .flecha{transform:rotate(90deg)}.submenu{display:flex;flex-direction:column;gap:3px;padding-bottom:5px}.grupo-menu.cerrado .submenu{display:none}.submenu a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:9px;font-size:13px;color:#656872}.submenu a.activo{background:var(--naranja-claro);color:var(--naranja-oscuro);font-weight:800}.nav-punto{width:6px;height:6px;background:#d7d9de;border-radius:50%}.submenu a.activo .nav-punto{background:var(--naranja)}.separador-sesion{border-top:1px solid var(--borde);margin-top:19px;padding-top:12px}.enlace-cerrar-sesion{display:flex;padding:12px;gap:10px;color:#c0392b;font-size:13px;font-weight:700}.capa-sidebar{display:none}
+.contenido{flex:1;min-width:0;width:100%;max-width:1500px;margin:0 auto;padding:28px}
+.cabecera-pagina{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;margin-bottom:22px}.etiqueta{display:block;color:var(--naranja-oscuro);font-size:10px;font-weight:900;letter-spacing:1px;margin-bottom:7px}.cabecera-pagina h2{font-size:27px;margin:0 0 7px}.cabecera-pagina p{margin:0;color:var(--gris-texto);font-size:13px;line-height:1.5;max-width:760px}
+.selector-categoria{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--borde);border-radius:12px;padding:12px 15px;margin-bottom:18px}.selector-categoria label,.campo label{font-size:10px;font-weight:900;letter-spacing:.5px;color:var(--gris-texto);display:block;margin-bottom:6px}.selector-categoria select{min-width:175px;border:1px solid var(--borde);border-radius:8px;padding:10px;background:#fff}
+.panel{background:#fff;border:1px solid var(--borde);border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 2px 8px #00000005}.panel-cabecera{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}.panel-cabecera h3{font-size:16px;margin:0 0 4px}.panel-cabecera p{font-size:12px;color:var(--gris-texto);margin:0}
+.pestanas{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.pestana{border:1px solid var(--borde);background:#fff;border-radius:9px;padding:10px 15px;font-size:12px;font-weight:800;color:#555}.pestana.activa{background:var(--naranja-claro);border-color:#e2b8c2;color:var(--naranja-oscuro)}
+.encuestas-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.encuesta-tarjeta{border:1px solid var(--borde);border-radius:13px;padding:18px;background:#fff;min-width:0}.encuesta-tarjeta .icono{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--naranja-claro);font-size:20px;margin-bottom:13px}.encuesta-tarjeta h3{margin:0 0 6px;font-size:17px}.encuesta-tarjeta p{margin:0 0 15px;color:var(--gris-texto);font-size:12px;line-height:1.5}.estado-encuesta{font-size:10px;font-weight:800;color:var(--verde);background:#eaf7ee;padding:5px 8px;border-radius:20px;display:inline-block;margin-bottom:12px}
+.btn{border:0;border-radius:9px;padding:10px 14px;font-size:12px;font-weight:800}.btn-principal{background:var(--naranja);color:#fff}.btn-principal:hover{background:var(--naranja-oscuro)}.btn-secundario{background:#fff;border:1px solid var(--borde);color:#333}.btn-peligro{background:#f8e9ed;color:var(--rojo);border:1px solid #f2ceca}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.campo{min-width:0}.campo input,.campo select,.campo textarea{width:100%;padding:11px 12px;border:1px solid var(--borde);border-radius:9px;background:#fff;outline:none;font-size:13px}.campo textarea{min-height:78px;resize:vertical}.campo input:focus,.campo select:focus,.campo textarea:focus{border-color:var(--naranja)}.campo-completo{grid-column:1/-1}.ayuda{font-size:11px;color:var(--gris-texto);line-height:1.5;margin-top:5px}
+.escala-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}.escala-item{border:1px solid var(--borde);border-radius:10px;padding:11px;background:#fafafa;min-width:0}.escala-item label{display:block;font-size:12px;font-weight:800;margin-bottom:8px}.escala-item select{width:100%;padding:9px;border:1px solid var(--borde);border-radius:7px;background:#fff}
+.escala-rpe{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:6px;margin-top:8px}.rpe-opcion{border:1px solid var(--borde);background:#fff;border-radius:8px;padding:10px 2px;font-size:13px;font-weight:900;color:#555}.rpe-opcion.seleccionado{background:var(--naranja);border-color:var(--naranja);color:#fff}.rpe-opcion:focus-visible{outline:2px solid var(--negro);outline-offset:2px}
+.form-acciones{display:flex;justify-content:flex-end;gap:9px;margin-top:18px;flex-wrap:wrap}.mensaje{padding:12px 14px;border-radius:9px;background:#f7f8fa;border:1px solid var(--borde);font-size:12px;color:#555;margin-bottom:14px}.mensaje.error{background:#fff2f1;border-color:#f2ceca;color:var(--rojo)}.mensaje.ok{background:#edf8f0;border-color:#cdebd5;color:var(--verde)}
+.metricas{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}.metrica{background:#fff;border:1px solid var(--borde);border-radius:12px;padding:15px;min-width:0}.metrica span{display:block;color:var(--gris-texto);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px}.metrica strong{display:block;font-size:25px;margin-top:7px;line-height:1.1}.metrica small{display:block;color:var(--gris-texto);font-size:10px;margin-top:5px}
+.filtros{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.filtros .campo{min-width:140px}.tabla-scroll{width:100%;overflow:auto}table{border-collapse:collapse;width:100%;min-width:720px;font-size:12px}th{text-align:left;color:#777;font-size:10px;text-transform:uppercase;letter-spacing:.4px;padding:11px 9px;border-bottom:1px solid var(--borde);white-space:nowrap}td{padding:12px 9px;border-bottom:1px solid #f0f0f0;vertical-align:middle}tbody tr:hover{background:#fafafa}.nombre-jugadora{font-weight:800}.dato-secundario{display:block;color:var(--gris-texto);font-size:10px;margin-top:3px}.pill{display:inline-block;border-radius:20px;padding:5px 8px;font-size:10px;font-weight:800;background:#f2f3f5;color:#555}.pill.alerta{background:#fde9e9;color:#8b243b}.pill.ok{background:#eaf7ee;color:var(--verde)}
+.barra-progreso{height:7px;border-radius:20px;background:#eee;overflow:hidden;min-width:75px}.barra-progreso span{display:block;height:100%;background:var(--naranja);border-radius:20px}.vacio{text-align:center;padding:28px 15px;color:var(--gris-texto);font-size:12px;border:1px dashed var(--borde);border-radius:10px}
+.detalle-lista{display:grid;gap:8px}.detalle-fila{display:flex;justify-content:space-between;gap:14px;padding:10px 12px;background:#f8f9fa;border-radius:8px;font-size:12px}.detalle-fila strong{font-size:12px}
+.modal{display:none;position:fixed;inset:0;z-index:500;background:#0008;align-items:center;justify-content:center;padding:18px}.modal.activo{display:flex}.modal-contenido{background:#fff;border-radius:14px;width:100%;max-width:720px;max-height:90vh;overflow:auto;padding:22px}.modal-cabecera{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}.modal-cabecera h3{margin:0;font-size:17px}.cerrar-modal{border:0;background:transparent;font-size:24px;color:#777}
+.pie-nota{font-size:10px;color:var(--gris-texto);line-height:1.5;margin-top:12px}
+.oculto{display:none!important}
+@media(max-width:1050px){.escala-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.metricas{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.barra-superior{min-height:72px;padding:10px 13px;gap:9px}.boton-menu{width:38px;height:38px;font-size:24px}.logo-superior{width:44px;height:44px}.titulo-superior h1{font-size:16px}.titulo-superior p{font-size:11px}.nombre-perfil{max-width:80px;font-size:12px}.rol-perfil{display:none}.avatar{width:36px;height:36px}.contenedor{min-height:calc(100vh - 72px)}.sidebar{position:fixed;top:72px;bottom:0;left:0;z-index:300;width:258px;max-width:86vw;margin:0;transform:translateX(0);transition:transform .25s;box-shadow:5px 0 25px #00000012}.sidebar.oculto{margin:0;transform:translateX(-110%)}.capa-sidebar.visible{display:block;position:fixed;inset:72px 0 0;background:#0005;z-index:290}.contenido{padding:16px}.cabecera-pagina h2{font-size:22px}.encuestas-grid{grid-template-columns:1fr}.escala-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.escala-rpe{grid-template-columns:repeat(6,minmax(0,1fr))}.form-grid{grid-template-columns:1fr}.campo-completo{grid-column:auto}.panel{padding:15px}.selector-categoria{align-items:flex-start;flex-direction:column}.selector-categoria select{width:100%}}
+@media(max-width:380px){.titulo-superior h1{font-size:14px}.nombre-perfil{max-width:60px}.metricas{gap:8px}.metrica{padding:11px}.metrica strong{font-size:21px}}
+
+body.modo-publico .barra-superior,body.modo-publico .capa-sidebar,body.modo-publico .sidebar,body.modo-publico #bloqueCategoria,body.modo-publico #estadoGeneral,body.modo-publico .cabecera-pagina{display:none!important}
+body.modo-publico .contenedor{min-height:100vh}
+body.modo-publico .contenido{max-width:850px;padding:28px 18px}
+.publico-encabezado{background:linear-gradient(120deg,#fff 0%,#f4f7fb 100%);border:1px solid #dce7f0;border-radius:18px;padding:22px;margin-bottom:16px}
+.publico-encabezado h2{margin:4px 0 7px;font-size:25px}.publico-encabezado p{margin:0;color:#77808c;font-size:13px;line-height:1.5}
+.publico-mensaje{padding:14px;border-radius:11px;background:#f6f8fb;border:1px solid #e5e9ef;color:#596474;font-size:13px;margin-bottom:14px}
+.publico-mensaje.error{background:#fff2f1;border-color:#f2ceca;color:#a00000}.publico-mensaje.ok{background:#edf8f0;border-color:#cdebd5;color:#18743b}
+body.modo-publico #vistaPublica{display:block!important}
+body.modo-publico #formularioPublico{display:block}
+body.modo-publico .form-grid .campo label{display:block}
+@media(max-width:600px){body.modo-publico .contenido{padding:16px 12px}.publico-encabezado{padding:18px}}
+/* SANTELMO ENCUESTAS · interfaz renovada */
+:root{--fondo:#f6f7f9;--texto-suave:#7b8491;--linea:#e9edf2;--azul-suave:#eef4ff;--verde-suave:#eaf8ef}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--fondo);color:#202631}
+button,input,select,textarea{font-family:inherit}
+.cabecera-pagina h2{font-size:clamp(25px,3vw,34px);font-weight:850;letter-spacing:-1.1px}
+.cabecera-pagina p{font-size:14px;color:#7b8491}
+.panel{border:1px solid var(--linea);border-radius:18px;box-shadow:0 5px 22px #202b3d08;padding:22px}
+.etiqueta{font-size:10px;letter-spacing:1.25px}
+.btn{border-radius:11px;padding:11px 16px;transition:transform .15s,background .15s}
+.btn:active{transform:scale(.98)}
+.btn-principal{background:#c62828;box-shadow:0 4px 10px #c628282b}
+.selector-categoria{border-radius:15px;box-shadow:0 3px 14px #202b3d06}
+.jugadora-bienvenida{display:flex;align-items:center;gap:18px;padding:23px;background:linear-gradient(120deg,#fff 0%,#f4f7fb 100%);border:1px solid #dce7f0;border-radius:20px;margin-bottom:18px}
+.bienvenida-icono{width:54px;height:54px;display:grid;place-items:center;border-radius:17px;background:#f3dce2;color:#a00000;font-size:25px;flex-shrink:0}
+.jugadora-bienvenida h3{font-size:22px;margin:2px 0 5px;letter-spacing:-.5px}.jugadora-bienvenida p{margin:0;color:#77808c;font-size:13px;line-height:1.5}
+.encuestas-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.encuesta-tarjeta{border:1px solid var(--linea);border-radius:18px;padding:20px;box-shadow:0 5px 20px #202b3d08;transition:transform .18s,box-shadow .18s}
+.encuesta-tarjeta:hover{transform:translateY(-2px);box-shadow:0 10px 24px #202b3d10}
+.tarjeta-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:17px}
+.encuesta-tarjeta .icono{width:46px;height:46px;border-radius:15px;background:#fde9e9;font-size:22px;margin:0}
+.encuesta-tarjeta h3{font-size:19px;letter-spacing:-.4px}.encuesta-tarjeta p{font-size:13px;color:#77808c}
+.estado-encuesta{margin:0;background:#fff5e9;color:#b85c16}.estado-encuesta.respondida{background:#eaf8ef;color:#23834b}
+.tarjeta-meta{display:flex;gap:13px;color:#89919c;font-size:11px;margin:14px 0}
+.encuesta-tarjeta .btn{width:100%;padding:13px}
+.form-grid{gap:15px}.campo label{font-size:10px;letter-spacing:.7px;color:#737e8b}.campo input,.campo select,.campo textarea{border-color:#e5e9ef;border-radius:11px;padding:12px 13px;font-size:14px;background:#fff}.campo input:focus,.campo select:focus,.campo textarea:focus{border-color:#c62828;box-shadow:0 0 0 3px #c6282818}
+.escala-rpe{grid-template-columns:repeat(11,minmax(0,1fr));gap:7px}.rpe-opcion{border-radius:10px;padding:12px 3px;font-size:14px;font-weight:800;background:#f8f9fb}.rpe-opcion[data-rpe="0"],.rpe-opcion[data-rpe="1"],.rpe-opcion[data-rpe="2"]{border-color:#b9e5c7}.rpe-opcion[data-rpe="3"],.rpe-opcion[data-rpe="4"]{border-color:#c9e5d0}.rpe-opcion[data-rpe="5"],.rpe-opcion[data-rpe="6"]{border-color:#f3df9b}.rpe-opcion[data-rpe="7"],.rpe-opcion[data-rpe="8"]{border-color:#f5c48d}.rpe-opcion[data-rpe="9"],.rpe-opcion[data-rpe="10"]{border-color:#efb4b0}.rpe-opcion.seleccionado{background:#c62828;border-color:#c62828;color:white;box-shadow:0 4px 10px #c6282833}
+.rpe-lectura{margin-top:13px;padding:12px 14px;border-radius:12px;background:#f6f8fb;color:#596474;font-size:12px}
+.ct-resumen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:17px}
+.resumen-card{background:#fff;border:1px solid var(--linea);border-radius:16px;padding:17px;min-width:0}
+.resumen-card span{display:block;color:#7c8794;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.55px}
+.resumen-card strong{display:block;font-size:27px;letter-spacing:-.7px;margin-top:6px;color:#202631}
+.resumen-card small{display:block;color:#929aa5;font-size:11px;margin-top:4px}
+.ct-navegacion{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
+.ct-tab{display:grid;grid-template-columns:36px 1fr;grid-template-rows:auto auto;align-items:center;text-align:left;column-gap:10px;padding:14px;border:1px solid var(--linea);border-radius:15px;background:#fff;color:#303846}
+.ct-tab>span{grid-row:1/3;width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:#f2f4f7;color:#687385;font-size:19px}
+.ct-tab b{font-size:13px}.ct-tab small{font-size:10px;color:#89929e;margin-top:3px}
+.ct-tab.activa{border-color:#f3c5a6;background:#fffaf6;box-shadow:0 4px 14px #c6282810}.ct-tab.activa>span{background:#f3dce2;color:#a00000}
+.ct-titulo-seccion{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin:22px 0 13px}.ct-titulo-seccion h3{font-size:19px;letter-spacing:-.45px;margin:0 0 5px}.ct-titulo-seccion p{font-size:12px;color:#7f8996;margin:0;line-height:1.5}
+.publicacion-form{padding:20px}.carpetas-periodos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.periodo-card{background:#fff;border:1px solid var(--linea);border-radius:16px;padding:17px;min-width:0;box-shadow:0 4px 16px #202b3d06}
+.periodo-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}
+.periodo-icono{width:38px;height:38px;border-radius:12px;background:#fde9e9;display:grid;place-items:center;font-size:18px}
+.pill-abierta{background:#eaf8ef;color:#23834b}.pill-cerrada{background:#f0f2f5;color:#737e8b}.pill-alerta{background:#fff0ed;color:#ba4d3f}
+.periodo-fecha{font-size:11px;color:#929aa5;font-weight:700}.periodo-card h4{font-size:17px;margin:4px 0}.periodo-categoria{font-size:11px;color:#7d8793}
+.periodo-participacion{display:flex;justify-content:space-between;align-items:center;margin:17px 0 8px;font-size:11px;color:#7b8491}.periodo-participacion b{font-size:14px;color:#303846}
+.barra-progreso{height:8px;background:#f0f2f5;min-width:0}.barra-progreso span{background:linear-gradient(90deg,#a00000,#c62828)}
+.periodo-acciones{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.periodo-acciones .btn{flex:1;white-space:nowrap}
+.btn-cerrar{background:#fff1ef;color:#b94a40;border:1px solid #f5d5d1}.btn-abrir{background:#eaf8ef;color:#23834b;border:1px solid #d4efdc}
+.selector-periodo{display:flex;align-items:flex-end;gap:13px}.selector-periodo .campo{min-width:170px}
+.resultados-resumen{margin:0 0 15px}.estadisticas-respuesta{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:16px}
+.mini-stat{padding:15px;background:#fff;border:1px solid var(--linea);border-radius:14px}.mini-stat span{display:block;font-size:10px;color:#7d8793;font-weight:800;text-transform:uppercase}.mini-stat strong{display:block;font-size:22px;margin:6px 0 3px}.mini-stat small{font-size:10px;color:#929aa5}
+.faltantes-lista{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.faltante-chip{padding:7px 10px;border-radius:30px;background:#fff2ed;color:#8b243b;font-size:11px;font-weight:700}
+.rpe-chip{display:inline-block;padding:5px 9px;border-radius:8px;background:#f2f4f7;font-weight:850}.rpe-0,.rpe-1,.rpe-2{background:#e9f8ee;color:#21824a}.rpe-3,.rpe-4{background:#edf7ee;color:#4d855b}.rpe-5,.rpe-6{background:#fff6dc;color:#9c761b}.rpe-7,.rpe-8{background:#fff0df;color:#b46a1e}.rpe-9,.rpe-10{background:#ffebe9;color:#b3443b}
+@media(max-width:950px){.ct-resumen{grid-template-columns:repeat(3,minmax(0,1fr))}.carpetas-periodos{grid-template-columns:1fr}}
+@media(max-width:760px){.contenido{padding:16px}.jugadora-bienvenida{align-items:flex-start;padding:17px;gap:12px}.bienvenida-icono{width:43px;height:43px;border-radius:13px}.jugadora-bienvenida h3{font-size:19px}.encuestas-grid{grid-template-columns:1fr}.ct-resumen{grid-template-columns:1fr 1fr}.ct-resumen .resumen-card:last-child{grid-column:1/-1}.ct-navegacion{grid-template-columns:1fr;gap:8px}.ct-tab{padding:11px}.selector-periodo{display:block}.selector-periodo .campo{margin-bottom:12px}.escala-rpe{grid-template-columns:repeat(6,minmax(0,1fr))}.periodo-acciones .btn{flex:1 1 100%}}
+@media(max-width:420px){.ct-resumen{grid-template-columns:1fr 1fr}.resumen-card{padding:13px}.resumen-card strong{font-size:23px}.panel{padding:15px}.form-acciones .btn{width:100%}}
+
+</style>
+</head>
+<body>
+<header class="barra-superior">
+<button class="boton-menu" id="botonMenu" type="button" aria-label="Abrir menú" aria-expanded="true">☰</button>
+<img class="logo-superior" src="SAN TELMO.png" alt="Logo SANTELMO" onerror="this.style.display='none'">
+<div class="titulo-superior"><h1>SAN TELMO</h1><p>Encuestas del plantel</p></div>
+<div class="perfil"><div class="avatar" id="avatarUsuario">U</div><div><div class="nombre-perfil" id="nombreUsuario">Usuario</div><div class="rol-perfil" id="rolUsuario">Perfil</div></div></div>
+</header>
+<div class="capa-sidebar" id="capaSidebar"></div>
+<div class="contenedor">
+<aside class="sidebar" id="sidebar">
+<a class="menu-inicio" href="SAN TELMO-Pagina Principal.html">⌂ INICIO</a>
+<div class="grupo-menu cerrado" id="grupoPlantel"><div class="titulo-grupo" role="button" tabindex="0" onclick="toggleGrupo('grupoPlantel')">PLANTEL <span class="flecha">›</span></div><div class="submenu"><a href="SAN TELMO-jugadoras.html"><span class="nav-punto"></span>Jugadoras</a><a href="SAN TELMO-asistencia.html"><span class="nav-punto"></span>Asistencia</a></div></div>
+<div class="grupo-menu cerrado" id="grupoEntrenamiento"><div class="titulo-grupo" role="button" tabindex="0" onclick="toggleGrupo('grupoEntrenamiento')">ENTRENAMIENTO <span class="flecha">›</span></div><div class="submenu"><a href="SAN TELMO-calendario.html"><span class="nav-punto"></span>Calendario</a><a href="SAN TELMO-planificacion.html"><span class="nav-punto"></span>Planificación</a><a href="SAN TELMO-gimnasio.html"><span class="nav-punto"></span>Gimnasio</a></div></div>
+<div class="grupo-menu cerrado" id="grupoCompetencia"><div class="titulo-grupo" role="button" tabindex="0" onclick="toggleGrupo('grupoCompetencia')">COMPETENCIA <span class="flecha">›</span></div><div class="submenu"><a href="SAN TELMO-Partidos.html"><span class="nav-punto"></span>Partidos</a><a href="SAN TELMO-estadisticas.html"><span class="nav-punto"></span>Estadísticas</a><a href="SAN TELMO-pizarra.html"><span class="nav-punto"></span>Pizarra táctica</a></div></div>
+<div class="grupo-menu" id="grupoRendimientos"><div class="titulo-grupo" role="button" tabindex="0" onclick="toggleGrupo('grupoRendimientos')">RENDIMIENTOS <span class="flecha">›</span></div><div class="submenu"><a href="SAN TELMO-testeos.html"><span class="nav-punto"></span>Planilla de testeos</a><a href="SAN TELMO-tiempos.html"><span class="nav-punto"></span>Tiempos</a><a href="SAN TELMO-multimedia.html"><span class="nav-punto"></span>Multimedia</a><a href="SAN TELMO-encuestas.html" class="activo"><span class="nav-punto"></span>Encuestas</a><a href="SAN TELMO-lesiones.html"><span class="nav-punto"></span>Lesiones</a></div></div>
+<div class="separador-sesion"><a class="enlace-cerrar-sesion" href="#" onclick="cerrarSesion(event)">↪ Cerrar sesión</a></div>
+</aside>
+<main class="contenido">
+<section class="cabecera-pagina"><div><span class="etiqueta">RENDIMIENTO · SEGUIMIENTO DIARIO</span><h2>Encuestas del plantel</h2><p id="descripcionPagina">Publicaciones, respuestas y seguimiento del bienestar y la carga de entrenamiento.</p></div></section>
+<section class="selector-categoria" id="bloqueCategoria"><div style="flex:1"><label for="filtroCategoria">CATEGORÍA</label><select id="filtroCategoria"></select></div><div class="pie-nota">Cada categoría conserva sus propias publicaciones y resultados.</div></section>
+<div id="estadoGeneral" class="mensaje">Conectando con SANTELMO...</div>
+<section id="vistaJugadora" class="oculto">
+ <div class="jugadora-bienvenida"><div class="bienvenida-icono">✦</div><div><span class="etiqueta">TU ESPACIO DE RESPUESTAS</span><h3>¿Cómo estuvo tu día?</h3><p>Elegí la encuesta disponible y completala. Es rápido y nos ayuda a acompañar mejor tu entrenamiento.</p></div></div>
+ <div id="encuestasDisponibles" class="encuestas-grid"></div>
+ <div id="sinEncuestas" class="vacio oculto">Por ahora no hay encuestas abiertas para tu categoría. Cuando el cuerpo técnico publique una, aparecerá acá.</div>
+ <div id="formularioJugador" class="panel oculto"></div>
+</section>
+<section id="vistaPublica" class="oculto">
+ <div class="publico-encabezado"><span class="etiqueta">SAN TELMO · ENCUESTA</span><h2 id="tituloPublico">Encuesta del plantel</h2><p id="detallePublico">Completá tus datos y respondé la encuesta.</p></div>
+ <div id="estadoPublico" class="publico-mensaje">Cargando encuesta...</div>
+ <div id="formularioPublico" class="panel oculto"></div>
+</section>
+<section id="vistaTecnico" class="oculto">
+ <div class="ct-navegacion">
+  <button class="ct-tab activa" data-ct-tab="publicaciones" type="button"><span>＋</span><b>Publicaciones</b><small>Crear y habilitar encuestas</small></button>
+  <button class="ct-tab" data-ct-tab="resultados" type="button"><span>▤</span><b>Resultados</b><small>Respuestas por período</small></button>
+ </div>
+ <div id="ctPublicaciones" class="ct-vista">
+  <div class="ct-titulo-seccion"><div><span class="etiqueta">GESTIÓN DE ENCUESTAS</span><h3>Crear una publicación</h3><p>Elegí categoría, tipo y fecha. La encuesta aparecerá para las jugadoras al habilitarla.</p></div></div>
+  <form id="formPublicacion" class="panel publicacion-form">
+   <div class="form-grid">
+    <div class="campo"><label for="nuevaCategoria">CATEGORÍA</label><select id="nuevaCategoria" required></select></div>
+    <div class="campo"><label for="nuevoTipo">TIPO DE ENCUESTA</label><select id="nuevoTipo" required><option value="post_partido">Post Partido</option><option value="post_entrenamiento">Post Entrenamiento</option></select></div>
+    <div class="campo"><label for="nuevaFecha">FECHA DEL PERÍODO</label><input type="date" id="nuevaFecha" required></div>
+   </div>
+   <div class="form-acciones"><button class="btn btn-principal" type="submit" id="btnPublicar">Crear período</button></div>
+  </form>
+  <div class="ct-titulo-seccion"><div><h3>Publicaciones de la categoría</h3><p>Activá o cerrá las respuestas cuando lo necesites.</p></div></div>
+  <div id="listaPublicaciones" class="carpetas-periodos"></div>
+ </div>
+ <div id="ctResultados" class="ct-vista oculto">
+  <div class="ct-titulo-seccion"><div><span class="etiqueta">LECTURA DE DATOS</span><h3>Resultados por período</h3><p>Seleccioná una publicación para consultar cada respuesta y las estadísticas de ese momento.</p></div></div>
+  <div class="panel selector-periodo"><div class="campo" style="flex:1"><label for="selectorPeriodoResultados">PERÍODO PUBLICADO</label><select id="selectorPeriodoResultados"><option value="">Seleccioná un período</option></select></div><div class="campo"><label for="filtroTipoResultado">ENCUESTA</label><select id="filtroTipoResultado"><option value="todos">Todas</option><option value="post_partido">Post Partido</option><option value="post_entrenamiento">Post Entrenamiento</option></select></div></div>
+  <div id="resultadoPeriodo"><div class="vacio">Seleccioná un período para ver sus resultados.</div></div>
+ </div>
+</section>
+</main>
+</div>
+<div class="modal" id="modalDetalle"><div class="modal-contenido"><div class="modal-cabecera"><h3 id="tituloDetalle">Detalle de jugadora</h3><button class="cerrar-modal" id="cerrarDetalle" type="button" aria-label="Cerrar">×</button></div><div id="contenidoDetalle"></div></div></div>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id), norm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+const categoriaKey=s=>{const k=norm(s);const m=k.match(/^(?:sub|s|u)?(10|12|14|16)$/);return m?"sub"+m[1]:k};
+const modoPublico=!!window.SAN_TELMO_MODO_ENCUESTA_PUBLICA, encuestaPublicaId=new URLSearchParams(location.search).get("encuesta")||"";
+const fechaLocal=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const fmtFecha=s=>{if(!s)return "—";const p=s.split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:s};
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const TIPOS={post_partido:{nombre:"Post Partido",icono:"⚽",descripcion:"Contanos cómo terminaste el partido y cómo te sentís."},post_entrenamiento:{nombre:"Post Entrenamiento",icono:"⚡",descripcion:"Registrá el esfuerzo que te demandó la sesión."}};
+let perfil=null,auth=null,db=null,fb=null,rol="",uid="",nombre="",jugadoraNombre="",categorias=[],categoriaActiva="",plantel=[],periodos=[],respuestas=[],unsubs=[],periodoSeleccionado="",ctTab="publicaciones",rpeSeleccionado=null;
+function estado(msg,tipo){const el=$(modoPublico?"estadoPublico":"estadoGeneral")||$("estadoGeneral")||$("estadoPublico");if(!el){console.error("SAN TELMO Encuestas · no se encontró un contenedor para mostrar el estado:",msg);return}el.textContent=msg;el.className=(modoPublico?"publico-mensaje":"mensaje")+(tipo?" "+tipo:"")}
+function esJugadora(){return rol==="jugadora"}
+function puedePublicar(){return typeof perfil?.puedeEditar==="boolean"?perfil.puedeEditar:["admin","editor","coordinador","coordinadora","cuerpo_tecnico"].includes(rol)}
+function fechaCorta(p){return fmtFecha(p.fecha)}
+function tipoNombre(t){return TIPOS[t]?.nombre||String(t||"Encuesta")}
+function tipoConfig(t){return TIPOS[t]||{nombre:tipoNombre(t),icono:"📋",descripcion:"Esta encuesta fue creada con un formato anterior y no tiene una descripción disponible."}}
+function categoriaPermitida(){return Array.isArray(perfil?.categorias)?perfil.categorias:[]}
+function mostrarPerfil(){const nombreEl=$("nombreUsuario"),avatarEl=$("avatarUsuario"),rolEl=$("rolUsuario");if(nombreEl)nombreEl.textContent=nombre;if(avatarEl)avatarEl.textContent=(nombre.trim()[0]||"U").toUpperCase();if(rolEl)rolEl.textContent=({admin:"Administrador",editor:"Editor",coordinador:"Coordinador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rol]||rol}
+ function actualizarDescripcionPagina(texto){const el=$("descripcionPagina")||document.querySelector(".santelmo-panel-descripcion");if(el)el.textContent=texto}
+function poblarCategorias(){
+ categorias=categoriaPermitida();const selects=[$("filtroCategoria"),$("nuevaCategoria")];
+ selects.forEach(s=>{s.innerHTML="";categorias.forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;s.appendChild(o)})});
+ categoriaActiva=categorias[0]||"";$("filtroCategoria").value=categoriaActiva;$("nuevaCategoria").value=categoriaActiva;
+ $("filtroCategoria").disabled=esJugadora()||categorias.length===1;$("bloqueCategoria").classList.toggle("oculto",esJugadora()||categorias.length===1);
+ $("filtroCategoria").addEventListener("change",()=>{if(categorias.includes($("filtroCategoria").value)){categoriaActiva=$("filtroCategoria").value;renderTodo()}});
+ $("nuevaCategoria").addEventListener("change",()=>{if(categorias.includes($("nuevaCategoria").value)){$("filtroCategoria").value=$("nuevaCategoria").value;categoriaActiva=$("nuevaCategoria").value;renderTodo()}});
+}
+function iniciarMenu(){
+ const side=$("sidebar"),overlay=$("capaSidebar"),btn=$("botonMenu"),mobile=()=>innerWidth<=760;
+ function sync(){const open=!side.classList.contains("oculto");btn.setAttribute("aria-expanded",String(open));overlay.classList.toggle("visible",mobile()&&open)}
+ btn.addEventListener("click",()=>{side.classList.toggle("oculto");sync()});overlay.addEventListener("click",()=>{side.classList.add("oculto");sync()});
+ window.addEventListener("resize",()=>{if(mobile())side.classList.add("oculto");else side.classList.remove("oculto");sync()});if(mobile())side.classList.add("oculto");sync();
+}
+function iniciarPestanasCT(){document.querySelectorAll("[data-ct-tab]").forEach(b=>b.addEventListener("click",()=>{ctTab=b.dataset.ctTab;document.querySelectorAll("[data-ct-tab]").forEach(x=>x.classList.toggle("activa",x===b));["publicaciones","resultados"].forEach(v=>$("ct"+v[0].toUpperCase()+v.slice(1)).classList.toggle("oculto",v!==ctTab));if(ctTab==="resultados")poblarSelectorResultados()}))}
+function activo(p){return !/inactivo|baja|desvinculada/i.test(p.estado||"Activo")}
+function jugadorasDe(cat){return plantel.filter(p=>p.nombre&&categoriaKey(p.categoria)===categoriaKey(cat)&&activo(p)).sort((a,b)=>String(a.nombre).localeCompare(String(b.nombre),"es"))}
+function periodoCat(){return periodos.filter(p=>categoriaKey(p.categoria)===categoriaKey(categoriaActiva)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""))}
+function respuestasDe(id){return respuestas.filter(r=>r.periodoId===id)}
+function yaRespondio(id){return respuestas.some(r=>r.periodoId===id&&r.uid===uid)}
+function cargarPlantel(){
+ const permitidas=Array.isArray(perfil?.categorias)?perfil.categorias:[];
+ if(!permitidas.length){estado("Tu perfil no tiene categorías habilitadas para consultar el plantel.","error");return;}
+ const consulta=fb.query(fb.collection(db,"santelmo_jugadoras"),fb.where("categoria","in",permitidas));
+ const unsub=fb.onSnapshot(consulta,snap=>{plantel=snap.docs.map(d=>{const x=d.data();return{id:d.id,nombre:String(x.nombre||x.nombreCompleto||x.nombre_completo||[x.nombres,x.apellido||x.apellidos].filter(Boolean).join(" ")||"").trim(),categoria:x.categoria||x.division||x.categoría||x.category||"",estado:x.estado||x.status||"Activo"}}).filter(p=>p.nombre);renderTodo()},e=>{console.error("SAN TELMO Encuestas · plantel:",e);estado("No se pudo cargar el plantel de tus categorías. Revisá los permisos de Firestore.","error")});unsubs.push(unsub)
+}
+function escucharDatos(){
+ const permitidas=Array.isArray(perfil?.categorias)?perfil.categorias:[];
+ if(!permitidas.length){estado("Tu perfil no tiene categorías habilitadas para consultar encuestas.","error");return;}
+ const periodosRef=fb.collection(db,"santelmo_encuestas_periodos");
+ const consultaPeriodos=fb.query(periodosRef,fb.where("categoria","in",permitidas));
+ const up=fb.onSnapshot(consultaPeriodos,s=>{periodos=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error("SAN TELMO Encuestas · publicaciones:",e);estado("No se pudieron cargar las publicaciones de tus categorías. Revisá los permisos de Firestore.","error")});unsubs.push(up);
+ const respuestasRef=fb.collection(db,"santelmo_encuestas_respuestas");
+ const consultaRespuestas=esJugadora()?fb.query(respuestasRef,fb.where("uid","==",uid)):fb.query(respuestasRef,fb.where("categoria","in",permitidas));
+ const ur=fb.onSnapshot(consultaRespuestas,s=>{respuestas=s.docs.map(d=>({id:d.id,...d.data()}));renderTodo()},e=>{console.error("SAN TELMO Encuestas · respuestas:",e);estado("No se pudieron cargar las respuestas autorizadas. Revisá los permisos de Firestore.","error")});unsubs.push(ur)
+}
+function renderTodo(){if(!perfil)return;if(esJugadora())renderJugadora();else renderCT()}
+function renderJugadora(){
+ const abiertas=periodos.filter(p=>p.estado==="abierta"&&categoriaKey(p.categoria)===categoriaKey(categoriaActiva)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));
+ $("encuestasDisponibles").innerHTML=abiertas.map(p=>{const done=yaRespondio(p.id);return '<article class="encuesta-tarjeta"><div class="tarjeta-top"><span class="icono">'+tipoConfig(p.tipo).icono+'</span><span class="estado-encuesta '+(done?"respondida":"abierta")+'">'+(done?"Completada":"Disponible")+'</span></div><h3>'+tipoNombre(p.tipo)+'</h3><p>'+tipoConfig(p.tipo).descripcion+'</p><div class="tarjeta-meta"> <span>◷ '+fechaCorta(p)+'</span><span> '+esc(p.categoria)+'</span></div><button class="btn '+(done?"btn-secundario":"btn-principal")+'" type="button" data-abrir-periodo="'+esc(p.id)+'" '+(done||!TIPOS[p.tipo]?"disabled":"")+'>'+(done?"Ya respondiste":TIPOS[p.tipo]?"Completar encuesta":"Formato no disponible")+'</button></article>'}).join("");
+ $("sinEncuestas").classList.toggle("oculto",abiertas.length>0);
+ $("encuestasDisponibles").querySelectorAll("[data-abrir-periodo]").forEach(b=>b.addEventListener("click",()=>abrirFormularioJugador(b.dataset.abrirPeriodo)));
+}
+function escalaSelect(id,label,items){return '<div class="campo"><label for="'+id+'">'+label+'</label><select id="'+id+'" required><option value="">Elegir respuesta</option>'+items.map((x,i)=>'<option value="'+(i+1)+'">'+(i+1)+' · '+x+'</option>').join("")+'</select></div>'}
+function abrirFormularioJugador(id){
+ const p=periodos.find(x=>x.id===id);if(!p||p.estado!=="abierta"||(!modoPublico&&yaRespondio(id)))return;
+ if(!TIPOS[p.tipo]){const mensaje="Esta encuesta utiliza un formato anterior que no está disponible para responder desde esta página.";if(modoPublico){$("estadoPublico").textContent=mensaje;$("estadoPublico").className="publico-mensaje error"}else estado(mensaje,"error");return;}
+ periodoSeleccionado=id;rpeSeleccionado=null;let fields="";
+ if(modoPublico)fields='<div class="form-grid"><div class="campo"><label for="respNombre">NOMBRE</label><input id="respNombre" maxlength="80" autocomplete="given-name" required></div><div class="campo"><label for="respApellido">APELLIDO</label><input id="respApellido" maxlength="80" autocomplete="family-name" required></div></div>';
+ if(p.tipo==="post_partido"){
+ fields+='<section class="campo campo-completo"><h4>Wellness · obligatorio</h4><p class="ayuda">1 es el valor más bajo/mejor y 5 el más alto/peor.</p><div class="form-grid">'+escalaSelect("respSueno","Nivel de sueño",["Muy bueno","Bueno","Regular","Malo","Muy malo"])+escalaSelect("respEstres","Nivel de estrés",["Muy bajo","Bajo","Moderado","Alto","Muy alto"])+escalaSelect("respFatiga","Nivel de fatiga",["Muy bajo","Bajo","Moderado","Alto","Muy alto"])+escalaSelect("respDolorMuscular","Nivel de dolor muscular",["Sin dolor","Leve","Moderado","Alto","Muy alto"])+'</div><div class="rpe-lectura" id="wellnessTotal">Completá las cuatro escalas para calcular el RPE Wellness.</div></section><div class="form-grid" style="margin-top:18px"><div class="campo campo-completo oculto" id="dolorZonaWrap"><label for="respDolorZona">¿Dónde sentís el dolor muscular? (obligatorio para 3, 4 o 5)</label><textarea id="respDolorZona" maxlength="300"></textarea></div><div class="campo"><label for="respComidaAntes">¿Qué comiste antes del partido?</label><textarea id="respComidaAntes" maxlength="300"></textarea></div><div class="campo"><label for="respComidaDespues">¿Qué comiste después del partido?</label><textarea id="respComidaDespues" maxlength="300"></textarea></div><div class="campo campo-completo"><label for="respAnimo">Estado de ánimo</label><input id="respAnimo" maxlength="200"></div></div>';
+ }else{
+ fields+='<div class="form-grid"><div class="campo campo-completo"><label>¿Cuánto esfuerzo te demandó el entrenamiento?</label><p class="ayuda">Escala del 1 al 10: 1 mínimo esfuerzo y 10 máximo esfuerzo.</p><div class="escala-rpe" id="rpeOpciones">'+Array.from({length:10},(_,i)=>'<button type="button" class="rpe-opcion" data-rpe="'+(i+1)+'">'+(i+1)+'</button>').join("")+'</div></div><div class="campo campo-completo"><label>¿Qué actividades tuvo tu entrenamiento?</label><p class="ayuda">Podés seleccionar todas las que correspondan.</p><div class="form-grid"><label><input type="checkbox" name="actividad" value="Cancha"> Cancha</label><label><input type="checkbox" name="actividad" value="Gimnasio"> Gimnasio</label><label><input type="checkbox" name="actividad" value="Pasadas"> Pasadas</label></div></div><div class="campo campo-completo"><label for="respCalificacion">¿Cómo calificarías tu entrenamiento?</label><select id="respCalificacion" required><option value="">Elegir calificación</option><option value="1">1 · Muy malo</option><option value="2">2 · Malo</option><option value="3">3 · Regular</option><option value="4">4 · Bueno</option><option value="5">5 · Excelente</option></select></div><div class="campo campo-completo oculto" id="justificacionWrap"><label for="respJustificacion">Justificá tu elección (obligatorio para 1, 2, 3 o 4)</label><textarea id="respJustificacion" maxlength="500"></textarea></div></div><div id="rpeAyuda" class="rpe-lectura">Seleccioná el esfuerzo para continuar.</div>';
+ }
+ const destino=modoPublico?$("formularioPublico"):$("formularioJugador");
+ destino.innerHTML='<div class="panel-cabecera"><div><span class="etiqueta">'+esc(p.categoria)+' · '+fechaCorta(p)+'</span><h3>'+tipoNombre(p.tipo)+'</h3><p>Respondé con sinceridad. Tus respuestas ayudan al cuerpo técnico.</p></div>'+(modoPublico?"":'<button class="btn btn-secundario" id="volverEncuestas" type="button">← Volver</button>')+'</div><form id="formRespuesta">'+fields+'<div class="form-acciones"><button class="btn btn-principal" type="submit">Enviar respuesta</button></div></form>';
+ destino.classList.remove("oculto");if(!modoPublico){$("encuestasDisponibles").classList.add("oculto");$("sinEncuestas").classList.add("oculto");$("volverEncuestas").addEventListener("click",()=>{$("formularioJugador").classList.add("oculto");$("encuestasDisponibles").classList.remove("oculto");renderJugadora()})}
+ ["respSueno","respEstres","respFatiga","respDolorMuscular"].forEach(id=>$(id)?.addEventListener("change",actualizarWellness));
+ $("respCalificacion")?.addEventListener("change",()=>{const n=Number($("respCalificacion").value),req=n>=1&&n<=4;$("justificacionWrap").classList.toggle("oculto",!req);$("respJustificacion").required=req});
+ $("rpeOpciones")?.querySelectorAll("[data-rpe]").forEach(b=>b.addEventListener("click",()=>{rpeSeleccionado=Number(b.dataset.rpe);$("rpeOpciones").querySelectorAll("button").forEach(x=>x.classList.toggle("seleccionado",x===b));$("rpeAyuda").textContent="Esfuerzo seleccionado: "+rpeSeleccionado+"/10"}));
+ $("formRespuesta").addEventListener("submit",guardarRespuesta);
+}
+function actualizarWellness(){
+ const ids=["respSueno","respEstres","respFatiga","respDolorMuscular"],vals=ids.map(id=>Number($(id)?.value||0)),ok=vals.every(v=>v>=1&&v<=5),dolor=Number($("respDolorMuscular")?.value||0);
+ $("wellnessTotal").textContent=ok?"RPE Wellness: "+vals.reduce((a,b)=>a+b,0)+"/20 · suma de las cuatro escalas.":"Completá las cuatro escalas para calcular el RPE Wellness.";
+ $("dolorZonaWrap").classList.toggle("oculto",dolor<3);$("respDolorZona").required=dolor>=3;
+}
+async function guardarRespuesta(e){
+ e.preventDefault();const p=periodos.find(x=>x.id===periodoSeleccionado);if(!p||p.estado!=="abierta"){(modoPublico?$("estadoPublico").textContent= "Esta encuesta ya fue cerrada por el cuerpo técnico.":estado("Esta encuesta ya fue cerrada por el cuerpo técnico.","error"));return}if(!modoPublico&&yaRespondio(p.id)){estado("Ya registraste tu respuesta para este período.","error");return}
+ let respuestasForm={},nombreRespuesta="",apellidoRespuesta="";
+ if(modoPublico){nombreRespuesta=$("respNombre").value.trim();apellidoRespuesta=$("respApellido").value.trim();if(!nombreRespuesta||!apellidoRespuesta){$("estadoPublico").textContent="Ingresá tu nombre y apellido para continuar.";$("estadoPublico").className="publico-mensaje error";return}}
+ if(p.tipo==="post_partido"){
+  const keys=["Sueno","Estres","Fatiga","DolorMuscular"];for(const k of keys){const el=$("resp"+k);if(!el?.value){estado("Completá las cuatro preguntas obligatorias de Wellness.","error");return}respuestasForm[k.toLowerCase()]=Number(el.value)}
+  respuestasForm.rpeWellness=keys.reduce((a,k)=>a+Number($("resp"+k).value),0);respuestasForm.dolorZona=$("respDolorZona").value.trim();
+  if(respuestasForm.dolormuscular>=3&&!respuestasForm.dolorZona){estado("Indicá dónde sentís el dolor muscular.","error");$("respDolorZona").focus();return}
+  respuestasForm.comidaAntes=$("respComidaAntes").value.trim();respuestasForm.comidaDespues=$("respComidaDespues").value.trim();respuestasForm.animo=$("respAnimo").value.trim();
+ }else{
+  const actividades=Array.from(document.querySelectorAll('input[name="actividad"]:checked')).map(x=>x.value),calificacion=Number($("respCalificacion").value),justificacion=$("respJustificacion").value.trim();
+  if(rpeSeleccionado===null||!actividades.length||!calificacion){estado("Seleccioná el esfuerzo, al menos una actividad y una calificación.","error");return}if(calificacion<=4&&!justificacion){estado("Justificá tu calificación para poder enviar la respuesta.","error");$("respJustificacion").focus();return}
+  respuestasForm.esfuerzo=rpeSeleccionado;respuestasForm.actividades=actividades;respuestasForm.calificacion=calificacion;respuestasForm.justificacion=justificacion;
+ }
+ const b=e.submitter;b.disabled=true;b.textContent="Enviando...";
+ try{const estadoActual=await fb.getDoc(fb.doc(db,"santelmo_encuestas_periodos",p.id));if(!estadoActual.exists()||estadoActual.data().estado!=="abierta")throw new Error("El cuerpo técnico cerró esta encuesta. Ya no se aceptan respuestas.");
+ const datos={periodoId:p.id,tipo:p.tipo,categoria:p.categoria,fecha:p.fecha,uid:modoPublico?null:uid,jugadora:modoPublico?(nombreRespuesta+" "+apellidoRespuesta):(jugadoraNombre||nombre),nombre:modoPublico?nombreRespuesta:(jugadoraNombre||nombre),apellido:modoPublico?apellidoRespuesta:"",respuestas:respuestasForm,creadoEn:fb.serverTimestamp()};
+ if(modoPublico)await fb.addDoc(fb.collection(db,"santelmo_encuestas_respuestas"),datos);else{const ref=fb.doc(db,"santelmo_encuestas_respuestas",p.id+"_"+uid),existente=await fb.getDoc(ref);if(existente.exists())throw new Error("Ya existe una respuesta para este período.");await fb.setDoc(ref,datos)}
+ if(modoPublico){$("formularioPublico").classList.add("oculto");$("estadoPublico").textContent="¡Respuesta enviada! Gracias, "+nombreRespuesta+"."; $("estadoPublico").className="publico-mensaje ok"}else{estado("¡Respuesta enviada! Gracias por completar "+tipoNombre(p.tipo)+".","ok");$("formularioJugador").classList.add("oculto");$("encuestasDisponibles").classList.remove("oculto");renderJugadora()}periodoSeleccionado=""}
+ catch(err){console.error(err);if(modoPublico){$("estadoPublico").textContent=err.message||"No se pudo enviar la respuesta. Intentá nuevamente.";$("estadoPublico").className="publico-mensaje error"}else estado(err.message||"No se pudo enviar la respuesta. Intentá nuevamente.","error")}finally{if(b.isConnected){b.disabled=false;b.textContent="Enviar respuesta"}}
+}
+async function publicarPeriodo(e){
+ e.preventDefault();if(!puedePublicar())return;
+ const categoria=$("nuevaCategoria").value,tipo=$("nuevoTipo").value,fecha=$("nuevaFecha").value;
+ if(periodos.some(p=>norm(p.categoria)===norm(categoria)&&p.tipo===tipo&&p.fecha===fecha)){estado("Ya existe una publicación de ese tipo para esa categoría y fecha.","error");return}
+ if(!categorias.includes(categoria)||!TIPOS[tipo]||!fecha){estado("Revisá categoría, encuesta y fecha antes de publicar.","error");return}
+ const b=$("btnPublicar");b.disabled=true;b.textContent="Creando...";
+ try{await fb.addDoc(fb.collection(db,"santelmo_encuestas_periodos"),{categoria,tipo,fecha,estado:"abierta",creadoPor:uid,creadoPorNombre:nombre,creadoEn:fb.serverTimestamp(),actualizadoEn:fb.serverTimestamp()});$("filtroCategoria").value=categoria;categoriaActiva=categoria;estado("Período creado correctamente.","ok");$("formPublicacion").reset();$("nuevaCategoria").value=categoria;$("nuevaFecha").value=fechaLocal();renderCT()}
+ catch(err){console.error("SAN TELMO Encuestas · error al publicar:",err);const codigo=err?.code?(" ["+err.code+"]"):"";const detalle=err?.message||"Error desconocido";estado("No se pudo crear el período"+codigo+": "+detalle,"error")}finally{b.disabled=false;b.textContent="Crear período"}
+}
+async function cambiarEstadoPeriodo(id,nuevo){
+ if(!puedePublicar())return;
+ const p=periodos.find(x=>x.id===id);if(!p)return;
+ if(nuevo==="cerrada"&&!confirm("¿Cerrar esta encuesta? Las jugadoras ya no podrán responder. Los resultados quedarán guardados."))return;
+ if(nuevo==="abierta"&&!confirm("¿Volver a habilitar las respuestas de este período?"))return;
+ try{await fb.updateDoc(fb.doc(db,"santelmo_encuestas_periodos",id),{estado:nuevo,actualizadoEn:fb.serverTimestamp()});estado(nuevo==="abierta"?"Encuesta habilitada nuevamente.":"Encuesta cerrada. Los resultados se conservaron.","ok")}
+ catch(err){console.error(err);estado("No se pudo cambiar el estado de la publicación.","error")}
+}
+async function eliminarPeriodo(id){
+ const p=periodos.find(x=>x.id===id);if(!p||!perfil?.puedeEliminar)return;
+ if(!confirm("¿Eliminar definitivamente esta publicación y TODAS sus respuestas? Esta acción no se puede deshacer."))return;
+ try{
+  const consulta=fb.query(fb.collection(db,"santelmo_encuestas_respuestas"),fb.where("periodoId","==",id));
+  const snap=await fb.getDocs(consulta);
+  const docs=snap.docs;
+  for(let i=0;i<docs.length;i+=450){
+   const lote=fb.writeBatch(db);
+   docs.slice(i,i+450).forEach(d=>lote.delete(d.ref));
+   await lote.commit();
+  }
+  await fb.deleteDoc(fb.doc(db,"santelmo_encuestas_periodos",id));
+  estado("Publicación y "+docs.length+" respuesta(s) eliminadas definitivamente.","ok");
+ }catch(err){console.error(err);estado("No se pudo completar la eliminación. Revisá los permisos de Firestore.","error")}
+}
+function tarjetaPeriodo(p,archivo=false){
+ const rs=respuestasDe(p.id),esperadas=jugadorasDe(p.categoria).length,porcentaje=esperadas?Math.round(rs.length/esperadas*100):0,abierta=p.estado==="abierta";
+ return '<article class="periodo-card"><div class="periodo-card-top"><span class="periodo-icono">'+tipoConfig(p.tipo).icono+'</span><span class="pill '+(abierta?"pill-abierta":"pill-cerrada")+'">'+(abierta?"● Abierta":"● Cerrada")+'</span></div><div class="periodo-fecha">'+fechaCorta(p)+'</div><h4>'+tipoNombre(p.tipo)+'</h4><div class="periodo-categoria">'+esc(p.categoria)+'</div><div class="periodo-participacion"><div><b>'+rs.length+'</b><span> / '+esperadas+' respuestas</span></div><b>'+porcentaje+'%</b></div><div class="barra-progreso"><span style="width:'+Math.min(100,porcentaje)+'%"></span></div><div class="periodo-acciones"><button type="button" class="btn btn-secundario" data-ver-periodo="'+p.id+'">Ver resultados</button>'+'<button type="button" class="btn btn-secundario" data-copiar-enlace="'+p.id+'">Copiar enlace</button>'+(puedePublicar()?(abierta?'<button type="button" class="btn btn-cerrar" data-estado-periodo="'+p.id+'" data-nuevo-estado="cerrada">Deshabilitar</button>':'<button type="button" class="btn btn-abrir" data-estado-periodo="'+p.id+'" data-nuevo-estado="abierta">Habilitar</button>'):'')+(perfil?.puedeEliminar?'<button type="button" class="btn btn-peligro" data-eliminar-periodo="'+p.id+'">Eliminar</button>':'')+'</div></article>'
+}
+function enlazarTarjetas(root){
+ root.querySelectorAll("[data-estado-periodo]").forEach(b=>b.addEventListener("click",()=>cambiarEstadoPeriodo(b.dataset.estadoPeriodo,b.dataset.nuevoEstado)));
+ root.querySelectorAll("[data-ver-periodo]").forEach(b=>b.addEventListener("click",()=>{ctTab="resultados";document.querySelector('[data-ct-tab="resultados"]').click();$("selectorPeriodoResultados").value=b.dataset.verPeriodo;renderResultadoSeleccionado()}));
+ root.querySelectorAll("[data-eliminar-periodo]").forEach(b=>b.addEventListener("click",()=>eliminarPeriodo(b.dataset.eliminarPeriodo)));
+ root.querySelectorAll("[data-copiar-enlace]").forEach(b=>b.addEventListener("click",async()=>{const url=location.origin+location.pathname+"?encuesta="+encodeURIComponent(b.dataset.copiarEnlace);try{await navigator.clipboard.writeText(url);estado("Enlace público copiado. Cualquier jugadora podrá responder con nombre y apellido.","ok")}catch(e){window.prompt("Copiá este enlace para compartir la encuesta:",url)}}));
+}
+function renderPublicaciones(){const ps=periodoCat();$("listaPublicaciones").innerHTML=ps.length?ps.map(p=>tarjetaPeriodo(p)).join(""):'<div class="vacio">Todavía no hay publicaciones para esta categoría. Creá la primera desde el formulario.</div>';enlazarTarjetas($("listaPublicaciones"))}
+function poblarSelectorResultados(){
+ const s=$("selectorPeriodoResultados"),actual=s.value,tipoFiltro=$("filtroTipoResultado").value,ps=periodos.filter(p=>categorias.some(c=>categoriaKey(c)===categoriaKey(p.categoria))&&(tipoFiltro==="todos"||p.tipo===tipoFiltro)).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));
+ s.innerHTML='<option value="">Seleccioná un período</option>'+ps.map(p=>'<option value="'+esc(p.id)+'">'+fmtFecha(p.fecha)+' · '+esc(p.categoria)+' · '+tipoNombre(p.tipo)+' · '+(p.estado==="abierta"?"Abierta":"Cerrada")+'</option>').join("");
+ if(ps.some(p=>p.id===actual))s.value=actual;
+}
+function renderResultadoSeleccionado(){
+ const id=$("selectorPeriodoResultados").value,p=periodos.find(x=>x.id===id);if(!p){$("resultadoPeriodo").innerHTML='<div class="vacio">Seleccioná un período para ver sus resultados.</div>';return}
+ const rs=respuestasDe(id),plantelCat=jugadorasDe(p.categoria),respondieronIds=new Set(rs.map(x=>x.uid).filter(Boolean)),respondieronNombres=new Set(rs.map(x=>norm(x.jugadora||""))),faltan=plantelCat.filter(x=>!respondieronIds.has(x.id)&&!respondieronNombres.has(norm(x.nombre)));
+ const cards='<div class="ct-resumen resultados-resumen"><div class="resumen-card"><span>Respuestas recibidas</span><strong>'+rs.length+'/'+plantelCat.length+'</strong></div><div class="resumen-card"><span>Participación</span><strong>'+(plantelCat.length?Math.round(rs.length/plantelCat.length*100):0)+'%</strong></div><div class="resumen-card"><span>Estado</span><strong class="estado-grande">'+(p.estado==="abierta"?"Abierta":"Cerrada")+'</strong></div></div>';let stats="",rows="",encabezado="";
+ if(p.tipo==="post_partido"){
+  const ks=[["sueno","Sueño"],["estres","Estrés"],["fatiga","Fatiga"],["dolormuscular","Dolor muscular"]],sumas=rs.map(x=>Number(x.respuestas?.rpeWellness)).filter(Number.isFinite),prom=sumas.length?sumas.reduce((a,b)=>a+b,0)/sumas.length:null;
+  stats='<div class="estadisticas-respuesta">'+ks.map(([k,l])=>{const v=rs.map(x=>Number(x.respuestas?.[k])).filter(Number.isFinite),a=v.length?v.reduce((x,y)=>x+y,0)/v.length:null;return '<div class="mini-stat"><span>'+l+'</span><strong>'+(a===null?"—":a.toFixed(1)+'/5')+'</strong><small>Promedio del período</small></div>'}).join("")+'<div class="mini-stat"><span>RPE Wellness promedio</span><strong>'+(prom===null?"—":prom.toFixed(1)+'/20')+'</strong><small>Suma de las cuatro escalas</small></div></div>';
+  rows=rs.map(x=>{const r=x.respuestas||{};return '<tr><td><b>'+esc(x.jugadora||"Jugadora")+'</b></td>'+ks.map(([k])=>'<td>'+esc(r[k]??"—")+'/5</td>').join("")+'<td><b>'+esc(r.rpeWellness??"—")+'/20</b></td><td>'+esc(r.dolorZona||"—")+'</td><td>'+esc(r.comidaAntes||"—")+'</td><td>'+esc(r.comidaDespues||"—")+'</td><td>'+esc(r.animo||"—")+'</td></tr>'}).join("");
+  encabezado="<th>Jugadora</th><th>Sueño</th><th>Estrés</th><th>Fatiga</th><th>Dolor muscular</th><th>RPE Wellness</th><th>Zona del dolor</th><th>Comida antes</th><th>Comida después</th><th>Ánimo</th>";
+ }else{
+  const v=rs.map(x=>Number(x.respuestas?.esfuerzo)).filter(Number.isFinite),avg=v.length?v.reduce((a,b)=>a+b,0)/v.length:null,c=rs.map(x=>Number(x.respuestas?.calificacion)).filter(Number.isFinite),ca=c.length?c.reduce((a,b)=>a+b,0)/c.length:null;
+  stats='<div class="estadisticas-respuesta"><div class="mini-stat"><span>Esfuerzo promedio</span><strong>'+(avg===null?"—":avg.toFixed(1)+'/10')+'</strong></div><div class="mini-stat"><span>Calificación promedio</span><strong>'+(ca===null?"—":ca.toFixed(1)+'/5')+'</strong></div><div class="mini-stat"><span>Respuestas recibidas</span><strong>'+rs.length+'</strong></div></div>';
+  rows=rs.map(x=>{const r=x.respuestas||{};return '<tr><td><b>'+esc(x.jugadora||"Jugadora")+'</b></td><td>'+esc(r.esfuerzo??"—")+'/10</td><td>'+esc((r.actividades||[]).join(", ")||"—")+'</td><td><b>'+esc(r.calificacion??"—")+'/5</b></td><td>'+esc(r.justificacion||"—")+'</td></tr>'}).join("");encabezado="<th>Jugadora</th><th>Esfuerzo</th><th>Actividades</th><th>Calificación</th><th>Justificación</th>";
+ }
+ $("resultadoPeriodo").innerHTML=cards+stats+'<div class="panel"><div class="panel-cabecera"><div><h3>Respuestas individuales</h3><p>'+tipoNombre(p.tipo)+' · '+fmtFecha(p.fecha)+' · '+esc(p.categoria)+'</p></div><button class="btn btn-secundario" id="exportarPeriodo" type="button">Exportar período</button></div><div class="tabla-scroll"><table><thead><tr>'+encabezado+'</tr></thead><tbody>'+rows+'</tbody></table></div>'+(rs.length?"":'<div class="vacio">Todavía no hay respuestas para este período.</div>')+'</div><div class="panel"><h3>Participación</h3><p class="ayuda">Jugadoras que todavía no respondieron este período.</p><div class="faltantes-lista">'+(faltan.length?faltan.map(x=>'<span class="faltante-chip">'+esc(x.nombre)+'</span>').join(""):'<span class="pill pill-abierta">¡Respondieron todas!</span>')+'</div></div>';
+ $("exportarPeriodo").addEventListener("click",()=>exportarPeriodo(p,rs));
+}
+function exportarPeriodo(p,rs){
+ const rows=[["Jugadora","Categoria","Fecha","Encuesta","Respuestas"]];
+ rs.forEach(x=>rows.push([x.jugadora,p.categoria,p.fecha,tipoNombre(p.tipo),JSON.stringify(x.respuestas||{})]));
+ const csv="\uFEFF"+rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(";")).join("\n");
+ const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})),a=document.createElement("a");a.href=url;a.download="SAN_TELMO_"+norm(p.categoria)+"_"+p.tipo+"_"+p.fecha+".csv";a.click();URL.revokeObjectURL(url)
+}
+function renderCT(){renderPublicaciones();if(ctTab==="resultados"){poblarSelectorResultados();renderResultadoSeleccionado()}}
+function validarPerfil(){
+ if(!perfil)throw new Error("No se pudo identificar el perfil de SAN TELMO.");rol=perfil.rol||"";
+ if(!["admin","editor","coordinador","coordinadora","cuerpo_tecnico","jugadora"].includes(rol))throw new Error("Tu perfil no tiene acceso a Encuestas.");
+ uid=auth.currentUser?.uid||"";nombre=perfil.nombre||perfil.usuario||"Usuario";jugadoraNombre=perfil.jugadora||perfil.nombre||"";
+ mostrarPerfil();poblarCategorias();
+ if(esJugadora()){$("vistaJugadora").classList.remove("oculto");$("vistaTecnico").classList.add("oculto");$("bloqueCategoria").classList.add("oculto");actualizarDescripcionPagina("Completá las encuestas que el cuerpo técnico habilite para tu categoría. Cada respuesta se guarda de forma individual.")}
+ else{$("vistaTecnico").classList.remove("oculto");$("vistaJugadora").classList.add("oculto");$("formPublicacion").classList.toggle("oculto",!puedePublicar());actualizarDescripcionPagina("Administrá las publicaciones y consultá resultados por categoría y período.");$("nuevaFecha").value=fechaLocal();$("formPublicacion").addEventListener("submit",publicarPeriodo);$("selectorPeriodoResultados").addEventListener("change",renderResultadoSeleccionado);$("filtroTipoResultado").addEventListener("change",()=>{poblarSelectorResultados();renderResultadoSeleccionado()});iniciarPestanasCT()}
+}
+async function cargarEncuestaPublica(){
+ $("vistaPublica").classList.remove("oculto");$("vistaJugadora").classList.add("oculto");$("vistaTecnico").classList.add("oculto");$("estadoPublico").textContent="Cargando encuesta...";
+ if(!encuestaPublicaId){$("estadoPublico").textContent="El enlace de la encuesta no es válido.";$("estadoPublico").className="publico-mensaje error";return}
+ try{
+  const snap=await fb.getDoc(fb.doc(db,"santelmo_encuestas_periodos",encuestaPublicaId));
+  if(!snap.exists())throw new Error("La encuesta no existe o fue eliminada.");
+  const p={id:snap.id,...snap.data()};periodos=[p];
+  $("tituloPublico").textContent=tipoNombre(p.tipo)+" · "+p.categoria;
+  $("detallePublico").textContent="Período: "+fechaCorta(p)+". Ingresá tu nombre y apellido para responder. No necesitás una cuenta.";
+  if(p.estado!=="abierta")throw new Error("Esta encuesta está cerrada y ya no acepta respuestas.");
+  $("estadoPublico").textContent="Encuesta habilitada. Completá tus datos y respondé.";
+  $("estadoPublico").className="publico-mensaje";
+  abrirFormularioJugador(p.id);
+ }catch(err){console.error(err);$("estadoPublico").textContent=err.message||"No se pudo abrir la encuesta.";$("estadoPublico").className="publico-mensaje error"}
+}
+async function iniciar(){
+ if(!modoPublico){try{iniciarMenu()}catch(error){console.error("SAN TELMO Encuestas · menú:",error);estado("El menú no pudo inicializarse correctamente: "+(error?.message||"error desconocido"),"error")}}
+ try{
+  const authMod=await import("./SAN TELMO-auth.js?v=20261126-modelo1");fb=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+  auth=authMod.auth;db=authMod.db;
+  if(modoPublico){document.body.classList.add("modo-publico");await cargarEncuestaPublica();return}
+  const esperarPerfil=()=>new Promise((resolve,reject)=>{if(window.SANTELMO_PERMISOS){resolve(window.SANTELMO_PERMISOS);return}const timer=setTimeout(()=>reject(new Error("La validación de permisos está tardando. Recargá la página.")),12000);window.addEventListener("santelmo-permisos-listos",e=>{clearTimeout(timer);resolve(e.detail||window.SANTELMO_PERMISOS)},{once:true})});
+  perfil=await esperarPerfil();validarPerfil();if(!esJugadora())cargarPlantel();escucharDatos();
+  estado("Conectado con SAN TELMO · Publicaciones y respuestas sincronizadas.","ok");
+  window.addEventListener("beforeunload",()=>unsubs.forEach(fn=>fn()));
+ }catch(err){console.error("SAN TELMO Encuestas · inicialización:",err);const mensaje="No se pudo iniciar Encuestas: "+(err?.code?("["+err.code+"] "):"")+(err?.message||"Error desconocido");if(modoPublico){const aviso=$("estadoPublico");if(aviso){aviso.textContent=mensaje;aviso.className="publico-mensaje error"}}else estado(mensaje,"error");document.getElementById("vistaTecnico")?.classList.add("oculto");document.getElementById("vistaJugadora")?.classList.add("oculto")}
+}
+iniciar();
+})();
+</script>
+<script type="module">if(!window.SAN_TELMO_MODO_ENCUESTA_PUBLICA)import("./SAN TELMO-layout.js?v=20261126-modelobase6");</script>
+</body>
+</html>
