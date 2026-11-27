@@ -412,7 +412,7 @@
 
   async function iniciarControlFirebase() {
     try {
-      const modulo = await import("./SAN TELMO-auth.js?v=20261124-auth1");
+      const modulo = await import("./BANCO-auth.js?v=20261127-acceso-santelmo1");
       await modulo.observarSesionSANTELMO(async user => {
         // Firebase puede entregar un estado inicial vacío en algunos entornos.
         // Antes de considerar la sesión cerrada, consultamos la instancia ya restaurada.
