@@ -34,7 +34,8 @@
         ["BANCO-calendario.html", "Calendario", false],
         ["BANCO-planificacion.html", "Planificación", true],
         ["BANCO-gimnasio.html", "Gimnasio", false],
-        ["BANCO-calculadora.html", "Calculadora", true]
+        ["BANCO-calculadora.html", "Calculadora", true],
+        ["BANCO-biblioteca.html", "Biblioteca Ejercicios", true]
       ]
     },
     {
@@ -55,7 +56,8 @@
         ["BANCO-testeos.html", "Planilla de testeos", false],
         ["BANCO-tiempos.html", "Tiempos", false],
         ["BANCO-encuestas.html", "Encuestas", false],
-        ["BANCO-lesiones.html", "Lesiones", false]
+        ["BANCO-lesiones.html", "Lesiones", false],
+        ["BANCO-psicologia.html", "Psicología", true]
       ]
     }
   ];
@@ -547,6 +549,22 @@
         eyebrow: "RENDIMIENTOS · SEGUIMIENTO DIARIO",
         titulo: "Encuestas del plantel",
         descripcion: "Publicá encuestas, consultá respuestas y hacé el seguimiento del bienestar y la carga de entrenamiento."
+      },
+      "banco-biblioteca.html": {
+        controlesCategoria: ["categoria"],
+        ocultarSelectores: [],
+        selector: ".page-heading",
+        eyebrow: "ENTRENAMIENTO · PREPARACIÓN",
+        titulo: "Biblioteca de ejercicios",
+        descripcion: "Creá, clasificá y conservá ejercicios para la preparación física y el trabajo técnico del plantel."
+      },
+      "banco-psicologia.html": {
+        controlesCategoria: ["categoria"],
+        ocultarSelectores: [],
+        selector: ".page-heading",
+        eyebrow: "RENDIMIENTOS · PSICOLOGÍA",
+        titulo: "Psicología deportiva",
+        descripcion: "Registrá seguimientos individuales, informes grupales y actividades para acompañar el bienestar del plantel."
       },
       "banco-lesiones.html": {
         controlesCategoria: ["selectorCategoriaGlobal"],
