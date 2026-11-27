@@ -1106,6 +1106,28 @@ body.immersive .board-studio>.controlbar>.immersive-launch{
  }
 }
 
+
+/* Barra de herramientas continua: sin grupos ni separadores */
+.board-studio .top-tools{
+ display:flex!important;flex-flow:row nowrap!important;align-items:center!important;
+ justify-content:center!important;gap:2px!important;min-width:0!important;
+ padding:0!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;overflow-x:auto!important;
+}
+.board-studio .top-tools .top-separator{display:none!important;width:0!important;margin:0!important}
+.board-studio .top-tools .tool{
+ flex:0 0 auto!important;min-width:39px!important;border:0!important;
+ border-radius:6px!important;background:transparent!important;box-shadow:none!important;
+}
+.board-studio .top-tools .tool.active{background:#f1f2f4!important;color:inherit!important;border:0!important;box-shadow:none!important}
+.board-studio .top-tools .palette{display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:6px!important;margin:0!important;padding:0 3px!important;border:0!important;background:transparent!important}
+.board-studio .top-tools .quick-history{display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:2px!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important}
+.board-studio .top-tools .quick-history-btn{flex:0 0 27px!important;width:27px!important;height:27px!important;border-radius:6px!important}
+@media(max-width:760px){
+ .board-studio .top-tools{justify-content:flex-start!important;gap:1px!important;overflow-x:auto!important;scrollbar-width:none!important}
+ .board-studio .top-tools::-webkit-scrollbar{display:none!important}
+ .board-studio .top-tools .tool{min-width:32px!important}
+}
 </style>
 </head>
 <body>
@@ -1134,9 +1156,9 @@ body.immersive .board-studio>.controlbar>.immersive-launch{
 <button class="tool" data-tool="dash" type="button" title="Dibujar un trazo discontinuo"><span>┄</span><small>Trazo</small></button>
 <button class="tool" data-tool="free" type="button" title="Dibujar a mano alzada"><span>✎</span><small>Lápiz</small></button>
 <button class="tool" data-tool="zone" type="button" title="Dibujar una zona"><span>◯</span><small>Zona</small></button>
-<span class="top-separator"></span>
+
 <div class="palette" aria-label="Color de dibujo"><button class="swatch active" data-color="#c62828" style="background:#c62828" aria-label="Naranja" type="button"></button><button class="swatch" data-color="#e53935" style="background:#e53935" aria-label="Rojo" type="button"></button><button class="swatch" data-color="#171717" style="background:#171717" aria-label="Negro" type="button"></button></div>
-<span class="top-separator history-separator"></span>
+
 <div class="quick-history" aria-label="Historial de edición"><button class="quick-history-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button><button class="quick-history-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button></div>
 </div>
 <div class="control-group rival-formation"><span class="control-label">RIVAL</span><select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select><button class="add-rival-btn" id="addRival" type="button" title="Agregar formación rival" aria-label="Agregar formación rival" aria-pressed="false">✓</button></div>
