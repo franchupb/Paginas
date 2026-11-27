@@ -2622,6 +2622,9 @@ window.firebasePlanificacionReady = (async () => {
   const { initializeApp, getApps } = await import(
     "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"
   );
+  const { getAuth } = await import(
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"
+  );
 
   const {
     getFirestore,
@@ -2649,6 +2652,13 @@ window.firebasePlanificacionReady = (async () => {
   // Reutilizar solamente una app conectada al proyecto TORITO.
   const app = getApps().find(item => item.options?.projectId === firebaseConfig.projectId)
     || initializeApp(firebaseConfig, "torito-planificacion");
+  // En pestañas privadas la restauración de la sesión puede tardar más.
+  // Esperar a que Firebase Auth determine el usuario antes de leer Firestore.
+  const auth = getAuth(app);
+  if (typeof auth.authStateReady === "function") {
+    await auth.authStateReady();
+  }
+
   const db = getFirestore(app);
 
   const referencia = doc(db, "torito_planificacionTORITO", "principal");
