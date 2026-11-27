@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Planilla de Testeos - SAN TELMO</title>
+<title>Planilla de Testeos - BANCO</title>
 
 <style>
 :root {
@@ -736,9 +736,9 @@ thead .col-fija-nombre {
 <!-- BARRA SUPERIOR -->
 <header class="barra-superior">
   <button class="boton-menu" id="botonMenu" aria-label="Abrir menú" onclick="alternarSidebar()">☰</button>
-  <img class="logo-superior" src="SAN TELMO.png" alt="Logo SAN TELMO" onerror="this.style.display='none'">
+  <img class="logo-superior" src="BANCO.png" alt="Logo BANCO" onerror="this.style.display='none'">
   <div class="titulo-superior">
-    <h1>SAN TELMO</h1>
+    <h1>BANCO</h1>
     <p>Planilla de Testeos y Evaluaciones Físicas</p>
   </div>
   <div id="badgeNube" class="estado-nube">☁️ Conectando...</div>
@@ -746,7 +746,7 @@ thead .col-fija-nombre {
     <div class="avatar" id="avatarUsuario">U</div>
     <div>
       <div class="nombre-perfil" id="nombreUsuario">Usuario</div>
-      <div class="rol-perfil" id="rolUsuario">Club San Telmo</div>
+      <div class="rol-perfil" id="rolUsuario">Club BANCO</div>
     </div>
   </div>
 </header>
@@ -756,7 +756,7 @@ thead .col-fija-nombre {
 <div class="contenedor">
   <!-- BARRA LATERAL -->
   <aside class="sidebar" id="sidebar">
-    <a class="menu-inicio" href="SAN TELMO-Pagina Principal.html">
+    <a class="menu-inicio" href="BANCO-Pagina Principal.html">
       <span class="icono-inicio">⌂</span> INICIO
     </a>
     <div class="grupo-menu cerrado" id="grupoPlantel">
@@ -764,8 +764,8 @@ thead .col-fija-nombre {
         <span>PLANTEL</span><span class="flecha">›</span>
       </div>
       <div class="submenu">
-        <a href="SAN TELMO-jugadoras.html"><span class="nav-punto"></span>Jugadoras</a>
-        <a href="SAN TELMO-asistencia.html"><span class="nav-punto"></span>Asistencia</a>
+        <a href="BANCO-jugadoras.html"><span class="nav-punto"></span>Jugadoras</a>
+        <a href="BANCO-asistencia.html"><span class="nav-punto"></span>Asistencia</a>
       </div>
     </div>
     <div class="grupo-menu cerrado" id="grupoEntrenamiento">
@@ -773,9 +773,9 @@ thead .col-fija-nombre {
         <span>ENTRENAMIENTO</span><span class="flecha">›</span>
       </div>
       <div class="submenu">
-        <a href="SAN TELMO-calendario.html"><span class="nav-punto"></span>Calendario</a>
-        <a href="SAN TELMO-planificacion.html"><span class="nav-punto"></span>Planificación</a>
-        <a href="SAN TELMO-gimnasio.html"><span class="nav-punto"></span>Gimnasio</a>
+        <a href="BANCO-calendario.html"><span class="nav-punto"></span>Calendario</a>
+        <a href="BANCO-planificacion.html"><span class="nav-punto"></span>Planificación</a>
+        <a href="BANCO-gimnasio.html"><span class="nav-punto"></span>Gimnasio</a>
       </div>
     </div>
     <div class="grupo-menu cerrado" id="grupoCompetencia">
@@ -783,9 +783,9 @@ thead .col-fija-nombre {
         <span>COMPETENCIA</span><span class="flecha">›</span>
       </div>
       <div class="submenu">
-        <a href="SAN TELMO-Partidos.html"><span class="nav-punto"></span>Partidos</a>
-        <a href="SAN TELMO-estadisticas.html"><span class="nav-punto"></span>Estadísticas</a>
-        <a href="SAN TELMO-pizarra.html"><span class="nav-punto"></span>Pizarra táctica</a>
+        <a href="BANCO-Partidos.html"><span class="nav-punto"></span>Partidos</a>
+        <a href="BANCO-estadisticas.html"><span class="nav-punto"></span>Estadísticas</a>
+        <a href="BANCO-pizarra.html"><span class="nav-punto"></span>Pizarra táctica</a>
       </div>
     </div>
     <div class="grupo-menu" id="grupoRendimientos">
@@ -793,11 +793,11 @@ thead .col-fija-nombre {
         <span>RENDIMIENTOS</span><span class="flecha">›</span>
       </div>
       <div class="submenu">
-        <a href="SAN TELMO-testeos.html" class="activo"><span class="nav-punto"></span>Planilla de testeos</a>
-        <a href="SAN TELMO-tiempos.html"><span class="nav-punto"></span>Tiempos</a>
-        <a href="SAN TELMO-multimedia.html"><span class="nav-punto"></span>Multimedia</a>
-        <a href="SAN TELMO-encuestas.html"><span class="nav-punto"></span>Encuestas</a>
-        <a href="SAN TELMO-lesiones.html"><span class="nav-punto"></span>Lesiones</a>
+        <a href="BANCO-testeos.html" class="activo"><span class="nav-punto"></span>Planilla de testeos</a>
+        <a href="BANCO-tiempos.html"><span class="nav-punto"></span>Tiempos</a>
+        <a href="BANCO-multimedia.html"><span class="nav-punto"></span>Multimedia</a>
+        <a href="BANCO-encuestas.html"><span class="nav-punto"></span>Encuestas</a>
+        <a href="BANCO-lesiones.html"><span class="nav-punto"></span>Lesiones</a>
       </div>
     </div>
     <div class="separador-sesion">
@@ -858,7 +858,7 @@ thead .col-fija-nombre {
 
       <!-- ENCABEZADO VISUAL DE LA PLANILLA -->
       <div class="titulo-hoja-planilla">
-        <h3 id="tituloPlanillaDivision">SAN TELMO SUB 14</h3>
+        <h3 id="tituloPlanillaDivision">BANCO SUB 14</h3>
         <span>Test - Pruebas</span>
       </div>
 
@@ -980,7 +980,7 @@ function aplicarPerfilCentralPruebas(perfil) {
   puedeEditar = ["admin", "coordinadora", "cuerpo_tecnico"].includes(rolSANTELMO);
   document.getElementById("nombreUsuario").textContent = perfil.nombre || usuarioGuardado || "Usuario";
   document.getElementById("avatarUsuario").textContent = (perfil.nombre || usuarioGuardado || "U").trim().charAt(0).toUpperCase();
-  document.getElementById("rolUsuario").textContent = esFran ? "Administrador" : rolSANTELMO === "coordinadora" ? "Coordinadora" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora" : "Club San Telmo";
+  document.getElementById("rolUsuario").textContent = esFran ? "Administrador" : rolSANTELMO === "coordinadora" ? "Coordinadora" : esToto ? "Cuerpo técnico" : esBianca ? "Jugadora" : "Club BANCO";
   const acciones = document.getElementById("accionesTecnico");
   if (acciones) acciones.style.display = puedeEditar ? "" : "none";
   if (esBianca && Array.isArray(perfil.categorias) && perfil.categorias.length) {
@@ -998,7 +998,7 @@ else window.addEventListener("santelmo-permisos-listos", event => aplicarPerfilC
 window.cerrarSesion = function(event) {
   event.preventDefault();
   localStorage.removeItem("usuarioSANTELMO");
-  window.location.href = "SAN TELMO-Loing.html";
+  window.location.href = "BANCO-Loing.html";
 };
 
 window.alternarSidebar = function() {
@@ -1074,7 +1074,7 @@ async function cargarJugadorasPorDivision(division) {
     }
   }
 
-  // 2. Respaldo / fusión con localStorage de SAN TELMO-jugadoras.html
+  // 2. Respaldo / fusión con localStorage de BANCO-jugadoras.html
   if (listaTotal.length === 0) {
     const rawLocal = localStorage.getItem("jugadorasSANTELMO") || localStorage.getItem("plantelSANTELMO");
     if (rawLocal) {
@@ -1227,7 +1227,7 @@ function renderizarTablaPlanilla() {
   const division = document.getElementById("selectDivision").value;
   const mes = document.getElementById("selectMes").value;
 
-  document.getElementById("tituloPlanillaDivision").textContent = `SAN TELMO ${division.toUpperCase()}`;
+  document.getElementById("tituloPlanillaDivision").textContent = `BANCO ${division.toUpperCase()}`;
 
   const thead = document.getElementById("theadTesteos");
   const tbody = document.getElementById("tbodyTesteos");
