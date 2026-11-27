@@ -2645,7 +2645,9 @@ window.firebasePlanificacionReady = (async () => {
     measurementId: "G-32VFQHWP5Y"
 };
 
-  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+  // Reutilizar solamente una app conectada al proyecto TORITO.
+  const app = getApps().find(item => item.options?.projectId === firebaseConfig.projectId)
+    || initializeApp(firebaseConfig, "torito-planificacion");
   const db = getFirestore(app);
 
   const referencia = doc(
@@ -2782,6 +2784,9 @@ let sesionesActuales = [];
 let temporizadorMensaje = null;
 let modoEdicion = true;
 let microcicloGuardado = false;
+// No escribir en Firestore hasta confirmar que la lectura inicial fue correcta.
+// Esto evita pisar los datos remotos si otro dispositivo no logra cargarlos.
+let planificacionNubeLista = false;
 let catalogoTesteos = [];
 let catalogoTesteosError = false;
 let versionCargaCatalogoTesteos = 0;
@@ -3856,25 +3861,25 @@ function guardarDatosAutomaticamente(mostrarMensaje = false) {
       JSON.stringify(almacen)
     );
 
-    // Sincronizar también con Firebase
-    window.guardarPlanificacionEnNube(almacen)
-      .then(() => {
-        actualizarEstadoGuardado(
-          "✓ Planificación sincronizada con la nube",
-          false
-        );
-      })
-      .catch(error => {
-        console.error(
-          "Error al guardar planificación en Firebase:",
-          error
-        );
-
-        actualizarEstadoGuardado(
-          "Error al sincronizar con la nube",
-          true
-        );
-      });
+    // No sobrescribir Firestore hasta haber confirmado la lectura inicial.
+    if (planificacionNubeLista && typeof window.guardarPlanificacionEnNube === "function") {
+      window.guardarPlanificacionEnNube(almacen)
+        .then(() => {
+          actualizarEstadoGuardado(
+            "✓ Planificación sincronizada con la nube",
+            false
+          );
+        })
+        .catch(error => {
+          console.error("Error al guardar planificación en Firebase:", error);
+          actualizarEstadoGuardado("Error al sincronizar con la nube", true);
+        });
+    } else {
+      actualizarEstadoGuardado(
+        "Guardado solo en este dispositivo · esperando conexión con la nube",
+        true
+      );
+    }
 
     // El calendario NO se modifica al guardar borradores automáticamente.
     // La publicación se realiza únicamente desde guardarSemana().
@@ -6053,6 +6058,8 @@ async function inicializarPlanificacion() {
     await window.firebasePlanificacionReady;
 
     const datosNube = await window.cargarPlanificacionNube();
+    // Una respuesta correcta habilita la sincronización, aunque el documento aún no exista.
+    planificacionNubeLista = true;
     const datosLocales = cargarAlmacen();
 
     // Unión recursiva: conserva categorías, semanas y sesiones que existan
@@ -6119,8 +6126,13 @@ async function inicializarPlanificacion() {
       error
     );
 
+    planificacionNubeLista = false;
     console.warn(
-      "Se continuará utilizando el almacenamiento local."
+      "Se continuará utilizando el almacenamiento local sin sobrescribir la nube hasta poder leerla."
+    );
+    actualizarEstadoGuardado(
+      "No se pudo cargar la nube. Los datos remotos están protegidos; revisá la conexión y recargá.",
+      true
     );
 
   }
