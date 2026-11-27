@@ -68,7 +68,7 @@
     (equivalencias[nombre] || nombre).toLowerCase();
 
   const estilo = document.createElement("style");
-  estilo.id = "santelmo-layout-compartido";
+  estilo.id = "banco-layout-compartido";
   estilo.textContent = `
     .barra-superior {
       position: sticky !important;
@@ -169,7 +169,7 @@
       height: 42px !important;
       flex: 0 0 42px !important;
       border-radius: 50% !important;
-      background: #c62828 !important;
+      background: #58b9d6 !important;
       color: #ffffff !important;
       font-size: 14px !important;
       font-weight: 900 !important;
@@ -185,7 +185,7 @@
       display: block !important;
       max-width: 150px !important;
       overflow: hidden !important;
-      color: #c62828 !important;
+      color: #58b9d6 !important;
       font-size: 13px !important;
       font-weight: 800 !important;
       text-overflow: ellipsis !important;
@@ -667,7 +667,7 @@
   const barra = document.querySelector(".barra-superior");
   const sidebar = document.getElementById("sidebar");
   if (!barra || !sidebar) {
-    console.error("SANTELMO: no se encontró la barra superior o el contenedor lateral.");
+    console.error("BANCO: no se encontró la barra superior o el contenedor lateral.");
     return;
   }
 
@@ -707,8 +707,8 @@
   // Unifica el logotipo, sin tocar los elementos de perfil ni sus eventos.
   const logo = barra.querySelector(".logo-superior, .logo-club, .identidad-club img");
   if (logo) {
-    logo.src = "SAN TELMO.png";
-    logo.alt = "Escudo SANTELMO";
+    logo.src = "CLUBES/BANCO.jpg";
+    logo.alt = "Escudo oficial de BANCO";
     logo.classList.add("logo-superior");
   }
 
