@@ -9,7 +9,7 @@
 window.SAN_TELMO_MODO_ENCUESTA_PUBLICA = new URLSearchParams(location.search).has("encuesta");
 if (!window.SAN_TELMO_MODO_ENCUESTA_PUBLICA) {
  const permisos = document.createElement("script");
- permisos.src = "SAN TELMO-permisos.js?v=20261126-permisos3";
+ permisos.src = "BANCO-permisos.js?v=20261127-permisos4";
  permisos.async = false;
  document.head.appendChild(permisos);
 }
@@ -380,7 +380,7 @@ async function cargarEncuestaPublica(){
 async function iniciar(){
  if(!modoPublico){try{iniciarMenu()}catch(error){console.error("SAN TELMO Encuestas · menú:",error);estado("El menú no pudo inicializarse correctamente: "+(error?.message||"error desconocido"),"error")}}
  try{
-  const authMod=await import("./SAN TELMO-auth.js?v=20261126-modelo1");fb=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+  const authMod=await import("./BANCO-auth.js?v=20261127-acceso-santelmo2");fb=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
   auth=authMod.auth;db=authMod.db;
   if(modoPublico){document.body.classList.add("modo-publico");await cargarEncuestaPublica();return}
   const esperarPerfil=()=>new Promise((resolve,reject)=>{if(window.SANTELMO_PERMISOS){resolve(window.SANTELMO_PERMISOS);return}const timer=setTimeout(()=>reject(new Error("La validación de permisos está tardando. Recargá la página.")),12000);window.addEventListener("santelmo-permisos-listos",e=>{clearTimeout(timer);resolve(e.detail||window.SANTELMO_PERMISOS)},{once:true})});
@@ -392,6 +392,6 @@ async function iniciar(){
 iniciar();
 })();
 </script>
-<script type="module">if(!window.SAN_TELMO_MODO_ENCUESTA_PUBLICA)import("./SAN TELMO-layout.js?v=20261126-modelobase6");</script>
+<script type="module">if(!window.SAN_TELMO_MODO_ENCUESTA_PUBLICA)import("./BANCO-layout.js?v=20261127-modelobase7");</script>
 </body>
 </html>
