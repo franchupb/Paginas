@@ -2651,41 +2651,17 @@ window.firebasePlanificacionReady = (async () => {
     || initializeApp(firebaseConfig, "torito-planificacion");
   const db = getFirestore(app);
 
-  const coleccionPlanificacion = collection(db, "torito_planificacionTORITO");
-  const referenciaLegada = doc(db, "torito_planificacionTORITO", "principal");
+  const referencia = doc(db, "torito_planificacionTORITO", "principal");
 
-  // Cada categoría y semana se guarda en su propio documento. Así dos
-  // dispositivos no se pisan al sincronizar copias completas y desactualizadas.
-  const idDocumentoSemana = (categoria, claveSemana) =>
-    "semana__" + encodeURIComponent(categoria) + "__" + encodeURIComponent(claveSemana);
-
-  // Recuperar el formato histórico y luego superponer las semanas sincronizadas
-  // individualmente. Esto mantiene compatibilidad con los datos ya existentes.
+  // La lectura mantiene compatibilidad con el documento que ya utiliza TORITO.
   window.cargarPlanificacionNube = async () => {
-    const [resultadoLegado, documentos] = await Promise.all([
-      getDoc(referenciaLegada),
-      getDocs(coleccionPlanificacion)
-    ]);
-
-    const datos = resultadoLegado.exists()
-      ? (resultadoLegado.data()?.datos || {})
-      : {};
-
-    documentos.forEach(documento => {
-      if (!documento.id.startsWith("semana__")) return;
-      const registro = documento.data() || {};
-      if (!registro.categoria || !registro.claveSemana || !registro.registro) return;
-      if (!datos[registro.categoria] || typeof datos[registro.categoria] !== "object") {
-        datos[registro.categoria] = {};
-      }
-      datos[registro.categoria][registro.claveSemana] = registro.registro;
-    });
-
-    return datos;
+    const resultado = await getDoc(referencia);
+    return resultado.exists() ? (resultado.data()?.datos || {}) : {};
   };
 
-  // Guardar una sola semana mediante transacción. La versión más reciente
-  // prevalece y una pestaña incógnita no puede reemplazar semanas ajenas.
+  // Cada guardado actualiza exclusivamente una categoría y semana dentro del
+  // documento existente. La transacción lee la última versión remota antes de
+  // escribir, evitando que otro dispositivo borre semanas ajenas o más nuevas.
   let colaGuardado = Promise.resolve();
 
   window.guardarPlanificacionEnNube = (categoria, claveSemana, registro) => {
@@ -2694,23 +2670,29 @@ window.firebasePlanificacionReady = (async () => {
     }
 
     const copia = JSON.parse(JSON.stringify(registro));
-    const referenciaSemana = doc(
-      db,
-      "torito_planificacionTORITO",
-      idDocumentoSemana(categoria, claveSemana)
-    );
 
     colaGuardado = colaGuardado.catch(() => {}).then(() =>
       runTransaction(db, async transaccion => {
-        const actual = await transaccion.get(referenciaSemana);
-        const actualizadoRemoto = Number(actual.data()?.registro?.actualizadoEn || 0);
-        const actualizadoNuevo = Number(copia.actualizadoEn || 0);
+        const snapshot = await transaccion.get(referencia);
+        const datosRemotos = snapshot.exists()
+          ? (snapshot.data()?.datos || {})
+          : {};
+        const datosActualizados = JSON.parse(JSON.stringify(datosRemotos));
+        const semanasCategoria = datosActualizados[categoria] &&
+          typeof datosActualizados[categoria] === "object"
+          ? datosActualizados[categoria]
+          : {};
+        const registroRemoto = semanasCategoria[claveSemana];
+        const marcaRemota = Number(registroRemoto?.actualizadoEn || 0);
+        const marcaNueva = Number(copia.actualizadoEn || 0);
 
-        if (!actual.exists() || actualizadoNuevo >= actualizadoRemoto) {
-          transaccion.set(referenciaSemana, {
-            categoria,
-            claveSemana,
-            registro: copia,
+        if (!registroRemoto || marcaNueva >= marcaRemota) {
+          datosActualizados[categoria] = {
+            ...semanasCategoria,
+            [claveSemana]: copia
+          };
+          transaccion.set(referencia, {
+            datos: datosActualizados,
             actualizado: serverTimestamp()
           });
         }
@@ -2720,18 +2702,17 @@ window.firebasePlanificacionReady = (async () => {
     return colaGuardado;
   };
 
-  // Migrar/recuperar semanas existentes sin reemplazar una versión más nueva.
+  // Sincronizar semanas locales existentes sin reemplazar versiones remotas
+  // más recientes. Se usa al recuperar/migrar datos de un dispositivo.
   window.sincronizarPlanificacionCompleta = async datos => {
-    const tareas = [];
-    Object.entries(datos || {}).forEach(([categoria, semanas]) => {
-      if (!semanas || typeof semanas !== "object" || Array.isArray(semanas)) return;
-      Object.entries(semanas).forEach(([claveSemana, registro]) => {
+    for (const [categoria, semanas] of Object.entries(datos || {})) {
+      if (!semanas || typeof semanas !== "object" || Array.isArray(semanas)) continue;
+      for (const [claveSemana, registro] of Object.entries(semanas)) {
         if (registro && typeof registro === "object") {
-          tareas.push(window.guardarPlanificacionEnNube(categoria, claveSemana, registro));
+          await window.guardarPlanificacionEnNube(categoria, claveSemana, registro);
         }
-      });
-    });
-    for (const tarea of tareas) await tarea;
+      }
+    }
   };
 
   window.cargarCatalogoTesteosNube = async () => {
