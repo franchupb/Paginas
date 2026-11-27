@@ -1259,7 +1259,7 @@
       .puesto-mini { min-height: 58px; }
     }
   </style>
-<script src="SAN TELMO-permisos.js?v=20261126-permisos3"></script>
+<script src="BANCO-permisos.js?v=20261127-permisos4"></script>
 </head>
 <body>
   <header class="barra-superior">
@@ -1299,7 +1299,7 @@
   <div class="contenedor">
     <aside class="sidebar" id="sidebar">
   <!-- INICIO -->
-      <a class="menu-inicio" href="SAN TELMO-Pagina Principal.html">
+      <a class="menu-inicio" href="BANCO-Pagina Principal.html">
         <span class="icono-inicio" aria-hidden="true">⌂</span>
         INICIO
       </a>
@@ -1740,9 +1740,9 @@
     window.cerrarSesion = async function(event) {
       event?.preventDefault();
       try {
-        const modulo = await import("./SAN TELMO-auth.js?v=20261123-authpersist1");
+        const modulo = await import("./BANCO-auth.js?v=20261127-acceso-santelmo2");
         await modulo.cerrarSesionSANTELMO();
-        window.location.href = "SAN TELMO-Loing.html";
+        window.location.href = "BANCO-Loing.html";
       } catch (error) {
         console.error("No se pudo cerrar la sesión:", error);
         alert("No se pudo cerrar la sesión. Intentá nuevamente.");
@@ -1755,7 +1755,7 @@
       rolSANTELMO = String(perfil?.rol || localStorage.getItem("rolSANTELMO") || "").trim().toLowerCase();
 
       if (!["admin", "editor", "coordinadora", "cuerpo_tecnico", "jugadora"].includes(rolSANTELMO)) {
-        document.body.innerHTML = '<main style="font-family:Arial,sans-serif;text-align:center;padding:70px 20px;color:#222"><h1>Acceso restringido</h1><p>No se pudo validar un perfil autorizado para esta página.</p><a href="SAN TELMO-Pagina Principal.html">Volver al inicio</a></main>';
+        document.body.innerHTML = '<main style="font-family:Arial,sans-serif;text-align:center;padding:70px 20px;color:#222"><h1>Acceso restringido</h1><p>No se pudo validar un perfil autorizado para esta página.</p><a href="BANCO-Pagina Principal.html">Volver al inicio</a></main>';
         return;
       }
 
@@ -2220,6 +2220,6 @@
   </script>
 
 
-<script type="module" src="SAN TELMO-layout.js?v=20261126-modelobase6"></script>
+<script type="module" src="BANCO-layout.js?v=20261127-modelobase7"></script>
 </body>
 </html>
