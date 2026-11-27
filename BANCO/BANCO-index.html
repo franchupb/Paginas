@@ -11,10 +11,10 @@
 
     <meta
         name="description"
-        content="Inicio de sesión de SAN TELMO. Accedé al sistema de gestión del club."
+        content="Inicio de sesión de BANCO. Accedé al sistema de gestión del club."
     >
 
-    <title>Iniciar sesión | SAN TELMO</title>
+    <title>Iniciar sesión | BANCO</title>
 
     <style>
         /* =====================================================
@@ -698,10 +698,10 @@
             <!-- LOGO OFICIAL DE SANTELMO -->
             <div class="logo-contenedor">
                 <img
-                    src="CLUBES/SAN TELMO.png"
-                    alt="Escudo de SAN TELMO"
+                    src="CLUBES/BANCO.jpg"
+                    alt="Escudo de BANCO"
                     class="logo"
-                    onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='CLUBES/SAN TELMO.png'}else{this.style.display='none'}"
+                    onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='CLUBES/BANCO.jpg'}else{this.style.display='none'}"
                 >
             </div>
 
@@ -711,7 +711,7 @@
                 CLUB DEPORTIVO
             </div>
 
-            <h1>SAN TELMO</h1>
+            <h1>BANCO</h1>
 
             <p class="subtitulo">
                 Pasión, compromiso y trabajo en equipo
@@ -854,7 +854,7 @@ if (loginForm && campoUsuario && campoContrasena && botonLogin) {
     if (textoBoton) textoBoton.textContent = "INGRESANDO…";
     try {
       await iniciarSesionSANTELMO(usuario, contrasena);
-      window.location.replace("SAN TELMO-Pagina Principal.html");
+      window.location.replace("BANCO-Pagina Principal.html");
     } catch (error) {
       console.error("SANTELMO: error al iniciar sesión.", error);
       const codigo = String(error?.code || "");
