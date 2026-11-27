@@ -93,6 +93,23 @@ main.main{padding-top:24px;background:linear-gradient(180deg,#fff 0,#f6f7f9 310p
 .player-color-control input{width:30px;height:25px;padding:0;border:0;background:transparent;cursor:pointer}
 @media(max-width:760px){.tactical-toolbox{grid-template-columns:1fr;gap:7px;padding:8px}.tool-group{padding:5px 2px 8px;border-right:0;border-bottom:1px solid #e7e9ed}.tool-group:last-child{border-bottom:0;padding-bottom:2px}.tool-group-label{margin-bottom:6px}.tool-group-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.tactical-toolbox .tool{min-width:0;padding:7px 5px;font-size:10px}.tactical-actions{gap:6px}.tactical-actions-spacer{display:none}.player-color-control{flex:1}.tactical-actions .btn{flex:1}}
 @media(max-width:380px){.tool-group-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Herramientas en tres grupos alineados horizontalmente */
+.tactical-workspace{grid-template-columns:minmax(0,1.28fr) minmax(290px,.72fr)!important;gap:14px}
+.tactical-toolbox{display:flex!important;flex-flow:row nowrap!important;align-items:stretch;gap:8px;width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+.tactical-toolbox .tool-group{display:flex;flex:1 1 0;flex-direction:column;min-width:0;padding:2px 7px;border-right:1px solid #e7e9ed;border-bottom:0}
+.tactical-toolbox .tool-group:last-child{border-right:0}
+.tactical-toolbox .tool-group-buttons{display:flex;flex-flow:row wrap;gap:5px}
+.tactical-toolbox .tool{flex:0 1 auto;min-width:0;padding:7px 8px;font-size:10px;white-space:nowrap}
+.tactical-board-panel .board-wrap{width:100%}
+@media(max-width:900px){.tactical-workspace{grid-template-columns:1fr!important}}
+@media(max-width:600px){
+ .tactical-toolbox{display:flex!important;flex-flow:row nowrap!important;gap:5px}
+ .tactical-toolbox .tool-group{flex:1 0 0;min-width:0;padding:3px 4px}
+ .tactical-toolbox .tool-group-label{font-size:9px;letter-spacing:.02em}
+ .tactical-toolbox .tool-group-buttons{display:flex;flex-flow:row wrap;gap:4px}
+ .tactical-toolbox .tool{flex:1 1 auto;padding:7px 5px;font-size:10px}
+}
 </style></head><body>
 <header class="barra-superior"><button class="boton-menu" id="botonMenu" type="button" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="true">☰</button><div class="identidad-club"><img class="logo-club" src="SAN TELMO.png" alt="Escudo SAN TELMO"><div class="textos-club"><h1>SAN TELMO</h1><p>Preparación física · Desarrollo técnico</p></div></div><button class="perfil" id="botonPerfil" type="button" aria-label="Ver perfil de usuario"><span class="avatar" id="avatarUsuario">U</span><span class="informacion-perfil"><span class="nombre-perfil" id="nombreUsuario">Usuario</span><span class="rol-perfil" id="rolUsuario">SAN TELMO</span></span></button></header>
 <div class="fondo-sidebar" id="fondoSidebar"></div><div class="contenedor"><aside class="sidebar" id="sidebar"></aside><main class="main">
@@ -240,12 +257,3 @@ import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.12.2/fir
 const cfg={apiKey:"AIzaSyDExeLCMeFUVmAFwQ8ydFvRmW9AdAJmmeg",authDomain:"san-telmo-f2155.firebaseapp.com",projectId:"san-telmo-f2155",storageBucket:"san-telmo-f2155.firebasestorage.app",messagingSenderId:"354872818092",appId:"1:354872818092:web:ef71af1c4b16885caa6209"};const app=getApps().find(x=>x.options?.projectId===cfg.projectId)||initializeApp(cfg,"santelmo-biblioteca");const db=getFirestore(app),col=collection(db,"santelmo_biblioteca_ejercicios");window.__clubModuleCloud={save:r=>setDoc(doc(db,"santelmo_biblioteca_ejercicios",String(r.id)),r),remove:id=>deleteDoc(doc(db,"santelmo_biblioteca_ejercicios",String(id)))};onSnapshot(col,snap=>{const cloud=snap.docs.map(d=>({id:d.id,...d.data()}));let local=[];try{local=JSON.parse(localStorage.getItem("santelmo_biblioteca_ejercicios_v1")||"[]")}catch(e){}const map=new Map(cloud.map(r=>[String(r.id),r]));local.forEach(r=>{if(!map.has(String(r.id)))map.set(String(r.id),r)});const merged=[...map.values()].map(r=>({...r,areaKey:r.areaKey||(String(r.area||"").toLowerCase().includes("preparación")?"fisica":"tactico")}));window.__setClubRecords?.(merged);local.forEach(r=>{if(!cloud.some(x=>String(x.id)===String(r.id)))window.__clubModuleCloud.save(r).catch(console.warn)})},e=>console.warn("Firestore no disponible; se conserva el almacenamiento local.",e));
 </script>
 <script type="module" src="SAN TELMO-layout.js?v=20261127-biblioteca-tabs1"></script></body></html>
-/* Ajuste final de proporciones y herramientas en una sola línea */
-.tactical-workspace{grid-template-columns:minmax(0,1.28fr) minmax(290px,.72fr)!important;gap:14px}
-.tactical-toolbox{display:flex;align-items:flex-start;gap:10px;flex-wrap:nowrap}
-.tactical-toolbox .tool-group{flex:1 1 0;min-width:0;padding:2px 8px;border-right:1px solid #e7e9ed;border-bottom:0}
-.tactical-toolbox .tool-group-buttons{display:flex;flex-wrap:wrap;gap:5px}
-.tactical-toolbox .tool{flex:0 1 auto;min-width:0;padding:7px 8px;font-size:10px}
-.tactical-board-panel .board-wrap{width:100%}
-@media(max-width:900px){.tactical-workspace{grid-template-columns:1fr!important}}
-@media(max-width:600px){.tactical-toolbox{display:flex;flex-wrap:wrap;gap:6px}.tactical-toolbox .tool-group{flex:1 1 30%;padding:4px;border:0}.tactical-toolbox .tool-group-buttons{display:flex;flex-wrap:wrap}.tactical-toolbox .tool{flex:1 1 auto}}
