@@ -2787,6 +2787,7 @@ let microcicloGuardado = false;
 // No escribir en Firestore hasta confirmar que la lectura inicial fue correcta.
 // Esto evita pisar los datos remotos si otro dispositivo no logra cargarlos.
 let planificacionNubeLista = false;
+let ultimaSincronizacionPlanificacion = Promise.resolve();
 let catalogoTesteos = [];
 let catalogoTesteosError = false;
 let versionCargaCatalogoTesteos = 0;
@@ -3136,6 +3137,8 @@ function obtenerCategoriaPredeterminada() {
     console.warn("No se pudo leer la categoría preferida.");
   }
 
+  const categoriaGlobal = document.getElementById("toritoCategoriaGlobal")?.value;
+  if (CATEGORIAS.includes(categoriaGlobal)) return categoriaGlobal;
   return "Sub 16";
 }
 
@@ -3863,8 +3866,8 @@ function guardarDatosAutomaticamente(mostrarMensaje = false) {
 
     // No sobrescribir Firestore hasta haber confirmado la lectura inicial.
     if (planificacionNubeLista && typeof window.guardarPlanificacionEnNube === "function") {
-      window.guardarPlanificacionEnNube(almacen)
-        .then(() => {
+      ultimaSincronizacionPlanificacion = window.guardarPlanificacionEnNube(almacen);
+      ultimaSincronizacionPlanificacion.then(() => {
           actualizarEstadoGuardado(
             "✓ Planificación sincronizada con la nube",
             false
@@ -3920,7 +3923,7 @@ function guardarDatosAutomaticamente(mostrarMensaje = false) {
   }
 }
 
-function guardarSemana() {
+async function guardarSemana() {
   if (!modoEdicion) {
     mostrarNotificacion("El microciclo ya está guardado. Elegí Editar microciclo para modificarlo.");
     return;
@@ -3933,6 +3936,21 @@ function guardarSemana() {
   if (!guardado) {
     microcicloGuardado = false;
     return;
+  }
+
+  // No confirmar el guardado ni publicar el microciclo hasta que Firestore
+  // haya confirmado la escritura. Esto permite verificar la sincronización
+  // al cambiar de dispositivo o abrir una ventana privada.
+  if (planificacionNubeLista) {
+    try {
+      await ultimaSincronizacionPlanificacion;
+    } catch (error) {
+      console.error("No se pudo confirmar el guardado en la nube:", error);
+      microcicloGuardado = false;
+      guardarDatosAutomaticamente(false);
+      mostrarNotificacion("No se pudo guardar en la nube. Revisá tu conexión e intentá nuevamente.");
+      return;
+    }
   }
 
   // Este botón es el único punto que publica las sesiones en el calendario.
@@ -6137,7 +6155,12 @@ async function inicializarPlanificacion() {
 
   }
 
-  categoriaActual = obtenerCategoriaPredeterminada();
+  // El selector global es la referencia compartida de la interfaz. En incógnito
+  // no existe la preferencia local anterior, por eso se toma su categoría inicial.
+  const categoriaGlobalInicial = document.getElementById("toritoCategoriaGlobal")?.value;
+  categoriaActual = CATEGORIAS.includes(categoriaGlobalInicial)
+    ? categoriaGlobalInicial
+    : obtenerCategoriaPredeterminada();
   await cargarCatalogoTesteos(categoriaActual);
 
   // Retirar del calendario los borradores que una versión anterior publicaba
