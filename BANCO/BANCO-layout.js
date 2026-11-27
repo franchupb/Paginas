@@ -169,7 +169,7 @@
       height: 42px !important;
       flex: 0 0 42px !important;
       border-radius: 50% !important;
-      background: #58b9d6 !important;
+      background: #328eae !important;
       color: #ffffff !important;
       font-size: 14px !important;
       font-weight: 900 !important;
@@ -185,7 +185,7 @@
       display: block !important;
       max-width: 150px !important;
       overflow: hidden !important;
-      color: #58b9d6 !important;
+      color: #328eae !important;
       font-size: 13px !important;
       font-weight: 800 !important;
       text-overflow: ellipsis !important;
