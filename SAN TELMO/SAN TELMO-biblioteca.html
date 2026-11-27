@@ -89,7 +89,7 @@ function boardDraw(kind,target){
  const half=kind==="tactico"&&pitchMode.tactico==="half";
  const displayWidth=half?450:900;
  if(cv.width!==displayWidth)cv.width=displayWidth;
- cv.height=520;
+ if(cv.height!==520)cv.height=520;
  cv.style.aspectRatio=half?"450 / 520":"900 / 520";
  const ctx=cv.getContext("2d"),w=900,h=520;
  ctx.setTransform(1,0,0,1,0,0);
