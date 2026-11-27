@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#c62828">
-<title>Estadísticas · SAN TELMO</title>
+<title>Estadísticas · BANCO</title>
 <script src="BANCO-permisos.js?v=20261127-permisos4"></script>
 <style>
 
@@ -26,14 +26,14 @@
 <body>
 <header class="barra-superior">
 <button class="boton-menu" id="botonMenu" type="button" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="true">☰</button>
-<img class="logo-superior" src="SAN TELMO.png" alt="Logo SANTELMO">
-<div class="titulo-superior"><h1>SAN TELMO</h1><p>Estadísticas generales del club</p></div>
-<div class="perfil"><div class="avatar" id="avatarUsuario">U</div><div><div class="nombre-perfil" id="nombreUsuario">Usuario</div><div class="rol-perfil" id="rolUsuario">Club San Telmo</div></div></div>
+<img class="logo-superior" src="BANCO.png" alt="Logo SANTELMO">
+<div class="titulo-superior"><h1>BANCO</h1><p>Estadísticas generales del club</p></div>
+<div class="perfil"><div class="avatar" id="avatarUsuario">U</div><div><div class="nombre-perfil" id="nombreUsuario">Usuario</div><div class="rol-perfil" id="rolUsuario">Club BANCO</div></div></div>
 </header>
 <div class="contenedor">
 <aside id="sidebar"></aside>
 <main class="contenido">
-<section class="encabezado-seccion"><div><div class="eyebrow">SAN TELMO · CENTRO DE ANÁLISIS</div><h2>Estadísticas del club</h2><p>El rendimiento, la evolución y el seguimiento del plantel en una sola mirada. Explorá los datos por categoría o abrí el perfil integral de cada jugadora.</p></div><div class="hero-side"><span class="hero-dot"></span> Panel de seguimiento deportivo</div></section>
+<section class="encabezado-seccion"><div><div class="eyebrow">BANCO · CENTRO DE ANÁLISIS</div><h2>Estadísticas del club</h2><p>El rendimiento, la evolución y el seguimiento del plantel en una sola mirada. Explorá los datos por categoría o abrí el perfil integral de cada jugadora.</p></div><div class="hero-side"><span class="hero-dot"></span> Panel de seguimiento deportivo</div></section>
 <section class="selector-panel">
 <div class="selector-campo"><label for="selectorCategoria">FILTRAR POR CATEGORÍA</label><select id="selectorCategoria"><option value="">Todas las categorías</option></select></div>
 <div class="selector-campo" id="campoJugadora"><label for="selectorJugadora">CONSULTAR JUGADORA</label><select id="selectorJugadora"><option value="">Todas las jugadoras · visión general del club</option></select></div>
@@ -294,7 +294,7 @@ function aplicarPerfil(p){
  if(!p)return;permisos=p;
  const nombre=p.nombre||p.usuario||"Usuario";
  $("nombreUsuario").textContent=nombre;$("avatarUsuario").textContent=nombre.charAt(0).toUpperCase();
- $("rolUsuario").textContent=({admin:"Administrador",editor:"Editor",coordinador:"Coordinador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[p.rol]||"Club San Telmo";
+ $("rolUsuario").textContent=({admin:"Administrador",editor:"Editor",coordinador:"Coordinador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[p.rol]||"Club BANCO";
  if(datos.jugadoras.length){renderSelectorCategorias();renderGeneral();}
 }
 window.addEventListener("santelmo-permisos-listos",e=>aplicarPerfil(e.detail||window.SANTELMO_PERMISOS));
