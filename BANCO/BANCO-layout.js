@@ -16,7 +16,7 @@
     try { return decodeURIComponent(archivo).toLowerCase(); }
     catch (_) { return archivo.toLowerCase(); }
   })();
-  const PRINCIPAL = "SAN TELMO-Pagina Principal.html";
+  const PRINCIPAL = "BANCO-Pagina Principal.html";
 
   const grupos = [
     {
@@ -779,9 +779,9 @@
 
   async function importarCerrarSesionSANTELMO() {
     try {
-      const modulo = await import("./SAN TELMO-auth.js?v=20261124-auth1");
+      const modulo = await import("./BANCO-auth.js?v=20261127-acceso-santelmo2");
       await modulo.cerrarSesionSANTELMO();
-      window.location.href = "SAN TELMO-Loing.html";
+      window.location.href = "BANCO-Loing.html";
     } catch (error) {
       console.error("No se pudo cerrar la sesión:", error);
       alert("No se pudo cerrar la sesión. Intentá nuevamente.");
