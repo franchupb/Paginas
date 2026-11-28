@@ -2912,10 +2912,7 @@ button:disabled { opacity: .5; cursor: not-allowed; }
       <label for="division">Seleccioná la categoría para comenzar *</label>
       <select id="division" required>
         <option value="" selected>Seleccionar categoría...</option>
-        <option value="Sub 10">Sub 10</option>
-        <option value="Sub 12">Sub 12</option>
-        <option value="Sub 14">Sub 14</option>
-        <option value="Sub 16">Sub 16</option>
+        <option value="Primera Masc">Primera Masc</option><option value="Primera Fem">Primera Fem</option><option value="Reserva Masc">Reserva Masc</option><option value="Reserva Fem">Reserva Fem</option>
         <option value="Primera">Primera</option>
       </select>
       <small class="ayuda-categoria-general">Los recuentos de partidos, goles y tarjetas, junto con la convocatoria, corresponden a la categoría seleccionada.</small>
@@ -3281,8 +3278,7 @@ button:disabled { opacity: .5; cursor: not-allowed; }
             <label for="filtroDivisionPartidos">División</label>
             <select id="filtroDivisionPartidos">
               <option value="">Todas</option>
-              <option>Sub 10</option><option>Sub 12</option><option>Sub 14</option>
-              <option>Sub 16</option><option>Primera</option>
+              <option value="Primera Masc">Primera Masc</option><option value="Primera Fem">Primera Fem</option><option value="Reserva Masc">Reserva Masc</option><option value="Reserva Fem">Reserva Fem</option>
             </select>
           </div>
           <div class="filtro">
@@ -3338,8 +3334,7 @@ button:disabled { opacity: .5; cursor: not-allowed; }
             <label for="filtroDivisionEstadisticas">División</label>
             <select id="filtroDivisionEstadisticas">
               <option value="">Todas</option>
-              <option>Sub 10</option><option>Sub 12</option><option>Sub 14</option>
-              <option>Sub 16</option><option>Primera</option>
+              <option value="Primera Masc">Primera Masc</option><option value="Primera Fem">Primera Fem</option><option value="Reserva Masc">Reserva Masc</option><option value="Reserva Fem">Reserva Fem</option>
             </select>
           </div>
           <div class="filtro">
@@ -3443,7 +3438,7 @@ const CLAVE_SESION = "usuarioSANTELMO";
 const CLAVE_FIXTURE = "fixtureSANTELMO";
 const CLAVE_INFORMES_ANTERIORES = "informesSANTELMOJornadasV1";
 
-const DIVISIONES = ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
+const DIVISIONES = ["Primera Masc","Primera Fem","Reserva Masc","Reserva Fem"];
 
 const COMPETICIONES_POR_DIVISION = {
   "Sub 10": ["Rosarina","Copa Oro - ARF","Copa Plata - ARF"],
