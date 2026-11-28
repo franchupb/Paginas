@@ -42,9 +42,7 @@
     reservamasc: "Reserva Masc",
     reservamasculino: "Reserva Masc",
     reservafem: "Reserva Fem",
-    reservafemenina: "Reserva Fem",
-    // Compatibilidad con perfiles antiguos mientras se actualizan sus categorías.
-    primera: "Primera Fem"
+    reservafemenina: "Reserva Fem"
   };
   function normalizarDivision(value) {
     const key = String(value || "").normalize("NFD")
