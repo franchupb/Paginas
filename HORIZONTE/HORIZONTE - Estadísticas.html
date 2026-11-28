@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#173e70">
+<title>Estadísticas · HORIZONTE</title>
+<script src="HORIZONTE-permisos.js?v=20261127-permisos4"></script>
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
+:root{--naranja:#173e70;--naranja-oscuro:#102b4e;--naranja-claro:#e8f5fa;--negro:#171717;--gris:#f5f6f8;--gris-texto:#737987;--borde:#e9ebef;--verde:#16845b;--rojo:#c04438}
+*{box-sizing:border-box}body{margin:0;background:#f5f6f8;color:var(--negro);font-family:'DM Sans',Inter,system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}button,select,input{font:inherit}
+.barra-superior{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:15px;min-height:84px;padding:12px 25px;background:#fff;border-bottom:1px solid var(--borde)}.boton-menu{width:42px;height:42px;border:0;border-radius:12px;background:#f6f6f6;font-size:25px;cursor:pointer}.logo-superior{width:55px;height:55px;object-fit:contain;border-radius:50%}.titulo-superior{flex:1;min-width:0}.titulo-superior h1{margin:0 0 5px;font-family:Manrope,sans-serif;font-size:22px;font-weight:800}.titulo-superior p{margin:0;color:var(--gris-texto);font-size:12px}.perfil{display:flex;align-items:center;gap:10px;min-width:0}.avatar{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#191919;color:#fff;font-size:14px;font-weight:800}.nombre-perfil{font-size:13px;font-weight:800}.rol-perfil{margin-top:4px;color:var(--gris-texto);font-size:11px}
+.contenedor{display:flex;min-height:calc(100vh - 84px)}#sidebar{flex:0 0 258px;width:258px;min-height:calc(100vh - 84px);background:#fff;border-right:1px solid var(--borde)}.contenido{width:100%;max-width:1660px;margin:0 auto;padding:30px 34px 48px}
+.encabezado-seccion{position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;min-height:176px;padding:28px 32px;margin-bottom:20px;border-radius:22px;background:linear-gradient(115deg,#191919,#282828 62%,#33212a);color:#fff;box-shadow:0 12px 30px #17171712}.encabezado-seccion:after{content:"";position:absolute;width:340px;height:340px;right:-95px;top:-185px;border:1px solid #ffffff20;border-radius:50%;box-shadow:0 0 0 35px #ffffff08,0 0 0 75px #ffffff06}.encabezado-seccion>div{position:relative;z-index:1}.eyebrow{display:flex;align-items:center;gap:8px;margin-bottom:12px;color:#d99aa7;font-size:10px;font-weight:800;letter-spacing:1.7px}.eyebrow:before{content:"";width:22px;height:2px;background:var(--naranja)}.encabezado-seccion h2{margin:0 0 8px;font-family:Manrope,sans-serif;font-size:30px;font-weight:800;letter-spacing:-.8px}.encabezado-seccion p{max-width:740px;margin:0;color:#d0d0d0;font-size:13px;line-height:1.65}.hero-side{position:relative;z-index:1;display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid #ffffff25;border-radius:13px;background:#ffffff0d;color:#eee;font-size:11px;white-space:nowrap}.hero-dot{width:8px;height:8px;border-radius:50%;background:#72d6a5;box-shadow:0 0 0 4px #72d6a51c}
+.selector-panel,.panel,.metric-card,.bloque-datos,.chart-card{background:#fff;border:1px solid var(--borde);border-radius:17px;box-shadow:0 3px 12px #17171705}.selector-panel{display:grid;grid-template-columns:minmax(180px,1fr) minmax(220px,1.2fr) auto;align-items:end;gap:16px;padding:16px 19px;margin-bottom:18px}.selector-panel label{display:block;margin-bottom:7px;font-size:10px;font-weight:800;letter-spacing:.9px;color:#737987}.selector-panel select,.buscador{width:100%;min-height:44px;padding:10px 13px;border:1px solid #e3e5e9;border-radius:10px;background:#fff;color:#222;font-size:13px;font-weight:700;outline:none}.selector-panel select:focus,.buscador:focus{border-color:var(--naranja);box-shadow:0 0 0 3px #173e701c}.estado-carga{align-self:center;color:var(--gris-texto);font-size:11px;text-align:right;white-space:nowrap}
+.metricas{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:18px}.metric-card{position:relative;overflow:hidden;min-height:130px;padding:17px}.metric-card:after{content:"";position:absolute;right:-24px;top:-25px;width:82px;height:82px;border-radius:50%;background:var(--tinte,#e8f5fa)}.metric-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.metric-card small{display:block;color:#737987;font-size:9px;font-weight:800;letter-spacing:.8px}.metric-icon{position:relative;z-index:1;display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--tinte,#e8f5fa);color:var(--tono,var(--naranja-oscuro));font-size:15px;font-weight:800}.metric-card strong{display:block;position:relative;z-index:1;margin:12px 0 4px;font-family:Manrope,sans-serif;font-size:29px;line-height:1.05;letter-spacing:-.7px}.metric-card span{color:#858b96;font-size:10px}
+.panel{padding:20px;margin-bottom:18px}.panel-titulo{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:17px}.panel-titulo h3{margin:0 0 5px;font-family:Manrope,sans-serif;font-size:16px;font-weight:800}.panel-titulo p{margin:0;color:var(--gris-texto);font-size:11px;line-height:1.5}.chart-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.85fr);gap:16px;margin-bottom:18px}.chart-card{min-width:0;padding:20px}.chart-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:17px}.chart-heading h3{margin:0 0 5px;font-family:Manrope,sans-serif;font-size:15px;font-weight:800}.chart-heading p{margin:0;color:var(--gris-texto);font-size:11px;line-height:1.45}.chart-chip{padding:5px 8px;border-radius:7px;background:#f6f6f7;color:#747987;font-size:9px;font-weight:800}.category-bars{display:grid;gap:13px}.category-row{display:grid;grid-template-columns:75px minmax(50px,1fr) 28px;align-items:center;gap:11px}.category-name{color:#555d69;font-size:11px;font-weight:700}.bar-track{height:10px;overflow:hidden;border-radius:20px;background:#f0f1f3}.bar-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#173e70,#102b4e);transition:width .35s}.bar-value{color:#30343b;font-size:11px;font-weight:800;text-align:right}.source-donut-wrap{display:flex;align-items:center;justify-content:center;gap:24px;min-height:155px}.donut{position:relative;display:grid;place-items:center;width:142px;height:142px;flex:0 0 142px;border-radius:50%;background:#e8eaee}.donut:after{content:"";position:absolute;inset:15px;border-radius:50%;background:#fff}.donut-center{position:relative;z-index:1;text-align:center}.donut-center strong{display:block;font-family:Manrope,sans-serif;font-size:27px;line-height:1}.donut-center span{display:block;margin-top:4px;color:#838894;font-size:9px;font-weight:700}.legend{display:grid;gap:10px;min-width:115px}.legend-item{display:flex;align-items:center;gap:8px;color:#606673;font-size:10px;font-weight:700}.legend-dot{width:8px;height:8px;border-radius:3px;flex:0 0 8px}.legend-item strong{margin-left:auto;color:#252932;font-size:11px}
+.tabla-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:720px}th{padding:11px 10px;background:#f7f8fa;color:#737987;text-align:left;font-size:9px;letter-spacing:.7px;font-weight:800}td{padding:12px 10px;border-bottom:1px solid #f0f1f3;font-size:11px}tbody tr:hover{background:#f7f9fc}tbody tr:last-child td{border-bottom:0}.jugadora-link{padding:0;border:0;background:none;color:#20232a;font-size:11px;font-weight:800;text-align:left;cursor:pointer}.jugadora-link:hover{color:var(--naranja-oscuro)}.pill{display:inline-flex;align-items:center;padding:5px 8px;border-radius:20px;background:#e8f5fa;color:#8b243b;font-size:9px;font-weight:800}.vacio{padding:25px 12px;color:var(--gris-texto);text-align:center;font-size:12px}
+.ficha{display:none}.ficha.activa{display:block}.ficha-cabecera{display:flex;align-items:center;justify-content:space-between;gap:15px;padding-bottom:17px;margin-bottom:17px;border-bottom:1px solid var(--borde)}.identidad{display:flex;align-items:center;gap:13px}.ficha-avatar{display:grid;place-items:center;width:55px;height:55px;border-radius:16px;background:linear-gradient(145deg,#e8f5fa,#e8f5fa);color:var(--naranja-oscuro);font-family:Manrope,sans-serif;font-size:19px;font-weight:900}.ficha-cabecera h3{margin:0 0 5px;font-family:Manrope,sans-serif;font-size:20px}.ficha-cabecera p{margin:0;color:var(--gris-texto);font-size:11px}.btn-secundario{padding:9px 12px;border:1px solid var(--borde);border-radius:9px;background:#fff;color:#454b55;font-size:11px;font-weight:800;cursor:pointer}.ficha-resumen{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:15px}.ficha-stat{padding:14px 15px;border:1px solid var(--borde);border-radius:13px;background:#fafbfc}.ficha-stat span{display:block;color:#818794;font-size:9px;font-weight:800;letter-spacing:.5px}.ficha-stat strong{display:block;margin-top:7px;font-family:Manrope,sans-serif;font-size:22px}.ficha-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.bloque-datos{padding:16px}.bloque-datos h4{margin:0 0 7px;font-size:12px}.bloque-datos .cantidad{float:right;color:var(--naranja-oscuro);font-weight:900}.bloque-datos p{margin:0;color:var(--gris-texto);font-size:11px;line-height:1.5}.lista-registros{margin-top:10px}.registro{padding:9px 0;border-top:1px solid #f0f1f3;color:#737987;font-size:10px;line-height:1.45}.registro strong{display:block;margin-bottom:2px;color:#292d35;font-size:11px}.pie-estado{padding:12px 2px;color:var(--gris-texto);font-size:10px;line-height:1.5}.oculto{display:none!important}
+@media(max-width:1250px){.metricas{grid-template-columns:repeat(3,minmax(0,1fr))}.contenido{padding:25px 22px}}@media(max-width:900px){.chart-grid{grid-template-columns:1fr}.selector-panel{grid-template-columns:1fr 1fr}.estado-carga{grid-column:1/-1;text-align:left}}@media(max-width:760px){.barra-superior{min-height:72px;padding:9px 12px;gap:9px}.logo-superior{width:42px;height:42px}.titulo-superior h1{font-size:15px}.titulo-superior p{font-size:10px}.rol-perfil{display:none}.nombre-perfil{max-width:82px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.contenedor{min-height:calc(100vh - 72px)}#sidebar{position:fixed;top:72px;bottom:0;left:0;z-index:300;min-height:0;height:calc(100vh - 72px);transform:translateX(-100%);transition:transform .2s}.contenido{padding:17px 12px 32px}.encabezado-seccion{align-items:flex-start;flex-direction:column;min-height:0;padding:23px 21px;border-radius:17px}.encabezado-seccion h2{font-size:24px}.encabezado-seccion p{font-size:11px}.hero-side{font-size:10px}.selector-panel{grid-template-columns:1fr;padding:14px}.estado-carga{grid-column:auto;white-space:normal}.metricas{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.metric-card{min-height:116px;padding:13px}.metric-card strong{font-size:25px}.metric-card small{font-size:8px}.metric-card span{font-size:9px}.panel,.chart-card{padding:15px}.chart-grid{gap:12px}.source-donut-wrap{gap:14px}.donut{width:120px;height:120px;flex-basis:120px}.donut:after{inset:13px}.legend{gap:8px}.ficha-grid{grid-template-columns:1fr}.ficha-resumen{grid-template-columns:repeat(2,minmax(0,1fr))}.ficha-cabecera{align-items:flex-start;flex-direction:column}.category-row{grid-template-columns:64px minmax(40px,1fr) 22px;gap:8px}}
+
+</style>
+</head>
+<body>
+<header class="barra-superior">
+<button class="boton-menu" id="botonMenu" type="button" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="true">☰</button>
+<img class="logo-superior" src="HORIZONTE.png" alt="Logo SANTELMO">
+<div class="titulo-superior"><h1>HORIZONTE</h1><p>Estadísticas generales del club</p></div>
+<div class="perfil"><div class="avatar" id="avatarUsuario">U</div><div><div class="nombre-perfil" id="nombreUsuario">Usuario</div><div class="rol-perfil" id="rolUsuario">Club HORIZONTE</div></div></div>
+</header>
+<div class="contenedor">
+<aside id="sidebar"></aside>
+<main class="contenido">
+<section class="encabezado-seccion"><div><div class="eyebrow">HORIZONTE · CENTRO DE ANÁLISIS</div><h2>Estadísticas del club</h2><p>El rendimiento, la evolución y el seguimiento del plantel en una sola mirada. Explorá los datos por categoría o abrí el perfil integral de cada jugadora.</p></div><div class="hero-side"><span class="hero-dot"></span> Panel de seguimiento deportivo</div></section>
+<section class="selector-panel">
+<div class="selector-campo"><label for="selectorCategoria">FILTRAR POR CATEGORÍA</label><select id="selectorCategoria"><option value="">Todas las categorías</option></select></div>
+<div class="selector-campo" id="campoJugadora"><label for="selectorJugadora">CONSULTAR JUGADORA</label><select id="selectorJugadora"><option value="">Todas las jugadoras · visión general del club</option></select></div>
+<div class="estado-carga" id="estadoCarga" role="status" aria-live="polite">Conectando con los registros del club…</div>
+</section>
+<section id="vistaGeneral">
+<div class="metricas">
+<article class="metric-card"><small>JUGADORAS ACTIVAS</small><strong id="mJugadoras">—</strong><span>Plantel completo de SANTELMO</span></article>
+<article class="metric-card"><small>INFORMES REGISTRADOS</small><strong id="mInformes">—</strong><span>Encuentros cargados</span></article>
+<article class="metric-card"><small>GOLES REGISTRADOS</small><strong id="mGoles">—</strong><span>Según informes cargados</span></article>
+<article class="metric-card"><small>ASISTENCIAS</small><strong id="mAsistencia">—</strong><span>Presentes registrados</span></article>
+<article class="metric-card"><small>TESTEOS CARGADOS</small><strong id="mTesteos">—</strong><span>Mediciones individuales</span></article><article class="metric-card"><small>EVALUACIONES DE TIEMPOS</small><strong id="mTiempos">—</strong><span>Registros de rendimiento</span></article><article class="metric-card"><small>LESIONES ACTIVAS</small><strong id="mLesiones">—</strong><span>Casos en seguimiento</span></article>
+</div>
+<section class="chart-grid"><article class="chart-card"><div class="chart-heading"><div><h3>Distribución del plantel</h3><p>Jugadoras activas por categoría seleccionada.</p></div><span class="chart-chip">PLANTEL</span></div><div class="category-bars" id="graficoCategorias"><div class="vacio">Preparando gráfico…</div></div></article><article class="chart-card"><div class="chart-heading"><div><h3>Actividad registrada</h3><p>Participación de las cinco fuentes de información.</p></div><span class="chart-chip">FUENTES</span></div><div class="source-donut-wrap"><div class="donut" id="graficoFuentes"><div class="donut-center"><strong id="totalFuentes">0</strong><span>REGISTROS</span></div></div><div class="legend" id="leyendaFuentes"></div></div></article></section>
+<section class="panel">
+<div class="panel-titulo"><div><h3>Resumen del plantel</h3><p>Compará los registros y abrí cualquier jugadora para consultar su ficha integral.</p></div><div style="width:min(100%,240px)"><input class="buscador" id="busquedaJugadora" type="search" placeholder="Buscar jugadora…" aria-label="Buscar jugadora"></div></div>
+<div class="tabla-wrap"><table><thead><tr><th>JUGADORA</th><th>CATEGORÍA</th><th>POSICIÓN</th><th>INFORMES</th><th>GOLES</th><th>ASISTENCIAS</th><th>TESTEOS</th><th>TIEMPOS</th><th>LESIONES</th></tr></thead><tbody id="tablaJugadoras"><tr><td colspan="9" class="vacio">Cargando jugadoras…</td></tr></tbody></table></div>
+</section>
+</section>
+<section class="panel ficha" id="fichaJugadora">
+<div class="ficha-cabecera"><div class="identidad"><div class="ficha-avatar" id="fichaAvatar">J</div><div><h3 id="fichaNombre">Jugadora</h3><p id="fichaMeta">Categoría · Posición</p></div></div><button class="btn-secundario" id="cerrarFicha" type="button">Volver al resumen general</button></div>
+<div class="ficha-resumen" id="fichaResumen"></div><div class="ficha-grid" id="fichaGrid"></div>
+</section>
+<div class="pie-estado" id="pieEstado">Los datos se consultan en modo lectura. Esta página no modifica ni elimina registros de las demás secciones.</div>
+</main>
+</div>
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyDExeLCMeFUVmAFwQ8ydFvRmW9AdAJmmeg",authDomain:"san-telmo-f2155.firebaseapp.com",projectId:"san-telmo-f2155",storageBucket:"san-telmo-f2155.firebasestorage.app",messagingSenderId:"354872818092",appId:"1:354872818092:web:ef71af1c4b16885caa6209",measurementId:"G-NTK2BFQQ0D"};
+const app=getApps().find(item=>item.options?.projectId===firebaseConfig.projectId)||initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const $=id=>document.getElementById(id);
+let busquedaActual="";
+const FUENTES=["informes","asistenciaSANTELMO","testeos_santelmo","tiemposRendimiento","lesiones"];
+const datos={jugadoras:[],informes:[],asistenciaSANTELMO:[],testeos_santelmo:[],tiemposRendimiento:[],lesiones:[]};
+let permisos=null;
+let categoriaActiva="";
+const texto=v=>String(v??"").trim();
+const normalizar=v=>texto(v).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+const nombreJ=j=>texto(j.nombreCompleto||j.nombre_completo||j.nombreYApellido||j.nombre_y_apellido||[j.nombre||j.nombres,j.apellido||j.apellidos].filter(Boolean).join(" ")||j.jugadora||j.nombre);
+const categoriaJ=j=>texto(j.categoria||j.division||j.categoriaDeportiva||j.divisionNombre||j.category||"Sin categoría");
+const posicionJ=j=>texto(j.posicion||j.puesto||j.demarcacion||"—");
+const activoJ=j=>j.activa!==false&&j.activo!==false&&!/^(inactiva|inactivo|baja)$/i.test(texto(j.estado));
+const esc=v=>texto(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ordenCategorias=["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
+function normalizarCategoria(v){const n=normalizar(v);return ({sub10:"Sub 10",s10:"Sub 10",sub12:"Sub 12",s12:"Sub 12",sub14:"Sub 14",s14:"Sub 14",sub16:"Sub 16",s16:"Sub 16",primera:"Primera"})[n]||texto(v)}
+function categoriasPermitidas(){
+ if(!permisos)return [];
+ if(permisos.rol==="admin")return ordenCategorias;
+ return (Array.isArray(permisos.categorias)?permisos.categorias:[]).map(normalizarCategoria);
+}
+function jugadorasVisibles(){
+ let lista=datos.jugadoras.filter(activoJ);
+ const permitidas=categoriasPermitidas();
+ if(permisos?.rol!=="admin")lista=lista.filter(j=>permitidas.some(c=>normalizar(c)===normalizar(categoriaJ(j))));
+ if(categoriaActiva)lista=lista.filter(j=>normalizar(categoriaJ(j))===normalizar(categoriaActiva));
+ if(permisos?.rol==="jugadora"){
+  const propia=normalizar(permisos.jugadora||permisos.nombre||permisos.usuario);
+  lista=lista.filter(j=>normalizar(nombreJ(j))===propia);
+ }
+ return lista;
+}
+function idsJugador(j){
+ return [j.id,j.uid,j.jugadoraId,j.idJugadora].filter(Boolean).map(normalizar);
+}
+function clavesNombre(j){
+ return [nombreJ(j),j.nombre,j.apellido,[j.nombre,j.apellido].filter(Boolean).join(" ")].filter(Boolean).map(normalizar);
+}
+function coincideIdentidad(o,j){
+ if(!o||typeof o!=="object")return false;
+ const ids=idsJugador(j),nombres=clavesNombre(j);
+ const keys=["jugadoraId","idJugadora","id_jugadora","playerId","uid","jugadora_id","jugadora","nombreJugadora","nombre_jugadora","nombre","nombreCompleto","nombre_completo","jugadoraNombre","atleta"];
+ for(const k of keys){
+  const v=o[k];
+  if(v&&typeof v==="object"){if(coincideIdentidad(v,j))return true;continue}
+  const n=normalizar(v);
+  if(n&&(ids.includes(n)||nombres.includes(n)))return true;
+ }
+ return false;
+}
+function buscarRegistros(obj,j,out=[],seen=new Set()){
+ if(!obj||typeof obj!=="object"||seen.has(obj))return out;
+ seen.add(obj);
+ if(Array.isArray(obj)){obj.forEach(x=>buscarRegistros(x,j,out,seen));return out}
+ if(coincideIdentidad(obj,j)){out.push(obj);return out}
+ const claves=[...idsJugador(j),...clavesNombre(j)];
+ Object.entries(obj).forEach(([k,v])=>{
+  if(claves.includes(normalizar(k))){out.push(v&&typeof v==="object"?v:{valor:v});return}
+  if(v&&typeof v==="object")buscarRegistros(v,j,out,seen);
+ });
+ return out;
+}
+function registrosAsistencia(j){
+ const id=texto(j.id||j.uid||j.jugadoraId),nombre=normalizar(nombreJ(j)),categoria=normalizar(categoriaJ(j));
+ const claves=[id?"id:"+id:"",nombre?"nombre:"+nombre:"",nombre].filter(Boolean),salida=[];
+ (datos.asistenciaSANTELMO||[]).forEach(sesion=>{
+  if(normalizar(sesion.categoria||sesion.division)!==categoria)return;
+  const mapa=sesion.asistencias&&typeof sesion.asistencias==="object"?sesion.asistencias:{};
+  const clave=claves.find(k=>Object.prototype.hasOwnProperty.call(mapa,k));
+  if(clave)salida.push({fecha:sesion.fecha||"",categoria:sesion.categoria||sesion.division||"",estado:normalizar(mapa[clave]),valor:mapa[clave],tipoSesion:sesion.tipoSesion||"Entrenamiento"});
+ });
+ return salida;
+}
+function registrosTesteos(j){
+ const nombre=nombreJ(j),categoria=normalizar(categoriaJ(j)),salida=[];
+ (datos.testeos_santelmo||[]).forEach(planilla=>{
+  if(planilla.division&&normalizar(planilla.division)!==categoria)return;
+  const valores=planilla.valores&&typeof planilla.valores==="object"?planilla.valores:{};
+  const fila=valores[nombre]||Object.entries(valores).find(([k])=>normalizar(k)===normalizar(nombre))?.[1];
+  if(!fila||typeof fila!=="object")return;
+  (Array.isArray(planilla.columnas)?planilla.columnas:[]).forEach(col=>{
+   if(!col||!col.id)return;
+   const cantidad=Math.max(1,Math.min(20,Number(col.cantidadIntentos)||((col.segundoId||col.intentoIds?.length>1)?2:1)));
+   const intentos=col.esCalculadoIMC?[{valor:(Number(fila.peso)>0&&Number(fila.altura)>0?Number((Number(fila.peso)/(Number(fila.altura)>3?Number(fila.altura)/100:Number(fila.altura))**2).toFixed(2)):null)}]:
+    Array.from({length:cantidad},(_,i)=>{const id=i===0?col.id:(col.intentoIds?.[i]||(i===1&&col.segundoId?col.segundoId:col.id+"_intento"+(i+1)));return{valor:fila[id]};});
+   intentos.forEach((intento,i)=>{
+    if(intento.valor===null||intento.valor===undefined||String(intento.valor).trim()==="")return;
+    salida.push({fecha:planilla.mes||planilla.ultimaActualizacion||"",titulo:col.label||col.nombre||col.grupo||"Prueba",prueba:col.label||col.nombre||col.grupo||"Prueba",grupo:col.grupo||"",valor:intento.valor,intento:i+1,unidad:col.unidad||"",categoria:planilla.division||categoriaJ(j)});
+   });
+  });
+ });
+ return salida;
+}
+function registrosDe(fuente,j){
+ if(fuente==="asistenciaSANTELMO")return registrosAsistencia(j);
+ if(fuente==="testeos_santelmo")return registrosTesteos(j);
+ const salida=[];(datos[fuente]||[]).forEach(d=>buscarRegistros(d,j,salida));
+ const vistos=new Set();return salida.filter(o=>{const k=JSON.stringify(o);if(vistos.has(k))return false;vistos.add(k);return true});
+}
+function documentosDe(fuente,lista){
+ const docs=datos[fuente]||[];
+ return docs.filter(d=>lista.some(j=>buscarRegistros(d,j,[]).length>0));
+}
+function buscarNumeros(obj,keys,out=[],seen=new Set()){
+ if(!obj||typeof obj!=="object"||seen.has(obj))return out;seen.add(obj);
+ if(Array.isArray(obj)){obj.forEach(x=>buscarNumeros(x,keys,out,seen));return out}
+ Object.entries(obj).forEach(([k,v])=>{if(keys.includes(normalizar(k))&&v!==""&&v!==null&&Number.isFinite(Number(String(v).replace(",","."))))out.push(Number(String(v).replace(",",".")));else if(v&&typeof v==="object")buscarNumeros(v,keys,out,seen)});
+ return out;
+}
+function contarPresentes(obj){
+ const estado=normalizar(obj?.estado||obj?.valor||"");
+ if(estado)return ["presente","p","asistio","tarde","t","llegotarde"].includes(estado)?1:0;
+ let total=0;const recorrer=(v,k="")=>{
+  if(v===null||v===undefined)return;
+  if(typeof v==="string"){if(["presente","p","asistio","tarde","t","llegotarde"].includes(normalizar(v)))total++;return;}
+  if(Array.isArray(v)){v.forEach(x=>recorrer(x,k));return}
+  if(typeof v==="object"){Object.entries(v).forEach(([key,val])=>recorrer(val,key));return}
+  if(typeof v==="boolean"&&v===true&&/presen|asist/i.test(k))total++;
+ };recorrer(obj);return total;
+}
+function fechaRegistro(o){return texto(o.fecha||o.fechaInicio||o.dia||o.createdAt||o.fechaPartido||o.fechaLesion||o.ultimaActualizacion||"")}
+function tituloRegistro(o){return texto(o.rival||o.equipoRival||o.contrincante||o.tipo||o.lesion||o.prueba||o.ejercicio||o.areaFuncional||o.area||o.competencia||o.torneo||o.nombre||o.mes||o.division||o.zona||o.contexto||"Registro")}
+function detalleRegistro(o){const pasadas=Array.isArray(o.pasadas)?o.pasadas.map(p=>Number(typeof p==="object"?p.tiempo:p)).filter(n=>Number.isFinite(n)&&n>0):[];const mejor=pasadas.length?Math.min(...pasadas):null;return [o.fecha,o.valor!==undefined?String(o.valor)+(o.unidad?" "+o.unidad:""):"",o.resultado,o.minutos!==undefined?String(o.minutos)+" min":"",o.goles!==undefined?String(o.goles)+" goles":"",o.amarillas!==undefined?String(o.amarillas)+" amarillas":"",o.rojas!==undefined?String(o.rojas)+" rojas":"",o.areaFuncional,o.exigenciaMetros?String(o.exigenciaMetros)+" m":"",mejor!==null?"Mejor "+mejor+" s":"",pasadas.length?pasadas.length+" pasadas":"",o.fc10Pasadas?.filter(v=>v!==null&&v!=="").length?o.fc10Pasadas.filter(v=>v!==null&&v!=="").length+" mediciones FC":"",o.estado,o.recuperacion,o.autorizacionRetorno,o.mes].filter(Boolean).join(" · ")}
+function bloqueFicha(titulo,fuente,j,descripcion){
+ const lista=registrosDe(fuente,j).sort((a,b)=>fechaRegistro(b).localeCompare(fechaRegistro(a)));
+ const items=lista.slice(0,8).map(o=>'<div class="registro"><strong>'+esc(tituloRegistro(o))+'</strong>'+esc([fechaRegistro(o),detalleRegistro(o)].filter(Boolean).join(" · ")||"Registro disponible")+'</div>').join("");
+ return '<article class="bloque-datos"><h4>'+titulo+' <span class="cantidad">'+lista.length+'</span></h4><p>'+descripcion+'</p><div class="lista-registros">'+(items||'<div class="registro">Sin registros asociados a esta jugadora.</div>')+'</div></article>';
+}
+function renderSelectorCategorias(){
+ const select=$("selectorCategoria");
+ const permitidas=categoriasPermitidas();
+ const disponibles=ordenCategorias.filter(c=>permitidas.some(p=>normalizar(p)===normalizar(c))&&datos.jugadoras.some(j=>normalizar(categoriaJ(j))===normalizar(c)));
+ const esJugador=permisos?.rol==="jugadora";
+ select.innerHTML=(esJugador?"":'<option value="">Todas las categorías permitidas</option>')+disponibles.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
+ if(categoriaActiva&&!disponibles.some(c=>normalizar(c)===normalizar(categoriaActiva)))categoriaActiva="";
+ select.value=categoriaActiva;
+ select.disabled=esJugador||disponibles.length<=1;
+ if(esJugador&&disponibles.length)select.value=disponibles[0];
+}
+
+function renderGraficos(jugadoras){
+ const conteo=ordenCategorias.map(c=>({nombre:c,total:jugadoras.filter(j=>normalizar(categoriaJ(j))===normalizar(c)).length})).filter(x=>x.total>0);
+ const max=Math.max(1,...conteo.map(x=>x.total));
+ $("graficoCategorias").innerHTML=conteo.length?conteo.map(x=>'<div class="category-row"><span class="category-name">'+esc(x.nombre)+'</span><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(x.total/max*100)+'%"></div></div><strong class="bar-value">'+x.total+'</strong></div>').join(""):'<div class="vacio">No hay jugadoras en esta selección.</div>';
+ const counts=[
+  {name:"Informes",value:documentosDe("informes",jugadoras).length,color:"#173e70"},
+  {name:"Asistencia",value:jugadoras.reduce((s,j)=>s+registrosAsistencia(j).filter(r=>contarPresentes(r)>0).length,0),color:"#102b4e"},
+  {name:"Testeos",value:jugadoras.reduce((s,j)=>s+registrosTesteos(j).length,0),color:"#687da8"},
+  {name:"Tiempos",value:documentosDe("tiemposRendimiento",jugadoras).length,color:"#16845b"},
+  {name:"Lesiones",value:documentosDe("lesiones",jugadoras).length,color:"#9b8ac4"}
+ ];
+ const total=counts.reduce((s,x)=>s+x.value,0);$("totalFuentes").textContent=total;
+ let angle=0;const stops=counts.map(x=>{const start=angle;angle+=total?x.value/total*360:0;return x.color+" "+start+"deg "+angle+"deg"}).join(",");
+ $("graficoFuentes").style.background=total?"conic-gradient("+stops+")":"conic-gradient(#e8eaee 0deg 360deg)";
+ $("leyendaFuentes").innerHTML=counts.map(x=>'<div class="legend-item"><span class="legend-dot" style="background:'+x.color+'"></span>'+x.name+'<strong>'+x.value+'</strong></div>').join("");
+}
+
+function golesJugadora(j){
+ const nombre=normalizar(nombreJ(j));let total=0;
+ (datos.informes||[]).forEach(partido=>{
+  const fila=(partido.jugadoras||[]).find(x=>normalizar(x.nombre||x.jugadora)===nombre);
+  const eventos=(partido.golesEventos||[]).filter(x=>normalizar(x.jugadora||x.nombre)===nombre);
+  total+=eventos.length?eventos.length:Number(fila?.goles||0);
+ });
+ return total;
+}
+function renderGeneral(){
+ const jugadoras=jugadorasVisibles();
+ const informes=documentosDe("informes",jugadoras);
+ const asistencias=jugadoras.reduce((s,j)=>s+registrosAsistencia(j).filter(r=>contarPresentes(r)>0).length,0);
+ const testeos=jugadoras.reduce((s,j)=>s+registrosTesteos(j).length,0);
+ const tiempos=documentosDe("tiemposRendimiento",jugadoras);
+ const lesiones=documentosDe("lesiones",jugadoras);
+ $("mJugadoras").textContent=jugadoras.length;
+ $("mInformes").textContent=informes.length;
+ $("mGoles").textContent=jugadoras.reduce((s,j)=>s+golesJugadora(j),0);
+ $("mAsistencia").textContent=asistencias;
+ $("mTesteos").textContent=testeos;
+ $("mTiempos").textContent=tiempos.length;
+ $("mLesiones").textContent=lesiones.filter(l=>!/(alta|recuperad|cerrad|finaliz)/i.test(normalizar(l.estado||l.recuperacion||"activa"))).length;
+ renderGraficos(jugadoras);
+ const rows=jugadoras.slice().sort((a,b)=>nombreJ(a).localeCompare(nombreJ(b),"es")).filter(j=>!busquedaActual||normalizar(nombreJ(j)).includes(normalizar(busquedaActual))).map(j=>{
+  const inf=registrosDe("informes",j),asis=registrosAsistencia(j),test=registrosTesteos(j),tim=registrosDe("tiemposRendimiento",j),les=registrosDe("lesiones",j);
+  return '<tr><td><button class="jugadora-link" type="button" data-jugadora="'+esc(j.id)+'">'+esc(nombreJ(j)||"Sin nombre")+'</button></td><td><span class="pill">'+esc(categoriaJ(j))+'</span></td><td>'+esc(posicionJ(j))+'</td><td>'+inf.length+'</td><td>'+golesJugadora(j)+'</td><td>'+asis.filter(o=>contarPresentes(o)>0).length+'</td><td>'+test.length+'</td><td>'+tim.length+'</td><td>'+les.length+'</td></tr>';
+ }).join("");
+ $("tablaJugadoras").innerHTML=rows||'<tr><td colspan="9" class="vacio">No hay jugadoras para la categoría seleccionada.</td></tr>';
+ $("tablaJugadoras").querySelectorAll("[data-jugadora]").forEach(b=>b.addEventListener("click",()=>seleccionarJugadora(b.dataset.jugadora)));
+ const selector=$("selectorJugadora");
+ selector.innerHTML='<option value="">Todas las jugadoras · visión general</option>'+jugadoras.slice().sort((a,b)=>nombreJ(a).localeCompare(nombreJ(b),"es")).map(j=>'<option value="'+esc(j.id)+'">'+esc(nombreJ(j))+' · '+esc(categoriaJ(j))+'</option>').join("");
+ if(permisos?.rol==="jugadora"){
+  selector.value=jugadoras[0]?.id||"";selector.disabled=true;$("campoJugadora").classList.add("oculto");
+  if(jugadoras[0])seleccionarJugadora(jugadoras[0].id);else $("estadoCarga").textContent="No se encontró tu ficha de jugadora en el plantel.";
+ }else{$("campoJugadora").classList.remove("oculto");selector.disabled=false;}
+}
+function seleccionarJugadora(id){
+ const j=jugadorasVisibles().find(x=>String(x.id)===String(id));if(!j)return;
+ $("vistaGeneral").classList.add("oculto");$("fichaJugadora").classList.add("activa");
+ $("fichaAvatar").textContent=(nombreJ(j)||"J").charAt(0).toUpperCase();
+ $("fichaNombre").textContent=nombreJ(j);$("fichaMeta").textContent=categoriaJ(j)+" · "+posicionJ(j);
+ const fi=registrosDe("informes",j),fa=registrosAsistencia(j),ft=registrosTesteos(j),fTiempo=registrosDe("tiemposRendimiento",j),fLes=registrosDe("lesiones",j);
+ const goles=golesJugadora(j),minutos=fi.reduce((s,o)=>s+Number(o.minutos||0),0),amarillas=fi.reduce((s,o)=>s+Number(o.amarillas||0),0),rojas=fi.reduce((s,o)=>s+Number(o.rojas||0),0);
+ $("fichaResumen").innerHTML=[["PARTIDOS",fi.length],["GOLES",goles],["MINUTOS",minutos],["AMARILLAS",amarillas],["ROJAS",rojas],["ASISTENCIAS",fa.filter(o=>contarPresentes(o)>0).length],["TESTEOS",ft.length],["EVALUACIONES DE TIEMPOS",fTiempo.length],["LESIONES",fLes.length]].map(x=>'<article class="ficha-stat"><span>'+x[0]+'</span><strong>'+x[1]+'</strong></article>').join("");
+ $("fichaGrid").innerHTML=
+  bloqueFicha("Informes de partidos","informes",j,"Participación, minutos, goles y tarjetas registrados en competencia.")+
+  bloqueFicha("Asistencia","asistenciaSANTELMO",j,"Sesiones con estado individual: presente, ausente, tarde o justificada.")+
+  bloqueFicha("Testeos físicos","testeos_santelmo",j,"Resultados individuales de cada prueba e intento cargado.")+
+  bloqueFicha("Tiempos y rendimiento","tiemposRendimiento",j,"Evaluaciones, áreas trabajadas, pasadas y frecuencia cardíaca.")+
+  bloqueFicha("Lesiones","lesiones",j,"Casos, estado y evolución del seguimiento de lesiones.");
+ $("cerrarFicha").hidden=permisos?.rol==="jugadora";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function volverGeneral(){
+ $("selectorJugadora").value="";
+ $("fichaJugadora").classList.remove("activa");$("vistaGeneral").classList.remove("oculto");
+}
+$("selectorCategoria").addEventListener("change",e=>{
+ categoriaActiva=e.target.value||"";
+ $("selectorJugadora").value="";
+ $("fichaJugadora").classList.remove("activa");$("vistaGeneral").classList.remove("oculto");
+ renderGeneral();
+});
+$("selectorJugadora").addEventListener("change",e=>{if(e.target.value)seleccionarJugadora(e.target.value);else volverGeneral()});
+$("busquedaJugadora").addEventListener("input",e=>{busquedaActual=e.target.value;renderGeneral()});
+$("cerrarFicha").addEventListener("click",volverGeneral);
+function aplicarPerfil(p){
+ if(!p)return;permisos=p;
+ const nombre=p.nombre||p.usuario||"Usuario";
+ $("nombreUsuario").textContent=nombre;$("avatarUsuario").textContent=nombre.charAt(0).toUpperCase();
+ $("rolUsuario").textContent=({admin:"Administrador",editor:"Editor",coordinador:"Coordinador",coordinadora:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[p.rol]||"Club HORIZONTE";
+ if(datos.jugadoras.length){renderSelectorCategorias();renderGeneral();}
+}
+window.addEventListener("santelmo-permisos-listos",e=>aplicarPerfil(e.detail||window.SANTELMO_PERMISOS));
+function esperarPermisosSANTELMO(){
+ if(window.SANTELMO_PERMISOS)return Promise.resolve(window.SANTELMO_PERMISOS);
+ return new Promise(resolve=>window.addEventListener("santelmo-permisos-listos",e=>resolve(e.detail||window.SANTELMO_PERMISOS||null),{once:true}));
+}
+const COLECCIONES={jugadoras:"santelmo_jugadoras",informes:"santelmo_informes_partidos",informesLegacy:"informes_partidos",asistenciaSANTELMO:"santelmo_asistenciaSANTELMO",testeos_santelmo:"santelmo_testeos_santelmo",tiemposRendimiento:"santelmo_tiemposRendimiento",lesiones:"santelmo_lesiones"};
+async function leerColeccion(nombre){
+ const nombreReal=COLECCIONES[nombre]||nombre;
+ const snap=await getDocs(collection(db,nombreReal));
+ return snap.docs.map(d=>({id:d.id,...d.data()}));
+}
+async function iniciar(){
+ const perfilConfirmado=await esperarPermisosSANTELMO();
+ if(perfilConfirmado)aplicarPerfil(perfilConfirmado);
+ $("estadoCarga").textContent="Leyendo Informes, Asistencia, Testeos, Tiempos y Lesiones…";
+ const resultados=await Promise.allSettled([leerColeccion("jugadoras"),...FUENTES.map(leerColeccion),leerColeccion("informesLegacy")]);
+ const fallos=[];
+ if(resultados[0].status==="fulfilled")datos.jugadoras=resultados[0].value;
+ else fallos.push("jugadoras");
+ resultados.slice(1,1+FUENTES.length).forEach((r,i)=>{if(r.status==="fulfilled")datos[FUENTES[i]]=r.value;else fallos.push(FUENTES[i]);});
+  const informesAnteriores=resultados[1+FUENTES.length];
+  if(informesAnteriores?.status==="fulfilled"){
+   const unificados=new Map();
+   informesAnteriores.value.forEach(p=>unificados.set(String(p.id),p));
+   (datos.informes||[]).forEach(p=>unificados.set(String(p.id),p));
+   datos.informes=[...unificados.values()];
+  }else if(informesAnteriores?.status==="rejected")fallos.push("informes anteriores");
+ if(!datos.jugadoras.length){
+  try{const snap=await getDoc(doc(db,"santelmo_plantel","jugadoras"));if(snap.exists()&&Array.isArray(snap.data().lista))datos.jugadoras=snap.data().lista.map((j,i)=>({...j,id:j.id||"plantel-"+i}));}catch(e){fallos.push("plantel");}
+ }
+ if(!permisos&&window.SANTELMO_PERMISOS)aplicarPerfil(window.SANTELMO_PERMISOS);
+ renderSelectorCategorias();renderGeneral();
+ const ok=FUENTES.length-fallos.filter(x=>FUENTES.includes(x)).length;
+ $("estadoCarga").textContent=fallos.length?"Datos parciales · "+ok+"/"+FUENTES.length+" fuentes estadísticas disponibles":"Datos actualizados · 5/5 fuentes estadísticas consultadas";
+ $("pieEstado").textContent=fallos.length?"No se pudieron leer: "+fallos.join(", ")+". Los datos de las demás fuentes siguen visibles.":"Estadísticas en modo lectura. Fuentes: Informes, Asistencia, Testeos, Tiempos y Lesiones.";
+ if(!datos.jugadoras.length)$("tablaJugadoras").innerHTML='<tr><td colspan="8" class="vacio">No se encontró el plantel en Firestore.</td></tr>';
+}
+iniciar().catch(error=>{$("estadoCarga").textContent="No se pudieron cargar las estadísticas";$("tablaJugadoras").innerHTML='<tr><td colspan="8" class="vacio">Ocurrió un error al consultar los registros. Revisá la consola del navegador.</td></tr>';console.error("Error al iniciar Estadísticas:",error)});
+</script>
+<script type="module" src="HORIZONTE-layout.js?v=20261127-modelobase7"></script>
+</body>
+</html>
