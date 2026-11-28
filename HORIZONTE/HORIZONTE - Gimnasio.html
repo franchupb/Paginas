@@ -2572,7 +2572,7 @@ a:focus-visible,
       </div>
 
       <div class="info-rutina">
-        <strong id="nombreSeleccionado">División: Sub 16</strong>
+        <strong id="nombreSeleccionado">División: Primera Fem</strong>
         <span id="estadoRutina">Sin guardar</span>
       </div>
 
@@ -2735,13 +2735,7 @@ const KEY = "gimnasioSANTELMORutinasV1";
 const PLAYERS_KEY = "jugadorasSANTELMO";
 const SESSION_KEY = "usuarioSANTELMO";
 
-const DIVISIONES = [
-  "Sub 10",
-  "Sub 12",
-  "Sub 14",
-  "Sub 16",
-  "Primera"
-];
+const DIVISIONES = ["Primera Masc", "Primera Fem", "Reserva Masc", "Reserva Fem"];
 
 const DIAS_POR_SEMANA = 3;
 const CANTIDAD_RUTINAS_INICIALES = 10;
@@ -3039,11 +3033,11 @@ function nombreJugadora(jugadora) {
 }
 
 function divisionJugadora(jugadora) {
-  const valor = jugadora?.division || jugadora?.categoria || jugadora?.división || "Sub 14";
+  const valor = jugadora?.division || jugadora?.categoria || jugadora?.división || "Primera Fem";
 
   return DIVISIONES.find(division =>
     normalizar(division) === normalizar(valor)
-  ) || "Sub 14";
+  ) || "Primera Fem";
 }
 
 function idJugadora(jugadora) {
@@ -4978,7 +4972,7 @@ function inicializar() {
         id: "bianca",
         usuario: "bianca",
         nombreCompleto: nombreSesion(usuario),
-        division: "Sub 14"
+        division: "Primera Fem"
       };
     }
 
