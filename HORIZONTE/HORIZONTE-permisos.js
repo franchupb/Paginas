@@ -416,7 +416,7 @@
 
   async function iniciarControlFirebase() {
     try {
-      const modulo = await import("./HORIZONTE-auth.js?v=20261128-restauracion-sesion1");
+      const modulo = await import("./HORIZONTE-auth.js?v=20261128-sesion-unificada2");
       await modulo.observarSesionHORIZONTE(async user => {
         // En algunos navegadores la restauración de la persistencia local puede
         // terminar después del primer evento del observador. No interpretar ese
