@@ -725,7 +725,7 @@
   // Unifica el logotipo, sin tocar los elementos de perfil ni sus eventos.
   const logo = barra.querySelector(".logo-superior, .logo-club, .identidad-club img");
   if (logo) {
-    logo.src = "CLUBES/HORIZONTE.jpg";
+    logo.src = "HORIZONTE - Logo2.png";
     logo.alt = "Escudo oficial de HORIZONTE";
     logo.classList.add("logo-superior");
   }
