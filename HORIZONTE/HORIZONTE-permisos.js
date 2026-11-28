@@ -52,7 +52,7 @@
   function categoriaDeTexto(value) {
     const direct = normalizarDivision(value);
     if (direct) return direct;
-    const match = String(value || "").match(/(?:^|[^a-z0-9])(primera\s*(?:masc(?:ulino)?|fem(?:enina)?)|reserva\s*(?:masc(?:ulino)?|fem(?:enina)?)|primera)(?:$|[^a-z0-9])/i);
+    const match = String(value || "").match(/(?:^|[^a-z0-9])(primera\\s*(?:masc(?:ulino)?|fem(?:enina)?)|reserva\\s*(?:masc(?:ulino)?|fem(?:enina)?))(?:$|[^a-z0-9])/i);
     return match ? normalizarDivision(match[1]) : null;
   }
   function normalizarNombreArchivo(value) {
