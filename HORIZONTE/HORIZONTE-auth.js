@@ -1,20 +1,20 @@
-/* SAN TELMO · AUTENTICACIÓN CENTRALIZADA CON FIREBASE
+/* HORIZONTE · AUTENTICACIÓN CENTRALIZADA CON FIREBASE
    Las cuentas se administran en Firebase Authentication.
    El perfil se valida en Firestore: usuarios/{uid}.
-   Este módulo usa exclusivamente el proyecto Firebase de SAN TELMO.
+   Este módulo utiliza exclusivamente el proyecto Firebase de HORIZONTE.
 */
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDExeLCMeFUVmAFwQ8ydFvRmW9AdAJmmeg",
-  authDomain: "san-telmo-f2155.firebaseapp.com",
-  projectId: "san-telmo-f2155",
-  storageBucket: "san-telmo-f2155.firebasestorage.app",
-  messagingSenderId: "354872818092",
-  appId: "1:354872818092:web:ef71af1c4b16885caa6209",
-  measurementId: "G-NTK2BFQQ0D"
+  apiKey: "AIzaSyCCC2AQ_pPEL1dM976JNGYaLrXluFR_ntM",
+  authDomain: "horizonte-21aa1.firebaseapp.com",
+  projectId: "horizonte-21aa1",
+  storageBucket: "horizonte-21aa1.firebasestorage.app",
+  messagingSenderId: "977841417989",
+  appId: "1:977841417989:web:29be738bff91da44e5d16c",
+  measurementId: "G-KQKZRL3ZH3"
 };
 
 const app = getApps().find(item => item.name === "horizonte-auth") || initializeApp(firebaseConfig, "horizonte-auth");
@@ -29,15 +29,14 @@ export function correoTecnicoHORIZONTE(usuario) {
   const limpio = normalizarUsuarioHORIZONTE(usuario);
   if (!limpio) throw new Error("Ingresá un nombre de usuario válido.");
 
-  // Alias diferenciados para las dos cuentas cuyo nombre visible es Kevin.
-  // Los correos se escriben completos porque el dominio indicado en Firebase
-  // Authentication para estas cuentas no lleva el guion de "san-telmo".
+  // Se conserva la distinción entre las dos cuentas llamadas Kevin.
+  // Los alias pertenecen exclusivamente al proyecto de HORIZONTE.
   const correosEspeciales = {
-    "kevin": "kevin@santelmo-f2155.firebaseapp.com",
-    "kevin_": "kevin_@santelmo-f2155.firebaseapp.com"
+    "kevin": "kevin@horizonte-21aa1.firebaseapp.com",
+    "kevin_": "kevin_@horizonte-21aa1.firebaseapp.com"
   };
 
-  return correosEspeciales[limpio] || (limpio + "@san-telmo-f2155.firebaseapp.com");
+  return correosEspeciales[limpio] || (limpio + "@horizonte-21aa1.firebaseapp.com");
 }
 
 export async function obtenerPerfilHORIZONTE(user) {
