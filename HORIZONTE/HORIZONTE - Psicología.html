@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff"><title>Psicología deportiva | HORIZONTE</title>
+<script src="HORIZONTE-permisos.js?v=20261127-permisos4"></script>
+<style>
+:root{--accent:#173e70;--dark:#102b4e;--soft:#e8f5fa;--ink:#171717;--muted:#747474;--line:#e8e8e8;--bg:#f7f8fa}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px Arial,Helvetica,sans-serif}.barra-superior{background:#fff}.contenedor{display:flex;min-height:calc(100vh - 84px)}.sidebar{flex:0 0 258px;background:#fff;border-right:1px solid var(--line)}main.main{min-width:0;flex:1;padding:28px clamp(16px,3vw,36px) 48px}.page-heading{margin:0 0 20px}.content-grid{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(0,1.15fr);gap:18px;align-items:start}.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 18px #00000006}.panel h3{margin:0 0 7px;font-size:16px}.panel-intro{margin:0 0 18px;color:var(--muted);font-size:12px;line-height:1.55}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.form-grid label,.filters label{display:flex;flex-direction:column;gap:7px;color:#4b4b4b;font-size:11px;font-weight:800}.form-grid input,.form-grid select,.form-grid textarea,.filters input,.filters select{width:100%;min-height:40px;padding:10px 11px;border:1px solid #dfe1e5;border-radius:9px;background:#fff;color:#222;font:13px Arial,sans-serif;outline:none}.form-grid textarea{resize:vertical;line-height:1.5}.form-grid input:focus,.form-grid select:focus,.form-grid textarea:focus,.filters input:focus,.filters select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 13%,transparent)}.full{grid-column:1/-1}.form-actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:1px solid transparent;border-radius:9px;min-height:38px;padding:9px 13px;font:700 12px Arial,sans-serif;cursor:pointer}.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{filter:brightness(.92)}.btn-light{background:#fff;border-color:var(--line);color:#343434}.btn-danger{background:#fff5f5;border-color:#f0cccc;color:#a12626}.btn-small{min-height:31px;padding:6px 9px;font-size:11px}.filters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}.filters input{grid-column:1/-1}.list-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.count{color:var(--muted);font-size:11px;font-weight:800}.item{display:flex;align-items:flex-start;gap:13px;padding:15px 0;border-top:1px solid #f0f0f0}.item-main{min-width:0;flex:1}.item-main strong{font-size:13px}.item-main p{margin:6px 0;color:#666;font-size:12px;line-height:1.5;white-space:pre-wrap}.item-actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.chips span{padding:5px 7px;border-radius:6px;background:var(--soft);color:var(--dark);font-size:10px;font-weight:800}.empty{padding:32px 16px;text-align:center;color:var(--muted);font-size:12px;line-height:1.6;border:1px dashed #d9dce1;border-radius:12px}.detail{margin-top:16px;padding:15px;border-radius:12px;background:#fafafa;border:1px solid var(--line)}.detail h3{margin:0 0 8px}.detail dl{display:grid;grid-template-columns:140px 1fr;gap:8px 12px;margin:12px 0 0;font-size:12px}.detail dt{color:#777;font-weight:800}.detail dd{margin:0;white-space:pre-wrap;line-height:1.5}.datebox{flex:0 0 60px;padding:9px 6px;border-radius:9px;background:var(--soft);color:var(--dark);text-align:center;font-size:10px;font-weight:900}.privacy{margin:0;color:#777;font-size:11px;line-height:1.5}.toast{position:fixed;right:18px;bottom:18px;z-index:500;padding:12px 16px;border-radius:10px;background:#202020;color:#fff;font-size:12px;box-shadow:0 8px 25px #0002}.toast[hidden]{display:none}@media(max-width:1050px){.content-grid{grid-template-columns:1fr}}@media(max-width:760px){main.main{padding:18px 13px 32px}.sidebar{display:none}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.filters{grid-template-columns:1fr}.filters input{grid-column:auto}.item{flex-wrap:wrap}.item-actions{width:100%;justify-content:flex-start}.detail dl{grid-template-columns:1fr;gap:4px}.detail dd{margin-bottom:8px}}
+</style></head><body>
+<header class="barra-superior"><button class="boton-menu" id="botonMenu" type="button" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="true">☰</button><div class="identidad-club"><img class="logo-club" src="HORIZONTE.png" alt="Escudo HORIZONTE"><div class="textos-club"><h1>HORIZONTE</h1><p>Seguimiento individual · Trabajo grupal</p></div></div><button class="perfil" id="botonPerfil" type="button" aria-label="Ver perfil de usuario"><span class="avatar" id="avatarUsuario">U</span><span class="informacion-perfil"><span class="nombre-perfil" id="nombreUsuario">Usuario</span><span class="rol-perfil" id="rolUsuario">HORIZONTE</span></span></button></header>
+<div class="fondo-sidebar" id="fondoSidebar"></div><div class="contenedor"><aside class="sidebar" id="sidebar"></aside><main class="main">
+<section class="page-heading"><p style="margin:0 0 5px;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:1px">SEGUIMIENTO INDIVIDUAL · TRABAJO GRUPAL</p><h2 style="margin:0 0 7px;font-size:24px">Psicología deportiva</h2><p style="margin:0;color:var(--muted);font-size:13px;line-height:1.6">Centralizá informes individuales, observaciones grupales y actividades realizadas con el plantel.</p></section>
+<div class="content-grid"><section class="panel"><h3>Nuevo registro</h3><p class="panel-intro">Elegí el tipo de registro y documentá el trabajo realizado o el seguimiento necesario.</p>
+ <form id="formRegistro" class="form-grid">
+  <input type="hidden" id="registroId">
+  <label>Tipo de registro<select id="tipo"><option>Informe individual</option><option>Informe grupal</option><option>Actividad del día</option></select></label>
+  <label>Fecha<input id="fecha" type="date" required></label>
+  <label for="categoria">Categoría</label><select id="categoria" required><option value="Todas">Todas</option><option>Sub 10</option><option>Sub 12</option><option>Sub 14</option><option>Sub 16</option><option>Primera</option></select>
+  <label id="jugadoraWrap">Jugadora<select id="jugadora"><option value="">Seleccionar jugadora</option></select></label>
+  <label class="full">Tema / actividad<input id="tema" required maxlength="140" placeholder="Ej. Confianza, cohesión grupal, manejo de presión..."></label>
+  <label class="full">Informe / descripción<textarea id="descripcion" rows="4" required placeholder="Registrá observaciones, objetivos, desarrollo de la actividad o acuerdos de seguimiento."></textarea></label>
+  <label class="full">Acciones / próximos pasos<textarea id="acciones" rows="3" placeholder="Propuestas de trabajo, seguimiento y fecha de revisión."></textarea></label>
+  <label>Profesional / responsable<input id="responsable" maxlength="100" placeholder="Nombre y apellido"></label>
+  <label>Próxima revisión<input id="revision" type="date"></label>
+  <p class="privacy full">Información de uso interno del cuerpo técnico y profesionales autorizados. Evitá incluir datos sensibles que no sean necesarios para el seguimiento deportivo.</p>
+  <div class="form-actions full"><button class="btn btn-primary" type="submit" id="guardar">Guardar registro</button><button class="btn btn-light" type="button" id="cancelar" hidden>Cancelar edición</button></div>
+ </form></section>
+<section class="panel"><div class="list-head"><div><h3>Registros de psicología</h3><p class="panel-intro" style="margin:5px 0 0">Consultá los informes y actividades registrados.</p></div><span class="count" id="contador">0</span></div><div class="filters"><input id="busqueda" type="search" placeholder="Buscar por tema, jugadora o contenido"><label>Tipo<select id="filtroTipo"><option value="">Todos</option><option>Informe individual</option><option>Informe grupal</option><option>Actividad del día</option></select></label><label>Categoría<select id="categoriaFiltro"><option value="">Todas las categorías</option><option>Sub 10</option><option>Sub 12</option><option>Sub 14</option><option>Sub 16</option><option>Primera</option></select></label></div><div id="lista"></div><div id="detalle"></div></section></div>
+</main></div><div class="toast" id="toast" hidden></div>
+<script>
+const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const KEY="horizonte_psicologia_v1";let records=[];let toastTimer;
+function notify(t){$("toast").textContent=t;$("toast").hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").hidden=true,2600)}
+function persist(){localStorage.setItem(KEY,JSON.stringify(records));if(window.__clubModuleCloud)records.forEach(r=>window.__clubModuleCloud.save(r).catch(e=>{console.error(e);notify("Guardado localmente; la nube no respondió.")}));render()}
+window.__setClubRecords=list=>{records=Array.isArray(list)?list:[];localStorage.setItem(KEY,JSON.stringify(records));render()};
+
+ const fields=["tipo","fecha","categoria","jugadora","tema","descripcion","acciones","responsable","revision"];
+ function values(){const o={};fields.forEach(k=>o[k]=document.getElementById(k).value.trim());return o;}
+ function fill(r){fields.forEach(k=>document.getElementById(k).value=r[k]||"");togglePlayer();}
+ function togglePlayer(){const individual=$("tipo").value==="Informe individual";$("jugadoraWrap").hidden=!individual;$("jugadora").required=individual;if(!individual)$("jugadora").value="";}
+ function render(){const term=$("busqueda").value.toLowerCase();const tipo=$("filtroTipo").value;const cat=$("categoriaFiltro").value;const rows=records.filter(r=>(!tipo||r.tipo===tipo)&&(!cat||r.categoria==="Todas"||r.categoria===cat)&&(!term||[r.jugadora,r.tema,r.descripcion,r.acciones,r.responsable].join(" ").toLowerCase().includes(term))).sort((a,b)=>String(b.fecha).localeCompare(String(a.fecha)));$("lista").innerHTML=rows.length?rows.map(r=>`<article class="item"><div class="datebox">${esc((r.fecha||"").split("-").reverse().join("/")||"—")}</div><div class="item-main"><strong>${esc(r.tema)}</strong><p>${esc(r.tipo==="Informe individual"?r.jugadora:r.tipo)} · ${esc(r.descripcion||"")}</p><div class="chips"><span>${esc(r.tipo)}</span><span>${esc(r.categoria)}</span>${r.revision?`<span>Revisión: ${esc(r.revision.split("-").reverse().join("/"))}</span>`:""}</div></div><div class="item-actions"><button class="btn btn-light btn-small" data-action="view" data-id="${esc(r.id)}">Ver</button><button class="btn btn-light btn-small" data-action="edit" data-id="${esc(r.id)}">Editar</button><button class="btn btn-danger btn-small" data-action="delete" data-id="${esc(r.id)}">Eliminar</button></div></article>`).join(""):`<div class="empty">${esc("Todavía no hay informes cargados. Registrá el primero desde el formulario.")}</div>`;$("contador").textContent=rows.length+" registros"; }
+ function detail(r){return `<div class="detail"><h3>${esc(r.tema)}</h3><div class="chips"><span>${esc(r.tipo)}</span><span>${esc(r.categoria)}</span><span>${esc(r.fecha)}</span></div><dl><dt>Jugadora / alcance</dt><dd>${esc(r.tipo==="Informe individual"?r.jugadora:r.tipo)}</dd><dt>Descripción</dt><dd>${esc(r.descripcion||"—")}</dd><dt>Acciones / próximos pasos</dt><dd>${esc(r.acciones||"—")}</dd><dt>Responsable</dt><dd>${esc(r.responsable||"—")}</dd><dt>Próxima revisión</dt><dd>${esc(r.revision||"—")}</dd></dl></div>`;}
+ 
+$("formRegistro").addEventListener("submit",e=>{e.preventDefault();const v=values();if(!v.nombre&&false)return;if(!v.tema&&!false)return;const id=$("registroId").value||("reg_"+Date.now()+"_"+Math.random().toString(36).slice(2,8));const old=records.find(r=>String(r.id)===id)||{};const r={...old,...v,id,actualizadoEn:new Date().toISOString(),creadoEn:old.creadoEn||new Date().toISOString()};records=[r,...records.filter(x=>String(x.id)!==id)];persist();resetForm();notify("Registro guardado correctamente.")});
+function resetForm(){$("formRegistro").reset();$("registroId").value="";$("guardar").textContent="Guardar registro";$("cancelar").hidden=true;$("fecha").value=new Date().toISOString().slice(0,10);togglePlayer();}
+$("cancelar").addEventListener("click",resetForm);
+$("tipo").addEventListener("change",togglePlayer);$("categoria").addEventListener("change",()=>{const opt=[...$("jugadora").options].find(o=>o.value===$("jugadora").value);if(opt&&opt.dataset.cat&&opt.dataset.cat!==$("categoria").value)$("jugadora").value="";});
+$("lista").addEventListener("click",async e=>{const b=e.target.closest("button[data-action]");if(!b)return;const r=records.find(x=>String(x.id)===b.dataset.id);if(!r)return;if(b.dataset.action==="view"){$("detalle").innerHTML=detail(r);return}if(b.dataset.action==="edit"){fill(r);$("registroId").value=r.id;$("guardar").textContent="Guardar cambios";$("cancelar").hidden=false;$("formRegistro").scrollIntoView({behavior:"smooth",block:"start"});return}if(b.dataset.action==="delete"&&confirm("¿Eliminar este registro de forma permanente?")){records=records.filter(x=>String(x.id)!==String(r.id));localStorage.setItem(KEY,JSON.stringify(records));if(window.__clubModuleCloud)try{await window.__clubModuleCloud.remove(r.id)}catch(err){console.error(err);notify("No se pudo eliminar de la nube.")}render();$("detalle").innerHTML="";notify("Registro eliminado.")}});
+["busqueda","categoriaFiltro","filtroTipo"].forEach(id=>$(id).addEventListener(id==="busqueda"?"input":"change",render));
+resetForm();render();
+</script>
+
+ <script type="module">
+ import {initializeApp,getApps} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+ import {getFirestore,collection,onSnapshot,doc,setDoc,deleteDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+ const cfg={apiKey:"AIzaSyDExeLCMeFUVmAFwQ8ydFvRmW9AdAJmmeg",authDomain:"san-telmo-f2155.firebaseapp.com",projectId:"san-telmo-f2155",storageBucket:"san-telmo-f2155.firebasestorage.app",messagingSenderId:"354872818092",appId:"1:354872818092:web:ef71af1c4b16885caa6209"};
+ const app=getApps().find(x=>x.options?.projectId===cfg.projectId)||initializeApp(cfg,"horizonte-psicologia");
+ const db=getFirestore(app),col=collection(db,"horizonte_psicologia");
+ let cloudReady=false;
+ window.__clubModuleCloud={save:async r=>setDoc(doc(db,"horizonte_psicologia",String(r.id)),r),remove:async id=>deleteDoc(doc(db,"horizonte_psicologia",String(id)))};
+ onSnapshot(col,snap=>{
+  const cloud=snap.docs.map(d=>({id:d.id,...d.data()}));
+  const local=JSON.parse(localStorage.getItem("horizonte_psicologia_v1")||"[]");
+  const map=new Map(cloud.map(r=>[String(r.id),r]));
+  local.forEach(r=>{if(!map.has(String(r.id)))map.set(String(r.id),r);});
+  const merged=[...map.values()];
+  window.__setClubRecords?.(merged);
+  cloudReady=true;
+  local.forEach(r=>{if(!cloud.some(x=>String(x.id)===String(r.id)))window.__clubModuleCloud.save(r).catch(console.warn);});
+ },err=>{console.warn("Firestore no disponible; se conserva el almacenamiento local.",err);});
+ </script>
+
+ <script type="module">
+ import {initializeApp,getApps} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+ import {getFirestore,collection,onSnapshot} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+ const cfg={apiKey:"AIzaSyDExeLCMeFUVmAFwQ8ydFvRmW9AdAJmmeg",authDomain:"san-telmo-f2155.firebaseapp.com",projectId:"san-telmo-f2155",storageBucket:"san-telmo-f2155.firebasestorage.app",messagingSenderId:"354872818092",appId:"1:354872818092:web:ef71af1c4b16885caa6209"};
+ const app=getApps().find(x=>x.options?.projectId===cfg.projectId)||initializeApp(cfg,"horizonte-psicologia");const db=getFirestore(app);
+ onSnapshot(collection(db,"horizonte_jugadoras"),snap=>{
+  const sel=document.getElementById("jugadora");if(!sel)return;const old=sel.value;
+  const opts=snap.docs.map(d=>{const x=d.data();const nombre=x.nombreCompleto||[x.nombre,x.apellido].filter(Boolean).join(" ")||x.nombre||d.id;return {nombre,categoria:x.categoria||x.division||""};}).sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"));
+  sel.innerHTML='<option value="">Seleccionar jugadora</option>'+opts.map(x=>'<option data-cat="'+String(x.categoria).replace(/"/g,"&quot;")+'" value="'+String(x.nombre).replace(/"/g,"&quot;")+'">'+String(x.nombre).replace(/</g,"&lt;")+'</option>').join("");
+  if([...sel.options].some(o=>o.value===old))sel.value=old;
+ },err=>console.warn("No se pudo cargar el plantel",err));
+ </script>
+<script type="module" src="HORIZONTE-layout.js?v=20261127-nuevosmodulos1"></script>
+</body></html>
