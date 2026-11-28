@@ -2010,11 +2010,10 @@ main {
                 <label for="categoria">Categoría</label>
 
                 <select id="categoria">
-                    <option value="Sub 10">Sub 10</option>
-                    <option value="Sub 12">Sub 12</option>
-                    <option value="Sub 14">Sub 14</option>
-                    <option value="Sub 16">Sub 16</option>
-                    <option value="Primera">Primera</option>
+                    <option value="Primera Masc">Primera Masc</option>
+                    <option value="Primera Fem">Primera Fem</option>
+                    <option value="Reserva Masc">Reserva Masc</option>
+                    <option value="Reserva Fem">Reserva Fem</option>
                 </select>
             </div>
 
@@ -2589,13 +2588,7 @@ if (usuarioNormalizado) {
 
     const preferida = leerAlmacenamiento(clavePreferencia);
 
-    const categoriasValidas = [
-        "Sub 10",
-        "Sub 12",
-        "Sub 14",
-        "Sub 16",
-        "Primera"
-    ];
+    const categoriasValidas = ["Primera Masc", "Primera Fem", "Reserva Masc", "Reserva Fem"];
 
     if (esBianca()) {
         let categoriasUsuario = [];
@@ -2786,7 +2779,7 @@ function analizarActividad(textoOriginal, estadoGuardado = "libre") {
     const textoCompleto = segmentos.join(" ");
 
     const categoriaEncontrada = textoCompleto.match(
-        /\b(Sub\s*\d{1,2}|Primera)\b/i
+        /\b(Primera\s+(?:Masc|Fem)|Reserva\s+(?:Masc|Fem))\b/i
     );
 
     const categoriaTexto = categoriaEncontrada
@@ -2904,7 +2897,7 @@ function analizarActividad(textoOriginal, estadoGuardado = "libre") {
     }
 
     descripcion = descripcion
-        .replace(/\b(Sub\s*\d{1,2}|Primera)\b/ig, "")
+        .replace(/\b(Primera\s+(?:Masc|Fem)|Reserva\s+(?:Masc|Fem))\b/ig, "")
         .replace(
             /\b(?:intensidad|carga)\s*:\s*(baja?|media?|alta?)\b/ig,
             ""
