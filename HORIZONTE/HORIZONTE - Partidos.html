@@ -2316,7 +2316,7 @@ function normalizarUsuario(valor) {
 
 function leerUsuario() {
     try {
-        return (localStorage.getItem("usuarioSANTELMO") || "").trim();
+        return (localStorage.getItem("usuarioHORIZONTE") || "").trim();
     } catch (error) {
         return "";
     }
@@ -2325,26 +2325,26 @@ function leerUsuario() {
 let usuarioGuardado = leerUsuario();
 let usuarioNormalizado = normalizarUsuario(usuarioGuardado);
 
-let rolSANTELMO = localStorage.getItem("rolSANTELMO") || "";
-function esFran() { return rolSANTELMO === "admin"; }
-function esToto() { return rolSANTELMO === "cuerpo_tecnico"; }
-function esBianca() { return rolSANTELMO === "jugadora"; }
-let puedeEditar = ["admin", "editor", "coordinadora", "cuerpo_tecnico"].includes(rolSANTELMO);
-let puedeEliminar = ["admin", "coordinadora"].includes(rolSANTELMO);
+let rolHORIZONTE = localStorage.getItem("rolHORIZONTE") || "";
+function esFran() { return rolHORIZONTE === "admin"; }
+function esToto() { return rolHORIZONTE === "cuerpo_tecnico"; }
+function esBianca() { return rolHORIZONTE === "jugadora"; }
+let puedeEditar = ["admin", "editor", "coordinadora", "cuerpo_tecnico"].includes(rolHORIZONTE);
+let puedeEliminar = ["admin", "coordinadora"].includes(rolHORIZONTE);
 
 // Categorías visibles en Partidos: se toma primero la matriz central de permisos.
 function sincronizarPerfilPartidos(evento) {
-    const perfil = evento.detail || window.SANTELMO_PERMISOS;
+    const perfil = evento.detail || window.HORIZONTE_PERMISOS;
     if (!perfil) return;
     usuarioGuardado = String(perfil.usuario || perfil.nombre || leerUsuario()).trim();
     usuarioNormalizado = normalizarUsuario(usuarioGuardado);
-    rolSANTELMO = String(perfil.rol || "").toLowerCase();
-    puedeEditar = ["admin", "editor", "coordinadora", "cuerpo_tecnico"].includes(rolSANTELMO);
-    puedeEliminar = ["admin", "coordinadora"].includes(rolSANTELMO);
+    rolHORIZONTE = String(perfil.rol || "").toLowerCase();
+    puedeEditar = ["admin", "editor", "coordinadora", "cuerpo_tecnico"].includes(rolHORIZONTE);
+    puedeEliminar = ["admin", "coordinadora"].includes(rolHORIZONTE);
 
     const nombre = perfil.nombre || usuarioGuardado || "Usuario";
     const rolOriginal = String(perfil.rol || perfil.tipo || "").trim().toLowerCase();
-    const rolTexto = ({admin:"Administrador",editor:"Coordinadora",coordinadora:"Coordinadora",coordinador:"Coordinador",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rolOriginal] || ({admin:"Administrador",editor:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rolSANTELMO] || "Club HORIZONTE";
+    const rolTexto = ({admin:"Administrador",editor:"Coordinadora",coordinadora:"Coordinadora",coordinador:"Coordinador",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rolOriginal] || ({admin:"Administrador",editor:"Coordinadora",cuerpo_tecnico:"Cuerpo técnico",jugadora:"Jugadora"})[rolHORIZONTE] || "Club HORIZONTE";
     ["nombreUsuario","nombrePerfil"].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=nombre; });
     ["avatarUsuario","avatarPerfil"].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=nombre.charAt(0).toUpperCase(); });
     ["rolUsuario","rolPerfil"].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=rolTexto; });
@@ -2355,18 +2355,18 @@ function sincronizarPerfilPartidos(evento) {
     if(borrar) borrar.style.display=puedeEliminar ? "inline-flex" : "none";
     window.renderizarFixture?.();
 }
-window.addEventListener("santelmo-permisos-listos", sincronizarPerfilPartidos);
-if (window.SANTELMO_PERMISOS) sincronizarPerfilPartidos({ detail: window.SANTELMO_PERMISOS });
+window.addEventListener("horizonte-permisos-listos", sincronizarPerfilPartidos);
+if (window.HORIZONTE_PERMISOS) sincronizarPerfilPartidos({ detail: window.HORIZONTE_PERMISOS });
 
 function obtenerCategoriasVisiblesPartidos() {
-    const perfil = window.SANTELMO_PERMISOS;
+    const perfil = window.HORIZONTE_PERMISOS;
     // El rol Admin es el único que obtiene la vista completa.
-    if (perfil?.rol === "admin" || rolSANTELMO === "admin") return [...DIVISIONES];
+    if (perfil?.rol === "admin" || rolHORIZONTE === "admin") return [...DIVISIONES];
 
     let categorias = Array.isArray(perfil?.categorias) ? perfil.categorias : null;
     if (!categorias) {
         try {
-            const guardadas = JSON.parse(localStorage.getItem("categoriasSANTELMO") || "null");
+            const guardadas = JSON.parse(localStorage.getItem("categoriasHORIZONTE") || "null");
             if (Array.isArray(guardadas)) categorias = guardadas;
         } catch (_) {}
     }
@@ -2546,7 +2546,7 @@ document.getElementById("cerrarSesion").addEventListener("click", event => {
     event.preventDefault();
 
     try {
-        localStorage.removeItem("usuarioSANTELMO");
+        localStorage.removeItem("usuarioHORIZONTE");
     } catch (error) {
         console.warn("No se pudo limpiar el usuario guardado.");
     }
@@ -3739,7 +3739,7 @@ window.addEventListener("storage", event => {
         renderizarFixture();
     }
 
-    if (event.key === "usuarioSANTELMO") {
+    if (event.key === "usuarioHORIZONTE") {
         if (!event.newValue) {
             window.location.href = "HORIZONTE - Login.html";
         } else {
@@ -3756,12 +3756,12 @@ window.addEventListener("storage", event => {
 // la sesión y el fixture se vuelve a dibujar con las categorías reales del perfil.
 window.renderizarFixture = () => renderizarFixture();
 function iniciarPartidosConSesion() {
-    if (window.SANTELMO_PERMISOS) {
+    if (window.HORIZONTE_PERMISOS) {
         iniciarSincronizacionNube();
         renderizarFixture();
         return;
     }
-    window.addEventListener("santelmo-permisos-listos", () => {
+    window.addEventListener("horizonte-permisos-listos", () => {
         renderizarFixture();
         iniciarSincronizacionNube();
     }, { once: true });
