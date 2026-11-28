@@ -3441,11 +3441,10 @@ const CLAVE_INFORMES_ANTERIORES = "informesSANTELMOJornadasV1";
 const DIVISIONES = ["Primera Masc","Primera Fem","Reserva Masc","Reserva Fem"];
 
 const COMPETICIONES_POR_DIVISION = {
-  "Sub 10": ["Rosarina","Copa Oro - ARF","Copa Plata - ARF"],
-  "Sub 12": ["Rosarina","Copa Oro - ARF","Copa Plata - ARF"],
-  "Sub 14": ["Rosarina","Copa Oro - ARF","Copa Plata - ARF"],
-  "Sub 16": ["Rosarina","Copa Oro - ARF","Copa Plata - ARF"],
-  "Primera": ["Fase Regular - ARF","Copa Oro - ARF","Copa Santa Fe","Torneo Regional AFA"]
+  "Primera Masc": ["Fase regular", "Copa Oro", "Copa Plata", "Amistoso"],
+  "Primera Fem": ["Fase regular", "Copa Oro", "Copa Plata", "Copa Argentina", "Amistoso"],
+  "Reserva Masc": ["Fase regular", "Copa Oro", "Copa Plata", "Amistoso"],
+  "Reserva Fem": ["Fase regular", "Copa Oro", "Copa Plata", "Amistoso"]
 };
 
 const ESCUDOS_CLUBES = [
@@ -3740,13 +3739,9 @@ function normalizarTexto(valor) {
 }
 
 function normalizarDivision(valor) {
-  const texto = normalizarTexto(valor).replace(/[-_]/g," ");
-  if (texto.includes("primera") || texto==="1ra") return "Primera";
-  const coincidencia = texto.match(/sub\s*([0-9]+)/);
-  if (coincidencia && ["10","12","14","16"].includes(coincidencia[1])) {
-    return "Sub "+coincidencia[1];
-  }
-  return DIVISIONES.includes(valor) ? valor : "";
+  const clave = normalizarTexto(valor).replace(/[^a-z]/g, "");
+  const equivalencias = { primeramasc: "Primera Masc", primerafem: "Primera Fem", reservamasc: "Reserva Masc", reservafem: "Reserva Fem" };
+  return equivalencias[clave] || "";
 }
 
 function duracionPorDivision(valor = $("division")?.value) {
@@ -4008,7 +4003,7 @@ function actualizarEscudoRival() {
 ===================================================== */
 
 function normalizarCompeticion(division,competicion) {
-  if (division==="Primera") {
+  if (division==="Primera Masc" || division==="Primera Fem") {
     if (competicion==="Rosarina") return "Fase Regular - ARF";
     if (competicion==="Regional") return "Torneo Regional AFA";
   }
@@ -5213,7 +5208,7 @@ function actualizarAvisoGoles() {
 ===================================================== */
 
 function normalizarPartidoGuardado(p) {
-  const division=normalizarDivision(p.division)||"Primera";
+  const division=normalizarDivision(p.division)||"Primera Fem";
   const duracion=numeroSeguro(p.duracionPartido)||90;
 
   const jugadoras=Array.isArray(p.jugadoras)?p.jugadoras.map(j=>{
@@ -5295,7 +5290,7 @@ function normalizarInformeDeRespaldo(registro, claveOrigen, indice) {
   const fecha = p.fecha || p.fechaReal || p.fechaPartido || "";
   const rival = p.rival || p.clubRival || p.nombre || "Rival sin nombre";
   const torneo = p.torneo || p.competicion || "Rosarina";
-  const division = p.division || p.categoria || p.categoría || "Primera";
+  const division = p.division || p.categoria || p.categoría || "Primera Fem";
   const identidad = [fecha, division, rival, torneo, p.jornada || "", p.golesFavor ?? p.golesAdiur ?? (resultado ? resultado[1] : ""), p.golesContra ?? p.golesRival ?? (resultado ? resultado[2] : "")]
     .map(v => normalizarTexto(v)).join("-").replace(/[^a-z0-9-]+/g, "-").replace(/-+/g, "-").slice(0, 100);
   const origen = String(claveOrigen || "respaldo").replace(/[^a-zA-Z0-9_-]+/g, "-").slice(0, 35);
