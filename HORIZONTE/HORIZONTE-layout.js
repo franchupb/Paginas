@@ -620,7 +620,7 @@
         encabezadoOriginal.remove();
       }
       zonaPrincipal.insertBefore(panel, zonaPrincipal.firstChild);
-      const categorias = ["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
+      const categorias = ["Primera Masc","Primera Fem","Reserva Masc","Reserva Fem"];
       const idsCategoria = new Set(["categoriaPrincipal","filtroCategoria","categoria","selectCategoria","division","filtroDivision","filtroDivisionPartidos","filtroDivisionEstadisticas","selectDivision","selectorCategoriaGlobal","selectorCategoria","filtroCategoriaEstadisticas"]);
       const normalizarCategoriaGlobal = valor => String(valor || "").normalize("NFD").split("").filter(caracter => { const codigo = caracter.charCodeAt(0); return codigo < 0x0300 || codigo > 0x036f; }).join("").toLowerCase().replace(/[^a-z0-9]/g,"");
       const categoriaEnOpciones = select => Array.from(select.options || []).some(option => categorias.some(cat => normalizarCategoriaGlobal(option.value || option.textContent) === normalizarCategoriaGlobal(cat)));
