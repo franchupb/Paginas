@@ -1413,7 +1413,7 @@ document.getElementById("avatarUsuario").textContent =
 document.getElementById("rolUsuario").textContent =
   esFran ? "Administrador" :
   esToto ? "Cuerpo técnico" :
-  esBianca ? "Jugadora · Sub 14" :
+  esBianca ? "Jugadora" :
   "Club HORIZONTE";
 
 document.getElementById("fechaHoy").textContent =
@@ -1442,7 +1442,7 @@ function divisionPredeterminada() {
             "Reserva Fem"
   ];
 
-  return permitidas.includes(guardada) ? guardada : "Primera";
+  return permitidas.includes(guardada) ? guardada : "Primera Fem";
 }
 
 function guardarPreferenciaDesdeSelector(id) {
