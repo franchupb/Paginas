@@ -3997,11 +3997,11 @@ function actualizarEscudoRival() {
 
 function normalizarCompeticion(division,competicion) {
   if (division==="Primera Masc" || division==="Primera Fem") {
-    if (competicion==="Rosarina") return "Fase Regular - ARF";
-    if (competicion==="Regional") return "Torneo Regional AFA";
+    if (competicion==="Rosarina" || competicion==="Fase Regular - ARF") return "Fase regular";
+    if (competicion==="Regional") return "Amistoso";
   }
 
-  if (competicion==="Regional") return "Torneo Regional AFA";
+  if (competicion==="Regional") return "Amistoso";
   return competicion || "";
 }
 
