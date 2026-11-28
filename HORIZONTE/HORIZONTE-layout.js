@@ -797,7 +797,7 @@
 
   async function importarCerrarSesionHORIZONTE() {
     try {
-      const modulo = await import("./HORIZONTE-auth.js?v=20261127-acceso-horizonte2");
+      const modulo = await import("./HORIZONTE-auth.js?v=20261128-sesion-unificada2");
       await modulo.cerrarSesionHORIZONTE();
       window.location.href = "HORIZONTE - Login.html";
     } catch (error) {
