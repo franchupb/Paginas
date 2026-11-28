@@ -17,7 +17,7 @@ const firebaseConfig = {
   measurementId: "G-NTK2BFQQ0D"
 };
 
-const app = getApps().find(item => item.options?.projectId === firebaseConfig.projectId) || initializeApp(firebaseConfig, "horizonte-auth");
+const app = getApps().find(item => item.name === "horizonte-auth") || initializeApp(firebaseConfig, "horizonte-auth");
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
