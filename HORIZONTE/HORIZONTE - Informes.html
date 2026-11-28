@@ -3746,13 +3746,7 @@ function normalizarDivision(valor) {
 
 function duracionPorDivision(valor = $("division")?.value) {
   const division = normalizarDivision(valor);
-  const duraciones = {
-    "Sub 10": 40,
-    "Sub 12": 40,
-    "Sub 14": 50,
-    "Sub 16": 60,
-    "Primera": 80
-  };
+  const duraciones = { "Primera Masc": 40, "Primera Fem": 40, "Reserva Masc": 40, "Reserva Fem": 40 };
   return duraciones[division] || 0;
 }
 
@@ -6228,7 +6222,7 @@ function obtenerRolVisible(usuario) {
   const clave = normalizarTexto(usuario).replace(/[\s._-]+/g, "");
   if (["fran", "francisco", "franciscoperezbasla"].includes(clave)) return "Administrador";
   if (clave === "toto") return "Cuerpo técnico";
-  if (["bianca", "biancadominguez"].includes(clave)) return "Jugadora · Sub 14";
+  if (["bianca", "biancadominguez"].includes(clave)) return "Jugadora";
   return "Club HORIZONTE";
 }
 
