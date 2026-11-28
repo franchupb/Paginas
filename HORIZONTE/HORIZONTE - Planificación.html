@@ -3010,7 +3010,7 @@ function detectarCompeticionEnTexto(texto, categoria) {
     return "Torneo Regional AFA";
   }
 
-  if (categoria === "Primera" && opciones.includes("Fase Regular - ARF")) {
+  if ((categoria === "Primera Masc" || categoria === "Primera Fem") && opciones.includes("Fase regular")) {
     return "Fase Regular - ARF";
   }
 
@@ -3556,7 +3556,7 @@ function cargarAlmacen() {
     }
 
     if (Object.keys(datos).some(clave => /^\d+$/.test(clave))) {
-      return { "Sub 16": datos };
+      return { "Primera Fem": datos };
     }
 
     return datos;
@@ -4107,7 +4107,7 @@ function sincronizarCalendarioSemana() {
 function obtenerEstadoRegistroSemana(registro, categoria, numero, ciclo = cicloMicrocicloActual) {
   if (registro && registro.guardada === true) return "Guardada";
   if (registro) return "Borrador";
-  if (ciclo === CICLO_ANTERIOR && categoria === "Sub 16" && microciclosData[numero]) return "Histórico";
+  if (ciclo === CICLO_ANTERIOR && categoria === "Primera Fem" && microciclosData[numero]) return "Histórico";
   return "Nueva";
 }
 
@@ -4240,7 +4240,7 @@ function crearOpcionesIntensidad(valor) {
 
 function crearOpcionesCompeticiones(valor) {
   const opciones = COMPETICIONES_POR_DIVISION[categoriaActual] ||
-    COMPETICIONES_POR_DIVISION["Sub 16"];
+    COMPETICIONES_POR_DIVISION["Primera Fem"];
 
   const completas = [...opciones];
 
