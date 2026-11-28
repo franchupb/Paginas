@@ -63,7 +63,7 @@
   ];
 
   const equivalencias = {
-    "horizonte-pruebas.html": "horizonte-testeos.html"
+    "horizonte-pruebas.html": "horizonte - testeos.html"
   };
 
   const normalizarArchivo = nombre =>
@@ -446,7 +446,7 @@
   // la selección de categoría. La página principal queda expresamente excluida.
   if (ARCHIVO_ACTUAL !== PRINCIPAL.toLowerCase()) {
     const paginas = {
-      "horizonte-jugadoras.html": {
+      "horizonte - jugadoras.html": {
         controlesCategoria: ["categoriaPrincipal"],
         ocultarSelectores: [".selector-categoria-principal"],
         selector: ".encabezado-pagina",
@@ -454,7 +454,7 @@
         titulo: "Plantel de jugadoras",
         descripcion: "Administrá la información personal y deportiva de HORIZONTE."
       },
-      "horizonte-asistencia.html": {
+      "horizonte - asistencias.html": {
         controlesCategoria: ["filtroCategoria"],
         ocultarSelectores: [".selector-categoria-panel"],
         selector: ".cabecera-pagina",
@@ -462,7 +462,7 @@
         titulo: "Asistencia mensual",
         descripcion: "Registrá la asistencia por categoría y consultá el seguimiento individual de cada jugadora al final de la página."
       },
-      "horizonte-calendario.html": {
+      "horizonte - calendario.html": {
         controlesCategoria: ["categoria"],
         ocultarSelectores: [".selector-categoria"],
         selector: ".encabezado-calendario",
@@ -470,7 +470,7 @@
         titulo: "Calendario de actividades",
         descripcion: "Organizá y consultá las actividades de cada categoría en un solo lugar."
       },
-      "horizonte-planificacion.html": {
+      "horizonte - planificación.html": {
         controlesCategoria: ["selectCategoria"],
         ocultarSelectores: [".panel-semanal"],
         selector: ".cabecera-pagina",
@@ -478,7 +478,7 @@
         titulo: "Planificación de microciclos",
         descripcion: "Organizá las sesiones semanales y consultá los contenidos técnicos y físicos de cada categoría."
       },
-      "horizonte-gimnasio.html": {
+      "horizonte - gimnasio.html": {
         controlesCategoria: ["division"],
         ocultarSelectores: [".selector-categoria-superior"],
         selector: ".cabecera-pagina",
@@ -486,7 +486,7 @@
         titulo: "Gimnasio",
         descripcion: "Creá, organizá y consultá las rutinas de fuerza del plantel."
       },
-      "horizonte-calculadora.html": {
+      "horizonte - calculadora.html": {
         controlesCategoria: ["division"],
         ocultarSelectores: [".field.campo-categoria"],
         selector: ".cabecera-pagina",
@@ -494,7 +494,7 @@
         titulo: "Calculadora de cargas y volúmenes",
         descripcion: "Calculadora atemporal para registrar distancias, pasadas y tiempos de trabajo."
       },
-      "horizonte-partidos.html": {
+      "horizonte - partidos.html": {
         controlesCategoria: ["filtroDivision"],
         ocultarSelectores: [".filters .field:nth-child(2)"],
         selector: ".page-heading",
@@ -502,7 +502,7 @@
         titulo: "Fixture de competencia",
         descripcion: "Organizá los partidos por división, competición y fecha del torneo."
       },
-      "horizonte-informes.html": {
+      "horizonte - informes.html": {
         controlesCategoria: ["division","filtroDivisionPartidos","filtroDivisionEstadisticas"],
         ocultarSelectores: [".selector-categoria-general, #filtroDivisionPartidos, #filtroDivisionEstadisticas"],
         selector: ".page-heading",
@@ -510,7 +510,7 @@
         titulo: "Informes de partidos",
         descripcion: "Una planilla más simple para registrar cada encuentro, organizar la formación y mantener el seguimiento de minutos, goles y tarjetas de cada jugadora."
       },
-      "horizonte-estadisticas.html": {
+      "horizonte - estadísticas.html": {
         controlesCategoria: ["selectorCategoria"],
         ocultarSelectores: ["#selectorCategoria"],
         selector: ".encabezado-seccion",
@@ -518,7 +518,7 @@
         titulo: "Estadísticas del club",
         descripcion: "Consultá el rendimiento general y la evolución de cada jugadora a partir de los registros de competencia, asistencia, testeos, tiempos y lesiones."
       },
-      "horizonte-video-analisis.html": {
+      "horizonte - vídeo análisis.html": {
         controlesCategoria: ["selectorCategoria"],
         ocultarSelectores: ["#selectorCategoria"],
         selector: ".page-heading",
@@ -534,7 +534,7 @@
         titulo: "Testeos y evaluaciones físicas",
         descripcion: "Registrá los resultados y consultá la evolución física de cada jugadora."
       },
-      "horizonte-tiempos.html": {
+      "horizonte - tiempos.html": {
         controlesCategoria: ["selectorCategoriaGlobal"],
         ocultarSelectores: [".selector-categoria-principal"],
         selector: ".page-heading",
@@ -542,7 +542,7 @@
         titulo: "Tiempos y rendimiento físico",
         descripcion: "Consultá las pasadas, analizá los resultados y registrá la evolución física de cada jugadora en un solo lugar."
       },
-      "horizonte-encuestas.html": {
+      "horizonte - encuestas.html": {
         controlesCategoria: ["filtroCategoria"],
         ocultarSelectores: ["#bloqueCategoria"],
         selector: ".cabecera-pagina",
@@ -550,7 +550,7 @@
         titulo: "Encuestas del plantel",
         descripcion: "Publicá encuestas, consultá respuestas y hacé el seguimiento del bienestar y la carga de entrenamiento."
       },
-      "horizonte-biblioteca.html": {
+      "horizonte - biblioteca.html": {
         controlesCategoria: ["categoria"],
         ocultarSelectores: [],
         selector: ".page-heading",
@@ -558,7 +558,7 @@
         titulo: "Biblioteca de ejercicios",
         descripcion: "Creá, clasificá y conservá ejercicios para la preparación física y el trabajo técnico del plantel."
       },
-      "horizonte-psicologia.html": {
+      "horizonte - psicología.html": {
         controlesCategoria: ["categoria"],
         ocultarSelectores: [],
         selector: ".page-heading",
@@ -566,7 +566,7 @@
         titulo: "Psicología deportiva",
         descripcion: "Registrá seguimientos individuales, informes grupales y actividades para acompañar el bienestar del plantel."
       },
-      "horizonte-lesiones.html": {
+      "horizonte - lesiones.html": {
         controlesCategoria: ["selectorCategoriaGlobal"],
         ocultarSelectores: [".selector-categoria-principal"],
         selector: ".page-heading",
