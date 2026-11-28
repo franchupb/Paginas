@@ -560,7 +560,7 @@ main {
 
 .stats {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
     margin-bottom: 22px;
 }
@@ -1772,9 +1772,9 @@ body.eliminando .btn-puntos {
 
         <img
             class="logo-club"
-            src="HORIZONTE.png"
+            src="HORIZONTE - Logo.png"
             alt="Logo HORIZONTE"
-            onerror="if(!this.dataset.intento){this.dataset.intento='1';this.src='HORIZONTE.png'}else{this.style.display='none'}"
+            onerror="this.onerror=null;this.src='HORIZONTE - Logo.png';"
         >
 
         <div class="textos-club">
@@ -2009,32 +2009,10 @@ body.eliminando .btn-puntos {
         </section>
 
         <section class="stats">
-
-            <div class="stat">
-                <span>Sub 10</span>
-                <strong id="contadorSub10">0</strong>
-            </div>
-
-            <div class="stat">
-                <span>Sub 12</span>
-                <strong id="contadorSub12">0</strong>
-            </div>
-
-            <div class="stat">
-                <span>Sub 14</span>
-                <strong id="contadorSub14">0</strong>
-            </div>
-
-            <div class="stat">
-                <span>Sub 16</span>
-                <strong id="contadorSub16">0</strong>
-            </div>
-
-            <div class="stat">
-                <span>Primera</span>
-                <strong id="contadorPrimera">0</strong>
-            </div>
-
+            <div class="stat"><span>Primera Masc</span><strong id="contadorPrimeraMasc">0</strong></div>
+            <div class="stat"><span>Primera Fem</span><strong id="contadorPrimeraFem">0</strong></div>
+            <div class="stat"><span>Reserva Masc</span><strong id="contadorReservaMasc">0</strong></div>
+            <div class="stat"><span>Reserva Fem</span><strong id="contadorReservaFem">0</strong></div>
         </section>
 
         <section class="filters">
@@ -2052,11 +2030,10 @@ body.eliminando .btn-puntos {
                 <label for="filtroDivision">Categoría</label>
                 <select id="filtroDivision">
                     <option value="">Todas las categorías</option>
-                    <option value="Sub 10">Sub 10</option>
-                    <option value="Sub 12">Sub 12</option>
-                    <option value="Sub 14">Sub 14</option>
-                    <option value="Sub 16">Sub 16</option>
-                    <option value="Primera">Primera</option>
+                    <option value="Primera Masc">Primera Masc</option>
+                    <option value="Primera Fem">Primera Fem</option>
+                    <option value="Reserva Masc">Reserva Masc</option>
+                    <option value="Reserva Fem">Reserva Fem</option>
                 </select>
             </div>
 
@@ -2108,11 +2085,10 @@ body.eliminando .btn-puntos {
                     <div class="field">
                         <label for="division">Categoría *</label>
                         <select id="division" required>
-                            <option value="Sub 10">Sub 10</option>
-                            <option value="Sub 12">Sub 12</option>
-                            <option value="Sub 14">Sub 14</option>
-                            <option value="Sub 16">Sub 16</option>
-                            <option value="Primera">Primera</option>
+                            <option value="Primera Masc">Primera Masc</option>
+                            <option value="Primera Fem">Primera Fem</option>
+                            <option value="Reserva Masc">Reserva Masc</option>
+                            <option value="Reserva Fem">Reserva Fem</option>
                         </select>
                     </div>
 
@@ -2191,9 +2167,9 @@ body.eliminando .btn-puntos {
                         <img
                             id="previewAdiur"
                             class="escudo-preview"
-                            src="HORIZONTE.png"
+                            src="HORIZONTE - Logo.png"
                             alt="Escudo de HORIZONTE"
-                            onerror="this.onerror=null;this.src='HORIZONTE.png';"
+                            onerror="this.onerror=null;this.src='HORIZONTE - Logo.png';"
                         >
 
                         <p class="escudo-fijo-aviso">
@@ -2575,7 +2551,7 @@ document.getElementById("cerrarSesion").addEventListener("click", event => {
         console.warn("No se pudo limpiar el usuario guardado.");
     }
 
-    window.location.href = "HORIZONTE-Loing.html";
+    window.location.href = "HORIZONTE - Login.html";
 });
 
 /* =====================================================
@@ -2583,93 +2559,50 @@ document.getElementById("cerrarSesion").addEventListener("click", event => {
 ===================================================== */
 
 const DIVISIONES = [
-    "Sub 10",
-    "Sub 12",
-    "Sub 14",
-    "Sub 16",
-    "Primera"
+    "Primera Masc",
+    "Primera Fem",
+    "Reserva Masc",
+    "Reserva Fem"
 ];
 
+const COMPETICIONES_BASE = ["Fase regular", "Copa Oro", "Copa Plata", "Amistoso"];
 const COMPETICIONES_POR_DIVISION = {
-    "Sub 10": [
-        "Rosarina",
-        "Copa Oro - ARF",
-        "Copa Plata - ARF",
-        "Amistoso"
-    ],
-    "Sub 12": [
-        "Rosarina",
-        "Copa Oro - ARF",
-        "Copa Plata - ARF",
-        "Amistoso"
-    ],
-    "Sub 14": [
-        "Rosarina",
-        "Copa Oro - ARF",
-        "Copa Plata - ARF",
-        "Amistoso"
-    ],
-    "Sub 16": [
-        "Rosarina",
-        "Copa Oro - ARF",
-        "Copa Plata - ARF",
-        "Amistoso"
-    ],
-    "Primera": [
-        "Fase Regular - ARF",
-        "Copa Oro - ARF",
-        "Copa Santa Fe",
-        "Torneo Regional AFA",
-        "Amistoso"
-    ]
+    "Primera Masc": [...COMPETICIONES_BASE],
+    "Primera Fem": ["Fase regular", "Copa Oro", "Copa Plata", "Copa Argentina", "Amistoso"],
+    "Reserva Masc": [...COMPETICIONES_BASE],
+    "Reserva Fem": [...COMPETICIONES_BASE]
 };
-
-const ORDEN_COMPETICIONES = [
-    "Rosarina",
-    "Copa Oro - ARF",
-    "Copa Plata - ARF",
-    "Fase Regular - ARF",
-    "Copa Santa Fe",
-    "Torneo Regional AFA",
-    "Amistoso"
-];
-
-const CLAVE_FIXTURE = "fixtureSANTELMO";
-const LOGO_SANTELMO_FIJO = "HORIZONTE.png";
+const ORDEN_COMPETICIONES = ["Fase regular", "Copa Oro", "Copa Plata", "Copa Argentina", "Amistoso"];
+const CLAVE_FIXTURE = "fixtureHORIZONTE";
+const LOGO_SANTELMO_FIJO = "HORIZONTE - Logo.png";
 
 /* =====================================================
    CLUBES Y ESCUDOS
 ===================================================== */
 
 const ESCUDOS_CLUBES = [
-    { nombre: "14 de Junio", ruta: "CLUBES/14 JUNIO.jpg" },
-    { nombre: "Alianza", ruta: "CLUBES/ALIANZA.png" },
-    { nombre: "Argentino", ruta: "CLUBES/ARGENTINO.png" },
-    { nombre: "Horizonte", ruta: "CLUBES/HORIZONTE.jpg" },
-    { nombre: "Botafogo", ruta: "CLUBES/BOTAFOGO.jpg" },
-    { nombre: "Central", ruta: "CLUBES/CENTRAL.png" },
-    { nombre: "CGR", ruta: "CLUBES/CGR.png" },
-    { nombre: "Coronel Aguirre", ruta: "CLUBES/CORONEL AGUIRRE.png" },
-    { nombre: "General Paz", ruta: "CLUBES/GRAL PAZ.jpg" },
-    { nombre: "Lamadrid", ruta: "CLUBES/LAMADRID.jpg" },
-    { nombre: "Leones", ruta: "CLUBES/LEONES.jpg" },
-    { nombre: "Mitre", ruta: "CLUBES/MITRE.png" },
-    { nombre: "Morning", ruta: "CLUBES/MORNING.jpg" },
-    { nombre: "Newell's Old Boys", ruta: "CLUBES/NEWELLS.png" },
-    { nombre: "Oriental", ruta: "CLUBES/ORIENTAL.jpg" },
-    { nombre: "Pablo VI", ruta: "CLUBES/PABLO VI.jpg" },
-    { nombre: "Provincial", ruta: "CLUBES/PROVINCIAL.png" },
-    { nombre: "Renato", ruta: "CLUBES/RENATO.jpg" },
-    { nombre: "San José", ruta: "CLUBES/SAN JOSE.jpg" },
-    { nombre: "San Roque", ruta: "CLUBES/SAN ROQUE.jpg" },
-    { nombre: "HORIZONTE", ruta: "CLUBES/HORIZONTE.jpg" },
-    { nombre: "Social Lux", ruta: "CLUBES/SOCIAL LUX.jpg" },
-    { nombre: "Sparta", ruta: "CLUBES/SPARTA.jpg" },
-    { nombre: "Tiro Federal", ruta: "CLUBES/TIRO FEDERAL.jpg" },
-    { nombre: "Tiro Suizo", ruta: "CLUBES/TIRO SUIZO.jpg" },
-    { nombre: "Torito", ruta: "../TORITO/TORITO - Logo.png" },
-    { nombre: "Unión Americana", ruta: "CLUBES/UNION AMERICANA.png" },
-    { nombre: "Villa Gobernador Gálvez", ruta: "CLUBES/VG GALVEZ.png" }
+    { nombre: "Banco Nación", ruta: "Clubes/BANCO NACIÓN.jpg" },
+    { nombre: "Central Córdoba", ruta: "Clubes/CENTRAL CORDOBA.png" },
+    { nombre: "Echesortu", ruta: "Clubes/ECHESORTU.png" },
+    { nombre: "Jockey", ruta: "Clubes/JOCKEY.jpg" },
+    { nombre: "Libertad", ruta: "Clubes/LIBERTAD.jpg" },
+    { nombre: "Marista", ruta: "Clubes/MARISTA.jpg" },
+    { nombre: "Náutico", ruta: "Clubes/NAUTICO.png" },
+    { nombre: "Newell's Old Boys", ruta: "Clubes/NEWELLS.png" },
+    { nombre: "Nueva Aurora", ruta: "Clubes/NUEVA AURORA.png" },
+    { nombre: "Parque", ruta: "Clubes/PARQUE.png" },
+    { nombre: "Provincial", ruta: "Clubes/PROVINCIAL.png" },
+    { nombre: "Regatas", ruta: "Clubes/REGATAS.png" },
+    { nombre: "Remeros", ruta: "Clubes/REMEROS.jpg" },
+    { nombre: "Rowing", ruta: "Clubes/ROWING.png" },
+    { nombre: "Sagrado", ruta: "Clubes/SAGRADO.jpg" },
+    { nombre: "Sirio", ruta: "Clubes/SIRIO.png" },
+    { nombre: "Social Lux", ruta: "Clubes/SOCIAL LUX.jpg" },
+    { nombre: "Talleres", ruta: "Clubes/TALLERES.jpg" },
+    { nombre: "Tiro Suizo", ruta: "Clubes/TIRO SUIZO.png" },
+    { nombre: "U.S.A.R.", ruta: "Clubes/U.S.A.R.jpg" },
+    { nombre: "Unión Americana", ruta: "Clubes/UNIÓN AMERICANA.jpg" },
+    { nombre: "UNR", ruta: "Clubes/UNR.png" }
 ];
 
 function obtenerClubPorNombre(nombre) {
@@ -2691,12 +2624,7 @@ function rutaImagen(nombre) {
 
     const minusculas = archivo.toLowerCase();
 
-    if (
-        minusculas === "santelmo" ||
-        minusculas === "HORIZONTE.png" ||
-        minusculas === "logo santelmo.png" ||
-        minusculas === "logo santelmo.jpeg"
-    ) {
+    if (["horizonte", "horizonte - logo.png", "horizonte.png", "logo horizonte.png"].includes(minusculas)) {
         return LOGO_SANTELMO_FIJO;
     }
 
@@ -2818,19 +2746,27 @@ completarSelectorRival();
 ===================================================== */
 
 function normalizarObjetoPartido(p, indice = 0) {
-    const division = DIVISIONES.includes(p.division)
-        ? p.division
-        : "Sub 10";
+    const divisionOriginal = p.division || p.categoria || "";
+    const equivalenciasCategoria = {
+        "primera": "Primera Fem",
+        "primera femenina": "Primera Fem",
+        "primera masculino": "Primera Masc",
+        "primera masculina": "Primera Masc",
+        "reserva": "Reserva Fem",
+        "reserva femenina": "Reserva Fem",
+        "reserva masculino": "Reserva Masc",
+        "reserva masculina": "Reserva Masc"
+    };
+    const divisionNormalizada = String(divisionOriginal).trim().toLowerCase();
+    const division = DIVISIONES.includes(divisionOriginal)
+        ? divisionOriginal
+        : (equivalenciasCategoria[divisionNormalizada] || "Primera Fem");
 
     let competicion = p.competicion || "";
 
-    if (division === "Primera") {
-        if (competicion === "Rosarina") {
-            competicion = "Fase Regular - ARF";
-        } else if (competicion === "Regional") {
-            competicion = "Torneo Regional AFA";
-        }
-    }
+    if (["Fase Regular", "Fase Regular - ARF"].includes(competicion)) competicion = "Fase regular";
+    if (competicion === "Copa Oro - ARF") competicion = "Copa Oro";
+    if (competicion === "Copa Plata - ARF") competicion = "Copa Plata";
 
     let jornada = parseInt(p.jornada ?? p.fechaNumero, 10);
 
@@ -3046,11 +2982,10 @@ function iniciarSincronizacionNube() {
 
 function actualizarContadoresCategorias() {
     const contadores = {
-        "Sub 10": "contadorSub10",
-        "Sub 12": "contadorSub12",
-        "Sub 14": "contadorSub14",
-        "Sub 16": "contadorSub16",
-        "Primera": "contadorPrimera"
+        "Primera Masc": "contadorPrimeraMasc",
+        "Primera Fem": "contadorPrimeraFem",
+        "Reserva Masc": "contadorReservaMasc",
+        "Reserva Fem": "contadorReservaFem"
     };
     const visibles = new Set(obtenerCategoriasVisiblesPartidos());
 
@@ -3095,7 +3030,7 @@ function actualizarCompeticionesFormulario(valorPreferido = "") {
     const selector = document.getElementById("competicion");
 
     const opciones = COMPETICIONES_POR_DIVISION[division] ||
-        COMPETICIONES_POR_DIVISION["Sub 10"];
+        COMPETICIONES_POR_DIVISION["Primera Masc"];
 
     selector.replaceChildren();
 
@@ -3204,7 +3139,7 @@ function abrirModal(id = null) {
 
     previewAdiur.onerror = function() {
         this.onerror = null;
-        this.src = "HORIZONTE.png";
+        this.src = "HORIZONTE - Logo.png";
     };
 
     previewAdiur.src = LOGO_SANTELMO_FIJO;
@@ -3513,7 +3448,7 @@ function construirEscudo(src, nombre, esAdiur = false) {
                 class="escudo-mini"
                 src="${rutaSegura}"
                 alt="${altSeguro}"
-                onerror="this.onerror=null;this.src='HORIZONTE.png';"
+                onerror="this.onerror=null;this.src='HORIZONTE - Logo.png';"
             >
         `;
     }
