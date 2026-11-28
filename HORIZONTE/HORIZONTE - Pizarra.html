@@ -122,7 +122,7 @@ body{background:#f7f7f7}
 .pitch-meta{flex:0 0 25px;min-height:25px;margin:0;padding:0 12px;background:#f4f5f4;font-size:8px}
 .pitch-meta strong{font-size:9px}
 .pitch-wrap{display:flex;flex:1;align-items:stretch;justify-content:stretch;min-width:0;min-height:0;padding:7px 10px 4px;border:0;border-radius:0;background:#f4f5f4}
-.pitch{width:100%;height:100%;min-height:0;max-height:none;aspect-ratio:auto;border:2px solid #35483a;border-radius:2px;background-color:#dcebdc;background-image:linear-gradient(90deg,#ffffff20 50%,transparent 50%);background-size:10% 100%;box-shadow:0 4px 14px #17271b18}
+.pitch{width:100%;height:100%;min-height:0;max-height:none;aspect-ratio:auto;border:2px solid #8a603b;border-radius:2px;background-color:#c99a67;background-image:repeating-linear-gradient(90deg,#ffffff12 0,#ffffff12 9.8%,#704a2b0b 10%,#704a2b0b 19.8%),linear-gradient(90deg,#bd8954,#d4aa78 50%,#bd8954);background-size:auto,auto;box-shadow:0 4px 14px #17271b18}
 .field-svg{width:100%;height:100%}
 .player{width:clamp(30px,3.2vw,47px);height:clamp(30px,3.2vw,47px)}
 .player-number{font-size:clamp(10px,1vw,14px)}
@@ -229,7 +229,7 @@ body.immersive .studio{border-radius:0}
 
 
 /* Campo reglamentario y fichas minimalistas */
-.pitch{background-color:#347b43!important;background-image:repeating-linear-gradient(90deg,#ffffff0b 0,#ffffff0b 10%,#00000008 10%,#00000008 20%)!important}
+.pitch{background-color:#c99a67!important;background-image:repeating-linear-gradient(90deg,#ffffff12 0,#ffffff12 9.8%,#704a2b0b 10%,#704a2b0b 19.8%),repeating-linear-gradient(0deg,#ffffff08 0,#ffffff08 1px,transparent 1px,transparent 72px),linear-gradient(90deg,#bd8954,#d4aa78 50%,#bd8954)!important}
 .field-svg{filter:drop-shadow(0 0 1px #163b20)}
 .player{width:clamp(29px,3vw,42px);height:clamp(29px,3vw,42px);border-radius:50%;font-variant-numeric:tabular-nums}
 .player.selected{outline:2px solid #171717;outline-offset:3px;box-shadow:0 3px 10px #101b1590,0 0 0 2px #fff}
@@ -1148,7 +1148,7 @@ body.immersive .board-studio>.controlbar>.immersive-launch{
 <section class="studio board-studio" aria-label="Pizarra táctica">
 
 <div class="controlbar" aria-label="Barra superior de herramientas">
-<div class="control-group formation-control own-formation"><span class="control-label">HORIZONTE</span><select id="formationOwn" aria-label="Formación HORIZONTE"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select></div>
+<div class="control-group formation-control own-formation"><span class="control-label">HORIZONTE</span><select id="formationOwn" aria-label="Formación HORIZONTE"><option>2-2</option><option>3-1</option><option>1-2-1</option><option>4-0</option></select></div>
 <div class="top-tools" aria-label="Herramientas de dibujo">
 <button class="tool active" data-tool="select" type="button" title="Mover fichas"><span>↖</span><small>Mover</small></button>
 <button class="tool" data-tool="line" type="button" title="Dibujar una línea"><span>／</span><small>Línea</small></button>
@@ -1161,7 +1161,7 @@ body.immersive .board-studio>.controlbar>.immersive-launch{
 
 <div class="quick-history" aria-label="Historial de edición"><button class="quick-history-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button><button class="quick-history-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button></div>
 </div>
-<div class="control-group rival-formation"><span class="control-label">RIVAL</span><select id="formationRival" aria-label="Formación rival"><option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option><option>5-3-2</option></select><button class="add-rival-btn" id="addRival" type="button" title="Agregar formación rival" aria-label="Agregar formación rival" aria-pressed="false">✓</button></div>
+<div class="control-group rival-formation"><span class="control-label">RIVAL</span><select id="formationRival" aria-label="Formación rival"><option>2-2</option><option>3-1</option><option>1-2-1</option><option>4-0</option></select><button class="add-rival-btn" id="addRival" type="button" title="Agregar formación rival" aria-label="Agregar formación rival" aria-pressed="false">✓</button></div>
 <button class="immersive-launch" id="toggleImmersive" type="button" aria-pressed="false" title="Activar modo inmersivo" aria-label="Activar modo inmersivo"><span>⛶</span><small>Modo inmersivo</small></button>
 </div>
 <div class="workspace">
@@ -1170,7 +1170,7 @@ body.immersive .board-studio>.controlbar>.immersive-launch{
 <svg class="field-svg" id="fieldSvg" viewBox="0 0 900 600" preserveAspectRatio="none" aria-hidden="true"></svg><canvas class="drawing-canvas" id="draw"></canvas><div id="players"></div>
 </div></div>
 
-<span id="status" class="status-hidden" aria-live="polite">11 posiciones iniciales listas</span>
+<span id="status" class="status-hidden" aria-live="polite">5 posiciones iniciales listas</span>
 </section>
 </div>
 </section>
@@ -1188,20 +1188,19 @@ $("avatarUsuario").textContent=(userName.trim().charAt(0)||"U").toUpperCase();
 $("rolUsuario").textContent=role==="admin"?"Administración":["coordinadora","coordinador","editor"].includes(role)?"Coordinación":role==="cuerpo_tecnico"?"Cuerpo técnico":role==="jugadora"?"Jugadora":"Club HORIZONTE";
 var pitch=$("pitch"),canvas=$("draw"),ctx=canvas.getContext("2d");
 var formations={
-"4-3-3":[[.10,.50],[.29,.17],[.29,.39],[.29,.61],[.29,.83],[.51,.28],[.51,.50],[.51,.72],[.76,.17],[.83,.50],[.76,.83]],
-"4-4-2":[[.10,.50],[.29,.17],[.29,.39],[.29,.61],[.29,.83],[.52,.17],[.52,.39],[.52,.61],[.52,.83],[.80,.36],[.80,.64]],
-"4-2-3-1":[[.10,.50],[.29,.17],[.29,.39],[.29,.61],[.29,.83],[.47,.38],[.47,.62],[.67,.17],[.67,.50],[.67,.83],[.84,.50]],
-"3-5-2":[[.10,.50],[.29,.25],[.29,.50],[.29,.75],[.51,.12],[.51,.31],[.51,.50],[.51,.69],[.51,.88],[.80,.36],[.80,.64]],
-"5-3-2":[[.10,.50],[.27,.12],[.27,.31],[.27,.50],[.27,.69],[.27,.88],[.54,.28],[.54,.50],[.54,.72],[.82,.36],[.82,.64]]
+"2-2":[[.08,.50],[.30,.30],[.30,.70],[.70,.30],[.70,.70]],
+"3-1":[[.08,.50],[.40,.20],[.40,.50],[.40,.80],[.78,.50]],
+"1-2-1":[[.08,.50],[.30,.50],[.55,.25],[.55,.75],[.80,.50]],
+"4-0":[[.08,.50],[.34,.22],[.49,.72],[.65,.28],[.80,.68]]
 };
-var players=formations["4-3-3"].map(function(p,i){return{id:"own-"+(i+1),team:"own",number:String(i+1),x:p[0],y:p[1]};});
+var players=formations["2-2"].map(function(p,i){return{id:"own-"+(i+1),team:"own",number:String(i+1),x:p[0],y:p[1]};});
 var drawings=[],tool="select",color="#173e70",lineWidth=4,selected=null,drawing=false,start=null,points=[],history=[],future=[];
 var clone=function(v){return JSON.parse(JSON.stringify(v));};
 function status(t){$("status").textContent=t;}
 function syncHistory(){$("undo").disabled=!history.length;$("redo").disabled=!future.length;}
 function snapshot(){history.push({players:clone(players),drawings:clone(drawings)});if(history.length>80)history.shift();future=[];syncHistory();}
 function syncCount(){}
-function setField(){$("fieldSvg").innerHTML='<g fill="none" stroke="#f7fff7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="12" width="876" height="576"/><line x1="450" y1="12" x2="450" y2="588"/><circle cx="450" cy="300" r="88"/><circle cx="450" cy="300" r="4" fill="#f7fff7" stroke="none"/><rect x="12" y="150" width="165" height="300"/><rect x="12" y="225" width="55" height="150"/><rect x="723" y="150" width="165" height="300"/><rect x="833" y="225" width="55" height="150"/><circle cx="122" cy="300" r="4" fill="#f7fff7" stroke="none"/><circle cx="778" cy="300" r="4" fill="#f7fff7" stroke="none"/><path d="M177 226 A78 78 0 0 1 177 374 M723 226 A78 78 0 0 0 723 374"/><path d="M12 30 A18 18 0 0 0 30 12 M870 12 A18 18 0 0 0 888 30 M12 570 A18 18 0 0 1 30 588 M870 588 A18 18 0 0 1 888 570"/><rect x="-8" y="260" width="20" height="80"/><rect x="888" y="260" width="20" height="80"/></g>';}
+function setField(){$("fieldSvg").innerHTML='<g fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="12" width="876" height="576"/><line x1="450" y1="12" x2="450" y2="588"/><circle cx="450" cy="300" r="72"/><circle cx="450" cy="300" r="4" fill="#fff" stroke="none"/><path d="M12 150 A150 150 0 0 1 12 450 M888 150 A150 150 0 0 0 888 450"/><circle cx="112" cy="300" r="4" fill="#fff" stroke="none"/><circle cx="788" cy="300" r="4" fill="#fff" stroke="none"/><circle cx="232" cy="300" r="3" fill="#fff" stroke="none"/><circle cx="668" cy="300" r="3" fill="#fff" stroke="none"/><path d="M12 28 A16 16 0 0 0 28 12 M872 12 A16 16 0 0 0 888 28 M12 572 A16 16 0 0 1 28 588 M872 588 A16 16 0 0 1 888 572"/><rect x="-8" y="252" width="20" height="96"/><rect x="888" y="252" width="20" height="96"/></g>';}
 function coords(e){var r=pitch.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};}
 function drawOne(d,g,w,h){var x=d.x*w,y=d.y*h,X=d.X*w,Y=d.Y*h;g.save();g.strokeStyle=d.color;g.fillStyle=d.color;g.lineWidth=4;g.lineCap="round";g.lineJoin="round";g.setLineDash(d.type==="dash"?[10,8]:[]);g.beginPath();if(d.type==="free"){(d.points||[]).forEach(function(p,i){if(i)g.lineTo(p.x*w,p.y*h);else g.moveTo(p.x*w,p.y*h);});}else if(d.type==="zone"){g.ellipse((x+X)/2,(y+Y)/2,Math.max(2,Math.abs(X-x)/2),Math.max(2,Math.abs(Y-y)/2),0,0,Math.PI*2);}else{g.moveTo(x,y);g.lineTo(X,Y);if(d.type==="arrow"){var a=Math.atan2(Y-y,X-x),len=20;g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a-.5),Y-len*Math.sin(a-.5));g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a+.5),Y-len*Math.sin(a+.5));}}g.stroke();g.restore();}
 function paint(){var r=pitch.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(!r.width||!r.height)return;ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.setTransform(dpr,0,0,dpr,0,0);drawings.forEach(function(d){drawOne(d,ctx,r.width,r.height);});if(drawing&&start&&points.length)drawOne({type:tool,x:start.x,y:start.y,X:points[points.length-1].x,Y:points[points.length-1].y,points:points,color:color},ctx,r.width,r.height);}
@@ -1209,7 +1208,7 @@ function renderPlayers(){var host=$("players");host.replaceChildren();players.fo
 function resize(){var r=pitch.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(!r.width||!r.height)return;canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);canvas.style.width=r.width+"px";canvas.style.height=r.height+"px";paint();}
 function setFormation(team,formation){var group=players.filter(function(p){return p.team===team;});formations[formation].forEach(function(q,i){if(group[i]){group[i].x=team==="rival"?1-q[0]:q[0];group[i].y=q[1];}});}
 function updateOwn(){snapshot();setFormation("own",$("formationOwn").value);renderPlayers();paint();status("Formación HORIZONTE "+$("formationOwn").value+" aplicada");}
-function addRival(){var active=players.some(function(p){return p.team==="rival";});snapshot();if(active){players=players.filter(function(p){return p.team!=="rival";});$("addRival").setAttribute("aria-pressed","false");$("addRival").title="Agregar formación rival";$("addRival").setAttribute("aria-label","Agregar formación rival");renderPlayers();paint();status("Formación rival quitada");return;}var formation=$("formationRival").value;formations[formation].forEach(function(q,i){players.push({id:"rival-"+(i+1),team:"rival",number:String(i+1),x:1-q[0],y:q[1]});});$("addRival").setAttribute("aria-pressed","true");$("addRival").title="Quitar formación rival";$("addRival").setAttribute("aria-label","Quitar formación rival");renderPlayers();paint();status("Equipo rival incorporado · 11 fichas");}
+function addRival(){var active=players.some(function(p){return p.team==="rival";});snapshot();if(active){players=players.filter(function(p){return p.team!=="rival";});$("addRival").setAttribute("aria-pressed","false");$("addRival").title="Agregar formación rival";$("addRival").setAttribute("aria-label","Agregar formación rival");renderPlayers();paint();status("Formación rival quitada");return;}var formation=$("formationRival").value;formations[formation].forEach(function(q,i){players.push({id:"rival-"+(i+1),team:"rival",number:String(i+1),x:1-q[0],y:q[1]});});$("addRival").setAttribute("aria-pressed","true");$("addRival").title="Quitar formación rival";$("addRival").setAttribute("aria-label","Quitar formación rival");renderPlayers();paint();status("Equipo rival incorporado · 5 fichas");}
 $("formationOwn").addEventListener("change",updateOwn);
 $("addRival").addEventListener("click",addRival);
 document.querySelectorAll("[data-tool]").forEach(function(b){b.addEventListener("click",function(){tool=b.dataset.tool;document.querySelectorAll("[data-tool]").forEach(function(x){x.classList.toggle("active",x===b);});status("Herramienta: "+b.querySelector("small").textContent);});});
