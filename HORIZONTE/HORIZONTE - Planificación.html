@@ -2427,11 +2427,10 @@ button:disabled {
         <div class="campo-control panel-categoria">
           <label for="selectCategoria">CATEGORÍA DEL PLANTEL</label>
           <select id="selectCategoria" onchange="seleccionarCategoria(this.value)">
-            <option value="Sub 10">Sub 10</option>
-            <option value="Sub 12">Sub 12</option>
-            <option value="Sub 14">Sub 14</option>
-            <option value="Sub 16">Sub 16</option>
-            <option value="Primera">Primera</option>
+            <option value="Primera Masc">Primera Masc</option>
+              <option value="Primera Fem" selected>Primera Fem</option>
+              <option value="Reserva Masc">Reserva Masc</option>
+              <option value="Reserva Fem">Reserva Fem</option>
           </select>
         </div>
       </div>
@@ -2629,7 +2628,7 @@ const CLAVE_PLANIFICACION = "microciclosPlanificacionSANTELMO_Sub16_v1";
 const CLAVE_CALENDARIO = "actividadesSANTELMO";
 const ORIGEN_PLANIFICACION = "planificacionMicrocicloSANTELMO";
 
-const CATEGORIAS = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
+const CATEGORIAS = ["Primera Masc", "Primera Fem", "Reserva Masc", "Reserva Fem"];
 
 const DIAS_SEMANA = [
   "Lunes", "Martes", "Miércoles", "Jueves",
@@ -2685,19 +2684,17 @@ async function cargarCatalogoTesteos(categoria) {
 }
 
 const DIAS_BASE_POR_CATEGORIA = {
-  "Sub 10": [1, 3, 5],
-  "Sub 12": [1, 3, 5],
-  "Sub 14": [0, 1, 4, 5],
-  "Sub 16": [0, 1, 4, 5],
-  "Primera": [0, 1, 4, 5]
+  "Primera Masc": [0, 1, 4, 5],
+  "Primera Fem": [0, 1, 4, 5],
+  "Reserva Masc": [0, 1, 4, 5],
+  "Reserva Fem": [0, 1, 4, 5]
 };
 
 const CANTIDAD_SESIONES_BASE = {
-  "Sub 10": 3,
-  "Sub 12": 3,
-  "Sub 14": 4,
-  "Sub 16": 4,
-  "Primera": 4
+  "Primera Masc": 4,
+  "Primera Fem": 4,
+  "Reserva Masc": 4,
+  "Reserva Fem": 4
 };
 
 const SEMANA_REFERENCIA = 39;
@@ -2706,7 +2703,7 @@ const FECHA_REINICIO_MICROCICLO = "2027-01-18";
 const CICLO_ANTERIOR = "2026";
 const CICLO_NUEVO = "2027";
 
-let categoriaActual = "Sub 16";
+let categoriaActual = "Primera Fem";
 let semanaActual = 39;
 let cicloMicrocicloActual = CICLO_ANTERIOR;
 let fechaInicioActual = FECHA_REFERENCIA;
@@ -2719,11 +2716,10 @@ let catalogoTesteosError = false;
 let versionCargaCatalogoTesteos = 0;
 
 const COMPETICIONES_POR_DIVISION = {
-  "Sub 10": ["Rosarina", "Copa Oro - ARF", "Copa Plata - ARF"],
-  "Sub 12": ["Rosarina", "Copa Oro - ARF", "Copa Plata - ARF"],
-  "Sub 14": ["Rosarina", "Copa Oro - ARF", "Copa Plata - ARF"],
-  "Sub 16": ["Rosarina", "Copa Oro - ARF", "Copa Plata - ARF"],
-  "Primera": ["Fase Regular - ARF", "Copa Oro - ARF", "Copa Santa Fe", "Torneo Regional AFA"]
+  "Primera Masc": ["Fase regular", "Copa Oro", "Copa Plata", "Amistoso"],
+  "Primera Fem": ["Fase regular", "Copa Oro", "Copa Plata", "Copa Argentina", "Amistoso"],
+  "Reserva Masc": ["Fase regular", "Copa Oro", "Copa Plata", "Amistoso"],
+  "Reserva Fem": ["Fase regular", "Copa Oro", "Copa Plata", "Amistoso"]
 };
 
 const CONFIGURACION_INTENSIDAD = {
@@ -2996,7 +2992,7 @@ function detectarRivalEnTexto(texto) {
 function detectarCompeticionEnTexto(texto, categoria) {
   const normalizado = normalizarTexto(texto);
   const opciones = COMPETICIONES_POR_DIVISION[categoria] ||
-    COMPETICIONES_POR_DIVISION["Sub 16"];
+    COMPETICIONES_POR_DIVISION["Primera Fem"];
 
   if (normalizado.includes("copa oro") && opciones.includes("Copa Oro - ARF")) {
     return "Copa Oro - ARF";
@@ -3063,7 +3059,7 @@ function obtenerCategoriaPredeterminada() {
     console.warn("No se pudo leer la categoría preferida.");
   }
 
-  return "Sub 16";
+  return "Primera Fem";
 }
 
 function guardarPreferenciaCategoria() {
@@ -3481,7 +3477,7 @@ function normalizarSesion(registro, indicePredeterminado) {
 
 function crearSesionesPredeterminadas(numeroSemana, categoria) {
   if (
-    categoria === "Sub 16" &&
+    categoria === "Primera Fem" &&
     Array.isArray(microciclosData[numeroSemana])
   ) {
     const originales = microciclosData[numeroSemana];
@@ -3523,7 +3519,7 @@ function crearSesionesPredeterminadas(numeroSemana, categoria) {
   }
 
   const dias = DIAS_BASE_POR_CATEGORIA[categoria] ||
-    DIAS_BASE_POR_CATEGORIA["Sub 16"];
+    DIAS_BASE_POR_CATEGORIA["Primera Fem"];
 
   const cantidad = CANTIDAD_SESIONES_BASE[categoria] || 4;
 
@@ -3608,7 +3604,7 @@ function migrarSesionesAntiguas(listaAntigua, categoria) {
 }
 
 function ajustarSesionesBaseCategoria(sesiones, categoria) {
-  if (categoria !== "Sub 10" && categoria !== "Sub 12") {
+  if (categoria !== "Primera Masc" && categoria !== "Primera Fem" && categoria !== "Reserva Masc" && categoria !== "Reserva Fem") {
     return sesiones;
   }
 
