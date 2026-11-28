@@ -2828,7 +2828,7 @@ function cargarPartidosLocales() {
 let partidos = cargarPartidosLocales();
 let idEditando = null;
 let modoEliminar = false;
-const CLAVE_MIGRACION_FIXTURE = "fixtureSANTELMO_migracion_v2";
+const CLAVE_MIGRACION_FIXTURE = "fixtureHORIZONTE_migracion_v1";
 let migracionInicialRealizada = (() => {
     try {
         return localStorage.getItem(CLAVE_MIGRACION_FIXTURE) === "1";
@@ -2855,7 +2855,7 @@ async function guardarPartidoEnNube(partido) {
 
     actualizarIndicadorGuardado("guardando", "⏳ Guardando en la nube...");
     try {
-        await setDoc(doc(db, "santelmo_partidos", String(partido.id)), {
+        await setDoc(doc(db, "horizonte_partidos", String(partido.id)), {
             ...partido,
             actualizadoPor: usuarioGuardado,
             actualizadoEl: new Date().toISOString()
@@ -2879,7 +2879,7 @@ async function eliminarPartidoEnNube(id) {
 
     actualizarIndicadorGuardado("guardando", "⏳ Eliminando en la nube...");
     try {
-        await deleteDoc(doc(db, "santelmo_partidos", String(id)));
+        await deleteDoc(doc(db, "horizonte_partidos", String(id)));
         actualizarIndicadorGuardado("", "☁️ Guardado en la nube");
         return true;
     } catch (error) {
@@ -2896,7 +2896,7 @@ function iniciarSincronizacionNube() {
     }
 
     onSnapshot(
-        collection(db, "santelmo_partidos"),
+        collection(db, "horizonte_partidos"),
         async snapshot => {
             const listaNube = [];
             snapshot.forEach(docSnap => {
@@ -2921,7 +2921,7 @@ function iniciarSincronizacionNube() {
 
                 for (const pLocal of partidosFinales) {
                     try {
-                        await setDoc(doc(db, "santelmo_partidos", String(pLocal.id)), {
+                        await setDoc(doc(db, "horizonte_partidos", String(pLocal.id)), {
                             ...pLocal,
                             actualizadoPor: usuarioGuardado,
                             actualizadoEl: new Date().toISOString()
@@ -2951,7 +2951,7 @@ function iniciarSincronizacionNube() {
 
                 for (const pendiente of pendientesDeSubir) {
                     try {
-                        await setDoc(doc(db, "santelmo_partidos", String(pendiente.id)), {
+                        await setDoc(doc(db, "horizonte_partidos", String(pendiente.id)), {
                             ...pendiente,
                             actualizadoPor: usuarioGuardado,
                             actualizadoEl: new Date().toISOString()
@@ -3741,7 +3741,7 @@ window.addEventListener("storage", event => {
 
     if (event.key === "usuarioSANTELMO") {
         if (!event.newValue) {
-            window.location.href = "HORIZONTE-Loing.html";
+            window.location.href = "HORIZONTE - Login.html";
         } else {
             window.location.reload();
         }
