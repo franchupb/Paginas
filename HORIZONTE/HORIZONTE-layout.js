@@ -526,7 +526,7 @@
         titulo: "Vídeo análisis",
         descripcion: "Analizá partidos, organizá clips y compartí observaciones técnicas para acompañar la evolución del equipo."
       },
-      "horizonte-testeos.html": {
+      "horizonte - testeos.html": {
         controlesCategoria: ["selectDivision"],
         ocultarSelectores: [".selector-categoria"],
         selector: ".encabezado",
