@@ -1746,11 +1746,10 @@ hr {
         <div class="field campo-categoria">
           <label for="division">Categoría del plantel</label>
           <select id="division">
-            <option>Sub 10</option>
-            <option>Sub 12</option>
-            <option>Sub 14</option>
-            <option value="Sub 16" selected>Sub 16</option>
-            <option>Primera</option>
+            <option value="Primera Masc">Primera Masc</option>
+            <option value="Primera Fem" selected>Primera Fem</option>
+            <option value="Reserva Masc">Reserva Masc</option>
+            <option value="Reserva Fem">Reserva Fem</option>
           </select>
         </div>
 
@@ -2075,20 +2074,13 @@ const DAYS = [
   "Domingo"
 ];
 
-const CATEGORIAS = [
-  "Sub 10",
-  "Sub 12",
-  "Sub 14",
-  "Sub 16",
-  "Primera"
-];
+const CATEGORIAS = ["Primera Masc", "Primera Fem", "Reserva Masc", "Reserva Fem"];
 
 const DEFAULT_TRAINING_DAYS = {
-  "Sub 10": ["Martes", "Jueves"],
-  "Sub 12": ["Martes", "Jueves"],
-  "Sub 14": ["Lunes", "Martes", "Jueves"],
-  "Sub 16": ["Lunes", "Martes", "Viernes"],
-  "Primera": ["Martes", "Miércoles", "Viernes"]
+  "Primera Masc": ["Lunes", "Miércoles", "Viernes"],
+  "Primera Fem": ["Martes", "Jueves", "Sábado"],
+  "Reserva Masc": ["Lunes", "Miércoles", "Viernes"],
+  "Reserva Fem": ["Martes", "Jueves", "Sábado"]
 };
 
 const SUBTYPES = {
@@ -3395,7 +3387,7 @@ function inicializarCalculadora() {
   inicializarPerfil();
   inicializarHerramientasVolumen();
 
-  $("division").value = "Sub 16";
+  $("division").value = "Primera Fem";
 
   populateSubtypes();
   actualizarCalculosFormulario();
