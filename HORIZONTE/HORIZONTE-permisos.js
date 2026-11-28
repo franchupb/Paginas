@@ -9,7 +9,7 @@
   "use strict";
 
   const LOGIN_URL = "HORIZONTE-Loing.html";
-  const INICIO_URL = "HORIZONTE-Pagina Principal.html";
+  const INICIO_URL = "index.html";
   const normalizar = value => String(value ?? "")
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase().replace(/[\s._-]+/g, "").trim();
