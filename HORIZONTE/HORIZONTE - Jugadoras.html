@@ -1471,11 +1471,10 @@
           <label for="categoriaPrincipal">Categoría del plantel</label>
           <select id="categoriaPrincipal" aria-label="Seleccionar categoría del plantel">
             <option value="">Seleccioná una categoría</option>
-            <option value="Sub 10">Sub 10</option>
-            <option value="Sub 12">Sub 12</option>
-            <option value="Sub 14">Sub 14</option>
-            <option value="Sub 16">Sub 16</option>
-            <option value="Primera">Primera</option>
+            <option value="Primera Masc">Primera Masc</option>
+            <option value="Primera Fem" selected>Primera Fem</option>
+            <option value="Reserva Masc">Reserva Masc</option>
+            <option value="Reserva Fem">Reserva Fem</option>
           </select>
         </div>
       </section>
@@ -1630,11 +1629,10 @@
           <label for="categoria">Categoría *</label>
           <select id="categoria" required>
             <option value="">Seleccionar categoría</option>
-            <option value="Sub 10">Sub 10</option>
-            <option value="Sub 12">Sub 12</option>
-            <option value="Sub 14">Sub 14</option>
-            <option value="Sub 16">Sub 16</option>
-            <option value="Primera">Primera</option>
+            <option value="Primera Masc">Primera Masc</option>
+            <option value="Primera Fem" selected>Primera Fem</option>
+            <option value="Reserva Masc">Reserva Masc</option>
+            <option value="Reserva Fem">Reserva Fem</option>
           </select>
         </div>
         <div class="campo">
@@ -1838,7 +1836,7 @@
       });
       ajustarSidebarPorPantalla();
 
-      const categoriasPermitidas = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
+      const categoriasPermitidas = ["Primera Masc", "Primera Fem", "Reserva Masc", "Reserva Fem"];
       let jugadoras = [];
       let idEnEdicion = null;
 
