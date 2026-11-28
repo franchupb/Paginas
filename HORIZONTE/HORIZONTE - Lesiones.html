@@ -2333,7 +2333,8 @@ function poblarCategorias(){
     });
     jugadorasBase=[...mapa.values()].sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"));
     const select=$("selectorCategoriaGlobal"),anterior=select.value;
-    const ordenCategorias=["Primera Masc","Primera Fem","Reserva Masc","Reserva Fem"];\n     const categorias=ordenCategorias.filter(c=>jugadorasBase.some(j=>normalizar(j.categoria)===normalizar(c)));
+    const ordenCategorias=["Primera Masc","Primera Fem","Reserva Masc","Reserva Fem"];
+     const categorias=ordenCategorias.filter(c=>jugadorasBase.some(j=>normalizar(j.categoria)===normalizar(c)));
     select.replaceChildren(new Option("Seleccioná una categoría para continuar",""));
     categorias.forEach(c=>select.add(new Option(c,c)));
     if(categorias.includes(anterior))select.value=anterior;else select.value="";
