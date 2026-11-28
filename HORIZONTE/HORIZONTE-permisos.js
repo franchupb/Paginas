@@ -416,11 +416,16 @@
 
   async function iniciarControlFirebase() {
     try {
-      const modulo = await import("./HORIZONTE-auth.js?v=20261127-acceso-horizonte2");
+      const modulo = await import("./HORIZONTE-auth.js?v=20261128-restauracion-sesion1");
       await modulo.observarSesionHORIZONTE(async user => {
-        // Firebase puede entregar un estado inicial vacío en algunos entornos.
-        // Antes de considerar la sesión cerrada, consultamos la instancia ya restaurada.
-        const usuarioAutenticado = user || modulo.auth.currentUser;
+        // En algunos navegadores la restauración de la persistencia local puede
+        // terminar después del primer evento del observador. No interpretar ese
+        // primer null como una sesión cerrada: dar un margen y consultar de nuevo.
+        let usuarioAutenticado = user || modulo.auth.currentUser;
+        if (!usuarioAutenticado) {
+          await new Promise(resolve => setTimeout(resolve, 1200));
+          usuarioAutenticado = modulo.auth.currentUser;
+        }
         if (!usuarioAutenticado) {
           mostrarErrorInicializacion(
             new Error("Firebase no devolvió un usuario autenticado."),
