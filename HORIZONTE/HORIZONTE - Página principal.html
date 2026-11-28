@@ -989,12 +989,12 @@ a {
   <img
     class="logo-superior"
     src="HORIZONTE - Logo.png"
-    alt="Escudo oficial de BANCO"
+    alt="Escudo oficial de HORIZONTE"
     onerror="this.onerror=null;this.style.visibility='hidden';"
   >
 
   <div class="titulo-superior">
-    <h1>BANCO</h1>
+    <h1>HORIZONTE</h1>
     <p>Página Principal</p>
   </div>
 
@@ -1643,7 +1643,7 @@ function construirEscudo(url, nombre) {
 async function sincronizarPartidosDesdeNube() {
   if (!nubeActiva || !db) return;
   try {
-    const snap = await getDocs(collection(db,"santelmo_partidos"));
+    const snap = await getDocs(collection(db,"horizonte_partidos"));
     const lista = [];
     snap.forEach(d => lista.push({ id: d.id, ...d.data() }));
     cachePartidosNube = lista;
@@ -1710,7 +1710,7 @@ function listaDesdeDatosFixture(datos, divisionPadre = "") {
       "division",
       "competicion",
       "jornada",
-      "golessantelmo",
+      "goleshorizonte",
       "resultado"
     ].some(campo =>
       Object.prototype.hasOwnProperty.call(valor, campo)
@@ -1761,7 +1761,7 @@ function leerTodosLosPartidos() {
       const partidos = listaDesdeDatosFixture(datos);
       if (partidos.length) combinados.push(...partidos);
     } catch (error) {
-      console.warn("No se pudo leer el registro propio de BANCO:", clave, error);
+      console.warn("No se pudo leer el registro propio de HORIZONTE:", clave, error);
     }
   }
 
@@ -1792,9 +1792,9 @@ function fechaFixture(partido) {
 
 function partidoTieneMarcador(partido) {
   const tieneGolesSeparados =
-    partido.golessantelmo !== undefined &&
-    partido.golessantelmo !== null &&
-    String(partido.golessantelmo).trim() !== "" &&
+    partido.goleshorizonte !== undefined &&
+    partido.goleshorizonte !== null &&
+    String(partido.goleshorizonte).trim() !== "" &&
     partido.golesRival !== undefined &&
     partido.golesRival !== null &&
     String(partido.golesRival).trim() !== "";
@@ -1864,7 +1864,7 @@ function crearPartidoJugadoCard(partido) {
   const local = document.createElement("div");
   local.className = "equipo";
 
-  const nombreLocal = "BANCO";
+  const nombreLocal = "HORIZONTE";
 
   local.append(
     construirEscudo("HORIZONTE - Logo.png", nombreLocal)
@@ -1882,15 +1882,15 @@ function crearPartidoJugadoCard(partido) {
   marcador.className = "marcador";
 
   const tieneGoles =
-    partido.golessantelmo !== undefined &&
-    partido.golessantelmo !== null &&
-    String(partido.golessantelmo).trim() !== "" &&
+    partido.goleshorizonte !== undefined &&
+    partido.goleshorizonte !== null &&
+    String(partido.goleshorizonte).trim() !== "" &&
     partido.golesRival !== undefined &&
     partido.golesRival !== null &&
     String(partido.golesRival).trim() !== "";
 
   if (tieneGoles) {
-    marcador.textContent = `${partido.golessantelmo} - ${partido.golesRival}`;
+    marcador.textContent = `${partido.goleshorizonte} - ${partido.golesRival}`;
   } else if (partido.resultado) {
     marcador.textContent = String(partido.resultado).trim();
   } else {
@@ -2056,11 +2056,11 @@ async function sincronizarJugadorasDesdeNube() {
   let lista = [];
   if (nubeActiva && db) {
     try {
-      const snap = await getDocs(collection(db,"santelmo_jugadoras"));
+      const snap = await getDocs(collection(db,"horizonte_jugadoras"));
       snap.forEach(d => lista.push({ id: d.id, ...d.data() }));
 
       if (lista.length === 0) {
-        const docPlantel = await getDoc(doc(db,"santelmo_plantel", "jugadoras"));
+        const docPlantel = await getDoc(doc(db,"horizonte_plantel", "jugadoras"));
         if (docPlantel.exists() && Array.isArray(docPlantel.data().lista)) {
           lista = docPlantel.data().lista;
         }
@@ -2609,7 +2609,7 @@ const ESCUDOS_CLUBES = [
   { nombre: "14 de Junio", ruta: "CLUBES/14 JUNIO.jpg" },
   { nombre: "Alianza", ruta: "CLUBES/ALIANZA.png" },
   { nombre: "Argentino", ruta: "CLUBES/ARGENTINO.png" },
-  { nombre: "Banco", ruta: "CLUBES/BANCO.jpg" },
+  { nombre: "Banco", ruta: "CLUBES/HORIZONTE.jpg" },
   { nombre: "Botafogo", ruta: "CLUBES/BOTAFOGO.jpg" },
   { nombre: "Central", ruta: "CLUBES/CENTRAL.png" },
   { nombre: "CGR", ruta: "CLUBES/CGR.png" },
@@ -2626,7 +2626,7 @@ const ESCUDOS_CLUBES = [
   { nombre: "Renato", ruta: "CLUBES/RENATO.jpg" },
   { nombre: "San José", ruta: "CLUBES/SAN JOSE.jpg" },
   { nombre: "San Roque", ruta: "CLUBES/SAN ROQUE.jpg" },
-  { nombre: "BANCO", ruta: "CLUBES/HORIZONTE - Logo.png" },
+  { nombre: "HORIZONTE", ruta: "CLUBES/BANCO.png" },
   { nombre: "Social Lux", ruta: "CLUBES/SOCIAL LUX.jpg" },
   { nombre: "Sparta", ruta: "CLUBES/SPARTA.jpg" },
   { nombre: "Tiro Federal", ruta: "CLUBES/TIRO FEDERAL.jpg" },
