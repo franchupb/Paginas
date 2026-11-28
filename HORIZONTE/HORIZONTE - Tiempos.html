@@ -623,12 +623,8 @@ function cargarCategorias(){
     select.options[0].disabled=true;
     select.options[0].selected=true;
 
-    [...new Set(
-        baseJugadoras
-            .map(j=>String(j.categoria||"").trim())
-            .filter(Boolean)
-    )]
-    .sort((a,b)=>a.localeCompare(b,"es"))
+    ["Primera Masc","Primera Fem","Reserva Masc","Reserva Fem"]
+        .filter(c=>baseJugadoras.some(j=>normalizarTexto(j.categoria)===normalizarTexto(c)))
     .forEach(c=>select.add(new Option(c,c)));
 
     select.value=[...select.options].some(
