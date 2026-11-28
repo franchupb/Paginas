@@ -8,8 +8,8 @@
 (function () {
   "use strict";
 
-  const LOGIN_URL = "login.html";
-  const INICIO_URL = "index.html";
+  const LOGIN_URL = "HORIZONTE - Login.html";
+  const INICIO_URL = "HORIZONTE - Página principal.html";
   const normalizar = value => String(value ?? "")
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase().replace(/[\s._-]+/g, "").trim();
@@ -21,7 +21,7 @@
   const USUARIOS = Object.freeze({});;
 
   const PAGINAS_JUGADORAS = new Set([
-    "index.html",
+    "HORIZONTE - Página principal.html",
     "horizonte-paginaprincipal.html",
     "horizonte-jugadoras.html",
     "horizonte-asistencia.html",
