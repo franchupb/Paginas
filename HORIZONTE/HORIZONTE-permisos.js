@@ -35,11 +35,16 @@
   ]);
 
   const DIVISIONES = {
-    sub10: "Sub 10", s10: "Sub 10", u10: "Sub 10",
-    sub12: "Sub 12", s12: "Sub 12", u12: "Sub 12",
-    sub14: "Sub 14", s14: "Sub 14", u14: "Sub 14",
-    sub16: "Sub 16", s16: "Sub 16", u16: "Sub 16",
-    primera: "Primera"
+    primeramasc: "Primera Masc",
+    primeromasculino: "Primera Masc",
+    primerafem: "Primera Fem",
+    primerafemenina: "Primera Fem",
+    reservamasc: "Reserva Masc",
+    reservamasculino: "Reserva Masc",
+    reservafem: "Reserva Fem",
+    reservafemenina: "Reserva Fem",
+    // Compatibilidad con perfiles antiguos mientras se actualizan sus categorías.
+    primera: "Primera Fem"
   };
   function normalizarDivision(value) {
     const key = String(value || "").normalize("NFD")
@@ -49,7 +54,7 @@
   function categoriaDeTexto(value) {
     const direct = normalizarDivision(value);
     if (direct) return direct;
-    const match = String(value || "").match(/(?:^|[^a-z0-9])(sub\s*10|sub\s*12|sub\s*14|sub\s*16|s10|s12|s14|s16|primera)(?:$|[^a-z0-9])/i);
+    const match = String(value || "").match(/(?:^|[^a-z0-9])(primera\s*(?:masc(?:ulino)?|fem(?:enina)?)|reserva\s*(?:masc(?:ulino)?|fem(?:enina)?)|primera)(?:$|[^a-z0-9])/i);
     return match ? normalizarDivision(match[1]) : null;
   }
   function normalizarNombreArchivo(value) {
@@ -298,7 +303,7 @@
     }
 
     if (pagina === "horizonte-partidos.html") {
-      ["contadorSub10", "contadorSub12", "contadorSub14", "contadorPrimera"].forEach(id => {
+      ["contadorPrimeraMasc", "contadorPrimeraFem", "contadorReservaMasc", "contadorReservaFem"].forEach(id => {
         const contador = document.getElementById(id);
         const tarjeta = contador?.closest(".stat");
         if (tarjeta) tarjeta.hidden = true;
@@ -467,7 +472,7 @@
           let categorias = perfil.categorias ?? perfil.categoria ?? [];
           if (!Array.isArray(categorias)) categorias = categorias ? [categorias] : [];
           categorias = categorias.map(normalizarDivision).filter(Boolean);
-          const todasLasCategorias = ["Sub 10", "Sub 12", "Sub 14", "Sub 16", "Primera"];
+          const todasLasCategorias = ["Primera Masc", "Primera Fem", "Reserva Masc", "Reserva Fem"];
           const permisosAnidados = perfil.permisos && typeof perfil.permisos === "object" ? perfil.permisos : {};
           const permiso = (clave, valorPredeterminado) => {
             if (typeof perfil[clave] === "boolean") return perfil[clave];
