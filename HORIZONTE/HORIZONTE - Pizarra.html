@@ -1175,14 +1175,97 @@ body.immersive .board-studio>.controlbar>.immersive-launch{
 }
 
 
-/* PISO FUTSAL HORIZONTE · BEIGE CENIZA UNIFORME, SIN BANDAS */
+/* IDENTIDAD HORIZONTE · FUTSAL */
 .board-studio .pitch{
-  background-color:#D8CDB8!important;
+  background-color:#E7F1F8!important;
   background-image:none!important;
   background-size:auto!important;
   background-repeat:no-repeat!important;
-  border:2px solid #918675!important;
+  border:3px solid #07558A!important;
 }
+.board-studio .field-svg{
+  filter:none!important;
+}
+.board-studio .player.own{
+  background:#0874B9!important;
+  border:2px solid #fff!important;
+  box-shadow:0 2px 8px #07558A55,0 0 0 2px #07558A!important;
+  color:#fff!important;
+}
+.board-studio .player.own .player-number{
+  color:#fff!important;
+  text-shadow:0 1px 2px #06395f!important;
+}
+.board-studio .player.rival{
+  background:#F5A000!important;
+  border:2px solid #fff!important;
+  box-shadow:0 2px 8px #8A5A0055,0 0 0 2px #D88900!important;
+  color:#171717!important;
+}
+.board-studio .player.rival .player-number{
+  color:#171717!important;
+  text-shadow:none!important;
+}
+.board-studio .player.selected{
+  outline:3px solid #F5A000!important;
+  outline-offset:4px!important;
+}
+.board-studio .controlbar{
+  --club-blue:#0874B9;
+  --club-blue-dark:#07558A;
+  --club-orange:#F5A000;
+}
+.board-studio .formation-control,
+.board-studio .rival-formation{
+  border-color:#0874B955!important;
+  background:linear-gradient(135deg,#fff 0%,#E7F1F8 100%)!important;
+}
+.board-studio .formation-control .control-label{
+  color:#07558A!important;
+}
+.board-studio .rival-formation .control-label{
+  color:#A66A00!important;
+}
+.board-studio .top-tools{
+  border-color:#0874B966!important;
+  background:linear-gradient(135deg,#fff 0%,#E7F1F8 65%,#FFF3D6 100%)!important;
+}
+.board-studio .top-tools .tool.active{
+  border-color:#0874B9!important;
+  background:#E7F1F8!important;
+  color:#07558A!important;
+}
+.board-studio .top-tools .tool:hover{
+  border-color:#F5A000!important;
+  color:#07558A!important;
+}
+.board-studio .top-tools .swatch.active{
+  outline-color:#F5A000!important;
+}
+.board-studio .quick-history-btn{
+  border-color:#0874B955!important;
+  background:#fff!important;
+  color:#07558A!important;
+}
+.board-studio .quick-history-btn:hover,
+.board-studio .add-rival-btn:hover{
+  border-color:#F5A000!important;
+  background:#FFF3D6!important;
+  color:#07558A!important;
+}
+.board-studio .add-rival-btn{
+  border-color:#D88900!important;
+  background:#F5A000!important;
+  color:#171717!important;
+}
+.board-studio .rival-strip{
+  border-color:#F5A00088!important;
+  background:linear-gradient(110deg,#fff 0%,#FFF3D6 100%)!important;
+}
+.board-studio .rival-strip>strong{
+  color:#9A6500!important;
+}
+
 </style>
 </head>
 <body>
@@ -1255,7 +1338,7 @@ function status(t){$("status").textContent=t;}
 function syncHistory(){$("undo").disabled=!history.length;$("redo").disabled=!future.length;}
 function snapshot(){history.push({players:clone(players),drawings:clone(drawings)});if(history.length>80)history.shift();future=[];syncHistory();}
 function syncCount(){}
-function setField(){$("fieldSvg").innerHTML='<g fill="none" stroke="#171717" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="12" width="876" height="576"/><line x1="450" y1="12" x2="450" y2="588"/><circle cx="450" cy="300" r="72"/><circle cx="450" cy="300" r="4" fill="#171717" stroke="none"/><path d="M12 150 A150 150 0 0 1 12 450 M888 150 A150 150 0 0 0 888 450"/><circle cx="112" cy="300" r="4" fill="#171717" stroke="none"/><circle cx="788" cy="300" r="4" fill="#171717" stroke="none"/><circle cx="232" cy="300" r="3" fill="#171717" stroke="none"/><circle cx="668" cy="300" r="3" fill="#171717" stroke="none"/><path d="M12 28 A16 16 0 0 0 28 12 M872 12 A16 16 0 0 0 888 28 M12 572 A16 16 0 0 1 28 588 M872 588 A16 16 0 0 1 888 572"/><rect x="-8" y="252" width="20" height="96"/><rect x="888" y="252" width="20" height="96"/></g>';}
+function setField(){$("fieldSvg").innerHTML='<g fill="none" stroke="#07558A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="12" width="876" height="576"/><line x1="450" y1="12" x2="450" y2="588"/><circle cx="450" cy="300" r="72"/><circle cx="450" cy="300" r="4" fill="#07558A" stroke="none"/><path d="M12 150 A150 150 0 0 1 12 450 M888 150 A150 150 0 0 0 888 450"/><circle cx="112" cy="300" r="4" fill="#171717" stroke="none"/><circle cx="788" cy="300" r="4" fill="#171717" stroke="none"/><circle cx="232" cy="300" r="3" fill="#171717" stroke="none"/><circle cx="668" cy="300" r="3" fill="#171717" stroke="none"/><path d="M12 28 A16 16 0 0 0 28 12 M872 12 A16 16 0 0 0 888 28 M12 572 A16 16 0 0 1 28 588 M872 588 A16 16 0 0 1 888 572"/><rect x="-8" y="252" width="20" height="96"/><rect x="888" y="252" width="20" height="96"/></g>';}
 function coords(e){var r=pitch.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};}
 function drawOne(d,g,w,h){var x=d.x*w,y=d.y*h,X=d.X*w,Y=d.Y*h;g.save();g.strokeStyle=d.color;g.fillStyle=d.color;g.lineWidth=4;g.lineCap="round";g.lineJoin="round";g.setLineDash(d.type==="dash"?[10,8]:[]);g.beginPath();if(d.type==="free"){(d.points||[]).forEach(function(p,i){if(i)g.lineTo(p.x*w,p.y*h);else g.moveTo(p.x*w,p.y*h);});}else if(d.type==="zone"){g.ellipse((x+X)/2,(y+Y)/2,Math.max(2,Math.abs(X-x)/2),Math.max(2,Math.abs(Y-y)/2),0,0,Math.PI*2);}else{g.moveTo(x,y);g.lineTo(X,Y);if(d.type==="arrow"){var a=Math.atan2(Y-y,X-x),len=20;g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a-.5),Y-len*Math.sin(a-.5));g.moveTo(X,Y);g.lineTo(X-len*Math.cos(a+.5),Y-len*Math.sin(a+.5));}}g.stroke();g.restore();}
 function paint(){var r=pitch.getBoundingClientRect(),dpr=window.devicePixelRatio||1;if(!r.width||!r.height)return;ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.setTransform(dpr,0,0,dpr,0,0);drawings.forEach(function(d){drawOne(d,ctx,r.width,r.height);});if(drawing&&start&&points.length)drawOne({type:tool,x:start.x,y:start.y,X:points[points.length-1].x,Y:points[points.length-1].y,points:points,color:color},ctx,r.width,r.height);}
