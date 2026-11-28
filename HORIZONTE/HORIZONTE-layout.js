@@ -770,7 +770,7 @@
     submenu.className = "submenu";
     grupo.paginas.forEach(([href, texto, restringido]) => {
       const link = document.createElement("a");
-      link.href = href === "HORIZONTE - Pizarra.html" ? "HORIZONTE - Pizarra.html?v=20261128-futsal1" : href;
+      link.href = href === "HORIZONTE - Pizarra.html" ? "HORIZONTE - Pizarra.html?v=20261128-futsal2" : href;
       link.innerHTML = '<span class="nav-punto" aria-hidden="true"></span>' + texto;
       if (restringido) link.setAttribute("data-ocultar-bianca", "");
       if (normalizarArchivo(href.toLowerCase()) === actual) {
