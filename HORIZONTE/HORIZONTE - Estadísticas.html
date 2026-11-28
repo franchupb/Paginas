@@ -80,8 +80,8 @@ const categoriaJ=j=>texto(j.categoria||j.division||j.categoriaDeportiva||j.divis
 const posicionJ=j=>texto(j.posicion||j.puesto||j.demarcacion||"—");
 const activoJ=j=>j.activa!==false&&j.activo!==false&&!/^(inactiva|inactivo|baja)$/i.test(texto(j.estado));
 const esc=v=>texto(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const ordenCategorias=["Sub 10","Sub 12","Sub 14","Sub 16","Primera"];
-function normalizarCategoria(v){const n=normalizar(v);return ({sub10:"Sub 10",s10:"Sub 10",sub12:"Sub 12",s12:"Sub 12",sub14:"Sub 14",s14:"Sub 14",sub16:"Sub 16",s16:"Sub 16",primera:"Primera"})[n]||texto(v)}
+const ordenCategorias=["Primera Masc","Primera Fem","Reserva Masc","Reserva Fem"];
+function normalizarCategoria(v){const n=normalizar(v).replace(/[^a-z]/g,"");return ({primeramasc:"Primera Masc",primeromasculino:"Primera Masc",primerafem:"Primera Fem",primerafemenina:"Primera Fem",reservamasc:"Reserva Masc",reservamasculino:"Reserva Masc",reservafem:"Reserva Fem",reservafemenina:"Reserva Fem"})[n]||texto(v)}
 function categoriasPermitidas(){
  if(!permisos)return [];
  if(permisos.rol==="admin")return ordenCategorias;
