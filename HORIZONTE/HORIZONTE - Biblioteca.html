@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#fff"><title>Biblioteca de ejercicios | HORIZONTE</title>
+<script src="HORIZONTE-permisos.js?v=20261126-permisos3"></script>
+<style>
+:root{--accent:#173e70;--dark:#102b4e;--soft:#e8f5fa;--ink:#171717;--muted:#747474;--line:#e8e8e8;--bg:#f7f8fa}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px Arial,Helvetica,sans-serif}.contenedor{display:flex;min-height:calc(100vh - 84px)}main.main{min-width:0;flex:1;padding:28px clamp(14px,3vw,36px) 45px}.page-heading{margin:0 0 20px}.tabs{display:flex;gap:8px;padding:6px;background:#fff;border:1px solid var(--line);border-radius:13px;margin-bottom:18px;overflow:auto}.tab{border:0;background:transparent;color:#555;border-radius:9px;padding:12px 17px;font:700 13px Arial;white-space:nowrap;cursor:pointer}.tab.active{background:var(--accent);color:white}.tabview[hidden]{display:none!important}.workspace{display:grid;grid-template-columns:minmax(290px,.85fr) minmax(0,1.15fr);gap:18px;align-items:start}.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 18px #00000006}.panel h3{margin:0 0 7px;font-size:16px}.muted{color:var(--muted);font-size:12px;line-height:1.55;margin:0 0 17px}.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form label,.filters label{display:flex;flex-direction:column;gap:7px;color:#555;font-size:11px;font-weight:800}.form input,.form select,.form textarea,.filters input,.filters select{width:100%;min-height:40px;padding:10px;border:1px solid #dfe1e5;border-radius:9px;background:#fff;color:#222;font:13px Arial,sans-serif}.form textarea{resize:vertical;line-height:1.5}.full{grid-column:1/-1}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{min-height:38px;padding:9px 13px;border:1px solid transparent;border-radius:9px;font:700 12px Arial,sans-serif;cursor:pointer}.primary{background:var(--accent);color:#fff}.light{background:#fff;border-color:var(--line);color:#333}.danger{background:#fff4f4;border-color:#efcccc;color:#a12626}.small{min-height:31px;padding:6px 9px;font-size:11px}.filters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0}.filters input{grid-column:1/-1}.head{display:flex;justify-content:space-between;align-items:center;gap:10px}.count{font-size:11px;font-weight:800;color:var(--muted)}.item{padding:15px 0;border-top:1px solid #f0f0f0;display:flex;gap:12px;align-items:flex-start}.item-main{min-width:0;flex:1}.item-main strong{font-size:13px}.item-main p{font-size:12px;line-height:1.5;color:#666;white-space:pre-wrap;margin:6px 0}.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.chips span{padding:5px 7px;border-radius:6px;background:var(--soft);color:var(--dark);font-size:10px;font-weight:800}.item-actions{display:flex;gap:5px;flex-wrap:wrap}.empty{padding:30px 14px;text-align:center;color:var(--muted);border:1px dashed #d9dce1;border-radius:12px;font-size:12px;line-height:1.6}.detail{margin-top:15px;padding:15px;border:1px solid var(--line);border-radius:12px;background:#fafafa}.detail h3{margin:0 0 10px}.detail dl{display:grid;grid-template-columns:145px 1fr;gap:8px 12px;font-size:12px}.detail dt{font-weight:800;color:#777}.detail dd{margin:0;white-space:pre-wrap;line-height:1.5}.board-tools{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.tool{background:#fff;border:1px solid #dfe1e5;border-radius:8px;padding:8px 10px;font:700 11px Arial;cursor:pointer}.tool.active{background:var(--soft);border-color:var(--accent);color:var(--dark)}.board-wrap{width:100%;overflow:auto;border:1px solid #d8e1d7;border-radius:12px;background:#e9f2e7}.physical-board-wrap{border:1px solid #dfe3e8!important;background:#fff!important;box-shadow:none!important}.physical-board-wrap .board{background:#fff;cursor:crosshair}.board{display:block;width:100%;min-width:520px;height:auto;touch-action:none;cursor:crosshair}.board-help{font-size:11px;color:#777;line-height:1.5;margin:8px 0 0}.board-actions{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:10px}.toast{position:fixed;right:18px;bottom:18px;padding:12px 16px;border-radius:10px;background:#222;color:#fff;font-size:12px;z-index:500}.toast[hidden]{display:none}.library-layout{display:grid;grid-template-columns:1fr;gap:18px}.preview{width:100%;max-width:360px;border:1px solid var(--line);border-radius:10px;margin-top:12px}.section-note{padding:12px 14px;background:#fafafa;border:1px solid var(--line);border-radius:10px;color:#666;font-size:12px;line-height:1.5;margin-bottom:14px}@media(max-width:1000px){.workspace{grid-template-columns:1fr}}@media(max-width:760px){main.main{padding:18px 13px 30px}.form{grid-template-columns:1fr}.full{grid-column:auto}.filters{grid-template-columns:1fr}.filters input{grid-column:auto}.item{flex-wrap:wrap}.item-actions{width:100%}.detail dl{grid-template-columns:1fr}.detail dd{margin-bottom:8px}.panel{padding:15px}}
+
+/* Rediseño visual integral de Biblioteca de ejercicios */
+main.main{padding-top:24px;background:linear-gradient(180deg,#fff 0,#f6f7f9 310px)}
+.hero-library{position:relative;display:flex;justify-content:space-between;align-items:center;gap:28px;min-height:245px;padding:30px 36px;margin:0 0 22px;overflow:hidden;border-radius:20px;background:linear-gradient(115deg,#102b4e 0%,#173e70 62%,#102b4e 100%);color:#fff;box-shadow:0 14px 32px #00000016}
+.hero-library:after{content:"";position:absolute;width:420px;height:420px;border:1px solid #ffffff22;border-radius:50%;right:11%;top:-240px;box-shadow:0 0 0 35px #ffffff08,0 0 0 75px #ffffff06;pointer-events:none}
+.hero-copy{position:relative;z-index:1;max-width:670px}.hero-kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid #ffffff42;border-radius:5px;background:#ffffff12;color:#fff;font-size:10px;font-weight:800;letter-spacing:1.5px}
+.hero-copy h2{margin:16px 0 9px;font-size:clamp(29px,4vw,43px);line-height:.98;letter-spacing:-1.5px;font-weight:800}.hero-copy h2 em{font-style:normal;color:#ffffffa8}.hero-copy>p{max-width:570px;margin:0;color:#ffffffd9;font-size:13px;line-height:1.65}
+.hero-meta{display:flex;flex-wrap:wrap;gap:18px;margin-top:22px}.hero-meta span{color:#ffffffd9;font-size:11px}.hero-meta b{margin-right:5px;color:#fff;font-size:10px}
+.hero-mark{position:relative;z-index:1;flex:0 0 185px;height:185px;display:grid;place-items:center;border:1px solid #ffffff35;border-radius:50%;background:radial-gradient(circle,#ffffff1d 0 42%,#ffffff08 43% 100%)}
+.hero-circle{width:135px;height:135px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #ffffff70;border-radius:50%;transform:rotate(-9deg);color:#fff}
+.hero-circle span{font-size:9px;letter-spacing:3px}.hero-circle strong{font-size:34px;line-height:1.05;letter-spacing:2px}.hero-circle small{margin-top:5px;font-size:8px;letter-spacing:1.6px}
+.hero-tag{position:absolute;bottom:4px;right:-8px;padding:8px 11px;border-radius:4px;background:#fff;color:#102b4e;font-size:9px;font-weight:900;letter-spacing:1px}
+.tabs{position:sticky;top:88px;z-index:20;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:7px;margin:0 0 20px;border:1px solid #e5e7eb;border-radius:14px;background:#ffffffed;box-shadow:0 7px 20px #11111108;backdrop-filter:blur(12px)}
+.tab{position:relative;display:flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:10px 14px;border:1px solid transparent;border-radius:9px;color:#60646d;font-size:12px;transition:.18s ease}
+.tab:before{content:attr(data-step);display:grid;place-items:center;width:23px;height:23px;border-radius:7px;background:#f0f1f3;color:#777;font-size:9px;font-weight:900}
+.tab:hover{background:#f7f7f8;color:#222}.tab.active{background:#173e70;color:#fff;box-shadow:0 5px 13px #173e7038}.tab.active:before{background:#ffffff26;color:#fff}
+.workspace{grid-template-columns:minmax(320px,.92fr) minmax(0,1.08fr);gap:16px}
+.panel{padding:22px;border:1px solid #e7e9ed;border-radius:15px;box-shadow:0 8px 25px #1a23300a}
+.panel h3{font-size:16px;letter-spacing:-.2px}.panel>.muted{margin-top:5px}
+.form{gap:13px}.form label,.filters label{gap:7px;color:#525866;font-size:10px;letter-spacing:.2px;text-transform:uppercase}
+.form input,.form select,.form textarea,.filters input,.filters select{min-height:43px;border:1px solid #dfe3e8;border-radius:8px;background:#fbfcfd;font-size:13px;transition:border-color .15s,box-shadow .15s}
+.form input:focus,.form select:focus,.form textarea:focus,.filters input:focus,.filters select:focus{outline:none;border-color:#173e70;box-shadow:0 0 0 3px #173e7016;background:#fff}
+.form textarea{min-height:76px}.btn{border-radius:8px;transition:transform .15s,filter .15s}.btn:hover,.tool:hover{filter:brightness(.97);transform:translateY(-1px)}.primary{background:#173e70}
+.board-tools{padding:9px;border:1px solid #e9ebef;border-radius:10px;background:#f8f9fb}.tool{min-height:34px;padding:7px 10px;border-radius:7px;background:#fff;font-size:10px}.tool.active{background:#e8f5fa;border-color:#173e70;color:#102b4e;box-shadow:inset 0 0 0 1px #173e7018}
+.board-wrap{border:5px solid #fff;outline:1px solid #dce2dc;border-radius:12px;box-shadow:0 5px 18px #0000000d}
+.board-help{margin-top:12px;padding:10px 12px;border-radius:8px;background:#f7f8fa;color:#626975}
+.board-actions{margin-top:13px}.physical-board-controls{justify-content:flex-start;gap:7px;margin:0 0 12px;padding:9px;background:#f8f9fb;border:1px solid #e7e9ed;border-radius:10px}.physical-board-controls .btn{min-height:35px;padding:7px 13px}.physical-board-controls [data-board-action="erase"].active{background:var(--soft);border-color:var(--accent);color:var(--dark)}.head{align-items:flex-start}.count{padding:7px 10px;border-radius:20px;background:#e8f5fa;color:#102b4e}
+.filters{grid-template-columns:minmax(0,1fr) 180px 180px;gap:10px;margin:18px 0}.filters input{grid-column:auto}
+.item{padding:17px 4px;border-top:1px solid #edf0f3}.item-main strong{font-size:14px}.item-main p{font-size:12px}.chips span{border-radius:5px}
+.detail{padding:19px;border-radius:12px;background:#fafbfc}.empty{padding:48px 18px;background:#fbfcfd}
+@media(max-width:1100px){.workspace{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}}
+@media(max-width:760px){main.main{padding:16px 12px 28px}.hero-library{min-height:0;padding:23px 20px;border-radius:15px}.hero-mark{flex-basis:94px;width:94px;height:94px}.hero-circle{width:70px;height:70px}.hero-circle span{font-size:6px;letter-spacing:1px}.hero-circle strong{font-size:19px}.hero-circle small{font-size:5px;letter-spacing:.7px}.hero-tag{right:-12px;bottom:-3px;padding:5px;font-size:6px}.hero-copy h2{font-size:30px}.hero-copy>p{font-size:12px}.hero-meta{gap:8px 13px;margin-top:15px}.hero-meta span{font-size:9px}.tabs{top:72px;gap:4px;padding:5px}.tab{min-height:45px;padding:8px 5px;gap:5px;font-size:10px}.tab:before{width:19px;height:19px;font-size:8px}.panel{padding:16px}.filters{grid-template-columns:1fr}.filters input{grid-column:auto}}
+@media(max-width:420px){.hero-mark{display:none}.hero-library{padding:23px 20px}.tab{font-size:9px}.tab:before{display:none}}
+
+.tactico-form textarea{min-height:66px;resize:vertical}.pitch-choices{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0;padding:10px;border:1px solid #e7e9ed;border-radius:10px}.pitch-choices>span{font-size:11px;font-weight:800;color:#666;margin-right:5px}.pitch-choice{border:1px solid #d9dde3;background:#fff;color:#444;border-radius:8px;padding:9px 13px;font-weight:800;cursor:pointer}.pitch-choice.active{background:${club==="HORIZONTE"?"#173e70":"#a00000"};border-color:${club==="HORIZONTE"?"#173e70":"#a00000"};color:#fff}.tactico-tools{display:flex;gap:7px;flex-wrap:wrap}.tactico-tools .tool{padding:9px 12px}.sync-status{padding:7px 10px;border:1px solid #ffffff55;border-radius:20px;background:#ffffff16;font-weight:800}.sync-status[data-state="error"]{background:#fff;color:#a00000}.sync-status[data-state="ok"]{background:#ffffff;color:#176b38}.board-color{display:flex;align-items:center;gap:7px;padding:5px 8px;border:1px solid #e4e7eb;border-radius:7px;background:#fff;color:#555;font:700 10px Arial}.board-color input{width:28px;height:22px;padding:0;border:0;background:transparent}.favorite-filter{display:flex;flex-direction:row;align-items:center;gap:8px;padding:8px 10px;border:1px solid #e4e7eb;border-radius:8px;color:#555;font-size:11px;font-weight:700}.favorite-filter input{width:auto;min-height:auto}.tool:disabled,.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}@media(max-width:760px){.hero-meta .sync-status{order:4}}\n
+/* Pizarra táctica: diseño simple y funcional */
+.tactical-board-panel{padding:18px!important;background:#fff;border:1px solid #e5e7eb!important}
+.tactical-board-heading{display:block;padding:0 0 12px;background:none;color:inherit;border-bottom:1px solid #eceff2}
+.tactical-board-heading h3{margin:0!important;color:#222!important;font-size:19px}
+.tactical-board-heading .tactical-kicker{display:none}
+.tactical-board-heading .muted{color:#777!important;font-size:12px}
+.tactical-board-panel>.pitch-choices{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0 12px;padding:0;border:0;background:transparent}
+.pitch-choices .pitch-label{font-size:11px;font-weight:700;color:#555;margin-right:5px}
+.pitch-choice{padding:8px 13px;border:1px solid #d8dce1;border-radius:7px;background:#fff;color:#444;font-size:12px;font-weight:700;cursor:pointer}
+.pitch-choice.active{background:#173e70;border-color:#173e70;color:#fff}
+.tactical-tools-heading{display:flex;align-items:center;margin:13px 0 8px}
+.tactical-tools-heading>span{font-size:11px;font-weight:700;color:#555;letter-spacing:.2px}
+.tactical-tools-heading small{display:none}
+.tactical-board-panel .tactico-tools{display:flex;flex-wrap:wrap;gap:7px;padding:0;margin:0 0 13px}
+.tactical-board-panel .tactico-tools .tool{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 13px;border:1px solid #dfe3e8;border-radius:7px;background:#f8f9fa;color:#333;font-size:12px;font-weight:700;cursor:pointer}
+.tactical-board-panel .tactico-tools .tool:hover{border-color:#173e70}
+.tactical-board-panel .tactico-tools .tool.active{background:#173e70;border-color:#173e70;color:#fff}
+.tactical-board-panel .board-wrap{margin:0;padding:5px;border:1px solid #d8dee4;border-radius:8px;background:#397b4b;overflow:hidden}
+.tactical-board-panel .board{display:block;width:100%;height:auto;aspect-ratio:900/520;border-radius:4px;touch-action:none;cursor:crosshair}
+.tactical-board-panel .board-help{margin:9px 0 0;padding:0;background:transparent;color:#777;font-size:11px;line-height:1.45}
+@media(max-width:600px){.tactical-board-panel{padding:13px!important}.tactical-board-panel>.pitch-choices{gap:6px}.pitch-choices .pitch-label{width:100%;margin-bottom:2px}.pitch-choice{padding:8px 10px}.tactical-board-panel .tactico-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.tactical-board-panel .tactico-tools .tool{padding:8px 5px;min-height:38px;font-size:11px}.tactical-board-panel .board-wrap{padding:3px}}
+
+/* Controles extra de la pizarra táctica */
+.tactical-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 12px}
+.player-color-control{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid #dfe3e8;border-radius:7px;background:#fff;color:#444;font-size:12px;font-weight:700}.player-color-control[hidden]{display:none!important}
+.player-color-control input{width:34px;height:28px;padding:0;border:0;background:transparent;cursor:pointer}
+@media(max-width:600px){.tactical-actions{gap:6px}.player-color-control{font-size:11px;padding:5px 7px}}
+
+/* Ajustes de composición de la pizarra táctica */
+.tactical-workspace{grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr)!important}
+.tactical-board-panel .board{width:100%;min-width:0;max-width:100%;height:auto;object-fit:contain}
+.tactical-board-panel .board-wrap{width:100%;overflow:hidden}
+.tactical-actions{justify-content:flex-start}
+.tactical-actions [data-board-action="undo"]{margin-left:auto}
+@media(max-width:1100px){.tactical-workspace{grid-template-columns:1fr!important}}
+
+/* Rediseño de la consola de herramientas tácticas */
+.tactical-toolbox{display:grid;grid-template-columns:1fr 1.45fr .9fr;gap:9px;margin:12px 0 10px;padding:10px;border:1px solid #e5e8ed;border-radius:12px;background:linear-gradient(135deg,#f8f9fb,#fff)}
+.tool-group{min-width:0;padding:2px 8px;border-right:1px solid #e7e9ed}
+.tool-group:last-child{border-right:0}
+.tool-group-label{display:block;margin:0 0 8px;color:#858b95;font-size:9px;font-weight:900;letter-spacing:1px}
+.tool-group-buttons{display:flex;flex-wrap:wrap;gap:6px}
+.tactical-toolbox .tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:35px;padding:7px 9px;border:1px solid #e0e4e9;border-radius:8px;background:#fff;color:#424852;font-size:11px;font-weight:700;white-space:nowrap;transition:background .15s,border-color .15s,transform .15s}
+.tactical-toolbox .tool:hover{border-color:var(--accent);transform:translateY(-1px)}
+.tactical-toolbox .tool.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 3px 9px #00000018}
+.tool-icon{display:inline-grid;place-items:center;min-width:14px;font-size:14px;line-height:1;font-weight:900}
+.tactical-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 11px;padding:8px 9px;border:1px solid #e7e9ed;border-radius:10px;background:#fafbfc}
+.tactical-actions-spacer{flex:1}
+.tactical-actions .btn{min-height:33px;padding:7px 11px;border-radius:7px;font-size:11px}
+.tactical-actions .danger{background:#fff2f2;border-color:#f0d0d0;color:#a12626}
+.player-color-control{display:inline-flex;align-items:center;gap:8px;padding:5px 9px;border:1px solid #e0e4e9;border-radius:8px;background:#fff;color:#4a5059;font-size:11px;font-weight:800}
+.player-color-control[hidden]{display:none!important}
+.player-color-control input{width:30px;height:25px;padding:0;border:0;background:transparent;cursor:pointer}
+@media(max-width:760px){.tactical-toolbox{grid-template-columns:1fr;gap:7px;padding:8px}.tool-group{padding:5px 2px 8px;border-right:0;border-bottom:1px solid #e7e9ed}.tool-group:last-child{border-bottom:0;padding-bottom:2px}.tool-group-label{margin-bottom:6px}.tool-group-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.tactical-toolbox .tool{min-width:0;padding:7px 5px;font-size:10px}.tactical-actions{gap:6px}.tactical-actions-spacer{display:none}.player-color-control{flex:1}.tactical-actions .btn{flex:1}}
+@media(max-width:380px){.tool-group-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Herramientas en tres grupos alineados horizontalmente */
+.tactical-workspace{grid-template-columns:minmax(0,1.28fr) minmax(290px,.72fr)!important;gap:14px}
+.tactical-toolbox{display:flex!important;flex-flow:row nowrap!important;align-items:stretch;gap:8px;width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+.tactical-toolbox .tool-group{display:flex;flex:1 1 0;flex-direction:column;min-width:0;padding:2px 7px;border-right:1px solid #e7e9ed;border-bottom:0}
+.tactical-toolbox .tool-group:last-child{border-right:0}
+.tactical-toolbox .tool-group-buttons{display:flex;flex-flow:row wrap;gap:5px}
+.tactical-toolbox .tool{flex:0 1 auto;min-width:0;padding:7px 8px;font-size:10px;white-space:nowrap}
+.tactical-board-panel .board-wrap{width:100%}
+@media(max-width:900px){.tactical-workspace{grid-template-columns:1fr!important}}
+@media(max-width:600px){
+ .tactical-toolbox{display:flex!important;flex-flow:row nowrap!important;gap:5px}
+ .tactical-toolbox .tool-group{flex:1 0 0;min-width:0;padding:3px 4px}
+ .tactical-toolbox .tool-group-label{font-size:9px;letter-spacing:.02em}
+ .tactical-toolbox .tool-group-buttons{display:flex;flex-flow:row wrap;gap:4px}
+ .tactical-toolbox .tool{flex:1 1 auto;padding:7px 5px;font-size:10px}
+}
+
+/* Biblioteca de ejercicios guardados */
+.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.saved-library{max-width:1500px;margin:0 auto}.saved-hero{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:30px 34px;margin-bottom:16px;border-radius:18px;background:linear-gradient(115deg,var(--dark),var(--accent));color:#fff;box-shadow:0 12px 28px #00000012}.saved-hero:after{content:"";position:absolute;width:280px;height:280px;border:1px solid #ffffff20;border-radius:50%;right:110px;top:-160px;box-shadow:0 0 0 32px #ffffff08,0 0 0 64px #ffffff06}.saved-hero-copy{position:relative;z-index:1;max-width:720px}.saved-eyebrow{font-size:10px;font-weight:900;letter-spacing:1.5px;opacity:.78}.saved-hero h2{font-size:clamp(25px,3vw,36px);margin:9px 0 8px;letter-spacing:-.7px}.saved-hero p{margin:0;max-width:650px;font-size:13px;line-height:1.6;color:#ffffffd9}.saved-total{position:relative;z-index:1;display:flex;align-items:center;gap:12px;min-width:145px;padding:14px 17px;border:1px solid #ffffff38;border-radius:14px;background:#ffffff17;backdrop-filter:blur(8px)}.saved-total strong{font-size:34px;line-height:1}.saved-total span{font-size:11px;line-height:1.35;font-weight:700}.saved-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}.saved-summary-card{display:flex;align-items:center;gap:12px;padding:15px 17px;background:#fff;border:1px solid var(--line);border-radius:13px;box-shadow:0 3px 12px #00000004}.saved-summary-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:var(--soft);color:var(--dark);font-size:19px}.saved-summary-card strong{display:block;font-size:20px;line-height:1.1}.saved-summary-card small{display:block;margin-top:4px;color:var(--muted);font-size:11px}.saved-panel{padding:21px}.saved-panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:15px}.saved-panel-heading h3{margin:0 0 5px;font-size:18px}.saved-panel-heading .muted{margin:0}.saved-filters{display:grid;grid-template-columns:minmax(200px,2fr) repeat(2,minmax(130px,1fr));gap:10px;align-items:end;margin:16px 0 13px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fafafa}.saved-filters label{display:flex;flex-direction:column;gap:6px;color:#666;font-size:11px;font-weight:800}.saved-filters label>span{display:block}.saved-filters input[type=search],.saved-filters select{width:100%;min-height:39px;padding:9px 11px;border:1px solid #dfe1e5;border-radius:8px;background:#fff;color:#222;font:12px Arial,sans-serif}.saved-fav-filter{grid-column:1/-1;display:flex!important;flex-direction:row!important;align-items:center;gap:8px!important;font-weight:700!important}.saved-fav-filter input{accent-color:var(--accent)}.saved-results-line{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 1px 12px}.saved-results-line #count{font-size:11px;font-weight:900;color:var(--dark)}.saved-results-hint{font-size:10px;color:#929292}.saved-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.saved-card{min-width:0;padding:16px;border:1px solid var(--line);border-radius:13px;background:#fff;transition:border-color .18s,transform .18s,box-shadow .18s}.saved-card:hover{border-color:#c9cdd4;transform:translateY(-2px);box-shadow:0 8px 20px #00000008}.saved-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.saved-card h4{margin:0;font-size:14px;line-height:1.4;overflow-wrap:anywhere}.saved-card p{margin:9px 0 12px;color:#666;font-size:12px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.saved-card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:13px}.saved-card-tags span{padding:5px 8px;border-radius:6px;background:var(--soft);color:var(--dark);font-size:9px;font-weight:800}.saved-card-area{font-size:9px;font-weight:900;letter-spacing:.6px;color:#888;text-transform:uppercase;margin-bottom:7px}.saved-card-actions{display:flex;gap:6px;flex-wrap:wrap;padding-top:11px;border-top:1px solid #f0f0f0}.saved-card-actions .btn{min-height:30px;padding:6px 9px}.saved-card .saved-star{border:0;background:transparent;color:#d39a22;font-size:18px;line-height:1;cursor:default}.saved-card .preview{display:block;width:100%;max-width:none;max-height:145px;object-fit:contain;margin:0 0 12px;background:#fafafa;border-radius:8px}.saved-panel .detail{margin-top:16px}.saved-empty{grid-column:1/-1;padding:36px 18px;text-align:center;border:1px dashed #d5d9df;border-radius:13px;background:#fcfcfd;color:#777}.saved-empty strong{display:block;margin-bottom:6px;color:#333;font-size:14px}.saved-empty span{font-size:12px;line-height:1.5}@media(max-width:900px){.saved-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.saved-filters .saved-search{grid-column:1/-1}}@media(max-width:650px){.tabs{grid-template-columns:repeat(3,minmax(150px,1fr))!important}.saved-hero{align-items:flex-start;padding:23px 20px}.saved-total{min-width:0;padding:10px 12px}.saved-total strong{font-size:27px}.saved-summary{gap:7px}.saved-summary-card{gap:7px;padding:11px 9px}.saved-summary-icon{width:31px;height:31px;font-size:15px}.saved-summary-card strong{font-size:17px}.saved-summary-card small{font-size:9px}.saved-grid{grid-template-columns:1fr}.saved-panel{padding:15px}.saved-panel-heading{align-items:flex-start}.saved-panel-heading .btn{white-space:nowrap}.saved-results-hint{display:none}}@media(max-width:420px){.saved-hero{display:block}.saved-total{display:inline-flex;margin-top:16px}.saved-filters{grid-template-columns:1fr}.saved-filters .saved-search{grid-column:auto}.saved-summary-card{flex-direction:column;align-items:flex-start}}
+</style></head><body>
+<header class="barra-superior"><button class="boton-menu" id="botonMenu" type="button" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="true">☰</button><div class="identidad-club"><img class="logo-club" src="HORIZONTE.png" alt="Escudo HORIZONTE"><div class="textos-club"><h1>HORIZONTE</h1><p>Preparación física · Desarrollo técnico</p></div></div><button class="perfil" id="botonPerfil" type="button" aria-label="Ver perfil de usuario"><span class="avatar" id="avatarUsuario">U</span><span class="informacion-perfil"><span class="nombre-perfil" id="nombreUsuario">Usuario</span><span class="rol-perfil" id="rolUsuario">HORIZONTE</span></span></button></header>
+<div class="fondo-sidebar" id="fondoSidebar"></div><div class="contenedor"><aside class="sidebar" id="sidebar"></aside><main class="main">
+<section class="page-heading hero-library"><div class="hero-copy"><span class="hero-kicker">CENTRO DE ENTRENAMIENTO · HORIZONTE</span><h2>Diseñá. Entrená.<br><em>Mejorá.</em></h2><p>Un espacio de trabajo para planificar tareas, construir ejercicios visuales y organizar el conocimiento del cuerpo técnico.</p><div class="hero-meta"><span class="sync-status" id="syncState" data-state="local">Guardado local</span><span><b>01</b> Crear tareas</span><span><b>02</b> Representar</span><span><b>03</b> Guardar y reutilizar</span></div></div><div class="hero-mark"><div class="hero-circle"><span>TRAINING</span><strong>LAB</strong><small>HORIZONTE</small></div><div class="hero-tag">CUERPO TÉCNICO</div></div></section>
+<nav class="tabs" aria-label="Secciones de biblioteca"><button class="tab active" data-tab="tactico" data-step="01">Técnico - Táctico</button><button class="tab" data-tab="fisica" data-step="02">Preparación Física</button><button class="tab" data-tab="biblioteca" data-step="03">Ejercicios guardados</button></nav>
+<section class="tabview" id="view-tactico"><div class="workspace tactical-workspace"><section class="panel tactical-board-panel"><div class="tactical-board-heading"><div><h3>Pizarra táctica</h3><p class="muted" style="margin:5px 0 0">Agregá elementos y dibujá directamente sobre la cancha completa.</p></div></div><div class="tactical-tools-heading"><span>HERRAMIENTAS</span><small>Seleccioná un elemento y dibujá sobre la cancha</small></div><div class="tactical-toolbox" data-board="tactico"><div class="tool-group"><span class="tool-group-label">AGREGAR ELEMENTOS</span><div class="tool-group-buttons"><button class="tool active" data-tool="player" type="button"><span class="tool-icon" aria-hidden="true">●</span>Jugadoras</button><button class="tool" data-tool="cone" type="button"><span class="tool-icon" aria-hidden="true">▲</span>Cono</button><button class="tool" data-tool="ball" type="button"><span class="tool-icon" aria-hidden="true">⚽</span>Pelota</button></div></div><div class="tool-group"><span class="tool-group-label">DIBUJAR</span><div class="tool-group-buttons"><button class="tool" data-tool="arrow" type="button"><span class="tool-icon" aria-hidden="true">➜</span>Flecha</button><button class="tool" data-tool="line" type="button"><span class="tool-icon" aria-hidden="true">／</span>Línea</button><button class="tool" data-tool="zone" type="button"><span class="tool-icon" aria-hidden="true">▱</span>Zona</button><button class="tool" data-tool="text" type="button"><span class="tool-icon" aria-hidden="true">T</span>Texto</button></div></div><div class="tool-group"><span class="tool-group-label">EDITAR</span><div class="tool-group-buttons"><button class="tool" data-tool="move" type="button"><span class="tool-icon" aria-hidden="true">✥</span>Mover</button><button class="tool" data-tool="erase" type="button"><span class="tool-icon" aria-hidden="true">⌫</span>Borrar</button></div></div></div><div class="board-actions tactical-actions"><label class="player-color-control" for="playerColor" hidden>Color de jugadora <input id="playerColor" type="color" value="#f7fbff" aria-label="Elegir color de jugadora"></label><span class="tactical-actions-spacer"></span><button class="btn light small" data-board-action="undo" data-kind="tactico" type="button">↶ Deshacer</button><button class="btn light small" data-board-action="redo" data-kind="tactico" type="button">↷ Rehacer</button><button class="btn danger small" data-board-action="clear" data-kind="tactico" type="button" aria-label="Borrar todos los elementos de la cancha">Borrar todo</button></div><div class="board-wrap"><canvas class="board" id="board-tactico" width="900" height="520" aria-label="Pizarra táctica interactiva"></canvas></div><p class="board-help">Jugadoras, conos y pelotas: tocá la cancha para agregarlos. Flecha, línea y zona: arrastrá para dibujar. Texto: tocá donde quieras ubicarlo.</p></section><section class="panel"><h3>Diseño del ejercicio</h3><p class="muted">Completá los datos esenciales de la tarea.</p><form class="form exercise-form tactico-form" id="form-tactico"><input type="hidden" id="id-tactico"><label class="full">Nombre del ejercicio<textarea id="nombre-tactico" required maxlength="100" rows="2" placeholder="Escribí el nombre del ejercicio"></textarea></label><label class="full">Objetivo<textarea id="objetivo-tactico" rows="4" placeholder="¿Qué queremos trabajar?"></textarea></label><label class="full">Jugadoras<textarea id="organizacion-tactico" rows="3" placeholder="Cantidad, distribución, equipos o roles"></textarea></label><label class="full">Espacio de juego<textarea id="espacio-tactico" rows="2" placeholder="Dimensiones y sector de cancha"></textarea></label><div class="actions full"><button class="btn primary" type="submit" id="guardar-tactico">Guardar ejercicio</button><button class="btn light" type="button" data-reset="tactico">Limpiar</button></div></form></section></div></section><section class="tabview" id="view-fisica" hidden><div class="workspace"><section class="panel"><h3>Constructor de preparación física</h3><p class="muted">Definí el ejercicio y representá libremente su organización.</p><form class="form exercise-form" id="form-fisica"><input type="hidden" id="id-fisica"><label class="full">Nombre del ejercicio<input id="nombre-fisica" required maxlength="100" placeholder="Ej. Circuito de velocidad y coordinación"></label><label class="full">Objetivo / contenido<textarea id="objetivo-fisica" rows="4" required maxlength="1200" placeholder="¿Qué se busca trabajar y cómo se desarrolla el contenido?"></textarea></label><label class="full">Duración / volumen<input id="duracion-fisica" maxlength="120" placeholder="Ej. 3 series de 6 repeticiones · 20 minutos"></label><div class="actions full"><button class="btn primary" type="submit" id="guardar-fisica">Guardar ejercicio</button><button class="btn light" type="button" data-reset="fisica">Limpiar</button></div></form></section><section class="panel"><h3>Espacio de diseño del ejercicio</h3><p class="muted">Un lienzo blanco y libre para ubicar materiales, recorridos y consignas.</p><div class="board-tools" data-board="fisica"><button class="tool active" data-tool="move">Mover</button><button class="tool" data-tool="cone">Cono</button><button class="tool" data-tool="turtle">Tortuguita</button><button class="tool" data-tool="hurdle">Valla</button><button class="tool" data-tool="arrow">Flecha</button><button class="tool" data-tool="line">Línea</button><button class="tool" data-tool="text">Texto</button></div><div class="board-actions physical-board-controls"><button class="btn light small" data-board-action="undo" data-kind="fisica" type="button">↶ Deshacer</button><button class="btn light small" data-board-action="redo" data-kind="fisica" type="button">↷ Rehacer</button><button class="btn light small" data-board-action="erase" data-kind="fisica" type="button">⌫ Borrar</button></div><div class="board-wrap physical-board-wrap"><canvas class="board" id="board-fisica" width="900" height="520" aria-label="Lienzo blanco para diseñar ejercicios de preparación física"></canvas></div><p class="board-help">Seleccioná un elemento para colocarlo. Usá Mover para reubicarlo y Borrar para quitarlo.</p><div class="board-actions"><button class="btn light small" data-board-action="download" data-kind="fisica">Descargar PNG</button><button class="btn light small" data-board-action="clear" data-kind="fisica">Limpiar esquema</button></div></section></div></section>
+<section class="tabview" id="view-biblioteca" hidden>
+ <div class="saved-library">
+  <div class="saved-summary">
+   <div class="saved-summary-card"><span class="saved-summary-icon">⚽</span><div><strong id="savedTactico">0</strong><small>Técnico - Táctico</small></div></div>
+   <div class="saved-summary-card"><span class="saved-summary-icon">⌁</span><div><strong id="savedFisica">0</strong><small>Preparación Física</small></div></div>
+   <div class="saved-summary-card"><span class="saved-summary-icon">★</span><div><strong id="savedFav">0</strong><small>Favoritos</small></div></div>
+  </div>
+  <section class="panel saved-panel">
+   <div class="saved-panel-heading"><div><h3>Todos los ejercicios</h3><p class="muted">Filtrá por área, categoría o nombre para encontrar una tarea rápidamente.</p></div><button class="btn primary" type="button" data-tab="tactico">＋ Crear ejercicio</button></div>
+   <div class="saved-filters">
+    <label class="saved-search"><span>Buscar ejercicio</span><input id="busqueda" type="search" placeholder="Nombre, objetivo, contenido o material…"></label>
+    <label><span>Área</span><select id="filtroArea"><option value="">Todas las áreas</option><option value="tactico">Técnico - Táctico</option><option value="fisica">Preparación Física</option></select></label>
+    <label><span>Ordenar por</span><select id="orden"><option value="recent">Más recientes</option><option value="name">Nombre A–Z</option><option value="old">Más antiguos</option></select></label>
+    <label class="saved-fav-filter"><input id="soloFavoritos" type="checkbox"><span>Mostrar solo favoritos</span></label>
+   </div>
+   <div class="saved-results-line"><span id="count">0 ejercicios</span><span class="saved-results-hint">Las nuevas tareas aparecerán automáticamente acá.</span></div>
+   <div id="lista" class="saved-grid"></div>
+   <div id="detalle"></div>
+  </section>
+ </div>
+</section>
+</main></div><div class="toast" id="toast" hidden></div>
+<script>
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const KEY="horizonte_biblioteca_ejercicios_v1";
+const CLUB="HORIZONTE";
+let registros=[],toastTimer,cloudReady=false,cloudError=false;
+const boards={tactico:[],fisica:[]},history={tactico:[],fisica:[]},future={tactico:[],fisica:[]},tools={tactico:"player",fisica:"move"},colors={tactico:"#ffdf42",fisica:"#ffdf42"},drag={};
+const canEdit=()=>{const p=window.SANTELMO_PERMISOS||window.HORIZONTE_PERMISOS||window.CLUB_PERMISOS;return !p||p.puedeEditar!==false};
+const canDelete=()=>{const p=window.SANTELMO_PERMISOS||window.HORIZONTE_PERMISOS||window.CLUB_PERMISOS;return !p||p.puedeEliminar!==false};
+function aviso(t){$("toast").textContent=t;$("toast").hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").hidden=true,3000)}
+function setSyncState(state){const el=$("syncState");if(!el)return;el.dataset.state=state;el.textContent=({local:"Guardado local",sync:"Sincronizando…",ok:"Sincronizado",error:"Sin conexión · modo local"}[state]||state)}
+function persistLocal(){try{localStorage.setItem(KEY,JSON.stringify(registros));return true}catch(e){console.error(e);aviso("No hay espacio disponible para guardar en este dispositivo.");return false}}
+async function saveRecord(r){persistLocal();if(window.__clubModuleCloud){setSyncState("sync");try{await window.__clubModuleCloud.save(r);cloudError=false;setSyncState("ok");return true}catch(e){console.error("Error guardando en Firestore:",e);cloudError=true;setSyncState("error");return false}}setSyncState("local");return true}
+async function removeRecord(id){if(window.__clubModuleCloud){setSyncState("sync");try{await window.__clubModuleCloud.remove(id);setSyncState("ok");return true}catch(e){console.error(e);setSyncState("error");return false}}return true}
+function setTab(name){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));document.querySelectorAll(".tabview").forEach(v=>v.hidden=v.id!=="view-"+name);if(name==="biblioteca"){render();$("detalle").innerHTML="";return}requestAnimationFrame(()=>boardDraw(name))}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab)));document.querySelectorAll("[data-tab]").forEach(b=>{if(!b.classList.contains("tab"))b.addEventListener("click",()=>setTab(b.dataset.tab))});
+function boardDraw(kind,target){
+ const cv=target||$("board-"+kind);if(!cv)return;
+ if(cv.width!==900)cv.width=900;
+ if(cv.height!==520)cv.height=520;
+ cv.style.aspectRatio="900 / 520";
+ const ctx=cv.getContext("2d"),w=900,h=520;
+ ctx.setTransform(1,0,0,1,0,0);
+ ctx.clearRect(0,0,w,h);
+ if(kind==="fisica"){ctx.fillStyle="#ffffff";ctx.fillRect(0,0,w,h)}else{
+ ctx.fillStyle="#4c9b61";ctx.fillRect(0,0,w,h);
+ ctx.strokeStyle="#ffffff";ctx.lineWidth=3;
+ ctx.strokeRect(18,18,w-36,h-36);
+ ctx.beginPath();ctx.moveTo(w/2,18);ctx.lineTo(w/2,h-18);ctx.stroke();
+ ctx.beginPath();ctx.arc(w/2,h/2,75,0,Math.PI*2);ctx.stroke();
+ ctx.strokeRect(18,h/2-105,125,210);ctx.strokeRect(w-143,h/2-105,125,210);
+ ctx.strokeRect(18,h/2-55,48,110);ctx.strokeRect(w-66,h/2-55,48,110);
+ }
+ (boards[kind]||[]).forEach(o=>{
+  ctx.save();ctx.lineCap="round";ctx.lineJoin="round";
+  if(o.type==="arrow"||o.type==="line"){
+   ctx.strokeStyle=o.color||"#ffdf42";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(o.x,o.y);ctx.lineTo(o.x2,o.y2);ctx.stroke();
+   if(o.type==="arrow"){const a=Math.atan2(o.y2-o.y,o.x2-o.x);ctx.beginPath();ctx.moveTo(o.x2,o.y2);ctx.lineTo(o.x2-18*Math.cos(a-.48),o.y2-18*Math.sin(a-.48));ctx.lineTo(o.x2-18*Math.cos(a+.48),o.y2-18*Math.sin(a+.48));ctx.closePath();ctx.fillStyle=o.color||"#ffdf42";ctx.fill()}
+  }else if(o.type==="zone"){
+   const x=Math.min(o.x,o.x2),y=Math.min(o.y,o.y2),ww=Math.abs(o.x2-o.x),hh=Math.abs(o.y2-o.y);
+   ctx.fillStyle=(o.color||"#ffe36a")+"33";ctx.strokeStyle=o.color||"#ffe36a";ctx.lineWidth=3;ctx.fillRect(x,y,ww,hh);ctx.strokeRect(x,y,ww,hh);
+  }else if(o.type==="text"){
+   ctx.fillStyle=o.color||"#fff";ctx.font="bold 20px Arial";ctx.fillText(o.label||"Texto",o.x,o.y);
+  }else if(o.type==="player"){
+   ctx.beginPath();ctx.arc(o.x,o.y,15,0,Math.PI*2);ctx.fillStyle=o.color||"#f7fbff";ctx.fill();ctx.strokeStyle="#155b9a";ctx.lineWidth=3;ctx.stroke();
+   ctx.fillStyle="#17324d";ctx.font="bold 12px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(o.label||"",o.x,o.y);
+  }else if(o.type==="cone"){
+   ctx.beginPath();ctx.moveTo(o.x,o.y-10);ctx.lineTo(o.x-9,o.y+8);ctx.lineTo(o.x+9,o.y+8);ctx.closePath();ctx.fillStyle="#ff8a24";ctx.fill();ctx.strokeStyle="#9b4a08";ctx.lineWidth=1.5;ctx.stroke();
+   }else if(o.type==="turtle"){
+   ctx.fillStyle="#16a085";ctx.strokeStyle="#08745f";ctx.lineWidth=2;
+   ctx.beginPath();ctx.ellipse(o.x,o.y,15,10,0,0,Math.PI*2);ctx.fill();ctx.stroke();
+   ctx.fillStyle="#d8fff2";ctx.beginPath();ctx.arc(o.x+12,o.y-2,4,0,Math.PI*2);ctx.fill();ctx.stroke();
+   ctx.fillStyle="#08745f";[[-8,-7],[-8,7],[5,-8],[5,8]].forEach(([dx,dy])=>{ctx.beginPath();ctx.arc(o.x+dx,o.y+dy,3,0,Math.PI*2);ctx.fill()});
+  }else if(o.type==="hurdle"){
+   ctx.strokeStyle="#e07b16";ctx.lineWidth=5;ctx.lineCap="round";
+   ctx.beginPath();ctx.moveTo(o.x-15,o.y-10);ctx.lineTo(o.x-15,o.y+12);ctx.moveTo(o.x+15,o.y-10);ctx.lineTo(o.x+15,o.y+12);ctx.stroke();
+   ctx.strokeStyle="#f0a12b";ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(o.x-17,o.y-10);ctx.lineTo(o.x+17,o.y-10);ctx.stroke();
+  }else if(o.type==="ball"){
+   ctx.beginPath();ctx.arc(o.x,o.y,11,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.strokeStyle="#222";ctx.lineWidth=1.5;ctx.stroke();
+   ctx.fillStyle="#222";ctx.beginPath();ctx.moveTo(o.x,o.y-4);ctx.lineTo(o.x+4,o.y-1);ctx.lineTo(o.x+2,o.y+4);ctx.lineTo(o.x-3,o.y+4);ctx.lineTo(o.x-4,o.y-1);ctx.closePath();ctx.fill();
+   for(let a=0;a<5;a++){const ang=a*2*Math.PI/5;ctx.beginPath();ctx.arc(o.x+7*Math.cos(ang),o.y+7*Math.sin(ang),1.7,0,Math.PI*2);ctx.fill()}
+  }
+  ctx.restore();
+ });
+}
+function point(cv,e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*cv.width/r.width,y:(e.clientY-r.top)*cv.height/r.height}}
+function hit(kind,p){const arr=boards[kind];for(let i=arr.length-1;i>=0;i--){const o=arr[i];if(["arrow","line","zone"].includes(o.type)){const minX=Math.min(o.x,o.x2)-14,maxX=Math.max(o.x,o.x2)+14,minY=Math.min(o.y,o.y2)-14,maxY=Math.max(o.y,o.y2)+14;if(p.x>=minX&&p.x<=maxX&&p.y>=minY&&p.y<=maxY)return i}else if(Math.hypot(p.x-o.x,p.y-o.y)<27)return i}return -1}
+function checkpoint(k){history[k].push(JSON.stringify(boards[k]));if(history[k].length>60)history[k].shift();future[k]=[]}
+function undo(k){if(!history[k].length)return;future[k].push(JSON.stringify(boards[k]));boards[k]=JSON.parse(history[k].pop());boardDraw(k)}
+function redo(k){if(!future[k].length)return;history[k].push(JSON.stringify(boards[k]));boards[k]=JSON.parse(future[k].pop());boardDraw(k)}
+function updateToolUI(w){w.querySelectorAll(".tool").forEach(b=>b.classList.toggle("active",b.dataset.tool===tools[w.dataset.board]));const erase=document.querySelector(`[data-board-action="erase"][data-kind="${w.dataset.board}"]`);if(erase)erase.classList.toggle("active",tools[w.dataset.board]==="erase");const color=w.querySelector(".player-color-control");if(color)color.hidden=tools[w.dataset.board]!=="player"}
+["tactico","fisica"].forEach(k=>{
+ const cv=$("board-"+k);if(!cv)return;boardDraw(k);
+ cv.addEventListener("pointerdown",e=>{
+  if(!canEdit())return;
+  const p=point(cv,e),tool=tools[k];
+  if(cv.setPointerCapture){try{cv.setPointerCapture(e.pointerId)}catch(err){}}
+  if(tool==="move"){
+   const index=hit(k,p);if(index<0)return;
+   checkpoint(k);drag[k]={move:true,index,lastX:p.x,lastY:p.y};return;
+  }
+  if(tool==="erase"){
+   const index=hit(k,p);if(index<0)return;
+   checkpoint(k);boards[k].splice(index,1);boardDraw(k);return;
+  }
+  if(["arrow","line","zone"].includes(tool)){
+   checkpoint(k);drag[k]={draw:true};
+   boards[k].push({type:tool,x:p.x,y:p.y,x2:p.x,y2:p.y,color:colors[k]});
+  }else{
+   checkpoint(k);
+   const o={type:tool,x:p.x,y:p.y,color:tool==="player"?colors.tactico:colors[k]};
+   if(tool==="text"){
+    const value=prompt("Texto para colocar en la pizarra:","");
+    if(value===null){history[k].pop();return}
+    o.label=value.trim().slice(0,40)||"Texto";
+   }
+   boards[k].push(o);boardDraw(k);
+  }
+ });
+ cv.addEventListener("pointermove",e=>{
+  const d=drag[k];if(!d)return;
+  const p=point(cv,e);
+  if(d.move){
+   const o=boards[k][d.index];if(!o){drag[k]=null;return}
+   const dx=p.x-d.lastX,dy=p.y-d.lastY;
+   o.x+=dx;o.y+=dy;
+   if(Number.isFinite(o.x2)){o.x2+=dx;o.y2+=dy}
+   d.lastX=p.x;d.lastY=p.y;boardDraw(k);return;
+  }
+  if(d.draw){
+   const o=boards[k][boards[k].length-1];if(!o)return;
+   o.x2=p.x;o.y2=p.y;boardDraw(k);
+  }
+ });
+ const end=()=>{if(drag[k]){drag[k]=null;boardDraw(k)}};
+ cv.addEventListener("pointerup",end);cv.addEventListener("pointercancel",end);
+});
+document.querySelectorAll("[data-board]").forEach(w=>w.addEventListener("click",e=>{const b=e.target.closest("[data-tool]");if(!b)return;tools[w.dataset.board]=b.dataset.tool;updateToolUI(w)}));document.querySelectorAll("[data-board]").forEach(updateToolUI);
+const playerColor=$("playerColor");if(playerColor)playerColor.addEventListener("input",()=>{colors.tactico=playerColor.value});
+document.querySelectorAll("[data-board-action]").forEach(b=>b.addEventListener("click",()=>{const k=b.dataset.kind,action=b.dataset.boardAction;if(action==="erase"){tools[k]="erase";const w=document.querySelector(`[data-board="${k}"]`);if(w)updateToolUI(w)}else if(action==="undo")undo(k);else if(action==="redo")redo(k);else if(action==="clear"){if(!boards[k].length)return;checkpoint(k);boards[k]=[];boardDraw(k)}else if(action==="download")downloadBoard(k)}));
+function downloadBoard(k){const cv=$("board-"+k);if(!cv)return;const link=document.createElement("a");link.download=(k==="fisica"?"preparacion-fisica":"tecnico-tactico")+"-horizonte.png";link.href=cv.toDataURL("image/png");link.click()}
+document.querySelectorAll("[data-board-color]").forEach(s=>s.addEventListener("change",()=>{colors[s.dataset.boardColor]=s.value}));
+function formData(kind){const g=id=>$(id+"-"+kind)?.value.trim()||"";const prev=registros.find(x=>String(x.id)===String(g("id")))||{};const tactical=kind==="tactico";if(!tactical)return {...prev,id:g("id")||"ej_"+Date.now()+"_"+Math.random().toString(36).slice(2,9),nombre:g("nombre"),categoria:prev.categoria||"Todas",area:"Preparación Física",areaKey:"fisica",duracion:g("duracion"),objetivo:g("objetivo"),desarrollo:g("objetivo"),boardData:boards.fisica.map(x=>({...x})),favorito:!!prev.favorito,creadoEn:prev.creadoEn||new Date().toISOString(),actualizadoEn:new Date().toISOString()};return {...prev,id:g("id")||"ej_"+Date.now()+"_"+Math.random().toString(36).slice(2,9),nombre:g("nombre"),categoria:prev.categoria||"Todas",area:"Técnico - Táctico",areaKey:kind,organizacion:g("organizacion"),espacio:g("espacio"),duracion:prev.duracion||"",intensidad:g("intensidad"),materiales:g("materiales"),objetivo:g("objetivo"),desarrollo:g("objetivo"),variantes:g("variantes"),boardData:boards[kind].map(x=>({...x})),favorito:!!prev.favorito,creadoEn:prev.creadoEn||new Date().toISOString(),actualizadoEn:new Date().toISOString()}}
+function resetForm(k){$("form-"+k).reset();$("id-"+k).value="";boards[k]=[];history[k]=[];future[k]=[];boardDraw(k);$("guardar-"+k).textContent=k==="tactico"?"Guardar tarea":"Guardar ejercicio"}
+function editRecord(r){if(!canEdit()){aviso("Tu perfil tiene permiso de consulta.");return}const k=r.areaKey==="fisica"?"fisica":"tactico";setTab(k);if(k==="fisica"){$("nombre-fisica").value=r.nombre||"";$("objetivo-fisica").value=r.objetivo||r.desarrollo||"";$("duracion-fisica").value=r.duracion||""}else ["nombre","categoria","area","organizacion","espacio","duracion","materiales","objetivo","desarrollo","variantes"].forEach(f=>{const el=$(f+"-"+k);if(el)el.value=r[f]||""});$("id-"+k).value=r.id;boards[k]=Array.isArray(r.boardData)?r.boardData.map(x=>({...x})):[];history[k]=[];future[k]=[];boardDraw(k);$("guardar-"+k).textContent="Guardar cambios";$("form-"+k).scrollIntoView({behavior:"smooth",block:"start"})}
+async function submitExercise(k,e){e.preventDefault();if(!canEdit()){aviso("Tu perfil no tiene permiso para crear o editar ejercicios.");return}const r=formData(k);if(!r.nombre||!r.objetivo){aviso("Completá el nombre y el objetivo / contenido del ejercicio.");return}const idx=registros.findIndex(x=>String(x.id)===String(r.id));if(idx>=0)registros[idx]=r;else registros.unshift(r);const saved=await saveRecord(r);resetForm(k);setTab("biblioteca");aviso(saved?"Ejercicio guardado correctamente.": "Se guardó en este dispositivo; falta sincronizar con la nube.")}
+["tactico","fisica"].forEach(k=>$("form-"+k).addEventListener("submit",e=>submitExercise(k,e)));
+document.querySelectorAll("[data-reset]").forEach(b=>b.addEventListener("click",()=>resetForm(b.dataset.reset)));
+function render(){if(!$("busqueda"))return;
+ const q=$("busqueda").value.toLowerCase().trim(),a=$("filtroArea").value,sort=$("orden")?.value||"recent",fav=$("soloFavoritos")?.checked||false;
+ let rows=registros.filter(r=>(!a||r.areaKey===a)&&(!fav||r.favorito)&&(!q||[r.nombre,r.area,r.objetivo,r.desarrollo,r.materiales,r.organizacion,r.variantes,r.duracion].join(" ").toLowerCase().includes(q)));
+ rows.sort((x,y)=>sort==="name"?String(x.nombre).localeCompare(String(y.nombre),"es"):sort==="old"?String(x.creadoEn||"").localeCompare(String(y.creadoEn||"")):String(y.actualizadoEn||y.creadoEn||"").localeCompare(String(x.actualizadoEn||x.creadoEn||"")));
+ const tactico=registros.filter(r=>r.areaKey!=="fisica").length,fisica=registros.filter(r=>r.areaKey==="fisica").length,favoritos=registros.filter(r=>r.favorito).length;
+ $("savedTotal").textContent=registros.length;$("savedTactico").textContent=tactico;$("savedFisica").textContent=fisica;$("savedFav").textContent=favoritos;
+ $("count").textContent=rows.length+" de "+registros.length+" ejercicios";
+ $("lista").innerHTML=rows.length?rows.map(r=>'<article class="saved-card"><div class="saved-card-top"><div><div class="saved-card-area">'+(r.areaKey==="fisica"?"PREPARACIÓN FÍSICA":"TÉCNICO · TÁCTICO")+'</div><h4>'+esc(r.nombre)+'</h4></div>'+(r.favorito?'<span class="saved-star" title="Favorito">★</span>':'')+'</div><p>'+esc(r.objetivo||r.desarrollo||"Sin objetivo detallado")+'</p><div class="saved-card-tags"><span>'+esc(r.categoria||"Todas las categorías")+'</span>'+(r.duracion?'<span>'+esc(r.duracion)+'</span>':'')+(r.area?'<span>'+esc(r.area)+'</span>':'')+'</div>'+(Array.isArray(r.boardData)&&r.boardData.length?makeBoardPreview(r):'')+'<div class="saved-card-actions"><button class="btn light small" data-action="view" data-id="'+esc(r.id)+'">Ver ficha</button><button class="btn light small" data-action="edit" data-id="'+esc(r.id)+'" '+(!canEdit()?'hidden':'')+'>Editar</button><button class="btn light small" data-action="duplicate" data-id="'+esc(r.id)+'" '+(!canEdit()?'hidden':'')+'>Duplicar</button><button class="btn danger small" data-action="delete" data-id="'+esc(r.id)+'" '+(!canDelete()?'hidden':'')+'>Eliminar</button></div></article>').join(""):'<div class="saved-empty"><strong>'+(registros.length?"No encontramos ejercicios con esos filtros":"Todavía no hay ejercicios guardados")+'</strong><span>'+(registros.length?"Probá modificar la búsqueda o los filtros.":"Cuando guardes una tarea desde Técnico - Táctico o Preparación Física, va a aparecer automáticamente en esta biblioteca.")+'</span></div>';
+}
+function makeBoardPreview(r){if(!Array.isArray(r.boardData)||!r.boardData.length)return "";const canvas=document.createElement("canvas");canvas.width=900;canvas.height=520;const old=boards[r.areaKey];boards[r.areaKey]=r.boardData;boardDraw(r.areaKey,canvas);boards[r.areaKey]=old;return '<img class="preview" alt="Pizarra de '+esc(r.nombre)+'" src="'+canvas.toDataURL("image/png")+'">'}
+function detail(r){const labels=r.areaKey==="fisica"?[["objetivo","Objetivo / contenido"],["duracion","Duración / volumen"]]:[["objetivo","Objetivo"],["organizacion","Jugadoras / organización"],["espacio","Espacio"],["duracion","Duración / volumen"],["intensidad","Intensidad / pausa"],["materiales","Materiales"],["desarrollo","Desarrollo y consignas"],["variantes","Variantes / progresiones"]];$("detalle").innerHTML='<div class="detail"><div class="head"><h3>'+esc(r.nombre)+'</h3><button class="btn light small" data-close-detail>Cerrar ficha</button></div><div class="chips"><span>'+(r.areaKey==="fisica"?"Preparación Física":"Técnico - Táctico")+'</span><span>'+esc(r.area||"")+'</span><span>'+esc(r.categoria||"Todas")+'</span></div><dl>'+labels.map(([k,l])=>'<dt>'+l+'</dt><dd>'+esc(r[k]||"—")+'</dd>').join("")+'</dl>'+makeBoardPreview(r)+'<div class="actions" style="margin-top:14px"><button class="btn light small" data-action="print" data-id="'+esc(r.id)+'">Imprimir ficha</button><button class="btn light small" data-action="edit" data-id="'+esc(r.id)+'" '+(!canEdit()?'hidden':'')+'>Editar ejercicio</button></div></div>'}
+function printRecord(r){const w=window.open("","_blank");if(!w){aviso("Permití las ventanas emergentes para imprimir.");return}const labels=r.areaKey==="fisica"?[["objetivo","Objetivo / contenido"],["duracion","Duración / volumen"]]:[["objetivo","Objetivo"],["organizacion","Organización"],["espacio","Espacio"],["duracion","Duración / volumen"],["intensidad","Intensidad / pausa"],["materiales","Materiales"],["desarrollo","Desarrollo"],["variantes","Variantes"]];w.document.write('<!doctype html><html lang="es"><meta charset="utf-8"><title>'+esc(r.nombre)+'</title><style>body{font:14px Arial;padding:30px;color:#222}h1{color:#173e70}h2{font-size:12px;color:#777;text-transform:uppercase}p{white-space:pre-wrap;line-height:1.5}img{max-width:100%;margin-top:15px}</style><h1>'+esc(r.nombre)+'</h1><h2>HORIZONTE · '+(r.areaKey==="fisica"?"Preparación Física":"Técnico - Táctico")+' · '+esc(r.categoria||"Todas")+'</h2>'+labels.map(([k,l])=>'<h3>'+l+'</h3><p>'+esc(r[k]||"—")+'</p>').join("")+makeBoardPreview(r)+'</html>');w.document.close();w.focus();w.print()}
+$("lista").addEventListener("click",async e=>{const b=e.target.closest("[data-action],[data-close-detail]");if(!b)return;if(b.hasAttribute("data-close-detail")){$("detalle").innerHTML="";return}const r=registros.find(x=>String(x.id)===b.dataset.id);if(!r)return;const action=b.dataset.action;if(action==="view"){detail(r);return}if(action==="edit"){editRecord(r);return}if(action==="print"){printRecord(r);return}if(action==="favorite"){if(!canEdit()){aviso("Tu perfil no tiene permiso para modificar favoritos.");return}r.favorito=!r.favorito;r.actualizadoEn=new Date().toISOString();await saveRecord(r);render();if($("detalle").innerHTML)detail(r);return}if(action==="duplicate"){if(!canEdit())return;const copy={...r,id:"ej_"+Date.now()+"_"+Math.random().toString(36).slice(2,7),nombre:r.nombre+" (copia)",creadoEn:new Date().toISOString(),actualizadoEn:new Date().toISOString(),favorito:false,boardData:Array.isArray(r.boardData)?r.boardData.map(x=>({...x})):[]};registros.unshift(copy);await saveRecord(copy);render();detail(copy);aviso("Se creó una copia independiente del ejercicio.");return}if(action==="delete"){if(!canDelete()){aviso("Tu perfil no tiene permiso para eliminar.");return}if(!confirm("¿Eliminar definitivamente “"+r.nombre+"”?"))return;const backup=registros.slice();registros=registros.filter(x=>String(x.id)!==String(r.id));persistLocal();const ok=await removeRecord(r.id);if(!ok){registros=backup;persistLocal();aviso("No se pudo eliminar de la nube. El ejercicio se conservó.");return}$("detalle").innerHTML="";render();aviso("Ejercicio eliminado.")}});
+$("busqueda").addEventListener("input",render);["filtroArea","orden","soloFavoritos"].forEach(id=>$(id)?.addEventListener(id==="soloFavoritos"?"change":"change",render));
+window.__setClubRecords=list=>{registros=Array.isArray(list)?list.map(r=>({...r,areaKey:r.areaKey||(String(r.area||"").toLowerCase().includes("preparación")?"fisica":"tactico")})):[];persistLocal();render();setSyncState("ok")};
+try{registros=JSON.parse(localStorage.getItem(KEY)||"[]").map(r=>({...r,areaKey:r.areaKey||(String(r.area||"").toLowerCase().includes("preparación")?"fisica":"tactico")}))}catch(e){registros=[]}render();boardDraw("tactico");boardDraw("fisica");
+document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){const k=$("view-fisica").hidden?"tactico":"fisica";e.preventDefault();e.shiftKey?redo(k):undo(k)}if(e.key==="Escape")$("detalle").innerHTML=""});
+function applyPermissions(){const editable=canEdit();document.querySelectorAll(".exercise-form input,.exercise-form select,.exercise-form textarea,.exercise-form button[type=submit],.exercise-form [data-reset]").forEach(el=>{el.disabled=!editable});document.querySelectorAll(".board-tools .tool,.board-actions button").forEach(el=>{el.disabled=!editable});if(!editable){const note=document.createElement("p");note.className="section-note";note.textContent="Perfil de consulta: podés explorar e imprimir ejercicios, pero no crear ni modificar tareas.";document.querySelectorAll(".tabview .panel:first-child").forEach(p=>{if(!p.querySelector(".permission-note")){note.className+=" permission-note";p.prepend(note.cloneNode(true))}})}render()}
+window.addEventListener("santelmo-permisos-listos",applyPermissions);window.addEventListener("horizonte-permisos-listos",applyPermissions);window.addEventListener("club-permisos-listos",applyPermissions);setTimeout(applyPermissions,500);
+
+
+$("detalle").addEventListener("click",e=>{const b=e.target.closest("[data-action]");if(!b)return;const r=registros.find(x=>String(x.id)===b.dataset.id);if(!r)return;if(b.dataset.action==="print")printRecord(r);if(b.dataset.action==="edit")editRecord(r)});
+</script>
+
+<script type="module">
+import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";import{getFirestore,collection,onSnapshot,doc,setDoc,deleteDoc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const cfg={apiKey:"AIzaSyDExeLCMeFUVmAFwQ8ydFvRmW9AdAJmmeg",authDomain:"san-telmo-f2155.firebaseapp.com",projectId:"san-telmo-f2155",storageBucket:"san-telmo-f2155.firebasestorage.app",messagingSenderId:"354872818092",appId:"1:354872818092:web:ef71af1c4b16885caa6209"};const app=getApps().find(x=>x.options?.projectId===cfg.projectId)||initializeApp(cfg,"horizonte-biblioteca");const db=getFirestore(app),col=collection(db,"horizonte_biblioteca_ejercicios");window.__clubModuleCloud={save:r=>setDoc(doc(db,"horizonte_biblioteca_ejercicios",String(r.id)),r),remove:id=>deleteDoc(doc(db,"horizonte_biblioteca_ejercicios",String(id)))};onSnapshot(col,snap=>{const cloud=snap.docs.map(d=>({id:d.id,...d.data()}));let local=[];try{local=JSON.parse(localStorage.getItem("horizonte_biblioteca_ejercicios_v1")||"[]")}catch(e){}const map=new Map(cloud.map(r=>[String(r.id),r]));local.forEach(r=>{if(!map.has(String(r.id)))map.set(String(r.id),r)});const merged=[...map.values()].map(r=>({...r,areaKey:r.areaKey||(String(r.area||"").toLowerCase().includes("preparación")?"fisica":"tactico")}));window.__setClubRecords?.(merged);local.forEach(r=>{if(!cloud.some(x=>String(x.id)===String(r.id)))window.__clubModuleCloud.save(r).catch(console.warn)})},e=>console.warn("Firestore no disponible; se conserva el almacenamiento local.",e));
+</script>
+<script type="module" src="HORIZONTE-layout.js?v=20261127-biblioteca-guardados2"></script></body></html>
