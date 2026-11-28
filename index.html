@@ -21,7 +21,7 @@ main{padding:48px 0 34px}
 .intro h1{margin:0;font-size:22px;font-weight:850;letter-spacing:-.035em}
 .intro p{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
 .intro-tag{padding:8px 11px;border:1px solid var(--line);border-radius:7px;background:#fff;color:#68727e;font-size:10px;font-weight:750;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
-.clubs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:13px}
+.clubs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
 .club{--accent:#f47721;position:relative;display:flex;min-width:0;min-height:222px;flex-direction:column;align-items:center;padding:20px 10px 16px;overflow:hidden;border:1px solid #e5e8ec;border-radius:12px;background:#fff;text-align:center;text-decoration:none;box-shadow:0 2px 8px rgba(27,38,50,.025);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
 .club:before{position:absolute;top:0;left:0;width:100%;height:3px;background:var(--accent);content:""}
 .club:hover,.club:focus-visible{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 10px 22px rgba(27,38,50,.08);outline:none}
@@ -33,14 +33,14 @@ main{padding:48px 0 34px}
 .club.torito{--accent:#e77825}
 .club.horizonte{--accent:#455a64}
 .crest{width:126px;height:126px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;padding:7px}
-.crest img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
+.crest img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}\n.horizon-mark{width:94px;height:94px;display:grid;place-items:center;border:3px solid var(--accent);border-radius:50%;color:var(--accent);font-size:48px;font-weight:900;letter-spacing:-.08em}
 .club-name{display:block;margin-top:auto;color:var(--accent);font-size:13px;font-weight:900;letter-spacing:.045em;line-height:1.25;overflow-wrap:anywhere}
 .club-caption{display:flex;align-items:center;gap:5px;margin-top:7px;color:#929aa4;font-size:9px;font-weight:750;letter-spacing:.09em;text-transform:uppercase}
 .club-caption:after{content:"↗";font-size:11px;transition:transform .18s ease}
 .club:hover .club-caption:after{transform:translate(2px,-2px)}
 footer{display:flex;justify-content:space-between;gap:14px;margin-top:30px;padding:17px 0 22px;border-top:1px solid var(--line);color:#929aa2;font-size:10px;font-weight:650}
-@media(max-width:1000px){.clubs{grid-template-columns:repeat(3,minmax(0,1fr))}.club{min-height:205px}.crest{width:116px;height:116px}}
-@media(max-width:560px){.page{width:calc(100% - 28px)}header{height:64px}.header-note{display:none}main{padding:30px 0 20px}.intro{align-items:flex-start;margin-bottom:18px}.intro h1{font-size:20px}.intro p{font-size:12px}.intro-tag{display:none}.clubs{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.club{min-height:166px;padding:13px 5px 12px;border-radius:10px}.crest{width:min(100%,88px);height:88px;margin-bottom:10px;padding:5px}.club-name{font-size:10px}.club-caption{font-size:8px;margin-top:6px}}
+@media(max-width:1000px){.clubs{grid-template-columns:repeat(3,minmax(0,1fr))}.club{min-height:205px}.crest{width:116px;height:116px}.horizon-mark{width:86px;height:86px;font-size:42px}}
+@media(max-width:560px){.page{width:calc(100% - 28px)}header{height:64px}.header-note{display:none}main{padding:30px 0 20px}.intro{align-items:flex-start;margin-bottom:18px}.intro h1{font-size:20px}.intro p{font-size:12px}.intro-tag{display:none}.clubs{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.club{min-height:166px;padding:13px 5px 12px;border-radius:10px}.crest{width:min(100%,88px);height:88px;margin-bottom:10px;padding:5px}.horizon-mark{width:68px;height:68px;font-size:34px}.club-name{font-size:10px}.club-caption{font-size:8px;margin-top:6px}}
 @media(max-width:350px){.clubs{grid-template-columns:repeat(2,minmax(0,1fr))}.club{min-height:180px}.crest{width:102px;height:102px}.club-name{font-size:11px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
 </style>
@@ -83,6 +83,10 @@ footer{display:flex;justify-content:space-between;gap:14px;margin-top:30px;paddi
     <a class="club torito" href="TORITO/TORITO-Loing.html" aria-label="Ingresar a TORITO">
       <span class="crest"><img src="TORITO/TORITO - Logo.png" alt="Escudo de TORITO"></span>
       <span class="club-name">TORITO</span><span class="club-caption">Ingresar</span>
+    </a>
+    <a class="club horizonte" href="HORIZONTE/login.html" aria-label="Ingresar a HORIZONTE">
+      <span class="crest"><span class="horizon-mark" aria-hidden="true">H</span></span>
+      <span class="club-name">HORIZONTE</span><span class="club-caption">Futsal · Ingresar</span>
     </a>
   </nav>
 </main>
