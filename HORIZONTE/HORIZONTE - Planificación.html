@@ -2994,20 +2994,20 @@ function detectarCompeticionEnTexto(texto, categoria) {
   const opciones = COMPETICIONES_POR_DIVISION[categoria] ||
     COMPETICIONES_POR_DIVISION["Primera Fem"];
 
-  if (normalizado.includes("copa oro") && opciones.includes("Copa Oro - ARF")) {
-    return "Copa Oro - ARF";
+  if (normalizado.includes("copa oro") && opciones.includes("Copa Oro")) {
+    return "Copa Oro";
   }
 
-  if (normalizado.includes("copa plata") && opciones.includes("Copa Plata - ARF")) {
-    return "Copa Plata - ARF";
+  if (normalizado.includes("copa plata") && opciones.includes("Copa Plata")) {
+    return "Copa Plata";
   }
 
-  if (normalizado.includes("copa santa fe") && opciones.includes("Copa Santa Fe")) {
-    return "Copa Santa Fe";
+  if (normalizado.includes("copa argentina") && opciones.includes("Copa Argentina")) {
+    return "Copa Argentina";
   }
 
-  if (normalizado.includes("regional") && opciones.includes("Torneo Regional AFA")) {
-    return "Torneo Regional AFA";
+  if (normalizado.includes("amistoso") && opciones.includes("Amistoso")) {
+    return "Amistoso";
   }
 
   if ((categoria === "Primera Masc" || categoria === "Primera Fem") && opciones.includes("Fase regular")) {
