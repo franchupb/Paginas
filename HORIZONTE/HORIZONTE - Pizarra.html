@@ -1128,6 +1128,52 @@ body.immersive .board-studio>.controlbar>.immersive-launch{
  .board-studio .top-tools::-webkit-scrollbar{display:none!important}
  .board-studio .top-tools .tool{min-width:32px!important}
 }
+
+/* IDENTIDAD HORIZONTE · FUTSAL */
+.board-studio .pitch{
+ background-color:#D8B58A!important;
+ background-image:
+  repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0,rgba(255,255,255,.12) 9.8%,rgba(112,75,39,.055) 10%,rgba(112,75,39,.055) 19.8%),
+  linear-gradient(90deg,#C99F70 0%,#E2C49D 50%,#C99F70 100%)!important;
+ border:2px solid #9A744D!important;
+}
+.board-studio .player.own{
+ background:#0874B9!important;
+ border-color:#fff!important;
+ box-shadow:0 2px 7px #10271955,0 0 0 2px #07558A!important;
+ color:#fff!important;
+}
+.board-studio .player.rival{
+ background:#F5A000!important;
+ border-color:#fff!important;
+ box-shadow:0 2px 7px #51340c55,0 0 0 2px #D88900!important;
+ color:#171717!important;
+}
+.board-studio .player.rival .player-number{
+ color:#171717!important;
+ text-shadow:none!important;
+}
+.board-studio .top-tools .swatch{
+ width:16px!important;height:16px!important;flex-basis:16px!important;
+ border:2px solid #fff!important;
+ box-shadow:0 0 0 1px #b9c2ca!important;
+}
+.board-studio .top-tools .swatch.active{
+ outline:2px solid #0874B9!important;outline-offset:2px!important;
+}
+.board-studio .top-tools .tool.active{
+ border-color:#0874B9!important;background:#E7F4FB!important;color:#07558A!important;
+}
+.board-studio .top-tools .tool:hover{
+ border-color:#F5A000!important;color:#07558A!important;
+}
+.board-studio .quick-history-btn:hover{
+ border-color:#0874B9!important;background:#E7F4FB!important;color:#07558A!important;
+}
+.board-studio .controlbar select:focus{
+ border-color:#0874B9!important;box-shadow:0 0 0 2px #0874B91A!important;
+}
+
 </style>
 </head>
 <body>
@@ -1157,7 +1203,7 @@ body.immersive .board-studio>.controlbar>.immersive-launch{
 <button class="tool" data-tool="free" type="button" title="Dibujar a mano alzada"><span>✎</span><small>Lápiz</small></button>
 <button class="tool" data-tool="zone" type="button" title="Dibujar una zona"><span>◯</span><small>Zona</small></button>
 
-<div class="palette" aria-label="Color de dibujo"><button class="swatch active" data-color="#173e70" style="background:#173e70" aria-label="Naranja" type="button"></button><button class="swatch" data-color="#58b9d6" style="background:#58b9d6" aria-label="Rojo" type="button"></button><button class="swatch" data-color="#171717" style="background:#171717" aria-label="Negro" type="button"></button></div>
+<div class="palette" aria-label="Colores institucionales de dibujo"><button class="swatch active" data-color="#0874B9" style="background:#0874B9" aria-label="Azul HORIZONTE" title="Azul HORIZONTE" type="button"></button><button class="swatch" data-color="#58B9D6" style="background:#58B9D6" aria-label="Celeste" title="Celeste" type="button"></button><button class="swatch" data-color="#F5A000" style="background:#F5A000" aria-label="Naranja HORIZONTE" title="Naranja HORIZONTE" type="button"></button><button class="swatch" data-color="#FFFFFF" style="background:#FFFFFF" aria-label="Blanco" title="Blanco" type="button"></button><button class="swatch" data-color="#171717" style="background:#171717" aria-label="Negro" title="Negro" type="button"></button></div>
 
 <div class="quick-history" aria-label="Historial de edición"><button class="quick-history-btn" id="undo" type="button" title="Deshacer" aria-label="Deshacer">↶</button><button class="quick-history-btn" id="redo" type="button" title="Rehacer" aria-label="Rehacer">↷</button></div>
 </div>
@@ -1194,7 +1240,7 @@ var formations={
 "4-0":[[.08,.50],[.34,.22],[.49,.72],[.65,.28],[.80,.68]]
 };
 var players=formations["2-2"].map(function(p,i){return{id:"own-"+(i+1),team:"own",number:String(i+1),x:p[0],y:p[1]};});
-var drawings=[],tool="select",color="#173e70",lineWidth=4,selected=null,drawing=false,start=null,points=[],history=[],future=[];
+var drawings=[],tool="select",color="#0874B9",lineWidth=4,selected=null,drawing=false,start=null,points=[],history=[],future=[];
 var clone=function(v){return JSON.parse(JSON.stringify(v));};
 function status(t){$("status").textContent=t;}
 function syncHistory(){$("undo").disabled=!history.length;$("redo").disabled=!future.length;}
