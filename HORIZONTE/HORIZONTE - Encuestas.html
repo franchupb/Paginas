@@ -177,7 +177,7 @@ button,input,select,textarea{font-family:inherit}
 (function(){
 "use strict";
 const $=id=>document.getElementById(id), norm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
-const categoriaKey=s=>{const k=norm(s);const m=k.match(/^(?:sub|s|u)?(10|12|14|16)$/);return m?"sub"+m[1]:k};
+const categoriaKey=s=>{const k=norm(s);const m=k.match(/^(primeramasc|primerafem|reservamasc|reservafem)$/);return m?k:""+k};
 const modoPublico=!!window.SAN_TELMO_MODO_ENCUESTA_PUBLICA, encuestaPublicaId=new URLSearchParams(location.search).get("encuesta")||"";
 const fechaLocal=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const fmtFecha=s=>{if(!s)return "—";const p=s.split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:s};
