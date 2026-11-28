@@ -577,35 +577,35 @@
     };
     const configPagina = paginas[normalizarArchivo(ARCHIVO_ACTUAL)];
     const panelEstilo = document.createElement("style");
-    panelEstilo.id = "santelmo-panel-compartido-estilos";
+    panelEstilo.id = "horizonte-panel-compartido-estilos";
     panelEstilo.textContent = `
-      .santelmo-panel-compartido{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:22px;min-height:154px;padding:25px 30px;margin:0 0 22px;border-radius:20px;background:linear-gradient(112deg,#07558a 0%,#0874b9 62%,#236b87 100%);color:#fff;box-shadow:0 12px 30px #17171712}
-      .santelmo-panel-compartido:after{content:"";position:absolute;z-index:-1;width:300px;height:300px;right:170px;top:-190px;border:1px solid #ffffff20;border-radius:50%;box-shadow:0 0 0 35px #ffffff08,0 0 0 75px #ffffff06}
-      .santelmo-panel-texto{min-width:0;flex:1 1 auto}.santelmo-panel-eyebrow{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:#e5c77a;font-size:10px;font-weight:850;letter-spacing:1.6px}.santelmo-panel-eyebrow:before{content:"";width:22px;height:2px;background:#c8a24a}.santelmo-panel-titulo{margin:0 0 7px;color:#fff;font-family:Manrope,'DM Sans',Arial,sans-serif;font-size:27px;font-weight:850;letter-spacing:-.5px}.santelmo-panel-descripcion{max-width:760px;margin:0;color:#d0d0d0;font-size:12px;line-height:1.6}
-      .santelmo-panel-control{position:relative;z-index:1;flex:0 0 235px;min-width:210px;padding:13px 15px;border:1px solid #ffffff29;border-radius:13px;background:#ffffff0d}.santelmo-panel-control label{display:block;margin:0 0 7px;color:#d9eff6;font-size:9px;font-weight:850;letter-spacing:1px}.santelmo-panel-control select{width:100%;min-height:42px;padding:9px 32px 9px 11px;border:1px solid #ffffff32;border-radius:9px;outline:none;background:#fff;color:#202020;font-size:12px;font-weight:800}.santelmo-panel-control select:focus{box-shadow:0 0 0 3px #58b9d640}.santelmo-categoria-integrada{display:none!important}
-      .santelmo-panel-acciones{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;justify-content:flex-end;gap:8px}
-      @media(max-width:760px){.santelmo-panel-compartido{align-items:stretch;flex-direction:column;gap:14px;min-height:0;padding:21px 18px;margin-bottom:16px;border-radius:16px}.santelmo-panel-titulo{font-size:23px}.santelmo-panel-descripcion{font-size:11px}.santelmo-panel-control{flex:0 0 auto;min-width:0;width:100%;padding:11px 12px}.santelmo-panel-acciones{justify-content:flex-start;flex-wrap:wrap}}
+      .horizonte-panel-compartido{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:22px;min-height:154px;padding:25px 30px;margin:0 0 22px;border-radius:20px;background:linear-gradient(112deg,#07558a 0%,#0874b9 62%,#236b87 100%);color:#fff;box-shadow:0 12px 30px #17171712}
+      .horizonte-panel-compartido:after{content:"";position:absolute;z-index:-1;width:300px;height:300px;right:170px;top:-190px;border:1px solid #ffffff20;border-radius:50%;box-shadow:0 0 0 35px #ffffff08,0 0 0 75px #ffffff06}
+      .horizonte-panel-texto{min-width:0;flex:1 1 auto}.horizonte-panel-eyebrow{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:#e5c77a;font-size:10px;font-weight:850;letter-spacing:1.6px}.horizonte-panel-eyebrow:before{content:"";width:22px;height:2px;background:#c8a24a}.horizonte-panel-titulo{margin:0 0 7px;color:#fff;font-family:Manrope,'DM Sans',Arial,sans-serif;font-size:27px;font-weight:850;letter-spacing:-.5px}.horizonte-panel-descripcion{max-width:760px;margin:0;color:#d0d0d0;font-size:12px;line-height:1.6}
+      .horizonte-panel-control{position:relative;z-index:1;flex:0 0 235px;min-width:210px;padding:13px 15px;border:1px solid #ffffff29;border-radius:13px;background:#ffffff0d}.horizonte-panel-control label{display:block;margin:0 0 7px;color:#d9eff6;font-size:9px;font-weight:850;letter-spacing:1px}.horizonte-panel-control select{width:100%;min-height:42px;padding:9px 32px 9px 11px;border:1px solid #ffffff32;border-radius:9px;outline:none;background:#fff;color:#202020;font-size:12px;font-weight:800}.horizonte-panel-control select:focus{box-shadow:0 0 0 3px #58b9d640}.horizonte-categoria-integrada{display:none!important}
+      .horizonte-panel-acciones{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;justify-content:flex-end;gap:8px}
+      @media(max-width:760px){.horizonte-panel-compartido{align-items:stretch;flex-direction:column;gap:14px;min-height:0;padding:21px 18px;margin-bottom:16px;border-radius:16px}.horizonte-panel-titulo{font-size:23px}.horizonte-panel-descripcion{font-size:11px}.horizonte-panel-control{flex:0 0 auto;min-width:0;width:100%;padding:11px 12px}.horizonte-panel-acciones{justify-content:flex-start;flex-wrap:wrap}}
     `;
     document.head.appendChild(panelEstilo);
     const zonaPrincipal = document.querySelector("main.contenido, main.main, main, .contenido, .contenido-principal");
     if (zonaPrincipal && configPagina) {
       const panel = document.createElement("section");
-      panel.className = "santelmo-panel-compartido";
-      panel.id = "santelmoPanelCompartido";
+      panel.className = "horizonte-panel-compartido";
+      panel.id = "horizontePanelCompartido";
       panel.innerHTML = `
-        <div class="santelmo-panel-texto">
-          <div class="santelmo-panel-eyebrow">${configPagina.eyebrow}</div>
-          <h2 class="santelmo-panel-titulo">${configPagina.titulo}</h2>
-          <p class="santelmo-panel-descripcion">${configPagina.descripcion}</p>
+        <div class="horizonte-panel-texto">
+          <div class="horizonte-panel-eyebrow">${configPagina.eyebrow}</div>
+          <h2 class="horizonte-panel-titulo">${configPagina.titulo}</h2>
+          <p class="horizonte-panel-descripcion">${configPagina.descripcion}</p>
         </div>
-        <div class="santelmo-panel-control">
-          <label for="santelmoCategoriaGlobal">CATEGORÍA DEL PLANTEL</label>
-          <select id="santelmoCategoriaGlobal" aria-label="Seleccionar categoría"></select>
+        <div class="horizonte-panel-control">
+          <label for="horizonteCategoriaGlobal">CATEGORÍA DEL PLANTEL</label>
+          <select id="horizonteCategoriaGlobal" aria-label="Seleccionar categoría"></select>
         </div>`;
       const controlesOriginales = (configPagina.controlesCategoria || []).map(id => document.getElementById(id)).filter(Boolean);
       const depositoControles = document.createElement("div");
       depositoControles.hidden = true;
-      depositoControles.className = "santelmo-controles-categoria-ocultos";
+      depositoControles.className = "horizonte-controles-categoria-ocultos";
       zonaPrincipal.appendChild(depositoControles);
       controlesOriginales.forEach(select => depositoControles.appendChild(select));
       const encabezadoOriginal = zonaPrincipal.querySelector(configPagina.selector);
@@ -613,7 +613,7 @@
         const bloquesConAcciones = Array.from(encabezadoOriginal.children).filter(nodo => nodo.matches("button, a.boton-principal, a.btn") || (nodo.querySelector && nodo.querySelector("button, a.boton-principal, a.btn")));
         if (bloquesConAcciones.length) {
           const acciones = document.createElement("div");
-          acciones.className = "santelmo-panel-acciones";
+          acciones.className = "horizonte-panel-acciones";
           bloquesConAcciones.forEach(nodo => acciones.appendChild(nodo));
           panel.appendChild(acciones);
         }
@@ -624,10 +624,10 @@
       const idsCategoria = new Set(["categoriaPrincipal","filtroCategoria","categoria","selectCategoria","division","filtroDivision","filtroDivisionPartidos","filtroDivisionEstadisticas","selectDivision","selectorCategoriaGlobal","selectorCategoria","filtroCategoriaEstadisticas"]);
       const normalizarCategoriaGlobal = valor => String(valor || "").normalize("NFD").split("").filter(caracter => { const codigo = caracter.charCodeAt(0); return codigo < 0x0300 || codigo > 0x036f; }).join("").toLowerCase().replace(/[^a-z0-9]/g,"");
       const categoriaEnOpciones = select => Array.from(select.options || []).some(option => categorias.some(cat => normalizarCategoriaGlobal(option.value || option.textContent) === normalizarCategoriaGlobal(cat)));
-      const selectorGlobal = panel.querySelector("#santelmoCategoriaGlobal");
+      const selectorGlobal = panel.querySelector("#horizonteCategoriaGlobal");
       (configPagina.ocultarSelectores || []).forEach(selector => {
         document.querySelectorAll(selector).forEach(nodo => {
-          if (nodo !== panel && !nodo.contains(panel)) nodo.classList.add("santelmo-categoria-integrada");
+          if (nodo !== panel && !nodo.contains(panel)) nodo.classList.add("horizonte-categoria-integrada");
         });
       });
       function categoriasAutorizadas() {
@@ -642,13 +642,13 @@
         return controlesOriginales.filter(select => select.isConnected && select !== selectorGlobal);
       }
       function ocultarControlOriginal(select) {
-        select.classList.add("santelmo-categoria-integrada");
+        select.classList.add("horizonte-categoria-integrada");
         const etiqueta = select.id ? document.querySelector('label[for="' + CSS.escape(select.id) + '"]') : null;
         if (etiqueta) {
           const campo = etiqueta.closest(".campo,.field,.selector-campo,.filtro-item");
           const otrosControles = campo ? campo.querySelectorAll("input,select,textarea,button") : [];
-          if (campo && otrosControles.length === 0) campo.classList.add("santelmo-categoria-integrada");
-          etiqueta.classList.add("santelmo-categoria-integrada");
+          if (campo && otrosControles.length === 0) campo.classList.add("horizonte-categoria-integrada");
+          etiqueta.classList.add("horizonte-categoria-integrada");
         }
       }
       function sincronizarControlesCategoria() {
@@ -663,7 +663,7 @@
       }
       function configurarSelectorGlobal() {
         const disponibles = categoriasAutorizadas();
-        const anterior = selectorGlobal.value || localStorage.getItem("santelmoCategoriaGlobal") || "";
+        const anterior = selectorGlobal.value || localStorage.getItem("horizonteCategoriaGlobal") || "";
         selectorGlobal.replaceChildren(...disponibles.map(c => new Option(c,c)));
         const elegida = disponibles.find(c => normalizarCategoriaGlobal(c) === normalizarCategoriaGlobal(anterior));
         selectorGlobal.value = elegida || disponibles[0] || "";
@@ -672,12 +672,12 @@
         sincronizarControlesCategoria();
       }
       selectorGlobal.addEventListener("change", () => {
-        try { localStorage.setItem("santelmoCategoriaGlobal", selectorGlobal.value); } catch (_) {}
+        try { localStorage.setItem("horizonteCategoriaGlobal", selectorGlobal.value); } catch (_) {}
         sincronizarControlesCategoria();
       });
       const observerCategorias = new MutationObserver(() => sincronizarControlesCategoria());
       observerCategorias.observe(zonaPrincipal, { childList: true, subtree: true });
-      window.addEventListener("santelmo-permisos-listos", configurarSelectorGlobal);
+      window.addEventListener("horizonte-permisos-listos", configurarSelectorGlobal);
       configurarSelectorGlobal();
     }
   }
@@ -797,7 +797,7 @@
 
   async function importarCerrarSesionHORIZONTE() {
     try {
-      const modulo = await import("./HORIZONTE-auth.js?v=20261127-acceso-santelmo2");
+      const modulo = await import("./HORIZONTE-auth.js?v=20261127-acceso-horizonte2");
       await modulo.cerrarSesionHORIZONTE();
       window.location.href = "HORIZONTE - Login.html";
     } catch (error) {
@@ -925,5 +925,5 @@
 
   // Señala que la barra lateral común ya está construida.
   window.HORIZONTE_LAYOUT_LISTO = true;
-  window.dispatchEvent(new Event("santelmo-layout-listo"));
+  window.dispatchEvent(new Event("horizonte-layout-listo"));
 })();
