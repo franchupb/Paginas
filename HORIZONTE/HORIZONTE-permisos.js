@@ -8,7 +8,7 @@
 (function () {
   "use strict";
 
-  const LOGIN_URL = "HORIZONTE-Loing.html";
+  const LOGIN_URL = "login.html";
   const INICIO_URL = "index.html";
   const normalizar = value => String(value ?? "")
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -21,6 +21,7 @@
   const USUARIOS = Object.freeze({});;
 
   const PAGINAS_JUGADORAS = new Set([
+    "index.html",
     "horizonte-paginaprincipal.html",
     "horizonte-jugadoras.html",
     "horizonte-asistencia.html",
@@ -623,7 +624,7 @@
     }
   }
 
-  if (/^(horizonte-index|horizonte-loing)\.html$/i.test(paginaActual())) return;
+  if (/^login\.html$/i.test(paginaActual())) return;
 
   // En Partidos no ocultamos todo el documento mientras se resuelve la sesión:
   // la pantalla en blanco impedía ver incluso el error real de inicialización.
